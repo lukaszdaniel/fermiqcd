@@ -37,7 +37,7 @@ void box_topology(int mu,
   if(x[mu]==nx[mu]-1) x_up[mu]=x[mu];
 } 
 
-void moebious_topolgy(int mu, 
+void moebious_topology(int mu, 
 		      int *x_dw, 
 		      int *x, 
 		      int *x_up, 

@@ -9,9 +9,9 @@
 # If you know how to write a better makefile send it to me please!
 #
 
-CC     = g++ -I../Libraries 
+CC     = g++
 # Basic compilation flags (-O2 for speed)
-CFLAGS = -DLINUX -O3
+CFLAGS = -DLINUX -O3 -std=c++14 -I../Libraries
 # Flags for double precision and sse (P4 optiomizations)
 #CFLAGS = -DLINUX -DSSE2 -O3
 # Flags for parallel (mpi) double precision and sse
