@@ -13,6 +13,8 @@
 #ifndef mdp_timer_
 #define mdp_timer_
 
+using namespace std;
+
 #ifndef NO_POSIX
 
 double walltime() {

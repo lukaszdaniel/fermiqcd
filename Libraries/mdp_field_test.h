@@ -9,29 +9,35 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_field_test_
+#define mdp_field_test_
+
+using namespace std;
 
 /// For debugging purposes only
 bool mdp_field_test(int argc, char** argv) {
-  mpi.open_wormholes(argc, argv);
-  
-  int box[]={4,4,4,4};
-  mdp_lattice      lattice(4,box);
-  mdp_matrix_field M(lattice,3,3);
-  mdp_site         x(lattice);
-  double counter=0;
+	mpi.open_wormholes(argc, argv);
 
-  forallsites(x)
-    M(x)=M.lattice().random(x).SU(3);
-  
-  forallsites(x)
-    counter+=real(trace(M(x)*inv(M(x))))/3;
+	int box[] = { 4, 4, 4, 4 };
+	mdp_lattice lattice(4, box);
+	mdp_matrix_field M(lattice, 3, 3);
+	mdp_site x(lattice);
+	double counter = 0;
 
-  mpi.add(counter);
-  counter/=lattice.size();
+	forallsites (x)
+	M(x) = M.lattice().random(x).SU(3);
 
-  assert((counter-1)<mdp_precision);
-  printf("lattice and field ...test passed.\n");
+	forallsites (x)
+	counter += real(trace(M(x) * inv(M(x)))) / 3;
 
-  mpi.close_wormholes();
-  return (mdp_int) counter;
+	mpi.add(counter);
+	counter /= lattice.size();
+
+	assert((counter - 1) < mdp_precision);
+	printf("lattice and field ...test passed.\n");
+
+	mpi.close_wormholes();
+	return (mdp_int) counter;
 }
+
+#endif /* mdp_field_test_ */

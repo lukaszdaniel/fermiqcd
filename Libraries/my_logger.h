@@ -1,3 +1,6 @@
+#ifndef my_logger_
+#define my_logger_
+
 int openlog(const char log[]);
 int closelog();
 void header(int argc, char *argv[], const char id[]);
@@ -106,3 +109,5 @@ void footer() {
 
 	fflush(stdlog);
 }
+
+#endif /* my_logger_ */

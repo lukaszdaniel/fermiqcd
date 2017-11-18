@@ -9,6 +9,10 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_
+#define fermiqcd_
+
+using namespace std;
 
 #define FERMIQCD 1
 #define forspincolor(a,i,nc) for(int a=0; a<4; a++) for(int i=0; i<nc; i++)
@@ -65,5 +69,4 @@
 // #include "fermiqcd_instanton4d.h"
 // #include "fermiqcd_ffts.h"
 
-
-
+#endif /* fermiqcd_ */

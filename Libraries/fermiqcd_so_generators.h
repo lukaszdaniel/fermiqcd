@@ -12,26 +12,31 @@
 //    cout << "g=" << g.lambda[a] << endl;
 //  return 0;
 // }
+#ifndef fermiqcd_so_generators_
+#define fermiqcd_so_generators_
+
+using namespace std;
 
 class SO_Generators {
 public:
-  vector<mdp_matrix> lambda;
-  int n;
-  int ngenerators;
-  SO_Generators(int n) {
-    this->n = n;
-    this->ngenerators = n*(n-1)/2;
-    lambda.resize(ngenerators);
-    mdp_matrix temp(n,n);
-    mdp_complex z = 1.0/sqrt(2.0);
-    int k=0;
-    for(int j=0; j<n-1; j++)
-      for(int i=j+1; i<n; i++) {
-	temp=0;
-	temp(i,j)=z;
-	temp(i,j)=-z;
-	lambda[k++] = temp;
-      }
-  }
+	vector<mdp_matrix> lambda;
+	int n;
+	int ngenerators;
+	SO_Generators(int n) {
+		this->n = n;
+		this->ngenerators = n * (n - 1) / 2;
+		lambda.resize(ngenerators);
+		mdp_matrix temp(n, n);
+		mdp_complex z = 1.0 / sqrt(2.0);
+		int k = 0;
+		for (int j = 0; j < n - 1; j++)
+			for (int i = j + 1; i < n; i++) {
+				temp = 0;
+				temp(i, j) = z;
+				temp(i, j) = -z;
+				lambda[k++] = temp;
+			}
+	}
 };
 
+#endif /* fermiqcd_so_generators_ */

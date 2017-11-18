@@ -92,7 +92,7 @@ mdp_field_file_header get_info(string filename, int proc = 0) {
 		if (fp == 0)
 			error("Unable to open file");
 		size_t count = sizeof(mdp_field_file_header) / sizeof(char);
-		if(fread(&myheader, sizeof(char), count, fp) != count) {
+		if (fread(&myheader, sizeof(char), count, fp) != count) {
 			error("Error while reading file");
 		}
 		switch_header_endianess(myheader);

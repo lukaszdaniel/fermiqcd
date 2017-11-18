@@ -9,12 +9,16 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_macros_
+#define mdp_macros_
+
+using namespace std;
 
 #define CHECK_ALL
 #define MDP_MPI
 #define INCLUDE_DEPRECATED_IO 
 
-/// Loop on all local siltes of this process
+/// Loop on all local sites of this process
 #define forallsites(x)                                     \
         for(x.start(); x.is_in(); x.next())
 
@@ -53,4 +57,4 @@
 #define FALSE false
 #endif
 
-
+#endif /* mdp_macros_ */

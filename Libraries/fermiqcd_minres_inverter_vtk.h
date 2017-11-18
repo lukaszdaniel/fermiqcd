@@ -9,12 +9,16 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_minres_inverter_vtk_
+#define fermiqcd_minres_inverter_vtk_
+
+using namespace std;
 
 // /////////////////////////////////////////////
 // implementation of the minimum residue inversion
 // /////////////////////////////////////////////
 
-/// @brief the minimum residure inverter
+/// @brief the minimum residue inverter
 ///
 /// It inverts mul_Q(psi_out,psi_in,U,coeff) iteratively
 /// @param psi_out the output field passed by reference
@@ -169,3 +173,5 @@ inversion_stats MinimumResidueInverterVtk(fieldT &psi_out,
 			  relative_precision,
 			  max_steps);
 }
+
+#endif /* fermiqcd_minres_inverter_vtk_ */

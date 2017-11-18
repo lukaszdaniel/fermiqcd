@@ -9,10 +9,15 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_delta_
+#define mdp_delta_
+
+using namespace std;
 
 /// True if i==j, false otherwise
 template<class T>
 const bool delta(const T& i, const T& j) {
-	return (i==j);
+	return (i == j);
 }
 
+#endif /* mdp_delta_ */

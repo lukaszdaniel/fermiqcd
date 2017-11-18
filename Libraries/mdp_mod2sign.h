@@ -9,11 +9,17 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_mod2sign_
+#define mdp_mod2sign_
+
+using namespace std;
 
 /// Returns +1 is x%2==0 -1 otherwise
 int mdp_mod2sign(int x) {
-  if((x % 2)==0) 
-    return +1; 
-  else 
-    return -1;
+	if ((x % 2) == 0)
+		return +1;
+	else
+		return -1;
 }
+
+#endif /* mdp_mod2sign_ */

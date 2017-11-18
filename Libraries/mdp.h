@@ -9,6 +9,10 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_
+#define mdp_
+
+using namespace std;
 
 // ///////////////////////////////////////////////////////////////////////////
 // include the usual libraries (works on gcc and VC)
@@ -23,11 +27,11 @@
 #include <ctime>
 #include <cassert>
 #include <typeinfo>
-#include <stdint.h>
+#include <cstdint>
 #ifdef __APPLE__
 #define OSX
 #endif
-#ifndef OSX
+#ifndef __APPLE__
 #include <malloc.h>
 #endif
 #include <string>
@@ -45,7 +49,6 @@
 #include <sys/socket.h>
 #include <fcntl.h>
 #endif
-using namespace std;
 #define endl "\n"
 
 // ///////////////////////////////////////////////////////////////////////////
@@ -59,12 +62,12 @@ using namespace std;
 #include "mdp_macros.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// all global varibales except mdp,mpi and mdp_random
+// all global variables except mdp,mpi and mdp_random
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_global_vars.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// faster dynamic allocation (no excpections)
+// faster dynamic allocation (no exceptions)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_dynalloc.h"
 
@@ -79,7 +82,7 @@ using namespace std;
 #include "mdp_timer.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// mdp implementation of complex numbres (portable ansi)
+// mdp implementation of complex numbers (portable ansi)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_complex.h"
 
@@ -89,7 +92,7 @@ using namespace std;
 #include "mdp_delta.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// implementation of multidimentional array, better than STL
+// implementation of multidimensional array, better than STL
 // (class mdp_array used to be class DynamicArray)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_array.h"
@@ -122,19 +125,19 @@ using namespace std;
 
 // ///////////////////////////////////////////////////////////////////////////
 // this is a wrapper to Message Passing Interface (is one uses it)
-// replace this funcitons to change communication protocol
+// replace this functions to change communication protocol
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_communicator.h"
 
 // ///////////////////////////////////////////////////////////////////////////
 // this defined the class mdp_prng and the obj mdp_random
-// (attantion that ::SU<T>(int n) only works with gcc,
+// (attention that ::SU<T>(int n) only works with gcc,
 //  VC does not support templates, therefore ::SU(int n) only for float)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_prng.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// mdp_jackboot is a class for statictical analysis
+// mdp_jackboot is a class for statistical analysis
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_jackboot.h"
 
@@ -144,10 +147,9 @@ using namespace std;
 #include "mdp_topologies.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// a collection of possible lattice partitionings
+// a collection of possible lattice partitioning
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_partitionings.h"
-
 
 // ///////////////////////////////////////////////////////////////////////////
 // implementation of the class mdp_lattice
@@ -178,7 +180,7 @@ using namespace std;
 // #include "mdp_postscript.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// implementation of the communicaton function mdp_field::update()
+// implementation of the communication function mdp_field::update()
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_field_update.h"
 
@@ -262,5 +264,4 @@ using namespace std;
 #include "mdp_matrix_test.h"
 #include "mdp_field_test.h"
 
-
-
+#endif /* mdp_ */

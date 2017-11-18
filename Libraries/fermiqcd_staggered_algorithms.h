@@ -9,6 +9,10 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_staggered_algorithms_
+#define fermiqcd_staggered_algorithms_
+
+using namespace std;
 
 mdp_matrix Omega4x4(mdp_site x) {
   mdp_matrix M(4,4);
@@ -162,7 +166,7 @@ void lepage_improved_links(gauge_field &V,
 
   if(U.ndim!=4) error("fermiqcd_staggered_auxiliary_functions/lepage_improved_links: ndim!=4 (contact <mdp@fnal.gov>)");
 
-  // this is a list of permitations of 0,1,2,3
+  // this is a list of permutations of 0,1,2,3
 
   
   const int epsilon[24][5] = {{0, 1, 2, 3, 0}, {0, 1, 3, 2, 3},
@@ -200,7 +204,7 @@ void lepage_improved_links(gauge_field &V,
     Delta2[im2].allocate_gauge_field(U.lattice(),nc);
 
   // ////////////////////////////////////////////////////////////////////
-  // These coefficints are in agreement with Irginos, Toussaint and Sugar
+  // These coefficients are in agreement with Irginos, Toussaint and Sugar
   // hep-lat/9903032
   // equivalent but easier than the Lepage version
   // ////////////////////////////////////////////////////////////////////
@@ -363,3 +367,4 @@ void staggered_rephase(gauge_field &U, staggered_field &chi) {
 
 }
 
+#endif /* fermiqcd_staggered_algorithms_ */

@@ -1,3 +1,6 @@
+#ifndef my_parameters_
+#define my_parameters_
+
 using namespace std;
 
 class parameter {
@@ -141,3 +144,5 @@ int parameter::fprint(FILE *fout) {
 	fflush(fout);
 	return 0;
 }
+
+#endif /* my_parameters_ */

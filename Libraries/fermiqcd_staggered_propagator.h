@@ -9,6 +9,10 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_staggered_propagator_
+#define fermiqcd_staggered_propagator_
+
+using namespace std;
 
 /// @brief staggared quark propagator
 /// 
@@ -32,72 +36,76 @@
 /// }
 /// @endverbatim
 class staggered_propagator: public mdp_field<mdp_complex> {
- public:
-  int nc;
-  staggered_propagator(mdp_lattice &mylattice, int nc_) {
-    nc=nc_;
-    int ndim=mylattice.ndim;
-    allocate_field(mylattice, ndim*ndim*nc*nc);
-  }
-  inline mdp_matrix operator() (site x, int a) {
-    mdp_matrix tmp(address(x,a*nc*nc),nc,nc);
-    return tmp;
-  }
-  inline mdp_complex &operator() (site x, int a, int i, int j) {
-    return *(address(x)+a*nc*nc+i*nc+j);
-  }
-  friend void generate(staggered_propagator &S, gauge_field &U,
-		       coefficients &coeff,
-		       mdp_real absolute_precision=fermi_inversion_precision,
-		       mdp_real relative_precision=0,
-		       int max_steps=2000,
-		       void (*smf)(staggered_field&,gauge_field&)=0, 
-		       int comp=0) {
-    staggered_field psi(S.lattice(),S.nc);
-    staggered_field chi(S.lattice(),S.nc);
-    site        x(S.lattice());
-    int ndim=S.lattice().ndim;
-    int nc=S.nc;
-    int i,j,mu,a;
-    
-    double time=mpi.time();
-
-    if(ME==0 && shutup==false) {
-      printf("BEGIN Generating ordinary propagator\n");
-      fflush(stdout);
-    }
-
-    for(a=0; a<(0x1 << ndim); a++) 
-       for(j=0; j<nc; j++) {
-	forallsitesandcopies(x) 
-	  for(i=0; i<nc; i++) 
-	    psi(x,i)=0;
-	
-	x=binary2versor(a);
-	if(ME==0 && shutup==false) {
-	  printf("(source at (");
-	  for(mu=0; mu<ndim; mu++) printf("%i ", x(mu));
-	  printf("), Color: %i\n", j);
-	  fflush(stdout);
+public:
+	int nc;
+	staggered_propagator(mdp_lattice &mylattice, int nc_) {
+		nc = nc_;
+		int ndim = mylattice.ndim;
+		allocate_field(mylattice, ndim * ndim * nc * nc);
 	}
-	if(x.is_here()) psi(x,j)=1;
+	inline mdp_matrix operator()(site x, int a) {
+		mdp_matrix tmp(address(x, a * nc * nc), nc, nc);
+		return tmp;
+	}
+	inline mdp_complex &operator()(site x, int a, int i, int j) {
+		return *(address(x) + a * nc * nc + i * nc + j);
+	}
+	friend void generate(staggered_propagator &S, gauge_field &U,
+			coefficients &coeff, mdp_real absolute_precision =
+					fermi_inversion_precision, mdp_real relative_precision = 0,
+			int max_steps = 2000, void (*smf)(staggered_field&, gauge_field&)=0,
+			int comp = 0) {
+		staggered_field psi(S.lattice(), S.nc);
+		staggered_field chi(S.lattice(), S.nc);
+		site x(S.lattice());
+		int ndim = S.lattice().ndim;
+		int nc = S.nc;
+		int i, j, mu, a;
 
-	/*
-	  If a smearing function is passed (smf)
-	  the source is smeared before the inversion
-	  the sink must be smeared using smear_sink.
-	*/      
-	if(smf!=0) (*smf)(psi,U);
-	mul_invQ(chi,psi,U,coeff,absolute_precision,relative_precision,max_steps);
-	
-	forallsites(x)
-	  for(i=0; i<nc; i++)
-	    S(x,a,i,j)=chi(x,i);
-       }
-    if(ME==0 && shutup==false) {
-      printf("END Generating ordinary propagator. Time: %f (sec)\n",
-	     mpi.time()-time);
-      fflush(stdout);
-    }
-  }
+		double time = mpi.time();
+
+		if (ME == 0 && shutup == false) {
+			printf("BEGIN Generating ordinary propagator\n");
+			fflush(stdout);
+		}
+
+		for (a = 0; a < (0x1 << ndim); a++)
+			for (j = 0; j < nc; j++) {
+				forallsitesandcopies (x)
+				for (i = 0; i < nc; i++)
+					psi(x, i) = 0;
+
+				x = binary2versor(a);
+				if (ME == 0 && shutup == false) {
+					printf("(source at (");
+					for (mu = 0; mu < ndim; mu++)
+						printf("%i ", x(mu));
+					printf("), Color: %i\n", j);
+					fflush(stdout);
+				}
+				if (x.is_here())
+					psi(x, j) = 1;
+
+				/*
+				 If a smearing function is passed (smf)
+				 the source is smeared before the inversion
+				 the sink must be smeared using smear_sink.
+				 */
+				if (smf != 0)
+					(*smf)(psi, U);
+				mul_invQ(chi, psi, U, coeff, absolute_precision,
+						relative_precision, max_steps);
+
+				forallsites (x)
+				for (i = 0; i < nc; i++)
+					S(x, a, i, j) = chi(x, i);
+			}
+		if (ME == 0 && shutup == false) {
+			printf("END Generating ordinary propagator. Time: %f (sec)\n",
+					mpi.time() - time);
+			fflush(stdout);
+		}
+	}
 };
+
+#endif /* fermiqcd_staggered_propagator_ */

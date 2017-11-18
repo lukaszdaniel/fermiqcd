@@ -9,22 +9,28 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_swap_
+#define mdp_swap_
+
+using namespace std;
 
 template<class T>
 void swap(T &a, T &b) {
-  T c;
-  c=a;
-  a=b;
-  b=c;
+	T c;
+	c = a;
+	a = b;
+	b = c;
 }
 
 template<class T>
 void swap(T* a, T* b, int n) {
-  int i;
-  T c;
-  for(i=0; i<n; i++) {
-    c=a[i];
-    a[i]=b[i];
-    b[i]=c;
-  }
+	int i;
+	T c;
+	for (i = 0; i < n; i++) {
+		c = a[i];
+		a[i] = b[i];
+		b[i] = c;
+	}
 }
+
+#endif /* mdp_swap_ */

@@ -9,6 +9,10 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_global_vars_
+#define mdp_global_vars_
+
+using namespace std;
 
 typedef unsigned int uint;
 
@@ -30,7 +34,7 @@ const unsigned int  mdp_local_endianess=0x87654321;
 const double Pi = 3.1415926535897932384626433832795028841971;
 
 /// Set mdp_shutup=true to suppress default output from any part of
-/// The program
+/// the program
 bool mdp_shutup  = false;
 
 /// Default precision used by iterative algorithms such as 
@@ -38,7 +42,7 @@ bool mdp_shutup  = false;
 double mdp_precision=1e-5;
 
 
-#if defined(USE_DOUBLE_PRECISION) 
+#ifdef USE_DOUBLE_PRECISION
 typedef double       mdp_real;
 #else
 typedef float        mdp_real;
@@ -47,3 +51,5 @@ typedef float        mdp_real;
 typedef int mdp_int;
 
 void _mpi_error_message(string, string, int);
+
+#endif /* mdp_global_vars_ */

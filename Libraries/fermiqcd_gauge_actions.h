@@ -9,7 +9,10 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_gauge_actions_
+#define fermiqcd_gauge_actions_
 
+using namespace std;
 /*
 void mul_OUU(mdp_complex &A, mdp_complex &B, mdp_complex &C,
 	     int nc=3, bool init=false) {
@@ -18,7 +21,7 @@ void mul_OUU(mdp_complex &A, mdp_complex &B, mdp_complex &C,
     for(int j=0; j<nc; j++) {
       if(init)(&A)[i*nc+j]=0.0;
       for(int k=0; k<nc; k++)
-	(&A)[i*nc+j]+=(&B)[i*nc+k]*(&C)[k*nc+j];      
+	(&A)[i*nc+j]+=(&B)[i*nc+k]*(&C)[k*nc+j];
     }
 }
 */
@@ -59,10 +62,10 @@ class WilsonGaugeAction {
     u1=mdp_complex(-e2/dk,-e1/dk);
     u2=mdp_complex(e2/dk,-e1/dk);
     u3=mdp_complex(e0/dk,e3/dk);
-    
-    if(beta_eff<=0.0) 
+
+    if(beta_eff<=0.0)
       error("fermiqcd_gauge_algorithms/heatbath_SU2: beta is zero");
-    
+
     do {
       do; while ((r1 = random.plain()) < 0.0001);
       r1 = -log(r1)/p0;
@@ -102,19 +105,19 @@ class WilsonGaugeAction {
 	mul_OUH(M(0,0),U(y,nu,0,0),U(x+nu,mu,0,0));
 	mul_OUH(M(0,0),U(y,nu,0,0),U(x+nu,mu,0,0));
       }
-    
+
   }
   */
-  static gauge_stats heatbath(gauge_field &U, 
-			      coefficients &coeff, 
+  static gauge_stats heatbath(gauge_field &U,
+			      coefficients &coeff,
 			      int n_iter=1) {
     begin_function("WilsonGaugeAction__heatbath");
     if(U.nc==1) error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
     gauge_stats stats;
     mdp_real beta, zeta;
-    if(coeff.has_key("beta")) beta=coeff["beta"]; 
+    if(coeff.has_key("beta")) beta=coeff["beta"];
     else error("beta undeclared");
-    if(coeff.has_key("zeta")) zeta=coeff["zeta"]; 
+    if(coeff.has_key("zeta")) zeta=coeff["zeta"];
     else zeta=1;
 
     int i,j,k,iter,mu,parity;
@@ -125,15 +128,15 @@ class WilsonGaugeAction {
 
     mdp << coeff;
 
-    for(iter=0; iter<n_iter; iter++) 
-      for(parity=0; parity<2; parity++) 
+    for(iter=0; iter<n_iter; iter++)
+      for(parity=0; parity<2; parity++)
 	for(mu=0; mu<U.ndim; mu++) {
 	  forallsitesofparity(x,parity) {
 	    for(i=0; i<U.nc-1; i++)
 	      for(j=i+1; j<U.nc; j++) {
 		if(zeta==1)    M=U(x,mu)*staple_H(U,x,mu);
 		else           M=U(x,mu)*staple_H_unisotropic(U,x,mu,zeta);
-		a[0]=M(i,i); 
+		a[0]=M(i,i);
 		a[1]=M(i,j);
 		a[2]=M(j,i);
 		a[3]=M(j,j);
@@ -220,14 +223,14 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
       y1=y0-mu;
       y2=y1-mu;
       tmp+=U(x+mu,mu)*hermitian(U(y2,mu)*U(y1,mu)*U(y0,nu))*U(y2,nu);
-      
+
     }
     prepare(tmp);
     return tmp;
   }
-  
-// if min_nu==0 then rectangles_ij computes all 6 rectanges
-  
+
+// if min_nu==0 then rectangles_ij computes all 6 rectangles
+
   static mdp_matrix rectangles_ij_H(gauge_field &U, site x, int mu, int min_nu=1) {
     mdp_matrix tmp(U.nc,U.nc);
     mdp_matrix b1(U.nc, U.nc);
@@ -237,19 +240,19 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
     site y1(U.lattice());
     site y2(U.lattice());
     int nu;
-    for(nu=min_nu; nu<U.ndim; nu++) if(nu!=mu) {    
+    for(nu=min_nu; nu<U.ndim; nu++) if(nu!=mu) {
       y0=x+mu;
       y1=y0+nu;
       tmp+=U(y0,nu)*U(y1,nu)*hermitian(U(x,nu)*U(x+nu,nu)*U((x+nu)+nu,mu));
-      
+
       y0=(x-nu)-nu;
       y1=y0+mu;
       y2=y1+nu;
       tmp+=hermitian(U(y0,mu)*U(y1,nu)*U(y2,nu))*U(y0,nu)*U(x-nu,nu);
-      
+
       y0=(x-mu)+nu;
       tmp+=U(x+mu,nu)*hermitian(U(x-mu,nu)*U(y0,mu)*U(x+nu,mu))*U(x-mu,mu);
-      
+
       y0=x-mu;
       y1=y0-nu;
       y2=y1+mu;
@@ -270,7 +273,7 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
   }
 
   // //////////////////////////////////////////////////////
-  // this is slow but should make the chair correcly ...
+  // this is slow but should make the chair correctly ...
   // see: hep-lat/0712010
   // //////////////////////////////////////////////////////
 
@@ -288,7 +291,7 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
     site y5(U.lattice());
     tmp=0;
     for(nu=0; nu<ndim; nu++) if(nu!=mu)
-      for(rho=0; rho<ndim; rho++) if((rho!=nu) && (rho!=mu)) { 
+      for(rho=0; rho<ndim; rho++) if((rho!=nu) && (rho!=mu)) {
 	y1=x+mu;
 	y2=y1+nu;
 	y3=y2+rho;
@@ -302,14 +305,14 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
 	y5=y4+nu;
 	tmp+=hermitian(U(y2,nu))*U(y2,rho)
 	  *hermitian(U(y4,mu))*U(y4,nu)*hermitian(U(x,rho));
-	
+
 	y1=x+mu;
 	y2=y1+nu;
 	y3=y2-rho;
 	y4=y3-mu;
 	y5=y4-nu;
 	tmp+=U(y1,nu)*hermitian(U(y5,nu)*U(y4,mu)*U(y3,rho))*U(y5,rho);
-	
+
 	y1=x+mu;
 	y2=y1-nu;
 	y3=y2-rho;
@@ -320,7 +323,7 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
       }
     return(tmp);
   }
-  
+
   // ////////////////////////////////////////////////////////////////////
   // new_heatbath uses an improved gauge action!
   // both isotropic (param.zeta=1) and anisotropic
@@ -333,13 +336,13 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
     for(mu=0; mu<x.lattice().ndim; mu++) type+=(int) pow((float) iGauge_min,mu)*(x(mu) % iGauge_min);
     return type;
   }
-  
+
  public:
   static gauge_stats heatbath(gauge_field &U,
 			      coefficients &coeff,
 			      int n_iter=1,
-			      string model="MILC") { 
-    
+			      string model="MILC") {
+
     begin_function("ImprovedGaugeAction__heatbath");
 
     gauge_stats stats;
@@ -349,7 +352,7 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
     if(coeff.has_key("zeta")) zeta=coeff["zeta"]; else zeta=1;
     if(coeff.has_key("u_t"))  u_t=coeff["u_t"];   else u_t=1;
     if(coeff.has_key("u_s"))  u_s=coeff["u_s"];   else u_s=1;
-    
+
     // if(Nproc!=1)  error("improved_heatbath() does not work in parallel!");
 
     if(U.ndim!=4) error("fermiqcd_gauge_algorithms/improved_heatbath(): ndim!=4 (use heatbath instead)");
@@ -370,44 +373,44 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
     mdp_complex a[4],tmpUik;
     mdp_real alpha_s;
     mdp_real c_tp=0, c_tr=0, c_sp=0, c_sr=0, c_p=0, c_r=0, c_c=0;
-    
+
     if(model=="Morningstar") {
-      
+
       c_tp=4.0*zeta/(3.0*pow((double)u_s*u_t,(double)2.0));
       c_tr=-1.0*zeta/(12.0*pow((double)u_s,(double)4.0)*pow((double)u_t,(double)2.0));
       c_sp=5.0/(3.0*zeta*pow((double)u_s,(double)4.0));
       c_sr=-1.0/(12.0*zeta*pow((double)u_s,(double)6.0));
-      
+
       c_p=1.0*pow((double)u_s,(double)-4.0);
       c_r=-0.05*pow((double)u_s,(double)-6.0);
       c_c=0;
-      
+
     } else if(model=="MILC") {
-      
-      if(zeta!=1) 
+
+      if(zeta!=1)
 	error("fermiqcd_gauge_algorithms/improved_heatbath: zeta!=1");
-      
+
       alpha_s=-4.0*log(u_s)/3.0684;
       c_p=1.0;
       c_r=-0.05*pow((double)u_s,(double)-2.0)*(1.0+0.4805*alpha_s);;
       c_c=-1.00*pow((double)u_s,(double)-2.0)*(0.03325*alpha_s);;
-      
+
     } else {
       mdp << "Using default non-improved action" << '\n';
       stats=WilsonGaugeAction::heatbath(U,coeff,n_iter);
       end_function("ImprovedGaugeAction__heatbath");
       return stats;
     }
-    
+
     mdp << coeff;
-    
+
     for(iter=0; iter<n_iter; iter++)
       for(type=0; type<(int) pow((float) iGauge_min, U.ndim); type++) {
 	forallsites(x) {
 	  if(strange_mapping(x)==type) {
-	    for(mu=0; mu<ndim; mu++) 
+	    for(mu=0; mu<ndim; mu++)
 	      for(i=0; i<nc-1; i++)
-		for(j=i+1; j<nc; j++) { 
+		for(j=i+1; j<nc; j++) {
 		  if(zeta!=1) {
 		    // anisotropic San Diego action
 		    if(mu==0) M=U(x,mu)*(c_tp*staple_0i_H(U,x,0)+
@@ -426,7 +429,7 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
 			       c_r*rectangles_ij_H(U,x,mu,0)+
 			       c_c*chair_H(U,x,mu));
 		  }
-		  a[0]=M(i,i); 
+		  a[0]=M(i,i);
 		  a[1]=M(i,j);
 		  a[2]=M(j,i);
 		  a[3]=M(j,j);
@@ -447,4 +450,4 @@ class ImprovedGaugeAction : public WilsonGaugeAction {
   }
 };
 
-
+#endif /* fermiqcd_gauge_actions_ */

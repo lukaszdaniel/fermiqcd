@@ -9,6 +9,10 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_gauge_algorithms_
+#define fermiqcd_gauge_algorithms_
+
+using namespace std;
 
 /// make a cold gauge configuration
 void set_cold(gauge_field &U) {
@@ -579,3 +583,4 @@ void rotate_path(int angle, int mu, int nu, int length, int d[][2]) {
 		}
 }
 
+#endif /* fermiqcd_gauge_algorithms_ */

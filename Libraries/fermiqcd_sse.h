@@ -6,6 +6,10 @@
 /// Basic actions for Wilson Fermions optimized in assembler
 ///
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_sse_
+#define fermiqcd_sse_
+
+using namespace std;
 
 #pragma fPIC
 
@@ -13,28 +17,49 @@
 #define ALIGN64 __attribute__ ((aligned (64)))
 #define _ASM __asm__ __volatile__
 
-typedef struct { float c1,c2,c3,c4;  } _sse_float  ALIGN16;  
-typedef struct { _sse_float c1,c2,c3;} _sse_vector ALIGN16;
-typedef struct { int c1,c2,c3,c4;}     _sse_int    ALIGN16;
-typedef struct { double c1,c2; }       _sse_double ALIGN16;
+typedef struct {
+	float c1, c2, c3, c4;
+} _sse_float ALIGN16;
+typedef struct {
+	_sse_float c1, c2, c3;
+} _sse_vector ALIGN16;
+typedef struct {
+	int c1, c2, c3, c4;
+} _sse_int ALIGN16;
+typedef struct {
+	double c1, c2;
+} _sse_double ALIGN16;
 
-typedef struct {mdp_complex c11,c12,c13,c21,c22,c23,c31,c32,c33; } _sse_su3;
-typedef struct {mdp_complex c1,c2,c3; } _sse_su3_vector;
-typedef struct {_sse_su3_vector c1,c2,c3,c4; } _sse_spinor;
+typedef struct {
+	mdp_complex c11, c12, c13, c21, c22, c23, c31, c32, c33;
+} _sse_su3;
+typedef struct {
+	mdp_complex c1, c2, c3;
+} _sse_su3_vector;
+typedef struct {
+	_sse_su3_vector c1, c2, c3, c4;
+} _sse_spinor;
 
-static _sse_float _sse_float_sgn12 __attribute__ ((unused)) = {-1.0f,-1.0f,1.0f,1.0f};
-static _sse_float _sse_float_sgn13 __attribute__ ((unused)) = {-1.0f,1.0f,-1.0f,1.0f};
-static _sse_float _sse_float_sgn14 __attribute__ ((unused)) = {-1.0f,1.0f,1.0f,-1.0f};
-static _sse_float _sse_float_sgn23 __attribute__ ((unused)) = {1.0f,-1.0f,-1.0f,1.0f};
-static _sse_float _sse_float_sgn24 __attribute__ ((unused)) = {1.0f,-1.0f,1.0f,-1.0f};
-static _sse_float _sse_float_sgn34 __attribute__ ((unused)) = {1.0f,1.0f,-1.0f,-1.0f};
-static _sse_int   _sse_double_sgn  __attribute__ ((unused)) = {0x0,0x80000000,0x0,0x0};
-static _sse_int   _sse_double_sgn2 __attribute__ ((unused)) = {0x0,0x0,0x0,0x80000000};
+static _sse_float _sse_float_sgn12 __attribute__ ((unused)) = { -1.0f, -1.0f,
+		1.0f, 1.0f };
+static _sse_float _sse_float_sgn13 __attribute__ ((unused)) = { -1.0f, 1.0f,
+		-1.0f, 1.0f };
+static _sse_float _sse_float_sgn14 __attribute__ ((unused)) = { -1.0f, 1.0f,
+		1.0f, -1.0f };
+static _sse_float _sse_float_sgn23 __attribute__ ((unused)) = { 1.0f, -1.0f,
+		-1.0f, 1.0f };
+static _sse_float _sse_float_sgn24 __attribute__ ((unused)) = { 1.0f, -1.0f,
+		1.0f, -1.0f };
+static _sse_float _sse_float_sgn34 __attribute__ ((unused)) = { 1.0f, 1.0f,
+		-1.0f, -1.0f };
+static _sse_int _sse_double_sgn __attribute__ ((unused)) = { 0x0, 0x80000000,
+		0x0, 0x0 };
+static _sse_int _sse_double_sgn2 __attribute__ ((unused)) = { 0x0, 0x0, 0x0,
+		0x80000000 };
 
 // //////////////////////////////////////////////////////////////////////////
 // Cache manipulation macros (float)
 // //////////////////////////////////////////////////////////////////////////
-
 
 #define _sse_float_prefetch_spinor(addr) \
 _ASM ("prefetcht0 %0 \n\t" \
@@ -43,7 +68,7 @@ _ASM ("prefetcht0 %0 \n\t" \
       : \
       "m" (*(((char*)(((unsigned int)(addr))&~0x7f)))), \
       "m" (*(((char*)(((unsigned int)(addr))&~0x7f))+128)))
-     
+
 #define _sse_float_prefetch_su3(addr) \
 _ASM ("prefetcht0 %0 \n\t" \
       "prefetcht0 %1" \
@@ -120,7 +145,6 @@ _ASM ("movlps %0, %%xmm3 \n\t" \
       "m" ((sh).c1), \
       "m" ((sh).c2), \
       "m" ((sh).c3))
-
 
 // //////////////////////////////////////////////////////////////////////////  
 // Stores the low and high words of xmm0,xmm1,xmm2 to the su3 vectors rl and rh
@@ -214,7 +238,7 @@ _ASM ("mulps %0, %%xmm0 \n\t" \
 // //////////////////////////////////////////////////////////////////////////  
 /* deprecated
 
-#define _sse_float_vector_mulc(a,b) \
+ #define _sse_float_vector_mulc(a,b) \
 _ASM ("mulps %0, %%xmm0 \n\t" \
       "mulps %0, %%xmm1 \n\t" \
       "mulps %0, %%xmm2 \n\t" \
@@ -238,12 +262,11 @@ _ASM ("mulps %0, %%xmm0 \n\t" \
       "m" (y), \
       "m" (x/y), \
       "m" (_sse_float_sgn13))
-*/
+ */
 // //////////////////////////////////////////////////////////////////////////  
 // Adds xmm3,xmm4,xmm5 to xmm1,xmm2,xmm3
 // (modified by Massimo Di Pierro to work with g++ instead of gcc)
 // //////////////////////////////////////////////////////////////////////////  
-
 #ifdef SSE2FIX
 #define _sse_float_vector_add() \
 _ASM ("addps %xmm3, %xmm0 \n\t" \
@@ -526,7 +549,6 @@ _ASM ("shufps $0x0, %%xmm6, %%xmm6 \n\t" \
 //
 // //////////////////////////////////////////////////////////////////////////  
 
-
 // //////////////////////////////////////////////////////////////////////////  
 // Multiplies the low words xmm3,xmm4,xmm5 with -1 and adds these registers
 // to xmm0,xmm1,xmm2
@@ -675,8 +697,6 @@ _ASM ("shufps $0x4e, %%xmm3, %%xmm3 \n\t" \
       :)
 #endif
 
-
-
 // //////////////////////////////////////////////////////////////////////////
 // Cache manipulation macros (double)
 // //////////////////////////////////////////////////////////////////////////
@@ -710,7 +730,6 @@ _ASM ("prefetcht0 %0 \n\t" \
       "m" (*(((char*)(((unsigned int)(addr))&~0x7f)))), \
       "m" (*(((char*)(((unsigned int)(addr))&~0x7f))+128)))
 
-
 // //////////////////////////////////////////////////////////////////////////
 //
 // Operations for SU3 color linear algebra used in mdp_matrix (double)
@@ -740,7 +759,6 @@ _ASM ("movapd %0, %%xmm0 \n\t" \
       "m" (c1), \
       "m" (c2), \
       "m" (c3))
-
 
 // //////////////////////////////////////////////////////////////////////////
 // Loads an su3 vector s to xmm3,xmm4,xmm5
@@ -826,7 +844,7 @@ _ASM ("mulpd %0, %%xmm0 \n\t" \
 // multiplies xmm0, xmm1, xmm2 for complex=a*(b+I)
 // //////////////////////////////////////////////////////////////////////////
 /* deprecated
-#define _sse_double_vector_mulc(a,b) \
+ #define _sse_double_vector_mulc(a,b) \
 _ASM ("mulpd %0, %%xmm0 \n\t" \
       "mulpd %0, %%xmm1 \n\t" \
       "mulpd %0, %%xmm2 \n\t" \
@@ -850,11 +868,10 @@ _ASM ("mulpd %0, %%xmm0 \n\t" \
       "m" (a), \
       "m" (b), \
       "m" (_sse_double_sgn))      
-*/
+ */
 // //////////////////////////////////////////////////////////////////////////
 // multiplies xmm0, xmm1, xmm2 for complex=x+I*y
 // //////////////////////////////////////////////////////////////////////////
-
 #define _sse_double_vector_mul_complex(x,y) \
 _ASM ("movapd %%xmm0, %%xmm3 \n\t" \
       "movapd %%xmm1, %%xmm4 \n\t" \
@@ -1178,7 +1195,6 @@ _ASM ("xorpd %0, %%xmm3 \n\t" \
       : \
       : \
       "m" (_sse_double_sgn))
-
 
 // //////////////////////////////////////////////////////////////////////////  
 //
@@ -1707,11 +1723,11 @@ _ASM ("movapd %%xmm4, %0 \n\t"	\
       "=m" (*((r)+6)), \
       "=m" (*((r)+7))); }
 
-
 static void _sse_check_alignment(void* var, unsigned int base) {
-  unsigned int af1=(unsigned int) var;
-  if (af1!=(af1&~base)) {
-    error("_sse_check_alignment()\nVariable not aligned properly");
-  }
+	unsigned int af1 = (unsigned int) var;
+	if (af1 != (af1 & ~base)) {
+		error("_sse_check_alignment()\nVariable not aligned properly");
+	}
 }
 
+#endif /* fermiqcd_sse_ */

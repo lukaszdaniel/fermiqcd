@@ -9,6 +9,10 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_gauge_actions_sse2_
+#define fermiqcd_gauge_actions_sse2_
+
+using namespace std;
 
 /// @brief the \f$ O(a^2)\f$ Improved Gauge Action for SU3 with SSE2
 ///        and double precision (UNTESTED)
@@ -97,19 +101,19 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     site y1(U.lattice());
     site y2(U.lattice());
     int nu;
-    for(nu=min_nu; nu<U.ndim; nu++) if(nu!=mu) {    
+    for(nu=min_nu; nu<U.ndim; nu++) if(nu!=mu) {
       y0=x+mu;
       y1=y0+nu;
       tmp+=U(y0,nu)*U(y1,nu)*hermitian(U(x,nu)*U(x+nu,nu)*U((x+nu)+nu,mu));
-      
+
       y0=(x-nu)-nu;
       y1=y0+mu;
       y2=y1+nu;
       tmp+=hermitian(U(y0,mu)*U(y1,nu)*U(y2,nu))*U(y0,nu)*U(x-nu,nu);
-      
+
       y0=(x-mu)+nu;
       tmp+=U(x+mu,nu)*hermitian(U(x-mu,nu)*U(y0,mu)*U(x+nu,mu))*U(x-mu,mu);
-      
+
       y0=x-mu;
       y1=y0-nu;
       y2=y1+mu;
@@ -147,7 +151,7 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     site y5(U.lattice());
     tmp=0;
     for(nu=0; nu<ndim; nu++) if(nu!=mu)
-      for(rho=0; rho<ndim; rho++) if((rho!=nu) && (rho!=mu)) { 
+      for(rho=0; rho<ndim; rho++) if((rho!=nu) && (rho!=mu)) {
 	y1=x+mu;
 	y2=y1+nu;
 	y3=y2+rho;
@@ -161,27 +165,27 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 	y5=y4+nu;
 	tmp+=hermitian(U(y2,nu))*U(y2,rho)
 	  *hermitian(U(y4,mu))*U(y4,nu)*hermitian(U(x,rho));
-	
+
 	y1=x+mu;
 	y2=y1+nu;
 	y3=y2-rho;
 	y4=y3-mu;
 	y5=y4-nu;
 	tmp+=U(y1,nu)*hermitian(U(y5,nu)*U(y4,mu)*U(y3,rho))*U(y5,rho);
-	
+
 	y1=x+mu;
 	y2=y1-nu;
 	y3=y2-rho;
 	y4=y3-mu;
 	y5=y4+nu;
 	tmp+=hermitian(U(y4,mu)*U(y3,rho)*U(y2,nu))*U(y4,nu)*U(y5,rho);
-	
+
       }
     return(tmp);
   }
-  
+
 #else
-  
+
   static mdp_matrix rectangles_0i_H(gauge_field &U, site x, int mu) {
     int nc=3;
     mdp_matrix tmp(nc,nc);
@@ -240,9 +244,9 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     }
     return tmp;
   }
-  
+
   // if min_nu==0 then rectangles_ij computes all 6 rectanges
-  
+
   static mdp_matrix rectangles_ij_H(gauge_field &U, site x, int mu, int min_nu=1) {
     int nc=3;
     mdp_matrix tmp(nc,nc);
@@ -253,7 +257,7 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     site y1(U.lattice());
     site y2(U.lattice());
     int nu;
-    for(nu=min_nu; nu<U.ndim; nu++) if(nu!=mu) {    
+    for(nu=min_nu; nu<U.ndim; nu++) if(nu!=mu) {
       y0=x+mu;
       y1=y0+nu;
       _sse_mulABC_set_333(&U(y0,nu,0,0),&U(y1,nu,0,0),&b1(0,0));
@@ -317,7 +321,7 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     site y5(U.lattice());
     tmp=0;
     for(nu=0; nu<ndim; nu++) if(nu!=mu)
-      for(rho=0; rho<ndim; rho++) if((rho!=nu) && (rho!=mu)) { 
+      for(rho=0; rho<ndim; rho++) if((rho!=nu) && (rho!=mu)) {
 	y1=x+mu;
 	y2=y1+nu;
 	y3=y2+rho;
@@ -357,8 +361,8 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
       }
     return(tmp);
   }
-  
-  
+
+
   static mdp_matrix twisted_rectangle_H(gauge_field &U, site x, int mu) {
     int nu;
     int nc=3;
@@ -373,9 +377,9 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     b2=0;
     for(nu=0; nu<U.ndim; nu++)
       if(nu!=mu) {
-	
+
 	// type (a) staples /////////////////////////////////////////////
-	
+
 	y1=x+mu;
 	y2=y1+mu;
 	y4=x+nu;
@@ -395,9 +399,9 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 	_sse_mulABHC_set_333(&b1(0,0), &U(y2,nu,0,0),&b2(0,0));
 	_sse_mulABHC_set_333(&b2(0,0), &U(y4,mu,0,0),&b1(0,0));
 	_sse_mulABC_add_333(&b1(0,0), &U(y4,nu,0,0),&tmp(0,0));
-	
-	//   type (b) staples  //////////////////////////////////////////          
-	
+
+	//   type (b) staples  //////////////////////////////////////////
+
 	y2=y1+nu;
 	y3=x+nu;
 	y4=y3+nu;
@@ -416,10 +420,10 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 	_sse_mulAHBC_set_333(&b2(0,0), &U(y3,mu,0,0),&b1(0,0));
 	_sse_mulABC_set_333(&b1(0,0), &U(y4,nu,0,0),&b2(0,0));
 	_sse_mulABHC_set_333(&b2(0,0), &U(y2,mu,0,0),&b1(0,0));
-	_sse_mulABC_add_333(&b1(0,0), &U(y2,nu,0,0),&tmp(0,0)); 
-	
+	_sse_mulABC_add_333(&b1(0,0), &U(y2,nu,0,0),&tmp(0,0));
+
 	// type (c) staples /////////////////////////////////////////////
-	
+
 	y2=x+nu;
 	y3=y2-mu;
 	y4=y3-nu;
@@ -428,7 +432,7 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 	_sse_mulABHC_set_333(&b2(0,0), &U(y4,mu,0,0),&b1(0,0));
 	_sse_mulABC_set_333(&b1(0,0), &U(y4,nu,0,0),&b2(0,0));
 	_sse_mulABC_set_333(&b2(0,0), &U(y3,mu,0,0),&b1(0,0));
-	_sse_mulABHC_add_333(&b1(0,0), &U(x,nu,0,0),&tmp(0,0)); 
+	_sse_mulABHC_add_333(&b1(0,0), &U(x,nu,0,0),&tmp(0,0));
 	y2=x-nu;
 	y3=y2-mu;
 	y4=y3+nu;
@@ -439,9 +443,9 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 	_sse_mulABHC_set_333(&b1(0,0), &U(y3,nu,0,0),&b2(0,0));
 	_sse_mulABC_set_333(&b2(0,0), &U(y3,mu,0,0),&b1(0,0));
 	_sse_mulABC_add_333(&b1(0,0), &U(y2,nu,0,0),&tmp(0,0));
-	
+
 	// type (d) staples /////////////////////////////////////////////
-	
+
 	y2=y1-nu;
 	y3=y2-mu;
 	y4=x+nu;
@@ -451,9 +455,9 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 	_sse_mulABHC_set_333(&b1(0,0), &U(y2,nu,0,0),&b2(0,0));
 	_sse_mulABHC_set_333(&b2(0,0), &U(y3,mu,0,0),&b1(0,0));
 	_sse_mulABC_add_333(&b1(0,0), &U(y3,nu,0,0),&tmp(0,0));
-	
+
 	// To include the next set double counts !!!    //////////////
-	
+
       }
     return tmp;
   }
@@ -462,9 +466,9 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 
 
 
-  
 
-  
+
+
   // ////////////////////////////////////////////////////////////////////
   // new_heatbath uses an improved gauge action!
   // both isotropic (param.zeta=1) and anisotropic
@@ -477,13 +481,13 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     for(mu=0; mu<x.lattice().ndim; mu++) type+=(int) pow((float) iGauge_min,mu)*(x(mu) % iGauge_min);
     return type;
   }
-  
+
  public:
   static gauge_stats heatbath(gauge_field &U,
 			      coefficients &coeff,
 			      int n_iter=1,
-			      string model="MILC") { 
-    
+			      string model="MILC") {
+
     begin_function("ImprovedGaugeAction__heatbath");
 
     gauge_stats stats;
@@ -493,7 +497,7 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     if(coeff.has_key("zeta")) zeta=coeff["zeta"]; else zeta=1;
     if(coeff.has_key("u_t"))  u_t=coeff["u_t"];   else u_t=1;
     if(coeff.has_key("u_s"))  u_s=coeff["u_s"];   else u_s=1;
-    
+
     // if(Nproc!=1)  error("improved_heatbath() does not work in parallel!");
 
     if(U.ndim!=4) error("fermiqcd_gauge_algorithms/improved_heatbath(): ndim!=4 (use heatbath instead)");
@@ -514,44 +518,44 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
     mdp_complex a[4],tmpUik;
     mdp_real alpha_s;
     mdp_real c_tp=0, c_tr=0, c_sp=0, c_sr=0, c_p=0, c_r=0, c_c=0;
-    
+
     if(model=="Morningstar") {
-      
+
       c_tp=4.0*zeta/(3.0*pow((double)u_s*u_t,(double)2.0));
       c_tr=-1.0*zeta/(12.0*pow((double)u_s,(double)4.0)*pow((double)u_t,(double)2.0));
       c_sp=5.0/(3.0*zeta*pow((double)u_s,(double)4.0));
       c_sr=-1.0/(12.0*zeta*pow((double)u_s,(double)6.0));
-      
+
       c_p=1.0*pow((double)u_s,(double)-4.0);
       c_r=-0.05*pow((double)u_s,(double)-6.0);
       c_c=0;
-      
+
     } else if(model=="MILC") {
-      
-      if(zeta!=1) 
+
+      if(zeta!=1)
 	error("fermiqcd_gauge_algorithms/improved_heatbath: zeta!=1");
-      
+
       alpha_s=-4.0*log(u_s)/3.0684;
       c_p=1.0;
       c_r=-0.05*pow((double)u_s,(double)-2.0)*(1.0+0.4805*alpha_s);;
       c_c=-1.00*pow((double)u_s,(double)-2.0)*(0.03325*alpha_s);;
-      
+
     } else {
       mdp << "Using default non-improved action" << '\n';
       stats=WilsonGaugeAction::heatbath(U,coeff,n_iter);
       end_function("ImprovedGaugeAction__heatbath");
       return stats;
     }
-    
+
     mdp << coeff;
-    
+
     for(iter=0; iter<n_iter; iter++)
       for(type=0; type<(int) pow((float) iGauge_min, U.ndim); type++) {
 	forallsites(x) {
 	  if(strange_mapping(x)==type) {
-	    for(mu=0; mu<ndim; mu++) 
+	    for(mu=0; mu<ndim; mu++)
 	      for(i=0; i<nc-1; i++)
-		for(j=i+1; j<nc; j++) { 
+		for(j=i+1; j<nc; j++) {
 		  if(zeta!=1) {
 		    // anisotropic San Diego action
 		    if(mu==0) M=U(x,mu)*(c_tp*staple_0i_H(U,x,0)+
@@ -570,7 +574,7 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
 			       c_r*rectangles_ij_H(U,x,mu,0)+
 			       c_c*chair_H(U,x,mu));
 		  }
-		  a[0]=M(i,i); 
+		  a[0]=M(i,i);
 		  a[1]=M(i,j);
 		  a[2]=M(j,i);
 		  a[3]=M(j,j);
@@ -591,3 +595,4 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
   }
 };
 
+#endif /* fermiqcd_gauge_actions_sse2_ */

@@ -9,8 +9,12 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_check_differences_
+#define fermiqcd_check_differences_
 
-// compares two fields and returns the max distrance between 
+using namespace std;
+
+// compares two fields and returns the max distance between
 // equivalent components.
 float check_differences(mdp_field<mdp_complex> &chi,
 			mdp_field<mdp_complex> &psi) {
@@ -31,3 +35,5 @@ float check_differences(mdp_field<mdp_complex> &chi,
   end_function("check_differences");
   return max;
 }
+
+#endif /* fermiqcd_check_differences_ */

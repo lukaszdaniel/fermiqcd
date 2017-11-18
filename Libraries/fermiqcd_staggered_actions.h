@@ -9,6 +9,10 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_staggered_actions_
+#define fermiqcd_staggered_actions_
+
+using namespace std;
 
 /// @brief Staggered/Asqtad action (SLOW: DO NOT USE IN PRODUCTION)
 ///
@@ -146,7 +150,7 @@ class StaggeredAsqtadActionFast {
 	       conj(FU_dw[3*2+i])*Fchi_dw[2]);
 	  
 	  // //////////////////////////////////////
-	  // The follwoing is called the Naik Term
+	  // The following is called the Naik Term
 	  // ... for the Lepage improved action
 	  // //////////////////////////////////////
 	  // with this phase naik= -1/24*pow(u0,-2)
@@ -204,3 +208,4 @@ class StaggeredAsqtadActionFast {
   }
 };
 
+#endif /* fermiqcd_staggered_actions_ */

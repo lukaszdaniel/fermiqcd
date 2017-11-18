@@ -9,54 +9,63 @@
 /// 
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef fermiqcd_staggered_mesons_
+#define fermiqcd_staggered_mesons_
 
-static const int KS_NDIM=4;
+using namespace std;
+
+static const int KS_NDIM = 4;
 
 #ifndef TWISTED_BOUNDARY
 
-class phase_field : public mdp_field<int> {
+class phase_field: public mdp_field<int> {
 public:
-  phase_field(mdp_lattice &a) {
-    if(a.ndim!=4) error("fermiqcd_staggered_mesons/phase_field: ndim!=4");
-    allocate_field(a,16);
-  };
-  int component(site x, site y) { 
-    int i=0, mu;
-    for(mu=0; mu<KS_NDIM; mu++) {
-      if(x(mu)/2 != y(mu)/2) 
-	return 0;
-      i = (i << 1) + (x(mu) % 2);
-    }
-    return *address(x,i);
-  }
-  void compute(mdp_matrix GAMMA, mdp_matrix ZETA) {
-    int A[KS_NDIM], B[KS_NDIM];
-    mdp_matrix G1, G2, ZETA_H;
-    site x(lattice());
-    int i,mu,nu;
-    ZETA_H=hermitian(ZETA);
-    forallsites(x) {
-      G1=mdp_identity(KS_NDIM);
-      for(mu=1; mu<=KS_NDIM; mu++) {
-	nu=mu % KS_NDIM;
-	A[nu]=x(nu) % 2;
-	if(A[nu]!=0) G1=-1.0*Gamma[nu]*G1;
-      }
-      for(i=0; i<16; i++) {
-	B[0]=(i >> 3) & 0x1;
-	B[1]=(i >> 2) & 0x1;
-	B[2]=(i >> 1) & 0x1;
-	B[3]=(i >> 0) & 0x1;
-	G2=mdp_identity(KS_NDIM);
-	for(mu=1; mu<=KS_NDIM; mu++) {
-	  nu=mu % KS_NDIM;
-	  if(B[nu]!=0) 
-	    G2=G2*Gamma[nu];
+	phase_field(mdp_lattice &a) {
+		if (a.ndim != 4)
+			error("fermiqcd_staggered_mesons/phase_field: ndim!=4");
+		allocate_field(a, 16);
 	}
-	*address(x,i)=(int) (0.25*real(trace(G1*GAMMA*G2*ZETA_H)));
-      }
-    }
-  }
+	;
+	int component(site x, site y) {
+		int i = 0, mu;
+		for (mu = 0; mu < KS_NDIM; mu++) {
+			if (x(mu) / 2 != y(mu) / 2)
+				return 0;
+			i = (i << 1) + (x(mu) % 2);
+		}
+		return *address(x, i);
+	}
+	void compute(mdp_matrix GAMMA, mdp_matrix ZETA) {
+		int A[KS_NDIM], B[KS_NDIM];
+		mdp_matrix G1, G2, ZETA_H;
+		site x(lattice());
+		int i, mu, nu;
+		ZETA_H = hermitian(ZETA);
+		forallsites(x)
+		{
+			G1 = mdp_identity(KS_NDIM);
+			for (mu = 1; mu <= KS_NDIM; mu++) {
+				nu = mu % KS_NDIM;
+				A[nu] = x(nu) % 2;
+				if (A[nu] != 0)
+					G1 = -1.0 * Gamma[nu] * G1;
+			}
+			for (i = 0; i < 16; i++) {
+				B[0] = (i >> 3) & 0x1;
+				B[1] = (i >> 2) & 0x1;
+				B[2] = (i >> 1) & 0x1;
+				B[3] = (i >> 0) & 0x1;
+				G2 = mdp_identity(KS_NDIM);
+				for (mu = 1; mu <= KS_NDIM; mu++) {
+					nu = mu % KS_NDIM;
+					if (B[nu] != 0)
+						G2 = G2 * Gamma[nu];
+				}
+				*address(x, i) = (int) (0.25
+						* real(trace(G1 * GAMMA * G2 * ZETA_H)));
+			}
+		}
+	}
 };
 
 
@@ -140,154 +149,157 @@ void operator_staggered_meson(staggered_field &out,
   }
 }
 
-const int local_source=1;  // 2^0
-const int wall_source =2;  // 2^1
+const int local_source = 1;  // 2^0
+const int wall_source = 2;  // 2^1
 
-mdp_matrix make_meson(gauge_field &U, gauge_field &V,
-		  mdp_matrix GAMMA,
-		  mdp_matrix ZETA, 
-		  coefficients &coeff1, 
-		  coefficients &coeff2,
-		  int source1_type=wall_source,
-		  int source2_type=wall_source & local_source,
-		  mdp_real precision =1e-7) {
+mdp_matrix make_meson(gauge_field &U, gauge_field &V, mdp_matrix GAMMA,
+		mdp_matrix ZETA, coefficients &coeff1, coefficients &coeff2,
+		int source1_type = wall_source,
+		int source2_type = wall_source & local_source,
+		mdp_real precision = 1e-7) {
 
-  if(source1_type!=wall_source && source1_type!=local_source)
-    error("fermiqcd_staggered_mesons/make_meson: source option not implemented");
-  if(source2_type!=local_source)
-    error("fermiqcd_staggered_mesons/make_meson: source option not implemented");
-  
-  int t, t_source, nsources=1, sourcestep=1;
-  int i, j, nt=U.lattice().size(0);
-  int nc=U.nc;
-  mdp_complex c;
-  site x(U.lattice());
-  staggered_field tmp(U.lattice(),nc);
-  staggered_field quark_source(U.lattice(),nc);
-  staggered_field quark_prop(U.lattice(),nc);
-  staggered_field anti_prop(U.lattice(),nc);
+	if (source1_type != wall_source && source1_type != local_source)
+		error(
+				"fermiqcd_staggered_mesons/make_meson: source option not implemented");
+	if (source2_type != local_source)
+		error(
+				"fermiqcd_staggered_mesons/make_meson: source option not implemented");
 
-  phase_field phases(U.lattice());
-  phases.compute(GAMMA, ZETA);
+	int t, t_source, nsources = 1, sourcestep = 1;
+	int i, j, nt = U.lattice().size(0);
+	int nc = U.nc;
+	mdp_complex c;
+	site x(U.lattice());
+	staggered_field tmp(U.lattice(), nc);
+	staggered_field quark_source(U.lattice(), nc);
+	staggered_field quark_prop(U.lattice(), nc);
+	staggered_field anti_prop(U.lattice(), nc);
 
-  mdp_matrix prop(1,nt);
-  prop=0;
+	phase_field phases(U.lattice());
+	phases.compute(GAMMA, ZETA);
 
-  U.update();
-  V.update();
+	mdp_matrix prop(1, nt);
+	prop = 0;
 
-  for(t_source=0; t_source<nsources*sourcestep; t_source+=sourcestep) {
-    for(i=0; i<U.nc; i++) {
-      forallsites(x)
-	for(j=0; j<U.nc; j++)
-	  if(i==j && 
-	     (x(0)==t_source || x(0)==(t_source+1)) && 
-	     source1_type==wall_source) 
-	    quark_source(x,j)=mdp_complex(1,0);
-	  else if(i==j && 
-		  (x(0)==t_source || x(0)==(t_source+1)) && 
-		  (x(1)/2==0) && (x(2)/2==0) && (x(3)/2==0) &&
-		  source1_type==local_source) 
-	    quark_source(x,j)=mdp_complex(1,0);
-	  else     
-	    quark_source(x,j)=mdp_complex(0,0);
+	U.update();
+	V.update();
 
-      quark_source.update();
-      mul_invQ(quark_prop,quark_source, V,coeff1,precision);
-      quark_prop.update();
-      operator_staggered_meson(tmp, quark_source, phases, U);
-      tmp.update();
-      mul_invQ(anti_prop, tmp, V,coeff2,precision);
-      quark_prop.update();      
-      operator_staggered_meson(tmp, quark_prop, phases, U);
-      forallsites(x) { 
-	for(j=0, c=mdp_complex(0,0); j<U.nc; j++)
-	  c+=conj(anti_prop(x,j))*tmp(x,j);
-	t=(x(0)-t_source+nt) % nt; if(t%2==1) t--;
-	prop(0,t)+=c;
-      }
-    }
-  }
-  return prop;
+	for (t_source = 0; t_source < nsources * sourcestep; t_source +=
+			sourcestep) {
+		for (i = 0; i < U.nc; i++) {
+			forallsites (x)
+			for (j = 0; j < U.nc; j++)
+				if (i == j && (x(0) == t_source || x(0) == (t_source + 1))
+						&& source1_type == wall_source)
+					quark_source(x, j) = mdp_complex(1, 0);
+				else if (i == j && (x(0) == t_source || x(0) == (t_source + 1))
+						&& (x(1) / 2 == 0) && (x(2) / 2 == 0) && (x(3) / 2 == 0)
+						&& source1_type == local_source)
+					quark_source(x, j) = mdp_complex(1, 0);
+				else
+					quark_source(x, j) = mdp_complex(0, 0);
+
+			quark_source.update();
+			mul_invQ(quark_prop, quark_source, V, coeff1, precision);
+			quark_prop.update();
+			operator_staggered_meson(tmp, quark_source, phases, U);
+			tmp.update();
+			mul_invQ(anti_prop, tmp, V, coeff2, precision);
+			quark_prop.update();
+			operator_staggered_meson(tmp, quark_prop, phases, U);
+			forallsites(x)
+			{
+				for (j = 0, c = mdp_complex(0, 0); j < U.nc; j++)
+					c += conj(anti_prop(x, j)) * tmp(x, j);
+				t = (x(0) - t_source + nt) % nt;
+				if (t % 2 == 1)
+					t--;
+				prop(0, t) += c;
+			}
+		}
+	}
+	return prop;
 }
 
-
 mdp_matrix GoldstonBoson_5x5(gauge_field &U, // input gauge field
-			 gauge_field &V, // input fat and link links
-			 coefficients &coeff,    // input quark mass
-			 float precision=1e-6)        // color source index
-{
-  // // Local variable /////////////  
-  int i,j;                        //
-  unsigned int t_source=0;        // location of the source (timeslice)
-  unsigned int t, nt              // number of timeslices
-    =U.lattice().size(0);         //
-  mdp_matrix tmp(nt,U.nc);            // auxiliary var
-  mdp_matrix prop(2, nt);             // output vector
-  site x(U.lattice());            // 
-  // ///////////////////////////////
+		gauge_field &V, // input fat and link links
+		coefficients &coeff,    // input quark mass
+		float precision = 1e-6)        // color source index
+		{
+	// // Local variable /////////////
+	int i, j;                        //
+	unsigned int t_source = 0;        // location of the source (timeslice)
+	unsigned int t, nt              // number of timeslices
+			= U.lattice().size(0);         //
+	mdp_matrix tmp(nt, U.nc);            // auxiliary var
+	mdp_matrix prop(2, nt);             // output vector
+	site x(U.lattice());            //
+	// ///////////////////////////////
 
-  // // Local fields ////////////////////////////////
-  staggered_field quark_source(U.lattice(), U.nc); //
-  staggered_field quark_prop(U.lattice(), U.nc);   //
-  // ////////////////////////////////////////////////
+	// // Local fields ////////////////////////////////
+	staggered_field quark_source(U.lattice(), U.nc); //
+	staggered_field quark_prop(U.lattice(), U.nc);   //
+	// ////////////////////////////////////////////////
 
-  // // Initialization of parameters ////////////////
-  prop=0;                                          //
-  // ////////////////////////////////////////////////
+	// // Initialization of parameters ////////////////
+	prop = 0;                                          //
+	// ////////////////////////////////////////////////
 
-  printf("Starting to make 5x5 pion...\n");
-  for(i=0; i<U.nc; i++) {
-    // // Make wall source /////////////////////////////
-    forallsites(x)                                    //
-      for(j=0; j<U.nc; j++)                           //
-	if(i==j && x(0)-t_source==0)                  //
-	  quark_source(x,j)=mdp_complex(1,0);             //
-	else                                          //
-	  quark_source(x,j)=mdp_complex(0,0);             //
-    quark_source.update();                            //
-    ////////////////////////////////////////////////////
-    
-    // // Make propagator - antipropagator - sink //////
-    mul_invQ(quark_prop,quark_source,V,coeff,1e-5);   //
-    // /////////////////////////////////////////////////
-    
-    // // trace with local sink ////////////////////////
-    tmp=0;                                            //
-    forallsites(x) {                                  //
-      t=(x(0)-t_source+nt) % nt;                      //
-      for(j=0; j<U.nc; j++)                           //
-	tmp(t,j)+=conj(quark_prop(x,j))*quark_prop(x,j);
-    }                                                 //
-    mpi.add(tmp);                                     //
-    for(t=0; t<nt; t++)                               //
-      for(j=0; j<U.nc; j++)                           //
-	prop(0,t)+=tmp(t,j);                          //
-    // /////////////////////////////////////////////////
-    
-    // // trace with wall sink /////////////////////////
-    tmp=0;                                            //
-    forallsites(x) {                                  //
-      t=(x(0)-t_source+nt) % nt;                      //
-      for(j=0; j<U.nc; j++)                           //
-	tmp(t,j)+=quark_prop(x,j);                    //
-    }                                                 //
-    mpi.add(tmp);                                     //
-    for(t=0; t<nt; t++)                               //
-      for(j=0; j<U.nc; j++)                           //
-	prop(1,t)+=conj(tmp(t,j))*tmp(t,j);           //
-    // /////////////////////////////////////////////////
-  }
-  // // Normalize output and retrun //////////////////
-  int volume=U.lattice().size(1)*
-    U.lattice().size(2)*
-    U.lattice().size(3);
-  for(t=0; t<nt; t++) {
-    prop(0,t)/=U.nc*volume;
-    prop(1,t)/=U.nc*volume*volume;
-  }
+	printf("Starting to make 5x5 pion...\n");
+	for (i = 0; i < U.nc; i++) {
+		// // Make wall source /////////////////////////////
+		forallsites (x)
+		//
+		for (j = 0; j < U.nc; j++)                           //
+			if (i == j && x(0) - t_source == 0)                  //
+				quark_source(x, j) = mdp_complex(1, 0);             //
+			else
+				//
+				quark_source(x, j) = mdp_complex(0, 0);             //
+		quark_source.update();                            //
+		////////////////////////////////////////////////////
 
-  return prop;
+		// // Make propagator - antipropagator - sink //////
+		mul_invQ(quark_prop, quark_source, V, coeff, 1e-5);   //
+		// /////////////////////////////////////////////////
+
+		// // trace with local sink ////////////////////////
+		tmp = 0;                                            //
+		forallsites(x)
+		{                                  //
+			t = (x(0) - t_source + nt) % nt;                      //
+			for (j = 0; j < U.nc; j++)                           //
+				tmp(t, j) += conj(quark_prop(x, j)) * quark_prop(x, j);
+		}                                                 //
+		mpi.add(tmp);                                     //
+		for (t = 0; t < nt; t++)                               //
+			for (j = 0; j < U.nc; j++)                           //
+				prop(0, t) += tmp(t, j);                          //
+			// /////////////////////////////////////////////////
+
+			// // trace with wall sink /////////////////////////
+		tmp = 0;                                            //
+		forallsites(x)
+		{                                  //
+			t = (x(0) - t_source + nt) % nt;                      //
+			for (j = 0; j < U.nc; j++)                           //
+				tmp(t, j) += quark_prop(x, j);                    //
+		}                                                 //
+		mpi.add(tmp);                                     //
+		for (t = 0; t < nt; t++)                               //
+			for (j = 0; j < U.nc; j++)                           //
+				prop(1, t) += conj(tmp(t, j)) * tmp(t, j);           //
+				// /////////////////////////////////////////////////
+	}
+	// // Normalize output and retrun //////////////////
+	int volume = U.lattice().size(1) * U.lattice().size(2)
+			* U.lattice().size(3);
+	for (t = 0; t < nt; t++) {
+		prop(0, t) /= U.nc * volume;
+		prop(1, t) /= U.nc * volume * volume;
+	}
+
+	return prop;
 }
 
 #endif
@@ -409,9 +421,9 @@ int main(int argc, char **argv) {
 
 
 NOTES:
-make meson dow not work is you enable twist. The rest does work!
+make meson does not work if you enable twist. The rest does work!
 
 
 */
 
-
+#endif /* fermiqcd_staggered_mesons_ */

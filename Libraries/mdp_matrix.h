@@ -9,6 +9,10 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef mdp_matrix_
+#define mdp_matrix_
+
+using namespace std;
 
 /// @brief matrices of complex numbers
 ///
@@ -184,7 +188,7 @@ mdp_matrix::mdp_matrix(mdp_complex* z, const uint a, const uint b) {
   cols()=b; 
   imax=a*b;
   m=z;
-#if defined(USE_DOUBLE_PRECISION) && defined(MATRIX_SSE2)
+#if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
   _sse_check_alignment((void*) m, 0xf);
 #endif
 }
@@ -308,7 +312,7 @@ inline mdp_matrix operator- (const mdp_matrix& a) {
 inline mdp_matrix operator+ (const mdp_matrix& x, 
 			     const mdp_matrix& y) {
   mdp_matrix z(x.rows(),x.cols());
-#if defined(CHECK_ALL)
+#ifdef CHECK_ALL
   if(x.rows()!=y.rows() || x.cols()!=y.cols()) 
     error("mdp_matrix::operator+()\nWrong argument size");
 #endif
@@ -388,7 +392,7 @@ inline mdp_matrix operator- (const mdp_matrix& a, mdp_complex b) {
 inline mdp_matrix operator* (const mdp_matrix& y, mdp_complex x) {
   register uint i;
   mdp_matrix z(y.rows(),y.cols());
-#if defined(MATRIX_SSE2)
+#ifdef MATRIX_SSE2
   if(y.rows()==3) {
     static _sse_float  factor1 ALIGN16;   
     static _sse_float  factor2 ALIGN16;   
@@ -396,7 +400,7 @@ inline mdp_matrix operator* (const mdp_matrix& y, mdp_complex x) {
     static _sse_double factor4 ALIGN16;   
     _sse_su3_vector *in =(_sse_su3_vector*) y.m; 
     _sse_su3_vector *out=(_sse_su3_vector*) z.m;    
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
     factor3.c1=factor3.c2=x.imag();
     factor4.c1=factor4.c2=x.real()/x.imag();
     for(i=0; i<y.cols(); i++, in++, out++) {
@@ -474,14 +478,14 @@ inline mdp_matrix operator- (const mdp_matrix& a, mdp_real b) {
 inline mdp_matrix operator* (const mdp_matrix& y, mdp_real x) {
   register uint i;
   mdp_matrix z(y.rows(),y.cols());
-#if defined(MATRIX_SSE2)
+#ifdef MATRIX_SSE2
   if(y.rows()==3) {
     static _sse_float  factor1 ALIGN16;   
     static _sse_double factor2 ALIGN16;   
 
     _sse_su3_vector *in =(_sse_su3_vector*) y.m; 
     _sse_su3_vector *out=(_sse_su3_vector*) z.m;    
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
     factor2.c1=factor2.c2=x;
     for(i=0; i<y.cols(); i++, in++, out++) {
       _sse_double_load(*in);
@@ -817,6 +821,7 @@ inline mdp_matrix transpose(const mdp_matrix& a) {
 inline mdp_matrix hermitian(const mdp_matrix& a) {
   mdp_matrix tmp(a.cols(), a.rows());
   
+
 #if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
   if(a.cols()==3 && a.rows()==3) {
     _sse_double_hermitian_su3((_sse_double*) tmp.address(),
@@ -841,4 +846,4 @@ inline mdp_matrix conj(const mdp_matrix& a) {
   return tmp;
 }
 
-
+#endif /* mdp_matrix_ */
