@@ -9,6 +9,8 @@
 #ifndef fermiqcd_sse_
 #define fermiqcd_sse_
 
+#ifdef SSE2
+
 using namespace std;
 
 #pragma fPIC
@@ -19,43 +21,43 @@ using namespace std;
 
 typedef struct {
 	float c1, c2, c3, c4;
-} _sse_float ALIGN16;
+}_sse_float ALIGN16;
 typedef struct {
 	_sse_float c1, c2, c3;
-} _sse_vector ALIGN16;
+}_sse_vector ALIGN16;
 typedef struct {
 	int c1, c2, c3, c4;
-} _sse_int ALIGN16;
+}_sse_int ALIGN16;
 typedef struct {
 	double c1, c2;
-} _sse_double ALIGN16;
+}_sse_double ALIGN16;
 
 typedef struct {
 	mdp_complex c11, c12, c13, c21, c22, c23, c31, c32, c33;
-} _sse_su3;
+}_sse_su3;
 typedef struct {
 	mdp_complex c1, c2, c3;
-} _sse_su3_vector;
+}_sse_su3_vector;
 typedef struct {
 	_sse_su3_vector c1, c2, c3, c4;
-} _sse_spinor;
+}_sse_spinor;
 
-static _sse_float _sse_float_sgn12 __attribute__ ((unused)) = { -1.0f, -1.0f,
-		1.0f, 1.0f };
-static _sse_float _sse_float_sgn13 __attribute__ ((unused)) = { -1.0f, 1.0f,
-		-1.0f, 1.0f };
-static _sse_float _sse_float_sgn14 __attribute__ ((unused)) = { -1.0f, 1.0f,
-		1.0f, -1.0f };
-static _sse_float _sse_float_sgn23 __attribute__ ((unused)) = { 1.0f, -1.0f,
-		-1.0f, 1.0f };
-static _sse_float _sse_float_sgn24 __attribute__ ((unused)) = { 1.0f, -1.0f,
-		1.0f, -1.0f };
-static _sse_float _sse_float_sgn34 __attribute__ ((unused)) = { 1.0f, 1.0f,
-		-1.0f, -1.0f };
-static _sse_int _sse_double_sgn __attribute__ ((unused)) = { 0x0, 0x80000000,
-		0x0, 0x0 };
-static _sse_int _sse_double_sgn2 __attribute__ ((unused)) = { 0x0, 0x0, 0x0,
-		0x80000000 };
+static _sse_float _sse_float_sgn12 __attribute__ ((unused)) = {-1.0f, -1.0f,
+	1.0f, 1.0f};
+static _sse_float _sse_float_sgn13 __attribute__ ((unused)) = {-1.0f, 1.0f,
+	-1.0f, 1.0f};
+static _sse_float _sse_float_sgn14 __attribute__ ((unused)) = {-1.0f, 1.0f,
+	1.0f, -1.0f};
+static _sse_float _sse_float_sgn23 __attribute__ ((unused)) = {1.0f, -1.0f,
+	-1.0f, 1.0f};
+static _sse_float _sse_float_sgn24 __attribute__ ((unused)) = {1.0f, -1.0f,
+	1.0f, -1.0f};
+static _sse_float _sse_float_sgn34 __attribute__ ((unused)) = {1.0f, 1.0f,
+	-1.0f, -1.0f};
+static _sse_int _sse_double_sgn __attribute__ ((unused)) = {0x0, 0x80000000,
+	0x0, 0x0};
+static _sse_int _sse_double_sgn2 __attribute__ ((unused)) = {0x0, 0x0, 0x0,
+	0x80000000};
 
 // //////////////////////////////////////////////////////////////////////////
 // Cache manipulation macros (float)
@@ -1729,5 +1731,7 @@ static void _sse_check_alignment(void* var, unsigned int base) {
 		error("_sse_check_alignment()\nVariable not aligned properly");
 	}
 }
+
+#endif
 
 #endif /* fermiqcd_sse_ */

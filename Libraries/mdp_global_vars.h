@@ -19,7 +19,7 @@ typedef unsigned int uint;
 //#define CHECK_ALL
 //#define MDP_MPI
 //#define INCLUDE_DEPRECATED_IO
-//#define USE_DOUBLE_PRECISION
+#define USE_DOUBLE_PRECISION
 //#define PARALLEL
 //#define NO_POSIX
 //#define HAVE_NO_TIMEZONE
@@ -30,48 +30,42 @@ typedef unsigned int uint;
 //#define MATRIXOPTIMIZE
 //#define MATRIX_SSE2
 //#define AIX
-//#define FERMIQCD
 //#define BLOCKSITE 100
 //#define TWISTED_BOUNDARY
 
 typedef int mdp_int;
 
 #ifdef USE_DOUBLE_PRECISION
-typedef double       mdp_real;
+typedef double mdp_real;
 #else
-typedef float        mdp_real;
+typedef float mdp_real;
 #endif
 
-const int EVEN=0;
-const int ODD=1;
-const int EVENODD=2;
-const int _NprocMax_=256;
-double PRECISION=3.0e-6;
+const int EVEN = 0;
+const int ODD = 1;
+const int EVENODD = 2;
+const int _NprocMax_ = 256;
+double PRECISION = 3.0e-6;
 const mdp_int NOWHERE = INT_MAX;
 
 /// Each program should have a name
 char *mdp_program_name = (char*) "A generic test program";
 
 /// Filename to store the random seed
-char *mdp_random_seed_filename=0;
+char *mdp_random_seed_filename = 0;
 
 /// Used to determine the local endianess of this machine
-const unsigned int  mdp_local_endianess=0x87654321;
+const unsigned int mdp_local_endianess = 0x87654321;
 
 const double Pi = 3.1415926535897932384626433832795028841971;
 
 /// Set mdp_shutup=true to suppress default output from any part of
 /// the program
-bool mdp_shutup  = false;
+bool mdp_shutup = true;
 
 /// Default precision used by iterative algorithms such as 
 /// mdp_matrix::sin(), mdp_matrix::cos() and mdp_matrix::exp()
-double mdp_precision=1e-5;
-
-
-
-
-
+double mdp_precision = 1e-5;
 
 void _mpi_error_message(string, string, int);
 

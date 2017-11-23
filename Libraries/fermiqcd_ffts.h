@@ -19,7 +19,7 @@ inline mdp_int i2pow(mdp_int n) {
 }
 ;
 
-// one dimensional fourier transform
+// one dimensional Fourier transform
 // here n is not the size of f but size of f is i2pow(n)
 
 void dft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
@@ -35,28 +35,30 @@ void dft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
 	}
 }
 
-/* NOT NOT UNCOMMENT THIS, WORK IN PROGRESS!!!
- void fft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign, 
- mdp_int offset=0, mdp_int coeff=1) {
- mdp_int a,b,h,pow2b, N=i2pow(n);
- mdp_complex alpha, omega, F[N];
- if(sign!=0) for(h=0; h<N; h++) {
- alpha=2.0*sign*Pi*I/N*h;
- for(a=0; a<N; a++) F[a]=f[offset+coeff*a];
- for(b=n-1; b>=0; b--) {
- pow2b=i2pow(b);
- omega=exp(alpha*pow2b);
- for(a=0; a<pow2b; a++) 
- F[a]+=omega*F[a+pow2b];
- };
- fft_f[offset+coeff*h]=F[0]/sqrt(N);
- } else {
- for(a=0; a<N; a++)
- fft_f[offset+coeff*a]=f[offset+coeff*a];
- }    
- }
-
- */
+/* DO NOT UNCOMMENT THIS, WORK IN PROGRESS!!!
+void fft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
+		mdp_int offset = 0, mdp_int coeff = 1) {
+	mdp_int a, b, h, pow2b, N = i2pow(n);
+	mdp_complex alpha, omega, F[N];
+	if (sign != 0)
+		for (h = 0; h < N; h++) {
+			alpha = 2.0 * sign * Pi * I / N * h;
+			for (a = 0; a < N; a++)
+				F[a] = f[offset + coeff * a];
+			for (b = n - 1; b >= 0; b--) {
+				pow2b = i2pow(b);
+				omega = exp(alpha * pow2b);
+				for (a = 0; a < pow2b; a++)
+					F[a] += omega * F[a + pow2b];
+			};
+			fft_f[offset + coeff * h] = F[0] / sqrt(N);
+		}
+	else {
+		for (a = 0; a < N; a++)
+			fft_f[offset + coeff * a] = f[offset + coeff * a];
+	}
+}
+*/
 
 void fermi_field_fft(int t, fermi_field& psi_out, fermi_field& psi_in,
 		int sign) {

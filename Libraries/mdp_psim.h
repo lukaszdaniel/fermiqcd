@@ -32,9 +32,6 @@ using namespace std;
 #include <fcntl.h>
 using namespace std;
 
-#ifndef FERMIQCD
-typedef int mdp_int; // this in case this lib is used without fermiqcd
-#endif
 
 /// @brief Parallel SIMulator used by class mdp_communicator
 ///

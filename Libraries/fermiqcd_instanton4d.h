@@ -15,23 +15,7 @@
 using namespace std;
 
 class Instanton4D {
-private:
-	static int epsilon123(int i, int j, int k) {
-		if (i == j || j == k || i == k)
-			return 0;
-		if (i == 1 && j == 2 && k == 3)
-			return 1;
-		if (i == 1 && j == 3 && k == 2)
-			return -1;
-		if (i == 2 && j == 1 && k == 3)
-			return -1;
-		if (i == 2 && j == 3 && k == 1)
-			return 1;
-		if (i == 3 && j == 1 && k == 2)
-			return 1;
-		if (i == 3 && j == 2 && k == 1)
-			return -1;
-	}
+
 public:
 	vector<mdp_real> p; // location of the instanton
 	int nc;
@@ -76,7 +60,7 @@ public:
 					T(sub_j, sub_i) = sigma_rot3[a](1, 0);
 					T(sub_j, sub_j) = sigma_rot3[a](1, 1);
 					if (a > 0 && mu > 0 && nu > 0) {
-						this->eta[mu][nu] += epsilon123(a, mu, nu) * T;
+						this->eta[mu][nu] += epsilon(a, mu, nu) * T;
 					} else if (mu == 0 && a > 0 && a == nu) {
 						this->eta[mu][nu] -= T; // T[a]*(-1)*delta(a,nu)
 					} else if (nu == 0 && a > 0 && a == mu) {
@@ -110,9 +94,9 @@ public:
 									this->eta[mu][nu](i, j) += sigma[a](i0, j0)
 											* ((a == mu) ? +1 : 0);
 								} else {
-									// this->eta[mu][nu](i,j) += epsilon123(a,mu,nu);
+									// this->eta[mu][nu](i,j) += epsilon(a,mu,nu);
 									this->eta[mu][nu](i, j) += sigma[a](i0, j0)
-											* epsilon123(a, mu, nu);
+											* epsilon(a, mu, nu);
 								}
 							}
 						}

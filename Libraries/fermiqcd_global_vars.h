@@ -15,9 +15,6 @@
 using namespace std;
 
 /// Do or do not dump output to stdout
-bool shutup = false;
-
-/// Do or do not dump output to stdout in loops
-bool shutup_loops = false;
+bool shutup = true;
 
 #endif /* fermiqcd_global_vars_ */
