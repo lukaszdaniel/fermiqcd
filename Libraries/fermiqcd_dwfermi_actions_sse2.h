@@ -13,7 +13,7 @@ using namespace std;
 
 /// WARNING!!!! THIS WAS NOT TESTED !!!!
 
-#if defined(SSE2)
+#ifdef SSE2
 
 /// @brief Domain Wilson action SSE/SSE2
 ///
@@ -628,11 +628,11 @@ public:
 			/******************************** end of loop ***********************/
 		}
 
-#endif // if defined(USE_DOUBLE_PRECISION)
+#endif // USE_DOUBLE_PRECISION
 
 	}
 };
 
-#endif // if defined(SSE2)
+#endif // SSE2
 
 #endif /* fermiqcd_dwfermi_actions_sse2_ */

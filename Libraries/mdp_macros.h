@@ -14,9 +14,7 @@
 
 using namespace std;
 
-#define CHECK_ALL
-#define MDP_MPI
-#define INCLUDE_DEPRECATED_IO 
+
 
 /// Loop on all local sites of this process
 #define forallsites(x)                                     \
@@ -49,12 +47,5 @@ using namespace std;
 
 /// Reports a runtime error and the line that caused it
 #define error(a) _mpi_error_message(a,__FILE__, __LINE__);
-
-#ifndef TRUE
-#define TRUE true
-#endif
-#ifndef FALSE
-#define FALSE false
-#endif
 
 #endif /* mdp_macros_ */

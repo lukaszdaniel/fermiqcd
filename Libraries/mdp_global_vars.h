@@ -16,11 +16,38 @@ using namespace std;
 
 typedef unsigned int uint;
 
+//#define CHECK_ALL
+//#define MDP_MPI
+//#define INCLUDE_DEPRECATED_IO
+//#define USE_DOUBLE_PRECISION
+//#define PARALLEL
+//#define NO_POSIX
+//#define HAVE_NO_TIMEZONE
+//#define SSE2
+//#define NO_SSE2_LINALG
+//#define DO_NOT_USE_MDP_COMPLEX //define if you want to use standard complex.h header
+//#define MDP_NO_LG //define if you want a temporary file to store local-to-global lattice mappings
+//#define MATRIXOPTIMIZE
+//#define MATRIX_SSE2
+//#define AIX
+//#define FERMIQCD
+//#define BLOCKSITE 100
+//#define TWISTED_BOUNDARY
+
+typedef int mdp_int;
+
+#ifdef USE_DOUBLE_PRECISION
+typedef double       mdp_real;
+#else
+typedef float        mdp_real;
+#endif
+
 const int EVEN=0;
 const int ODD=1;
 const int EVENODD=2;
 const int _NprocMax_=256;
 double PRECISION=3.0e-6;
+const mdp_int NOWHERE = INT_MAX;
 
 /// Each program should have a name
 char *mdp_program_name = (char*) "A generic test program";
@@ -42,13 +69,9 @@ bool mdp_shutup  = false;
 double mdp_precision=1e-5;
 
 
-#ifdef USE_DOUBLE_PRECISION
-typedef double       mdp_real;
-#else
-typedef float        mdp_real;
-#endif
 
-typedef int mdp_int;
+
+
 
 void _mpi_error_message(string, string, int);
 

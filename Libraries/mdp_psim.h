@@ -12,6 +12,8 @@
 #ifndef mdp_psim_
 #define mdp_psim_
 
+#ifndef NO_POSIX
+
 using namespace std;
 
 #include "cstdio"
@@ -885,5 +887,7 @@ public:
 		return n;
 	}
 };
+
+#endif // NO_POSIX
 
 #endif /* mdp_psim_ */

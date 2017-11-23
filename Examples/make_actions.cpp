@@ -60,7 +60,7 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc) {
   default_fermi_action=FermiCloverActionFast::mul_Q;
   mul_Q(chi2,psi,U,coeff);
   if(check_differences(chi1, chi2)>1e-5) { mdp << "FAILURE\n"; exit(1); }
-#if defined(SSE2) 
+#ifdef SSE2
   mdp << "Using FermiCloverActionSSE2\n";
   default_fermi_action=FermiCloverActionSSE2::mul_Q;
   mul_Q(chi2,psi,U,coeff);
@@ -108,7 +108,7 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc) {
   default_staggered_action=StaggeredAsqtadActionFast::mul_Q;
   mul_Q(chi2,psi,V,coeff);
   if(check_differences(chi1, chi2)>1e-5) { mdp << "FAILURE\n"; exit(1); }
-#if defined(SSE2) 
+#ifdef SSE2
   mdp << "Using FermiCloverActionSSE2\n";
   default_staggered_action=StaggeredAsqtadActionSSE2::mul_Q;
   mul_Q(chi2,psi,V,coeff);

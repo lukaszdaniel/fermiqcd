@@ -12,6 +12,8 @@
 #ifndef mdp_deprecatedIO_
 #define mdp_deprecatedIO_
 
+#ifdef INCLUDE_DEPRECATED_IO
+
 using namespace std;
 
 template<class T>
@@ -227,5 +229,7 @@ void mdp_field<T>::save(char filename[], int processIO, mdp_int max_buffer_size,
 		fflush(stdout);
 	}
 }
+
+#endif // INCLUDE_DEPRECATED_IO
 
 #endif /* mdp_deprecatedIO_ */

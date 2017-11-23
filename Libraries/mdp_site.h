@@ -44,8 +44,8 @@ public:
 	int block[BLOCKSITE];
 #endif
 	mdp_site() {
-		// one whould not use this!
-		ptr = 0;
+		// one would not use this!
+		ptr = nullptr;
 		idx = 0;
 	}
 	/// declares object of class mdp_site living on the 
@@ -148,7 +148,7 @@ public:
 	}
 	/// returns the local index of the site
 	/// local index is assigned by the process to the local sites and copies
-	/// of remote sites. local index is not unique thoughout the lattice.
+	/// of remote sites. local index is not unique throughout the lattice.
 	inline mdp_int local_index() {
 		return idx;
 	}
@@ -217,7 +217,7 @@ public:
 				v.x[8], v.x[9]);
 		return *this;
 	}
-	/// retruns a site similar to the present but
+	/// returns a site similar to the present but
 	/// each coordinates mu of the site shifted according to v[mu]
 	inline mdp_site operator+(mdp_vector v) {
 		int mu, step;
@@ -379,7 +379,6 @@ public:
 	}
 };
 
-#ifdef MDP_LATTICE
 
 /// Returns the local object mdp_prng at site x of the lattice 
 inline mdp_prng &mdp_lattice::random(mdp_site x) {
@@ -390,7 +389,6 @@ inline mdp_prng &mdp_lattice::random(mdp_site x) {
 	return mdp_random;
 }
 
-#endif
 
 /// When compiled with TWISTED_BOUNDARY the mdp_site class keeps track of 
 /// sites that moved around the boundary of the torus topology. this function 

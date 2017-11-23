@@ -1,5 +1,4 @@
 //#define SSE2
-#define OSX
 #include "fermiqcd.h"
 
 #define X 0

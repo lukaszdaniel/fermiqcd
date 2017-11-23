@@ -399,7 +399,7 @@ public:
 	bool load_as_double(string filename, int processIO = 0,
 			mdp_int max_buffer_size = 1024, bool load_header = true,
 			mdp_int skip_bytes = 0) {
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
 		header.bytes_per_site *= 2;
 		load(filename, processIO, max_buffer_size, load_header, skip_bytes,
 				mdp_read_float_as_double, true);
@@ -413,7 +413,7 @@ public:
 	bool save_as_double(string filename, int processIO = 0,
 			mdp_int max_buffer_size = 1024, bool load_header = true,
 			mdp_int skip_bytes = 0) {
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
 		header.bytes_per_site *= 2;
 		save(filename, processIO, max_buffer_size, load_header, skip_bytes,
 				mdp_write_float_as_double);

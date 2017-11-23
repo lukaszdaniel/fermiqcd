@@ -647,6 +647,6 @@ public:
 	}
 };
 
-#endif // if defined(SSE2)
+#endif // SSE2
 
 #endif /* fermiqcd_staggered_actions_sse2_ */

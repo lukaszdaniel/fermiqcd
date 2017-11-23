@@ -70,7 +70,7 @@ string next_to_latest_file(string pattern) {
 	return pattern.replace(i, 1, tostring(k).c_str());
 }
 
-string tostring(float k) {
+string tostring(mdp_real k) {
 	char buf[128];
 	sprintf(buf, "%f", k);
 	return string(buf);

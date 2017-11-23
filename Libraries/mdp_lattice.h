@@ -14,9 +14,7 @@
 
 using namespace std;
 
-#define MDP_LATTICE
 
-const mdp_int NOWHERE = INT_MAX;
 
 class mdp_site;
 
@@ -159,7 +157,7 @@ public:
 	/// @param where pointer to a partitioning function 
 	/// @parem neighbour_ pointer to a topology function. 
 	/// @param random_seed_ seed to be used by the parallel prng
-	/// @param next_next_ size of the buffer between neighbour processes
+	/// @param next_next_ size of the buffer between neighbor processes
 	/// @param local_random_ true is local random generator is required 
 	mdp_lattice(int ndim_, int nx_[],
 			int (*where_)(int*, int, int*)=default_partitioning0,
@@ -430,7 +428,7 @@ public:
 				}
 			}
 		}
-		// deallcate temporary array
+		// deallocate temporary array
 #ifndef MDP_NO_LG
 		delete[] local_mdp_sites;
 #else
@@ -492,7 +490,7 @@ public:
 		mpi.end_function("allocate_lattice");
 	}
 	// ////////////////////////////////////////////////////
-	// deallocate all the dynamically alocated arrays
+	// deallocate all the dynamically allocated arrays
 	// ////////////////////////////////////////////////////
 	virtual ~mdp_lattice() {
 		deallocate_memory();

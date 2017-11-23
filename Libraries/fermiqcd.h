@@ -27,6 +27,12 @@ using namespace std;
 #include "fermiqcd_set_random.h"
 #include "fermiqcd_coefficients.h"
 
+// ///////////////////////////////////////////////////////////////////////////
+// this file includes stuff for sse2 optimization
+// ///////////////////////////////////////////////////////////////////////////
+#ifdef SSE2
+#include "fermiqcd_sse.h"
+#endif
 #include "fermiqcd_sse_su3.h"
 #include "fermiqcd_gauge_field.h"
 #include "fermiqcd_gauge_routines.h"

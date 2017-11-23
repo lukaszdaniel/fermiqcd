@@ -16,7 +16,7 @@
 
 using namespace std;
 
-#if defined(SSE2) && !defined(OSX)
+#if defined(SSE2) && !defined(__APPLE__)
 #include "malloc.h"
 void* operator new(size_t size) {
 	void *p=memalign(64,size);

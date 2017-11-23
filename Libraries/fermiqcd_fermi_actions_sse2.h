@@ -1297,11 +1297,11 @@ public:
 
 			/*************** end of loop ***********************/
 		}
-#endif // if defined(USE_DOUBLE_PRECISION)
+#endif // USE_DOUBLE_PRECISION
 
 	}
 };
 
-#endif // if defined(SSE2)
+#endif // SSE2
 
 #endif /* fermiqcd_fermi_actions_sse2_ */

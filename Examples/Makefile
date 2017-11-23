@@ -34,6 +34,7 @@ all:
 	${CC} ${CFLAGS} example14.cpp -o example14.exe
 	${CC} ${CFLAGS} example15.cpp -o example15.exe
 	${CC} ${CFLAGS} test_sse2.cpp -o test_sse2.exe
+	${CC} ${CFLAGS} fermiqcd.cpp  -o fermiqcd.exe
 	${CC} ${CFLAGS} test_actions.cpp -o test_actions.exe
 	${CC} ${CFLAGS} meson.cpp        -o meson.exe
 	${CC} ${CFLAGS} ks_meson.cpp     -o ks_meson.exe

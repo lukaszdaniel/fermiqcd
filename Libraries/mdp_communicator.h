@@ -222,7 +222,7 @@ public:
 	}
 	void add(mdp_complex &obj1) {
 		mdp_complex obj2=0;
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
 		MPI_Allreduce(&obj1, &obj2, 2, MPI_FLOAT, MPI_SUM, communicator);
 #else
 		MPI_Allreduce(&obj1, &obj2, 2, MPI_DOUBLE, MPI_SUM, communicator);
@@ -233,7 +233,7 @@ public:
 		mdp_int i;
 		mdp_complex *obj2=new mdp_complex[length];
 		for(i=0; i<length; i++) obj2[i]=0;
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
 		MPI_Allreduce(obj1, obj2, 2*length, MPI_FLOAT, MPI_SUM, communicator);
 #else
 		MPI_Allreduce(obj1, obj2, 2*length, MPI_DOUBLE, MPI_SUM, communicator);

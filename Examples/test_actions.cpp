@@ -70,7 +70,7 @@ void test_fermi() {
      exit(1);
   }
 
-#if defined(SSE2) 
+#ifdef SSE2
   default_fermi_inverter=MinimumResidueInverter<fermi_field,gauge_field>;
   default_fermi_action=FermiCloverActionSSE2::mul_Q;
   mul_invQ(chi2,psi,U,coeff);
@@ -140,7 +140,7 @@ void test_staggered() {
      exit(1);
   }
 
-#if defined(SSE2)
+#ifdef SSE2
   default_staggered_inverter=BiConjugateGradientStabilizedInverter<staggered_field,gauge_field>;
   default_staggered_action=StaggeredAsqtadActionSSE2::mul_Q;
   mul_invQ(chi2,psi,V,coeff);
