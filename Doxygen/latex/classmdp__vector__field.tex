@@ -1,34 +1,36 @@
-\hypertarget{classmdp__vector__field}{
-\section{mdp\_\-vector\_\-field Class Reference}
-\label{classmdp__vector__field}\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}}
-}
+\hypertarget{classmdp__vector__field}{}\section{mdp\+\_\+vector\+\_\+field Class Reference}
+\label{classmdp__vector__field}\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
 
 
 a field of vectors of complex numbers  
 
 
-{\ttfamily \#include $<$mdp\_\-vector\_\-field.h$>$}Inheritance diagram for mdp\_\-vector\_\-field::\begin{figure}[H]
+
+
+{\ttfamily \#include $<$mdp\+\_\+vector\+\_\+field.\+h$>$}
+
+Inheritance diagram for mdp\+\_\+vector\+\_\+field\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=2cm]{classmdp__vector__field}
+\includegraphics[height=2.000000cm]{classmdp__vector__field}
 \end{center}
 \end{figure}
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{classmdp__vector__field_a3900cf2abf276128751407dc0795b312}{mdp\_\-vector\_\-field} ()
+\hyperlink{classmdp__vector__field_a3900cf2abf276128751407dc0795b312}{mdp\+\_\+vector\+\_\+field} ()
 \item 
-\hyperlink{classmdp__vector__field_ae565296f84d9187b093e4dd9d78577d9}{mdp\_\-vector\_\-field} (\hyperlink{classmdp__vector__field}{mdp\_\-vector\_\-field} \&field)
+\hyperlink{classmdp__vector__field_ae565296f84d9187b093e4dd9d78577d9}{mdp\+\_\+vector\+\_\+field} (\hyperlink{classmdp__vector__field}{mdp\+\_\+vector\+\_\+field} \&field)
 \item 
-\hyperlink{classmdp__vector__field_ac43a21288e27c78d5bdde212fa9351d2}{mdp\_\-vector\_\-field} (\hyperlink{classmdp__lattice}{mdp\_\-lattice} \&a, int i)
+\hyperlink{classmdp__vector__field_ac43a21288e27c78d5bdde212fa9351d2}{mdp\+\_\+vector\+\_\+field} (\hyperlink{classmdp__lattice}{mdp\+\_\+lattice} \&a, int i)
 \item 
-void \hyperlink{classmdp__vector__field_ad8c24094484c978db191b9aab575d528}{allocate\_\-mdp\_\-vector\_\-field} (\hyperlink{classmdp__lattice}{mdp\_\-lattice} \&a, int i)
+void \hyperlink{classmdp__vector__field_ad8c24094484c978db191b9aab575d528}{allocate\+\_\+mdp\+\_\+vector\+\_\+field} (\hyperlink{classmdp__lattice}{mdp\+\_\+lattice} \&a, int i)
 \item 
-\hyperlink{classmdp__matrix}{mdp\_\-matrix} \hyperlink{classmdp__vector__field_aaa674fa7253c69257ca593d3854d1672}{operator()} (\hyperlink{classmdp__site}{mdp\_\-site} x)
+\hyperlink{classmdp__matrix}{mdp\+\_\+matrix} \hyperlink{classmdp__vector__field_aaa674fa7253c69257ca593d3854d1672}{operator()} (\hyperlink{classmdp__site}{mdp\+\_\+site} x)
 \item 
-\hyperlink{classmdp__complex}{mdp\_\-complex} \& \hyperlink{classmdp__vector__field_aa50ba6cb67e5978d0e362b70ea703164}{operator()} (\hyperlink{classmdp__site}{mdp\_\-site} x, int i)
-\begin{DoxyCompactList}\small\item\em returns component i of the vector of objects T stored at site x \item\end{DoxyCompactList}\item 
-const \hyperlink{classmdp__complex}{mdp\_\-complex} \& \hyperlink{classmdp__vector__field_a9e9eac5aef1e86f5ed72cba00dbf06be}{operator()} (\hyperlink{classmdp__site}{mdp\_\-site} x, int i) const 
+\hyperlink{classmdp__complex}{mdp\+\_\+complex} \& \hyperlink{classmdp__vector__field_aa50ba6cb67e5978d0e362b70ea703164}{operator()} (\hyperlink{classmdp__site}{mdp\+\_\+site} x, int i)
+\item 
+const \hyperlink{classmdp__complex}{mdp\+\_\+complex} \& \hyperlink{classmdp__vector__field_ab3d5c7c91ad0c3210c2074785d22ccd9}{operator()} (\hyperlink{classmdp__site}{mdp\+\_\+site} x, int i) const
 \end{DoxyCompactItemize}
 \subsection*{Public Attributes}
 \begin{DoxyCompactItemize}
@@ -39,11 +41,13 @@ int \hyperlink{classmdp__vector__field_a79e671979619905202e5b725dabe41db}{column
 \item 
 int \hyperlink{classmdp__vector__field_a20e58b016cfd50221192aafc45029dfb}{imax}
 \end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
-a field of vectors of complex numbers Example: \begin{DoxyVerb}
-///    int box[]={10,10,10};
+a field of vectors of complex numbers 
+
+Example\+: \begin{DoxyVerb}///    int box[]={10,10,10};
 ///    mdp_lattice lattice(3,box);
 ///    mdp_vector_field h(lattice,10);
 ///    mdp_site x(lattice);
@@ -53,68 +57,74 @@ a field of vectors of complex numbers Example: \begin{DoxyVerb}
  
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{classmdp__vector__field_a3900cf2abf276128751407dc0795b312}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}}
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{mdp\_\-vector\_\-field}]{\setlength{\rightskip}{0pt plus 5cm}mdp\_\-vector\_\-field::mdp\_\-vector\_\-field ()\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classmdp__vector__field_a3900cf2abf276128751407dc0795b312}
-\hypertarget{classmdp__vector__field_ae565296f84d9187b093e4dd9d78577d9}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}}
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{mdp\_\-vector\_\-field}]{\setlength{\rightskip}{0pt plus 5cm}mdp\_\-vector\_\-field::mdp\_\-vector\_\-field ({\bf mdp\_\-vector\_\-field} \& {\em field})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classmdp__vector__field_ae565296f84d9187b093e4dd9d78577d9}
-\hypertarget{classmdp__vector__field_ac43a21288e27c78d5bdde212fa9351d2}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}}
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{mdp\_\-vector\_\-field}]{\setlength{\rightskip}{0pt plus 5cm}mdp\_\-vector\_\-field::mdp\_\-vector\_\-field ({\bf mdp\_\-lattice} \& {\em a}, \/  int {\em i})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classmdp__vector__field_ac43a21288e27c78d5bdde212fa9351d2}
+\mbox{\Hypertarget{classmdp__vector__field_a3900cf2abf276128751407dc0795b312}\label{classmdp__vector__field_a3900cf2abf276128751407dc0795b312}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{mdp\+\_\+vector\+\_\+field()}{mdp\_vector\_field()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily mdp\+\_\+vector\+\_\+field\+::mdp\+\_\+vector\+\_\+field (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classmdp__vector__field_ae565296f84d9187b093e4dd9d78577d9}\label{classmdp__vector__field_ae565296f84d9187b093e4dd9d78577d9}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{mdp\+\_\+vector\+\_\+field()}{mdp\_vector\_field()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily mdp\+\_\+vector\+\_\+field\+::mdp\+\_\+vector\+\_\+field (\begin{DoxyParamCaption}\item[{\hyperlink{classmdp__vector__field}{mdp\+\_\+vector\+\_\+field} \&}]{field }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{classmdp__vector__field_ac43a21288e27c78d5bdde212fa9351d2}\label{classmdp__vector__field_ac43a21288e27c78d5bdde212fa9351d2}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{mdp\+\_\+vector\+\_\+field()}{mdp\_vector\_field()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily mdp\+\_\+vector\+\_\+field\+::mdp\+\_\+vector\+\_\+field (\begin{DoxyParamCaption}\item[{\hyperlink{classmdp__lattice}{mdp\+\_\+lattice} \&}]{a,  }\item[{int}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
 
 
 \subsection{Member Function Documentation}
-\hypertarget{classmdp__vector__field_ad8c24094484c978db191b9aab575d528}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!allocate\_\-mdp\_\-vector\_\-field@{allocate\_\-mdp\_\-vector\_\-field}}
-\index{allocate\_\-mdp\_\-vector\_\-field@{allocate\_\-mdp\_\-vector\_\-field}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{allocate\_\-mdp\_\-vector\_\-field}]{\setlength{\rightskip}{0pt plus 5cm}void mdp\_\-vector\_\-field::allocate\_\-mdp\_\-vector\_\-field ({\bf mdp\_\-lattice} \& {\em a}, \/  int {\em i})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classmdp__vector__field_ad8c24094484c978db191b9aab575d528}
-\hypertarget{classmdp__vector__field_a9e9eac5aef1e86f5ed72cba00dbf06be}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!operator()@{operator()}}
-\index{operator()@{operator()}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{operator()}]{\setlength{\rightskip}{0pt plus 5cm}const {\bf mdp\_\-complex}\& mdp\_\-vector\_\-field::operator() ({\bf mdp\_\-site} {\em x}, \/  int {\em i}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classmdp__vector__field_a9e9eac5aef1e86f5ed72cba00dbf06be}
-\hypertarget{classmdp__vector__field_aa50ba6cb67e5978d0e362b70ea703164}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!operator()@{operator()}}
-\index{operator()@{operator()}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{operator()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf mdp\_\-complex}\& mdp\_\-vector\_\-field::operator() ({\bf mdp\_\-site} {\em x}, \/  int {\em i})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classmdp__vector__field_aa50ba6cb67e5978d0e362b70ea703164}
+\mbox{\Hypertarget{classmdp__vector__field_ad8c24094484c978db191b9aab575d528}\label{classmdp__vector__field_ad8c24094484c978db191b9aab575d528}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!allocate\+\_\+mdp\+\_\+vector\+\_\+field@{allocate\+\_\+mdp\+\_\+vector\+\_\+field}}
+\index{allocate\+\_\+mdp\+\_\+vector\+\_\+field@{allocate\+\_\+mdp\+\_\+vector\+\_\+field}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{allocate\+\_\+mdp\+\_\+vector\+\_\+field()}{allocate\_mdp\_vector\_field()}}
+{\footnotesize\ttfamily void mdp\+\_\+vector\+\_\+field\+::allocate\+\_\+mdp\+\_\+vector\+\_\+field (\begin{DoxyParamCaption}\item[{\hyperlink{classmdp__lattice}{mdp\+\_\+lattice} \&}]{a,  }\item[{int}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
+\mbox{\Hypertarget{classmdp__vector__field_aaa674fa7253c69257ca593d3854d1672}\label{classmdp__vector__field_aaa674fa7253c69257ca593d3854d1672}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!operator()@{operator()}}
+\index{operator()@{operator()}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \hyperlink{classmdp__matrix}{mdp\+\_\+matrix} mdp\+\_\+vector\+\_\+field\+::operator() (\begin{DoxyParamCaption}\item[{\hyperlink{classmdp__site}{mdp\+\_\+site}}]{x }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-returns component i of the vector of objects T stored at site x 
+\mbox{\Hypertarget{classmdp__vector__field_aa50ba6cb67e5978d0e362b70ea703164}\label{classmdp__vector__field_aa50ba6cb67e5978d0e362b70ea703164}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!operator()@{operator()}}
+\index{operator()@{operator()}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \hyperlink{classmdp__complex}{mdp\+\_\+complex}\& mdp\+\_\+vector\+\_\+field\+::operator() (\begin{DoxyParamCaption}\item[{\hyperlink{classmdp__site}{mdp\+\_\+site}}]{x,  }\item[{int}]{i }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
 
-Reimplemented from \hyperlink{classmdp__field_a9eec94ee723253a196ccc4677832b4a0}{mdp\_\-field$<$ mdp\_\-complex $>$}.\hypertarget{classmdp__vector__field_aaa674fa7253c69257ca593d3854d1672}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!operator()@{operator()}}
-\index{operator()@{operator()}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{operator()}]{\setlength{\rightskip}{0pt plus 5cm}{\bf mdp\_\-matrix} mdp\_\-vector\_\-field::operator() ({\bf mdp\_\-site} {\em x})\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classmdp__vector__field_aaa674fa7253c69257ca593d3854d1672}
+\mbox{\Hypertarget{classmdp__vector__field_ab3d5c7c91ad0c3210c2074785d22ccd9}\label{classmdp__vector__field_ab3d5c7c91ad0c3210c2074785d22ccd9}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!operator()@{operator()}}
+\index{operator()@{operator()}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{operator()()}{operator()()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily const \hyperlink{classmdp__complex}{mdp\+\_\+complex}\& mdp\+\_\+vector\+\_\+field\+::operator() (\begin{DoxyParamCaption}\item[{\hyperlink{classmdp__site}{mdp\+\_\+site}}]{x,  }\item[{int}]{i }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
+
 
 
 \subsection{Member Data Documentation}
-\hypertarget{classmdp__vector__field_a79e671979619905202e5b725dabe41db}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!columns@{columns}}
-\index{columns@{columns}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{columns}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf mdp\_\-vector\_\-field::columns}}}
-\label{classmdp__vector__field_a79e671979619905202e5b725dabe41db}
-\hypertarget{classmdp__vector__field_a20e58b016cfd50221192aafc45029dfb}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!imax@{imax}}
-\index{imax@{imax}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{imax}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf mdp\_\-vector\_\-field::imax}}}
-\label{classmdp__vector__field_a20e58b016cfd50221192aafc45029dfb}
-\hypertarget{classmdp__vector__field_ace0dc78c30bf473dab2014dac9b56d1d}{
-\index{mdp\_\-vector\_\-field@{mdp\_\-vector\_\-field}!rows@{rows}}
-\index{rows@{rows}!mdp_vector_field@{mdp\_\-vector\_\-field}}
-\subsubsection[{rows}]{\setlength{\rightskip}{0pt plus 5cm}int {\bf mdp\_\-vector\_\-field::rows}}}
-\label{classmdp__vector__field_ace0dc78c30bf473dab2014dac9b56d1d}
+\mbox{\Hypertarget{classmdp__vector__field_a79e671979619905202e5b725dabe41db}\label{classmdp__vector__field_a79e671979619905202e5b725dabe41db}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!columns@{columns}}
+\index{columns@{columns}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{columns}{columns}}
+{\footnotesize\ttfamily int mdp\+\_\+vector\+\_\+field\+::columns}
+
+\mbox{\Hypertarget{classmdp__vector__field_a20e58b016cfd50221192aafc45029dfb}\label{classmdp__vector__field_a20e58b016cfd50221192aafc45029dfb}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!imax@{imax}}
+\index{imax@{imax}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{imax}{imax}}
+{\footnotesize\ttfamily int mdp\+\_\+vector\+\_\+field\+::imax}
+
+\mbox{\Hypertarget{classmdp__vector__field_ace0dc78c30bf473dab2014dac9b56d1d}\label{classmdp__vector__field_ace0dc78c30bf473dab2014dac9b56d1d}} 
+\index{mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}!rows@{rows}}
+\index{rows@{rows}!mdp\+\_\+vector\+\_\+field@{mdp\+\_\+vector\+\_\+field}}
+\subsubsection{\texorpdfstring{rows}{rows}}
+{\footnotesize\ttfamily int mdp\+\_\+vector\+\_\+field\+::rows}
 
 
-The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/Users/mdipierro/fermiqcd/development/Libraries/\hyperlink{mdp__vector__field_8h}{mdp\_\-vector\_\-field.h}\end{DoxyCompactItemize}
+\hyperlink{mdp__vector__field_8h}{mdp\+\_\+vector\+\_\+field.\+h}\end{DoxyCompactItemize}

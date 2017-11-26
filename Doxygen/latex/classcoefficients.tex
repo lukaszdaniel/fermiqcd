@@ -1,40 +1,50 @@
-\hypertarget{classcoefficients}{
-\section{coefficients Class Reference}
+\hypertarget{classcoefficients}{}\section{coefficients Class Reference}
 \label{classcoefficients}\index{coefficients@{coefficients}}
-}
 
 
 container for action parameters  
 
 
-{\ttfamily \#include $<$fermiqcd\_\-coefficients.h$>$}\subsection*{Public Member Functions}
+
+
+{\ttfamily \#include $<$fermiqcd\+\_\+coefficients.\+h$>$}
+
+Inheritance diagram for coefficients\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{classcoefficients}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-bool \hyperlink{classcoefficients_a8c1deef53017a13f3307d6af968f80d4}{has\_\-key} (const string s) const 
+bool \hyperlink{classcoefficients_ae4ab5b04bcf6efdd614e0e04ad806d67}{has\+\_\+key} (const string s) const
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-container for action parameters All FermiQCD actions are classe and share the same prototype. Parameters are passed to the action via \hyperlink{classcoefficients}{coefficients} objects which are nothing more than hash tables.
+container for action parameters 
 
-Example: \begin{DoxyVerb}
-///    gauge_field U(lattice,nc);
+All Fermi\+Q\+CD actions are classes and share the same prototype. Parameters are passed to the action via coefficients objects which are nothing more than hash tables.
+
+Example\+: \begin{DoxyVerb}///    gauge_field U(lattice,nc);
 ///    coefficients gauge;
 ///    gauge["beta"]=6.0;
 ///    WilsonGaugeAction::heatbath(U,gauge);
 /// \end{DoxyVerb}
- Please check the spalling of the variables you store into the \hyperlink{classcoefficients}{coefficients} object (each action has its own \hyperlink{classcoefficients}{coefficients}).
+ Please check the spelling of the variables you store into the coefficients object (each action has its own coefficients).
 
 Why? This allows the creating of new actions while reusing inverters and simplify passing parameters to the action. 
 
 \subsection{Member Function Documentation}
-\hypertarget{classcoefficients_a8c1deef53017a13f3307d6af968f80d4}{
-\index{coefficients@{coefficients}!has\_\-key@{has\_\-key}}
-\index{has\_\-key@{has\_\-key}!coefficients@{coefficients}}
-\subsubsection[{has\_\-key}]{\setlength{\rightskip}{0pt plus 5cm}bool coefficients::has\_\-key (const string {\em s}) const\hspace{0.3cm}{\ttfamily  \mbox{[}inline\mbox{]}}}}
-\label{classcoefficients_a8c1deef53017a13f3307d6af968f80d4}
+\mbox{\Hypertarget{classcoefficients_ae4ab5b04bcf6efdd614e0e04ad806d67}\label{classcoefficients_ae4ab5b04bcf6efdd614e0e04ad806d67}} 
+\index{coefficients@{coefficients}!has\+\_\+key@{has\+\_\+key}}
+\index{has\+\_\+key@{has\+\_\+key}!coefficients@{coefficients}}
+\subsubsection{\texorpdfstring{has\+\_\+key()}{has\_key()}}
+{\footnotesize\ttfamily bool coefficients\+::has\+\_\+key (\begin{DoxyParamCaption}\item[{const string}]{s }\end{DoxyParamCaption}) const\hspace{0.3cm}{\ttfamily [inline]}}
 
 
-The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/Users/mdipierro/fermiqcd/development/Libraries/\hyperlink{fermiqcd__coefficients_8h}{fermiqcd\_\-coefficients.h}\end{DoxyCompactItemize}
+\hyperlink{fermiqcd__coefficients_8h}{fermiqcd\+\_\+coefficients.\+h}\end{DoxyCompactItemize}

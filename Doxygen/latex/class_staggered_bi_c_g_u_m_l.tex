@@ -1,27 +1,44 @@
-\hypertarget{class_staggered_bi_c_g_u_m_l}{
-\section{StaggeredBiCGUML Class Reference}
-\label{class_staggered_bi_c_g_u_m_l}\index{StaggeredBiCGUML@{StaggeredBiCGUML}}
-}
+\hypertarget{class_staggered_bi_c_g_u_m_l}{}\section{Staggered\+Bi\+C\+G\+U\+ML Class Reference}
+\label{class_staggered_bi_c_g_u_m_l}\index{Staggered\+Bi\+C\+G\+U\+ML@{Staggered\+Bi\+C\+G\+U\+ML}}
 
 
-MILC staggered UML inverter (optimized bicgstab).  
+M\+I\+LC staggered U\+ML inverter (optimized bicgstab)  
 
 
-{\ttfamily \#include $<$fermiqcd\_\-staggered\_\-uml\_\-inverter.h$>$}\subsection*{Static Public Member Functions}
+
+
+{\ttfamily \#include $<$fermiqcd\+\_\+staggered\+\_\+uml\+\_\+inverter.\+h$>$}
+
+\subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-static \hyperlink{classinversion__stats}{inversion\_\-stats} \hyperlink{class_staggered_bi_c_g_u_m_l_ac1959ada50857a518ad4c9d82fead805}{inverter} (\hyperlink{classstaggered__field}{staggered\_\-field} \&psi\_\-out, \hyperlink{classstaggered__field}{staggered\_\-field} \&psi\_\-in, \hyperlink{classgauge__field}{gauge\_\-field} \&U, \hyperlink{classcoefficients}{coefficients} \&coeff, \hyperlink{mdp__global__vars_8h_a049e4c1d4e74d644878a42f9909463e4}{mdp\_\-real} absolute\_\-precision=\hyperlink{fermiqcd__default__parameters_8h_ace2adee73e3f9d7c0df3759732b2688b}{staggered\_\-inversion\_\-precision}, \hyperlink{mdp__global__vars_8h_a049e4c1d4e74d644878a42f9909463e4}{mdp\_\-real} relative\_\-precision=0, int max\_\-steps=2000)
+static \hyperlink{classinversion__stats}{inversion\+\_\+stats} \hyperlink{class_staggered_bi_c_g_u_m_l_ac1959ada50857a518ad4c9d82fead805}{inverter} (\hyperlink{classstaggered__field}{staggered\+\_\+field} \&psi\+\_\+out, \hyperlink{classstaggered__field}{staggered\+\_\+field} \&psi\+\_\+in, \hyperlink{classgauge__field}{gauge\+\_\+field} \&U, \hyperlink{classcoefficients}{coefficients} \&coeff, \hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} absolute\+\_\+precision=\hyperlink{fermiqcd__default__parameters_8h_ace2adee73e3f9d7c0df3759732b2688b}{staggered\+\_\+inversion\+\_\+precision}, \hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} relative\+\_\+precision=0, int max\+\_\+steps=2000)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-MILC staggered UML inverter (optimized bicgstab). The algorithm is taken form hep-\/lat/9212007 This is best algorithm for staggered fermions
+M\+I\+LC staggered U\+ML inverter (optimized bicgstab) 
 
-It inverts mul\_\-Q(psi\_\-out,psi\_\-in,U,coeff) iteratively 
+The algorithm is taken form hep-\/lat/9212007 This is best algorithm for staggered fermions
+
+It inverts mul\+\_\+\+Q(psi\+\_\+out,psi\+\_\+in,\+U,coeff) iteratively 
 \begin{DoxyParams}{Parameters}
-\item[{\em psi\_\-out}]the output field passed by reference \item[{\em psi\_\-in}]the input field passed by reference \item[{\em U}]the gauge field to be passed to mul\_\-Q \item[{\em coeff}]the gauge parameters to be passed to mul\_\-Q \item[{\em absolute\_\-precision}]the target absolute precision \item[{\em relative\_\-precision}]the target relative precision \item[{\em max\_\-steps}]the maximum number of steps\end{DoxyParams}
-Example: \begin{DoxyVerb}
-/// gauge_field U(lattice,nc);
+{\em psi\+\_\+out} & the output field passed by reference \\
+\hline
+{\em psi\+\_\+in} & the input field passed by reference \\
+\hline
+{\em U} & the gauge field to be passed to mul\+\_\+Q \\
+\hline
+{\em coeff} & the gauge parameters to be passed to mul\+\_\+Q \\
+\hline
+{\em absolute\+\_\+precision} & the target absolute precision \\
+\hline
+{\em relative\+\_\+precision} & the target relative precision \\
+\hline
+{\em max\+\_\+steps} & the maximum number of steps\\
+\hline
+\end{DoxyParams}
+Example\+: \begin{DoxyVerb}/// gauge_field U(lattice,nc);
 /// staggered_field psi(lattice,nc);
 /// staggered_field chi(lattice,nc);
 /// coefficinets coeff;
@@ -36,13 +53,14 @@ Example: \begin{DoxyVerb}
  
 
 \subsection{Member Function Documentation}
-\hypertarget{class_staggered_bi_c_g_u_m_l_ac1959ada50857a518ad4c9d82fead805}{
-\index{StaggeredBiCGUML@{StaggeredBiCGUML}!inverter@{inverter}}
-\index{inverter@{inverter}!StaggeredBiCGUML@{StaggeredBiCGUML}}
-\subsubsection[{inverter}]{\setlength{\rightskip}{0pt plus 5cm}static {\bf inversion\_\-stats} StaggeredBiCGUML::inverter ({\bf staggered\_\-field} \& {\em psi\_\-out}, \/  {\bf staggered\_\-field} \& {\em psi\_\-in}, \/  {\bf gauge\_\-field} \& {\em U}, \/  {\bf coefficients} \& {\em coeff}, \/  {\bf mdp\_\-real} {\em absolute\_\-precision} = {\ttfamily {\bf staggered\_\-inversion\_\-precision}}, \/  {\bf mdp\_\-real} {\em relative\_\-precision} = {\ttfamily 0}, \/  int {\em max\_\-steps} = {\ttfamily 2000})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static\mbox{]}}}}
-\label{class_staggered_bi_c_g_u_m_l_ac1959ada50857a518ad4c9d82fead805}
+\mbox{\Hypertarget{class_staggered_bi_c_g_u_m_l_ac1959ada50857a518ad4c9d82fead805}\label{class_staggered_bi_c_g_u_m_l_ac1959ada50857a518ad4c9d82fead805}} 
+\index{Staggered\+Bi\+C\+G\+U\+ML@{Staggered\+Bi\+C\+G\+U\+ML}!inverter@{inverter}}
+\index{inverter@{inverter}!Staggered\+Bi\+C\+G\+U\+ML@{Staggered\+Bi\+C\+G\+U\+ML}}
+\subsubsection{\texorpdfstring{inverter()}{inverter()}}
+{\footnotesize\ttfamily static \hyperlink{classinversion__stats}{inversion\+\_\+stats} Staggered\+Bi\+C\+G\+U\+M\+L\+::inverter (\begin{DoxyParamCaption}\item[{\hyperlink{classstaggered__field}{staggered\+\_\+field} \&}]{psi\+\_\+out,  }\item[{\hyperlink{classstaggered__field}{staggered\+\_\+field} \&}]{psi\+\_\+in,  }\item[{\hyperlink{classgauge__field}{gauge\+\_\+field} \&}]{U,  }\item[{\hyperlink{classcoefficients}{coefficients} \&}]{coeff,  }\item[{\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real}}]{absolute\+\_\+precision = {\ttfamily \hyperlink{fermiqcd__default__parameters_8h_ace2adee73e3f9d7c0df3759732b2688b}{staggered\+\_\+inversion\+\_\+precision}},  }\item[{\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real}}]{relative\+\_\+precision = {\ttfamily 0},  }\item[{int}]{max\+\_\+steps = {\ttfamily 2000} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
 
 
-The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/Users/mdipierro/fermiqcd/development/Libraries/\hyperlink{fermiqcd__staggered__uml__inverter_8h}{fermiqcd\_\-staggered\_\-uml\_\-inverter.h}\end{DoxyCompactItemize}
+\hyperlink{fermiqcd__staggered__uml__inverter_8h}{fermiqcd\+\_\+staggered\+\_\+uml\+\_\+inverter.\+h}\end{DoxyCompactItemize}

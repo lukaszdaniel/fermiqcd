@@ -1,25 +1,42 @@
-\hypertarget{class_c_g2}{
-\section{CG2 Class Reference}
-\label{class_c_g2}\index{CG2@{CG2}}
-}
+\hypertarget{class_c_g2}{}\section{C\+G2 Class Reference}
+\label{class_c_g2}\index{C\+G2@{C\+G2}}
 
 
 the conjugate gradient inverter  
 
 
-{\ttfamily \#include $<$fermiqcd\_\-cg\_\-inverter.h$>$}\subsection*{Static Public Member Functions}
+
+
+{\ttfamily \#include $<$fermiqcd\+\_\+cg\+\_\+inverter.\+h$>$}
+
+\subsection*{Static Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-{\footnotesize template$<$class fieldT , class fieldG $>$ }\\static \hyperlink{classinversion__stats}{inversion\_\-stats} \hyperlink{class_c_g2_aa094cee6eb38b07eeddabb8175b1eb57}{inverter} (fieldT \&psi\_\-out, fieldT \&psi\_\-in, fieldG \&U, \hyperlink{classcoefficients}{coefficients} \&coeff, \hyperlink{mdp__global__vars_8h_a049e4c1d4e74d644878a42f9909463e4}{mdp\_\-real} absolute\_\-precision=\hyperlink{mdp__global__vars_8h_a443a4ca745298420893e113a7ac926a9}{mdp\_\-precision}, \hyperlink{mdp__global__vars_8h_a049e4c1d4e74d644878a42f9909463e4}{mdp\_\-real} relative\_\-precision=0, int max\_\-steps=2000, bool qdaggerq=false)
+{\footnotesize template$<$class fieldT , class fieldG $>$ }\\static \hyperlink{classinversion__stats}{inversion\+\_\+stats} \hyperlink{class_c_g2_afa577ee7a31d10e8f1d6e58f07e70598}{inverter} (fieldT \&psi\+\_\+out, fieldT \&psi\+\_\+in, fieldG \&U, \hyperlink{classcoefficients}{coefficients} \&coeff, \hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} absolute\+\_\+precision=\hyperlink{mdp__global__vars_8h_a443a4ca745298420893e113a7ac926a9}{mdp\+\_\+precision}, \hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} relative\+\_\+precision=0, int max\+\_\+steps=2000, bool qdaggerq=false)
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-the conjugate gradient inverter It inverts mul\_\-Q(psi\_\-out,psi\_\-in,U,coeff) ///not really 
+the conjugate gradient inverter 
+
+It inverts mul\+\_\+\+Q(psi\+\_\+out,psi\+\_\+in,\+U,coeff) ///not really 
 \begin{DoxyParams}{Parameters}
-\item[{\em psi\_\-out}]the output field passed by reference \item[{\em psi\_\-in}]the input field passed by reference \item[{\em U}]the gauge field to be passed to mul\_\-Q \item[{\em coeff}]the gauge parameters to be passed to mul\_\-Q \item[{\em absolute\_\-precision}]the target absolute precision \item[{\em relative\_\-precision}]the target relative precision \item[{\em max\_\-steps}]the maximum number of steps\end{DoxyParams}
-Example: \begin{DoxyVerb}
-/// gauge_field U(lattice,nc);
+{\em psi\+\_\+out} & the output field passed by reference \\
+\hline
+{\em psi\+\_\+in} & the input field passed by reference \\
+\hline
+{\em U} & the gauge field to be passed to mul\+\_\+Q \\
+\hline
+{\em coeff} & the gauge parameters to be passed to mul\+\_\+Q \\
+\hline
+{\em absolute\+\_\+precision} & the target absolute precision \\
+\hline
+{\em relative\+\_\+precision} & the target relative precision \\
+\hline
+{\em max\+\_\+steps} & the maximum number of steps\\
+\hline
+\end{DoxyParams}
+Example\+: \begin{DoxyVerb}/// gauge_field U(lattice,nc);
 /// fermi_field psi(lattice,nc);
 /// fermi_field chi(lattice,nc);
 /// coefficinets coeff;
@@ -29,16 +46,18 @@ Example: \begin{DoxyVerb}
 /// CG2::inverter(chi,psi,U,coeff);
 /// chi.save("myfield_chi");
 /// \end{DoxyVerb}
- Note that mul\_\-invQ(chi,psi,U,coeff) reads $ \chi=(/\!\!\!D[U]+m)^{-1}\psi $ 
+ Note that mul\+\_\+inv\+Q(chi,psi,\+U,coeff) reads $ \chi=(/\!\!\!D[U]+m)^{-1}\psi $ 
 
 \subsection{Member Function Documentation}
-\hypertarget{class_c_g2_aa094cee6eb38b07eeddabb8175b1eb57}{
-\index{CG2@{CG2}!inverter@{inverter}}
-\index{inverter@{inverter}!CG2@{CG2}}
-\subsubsection[{inverter}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class fieldT , class fieldG $>$ static {\bf inversion\_\-stats} CG2::inverter (fieldT \& {\em psi\_\-out}, \/  fieldT \& {\em psi\_\-in}, \/  fieldG \& {\em U}, \/  {\bf coefficients} \& {\em coeff}, \/  {\bf mdp\_\-real} {\em absolute\_\-precision} = {\ttfamily {\bf mdp\_\-precision}}, \/  {\bf mdp\_\-real} {\em relative\_\-precision} = {\ttfamily 0}, \/  int {\em max\_\-steps} = {\ttfamily 2000}, \/  bool {\em qdaggerq} = {\ttfamily false})\hspace{0.3cm}{\ttfamily  \mbox{[}inline, static\mbox{]}}}}
-\label{class_c_g2_aa094cee6eb38b07eeddabb8175b1eb57}
+\mbox{\Hypertarget{class_c_g2_afa577ee7a31d10e8f1d6e58f07e70598}\label{class_c_g2_afa577ee7a31d10e8f1d6e58f07e70598}} 
+\index{C\+G2@{C\+G2}!inverter@{inverter}}
+\index{inverter@{inverter}!C\+G2@{C\+G2}}
+\subsubsection{\texorpdfstring{inverter()}{inverter()}}
+{\footnotesize\ttfamily template$<$class fieldT , class fieldG $>$ \\
+static \hyperlink{classinversion__stats}{inversion\+\_\+stats} C\+G2\+::inverter (\begin{DoxyParamCaption}\item[{fieldT \&}]{psi\+\_\+out,  }\item[{fieldT \&}]{psi\+\_\+in,  }\item[{fieldG \&}]{U,  }\item[{\hyperlink{classcoefficients}{coefficients} \&}]{coeff,  }\item[{\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real}}]{absolute\+\_\+precision = {\ttfamily \hyperlink{mdp__global__vars_8h_a443a4ca745298420893e113a7ac926a9}{mdp\+\_\+precision}},  }\item[{\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real}}]{relative\+\_\+precision = {\ttfamily 0},  }\item[{int}]{max\+\_\+steps = {\ttfamily 2000},  }\item[{bool}]{qdaggerq = {\ttfamily false} }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
 
 
-The documentation for this class was generated from the following file:\begin{DoxyCompactItemize}
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/Users/mdipierro/fermiqcd/development/Libraries/\hyperlink{fermiqcd__cg__inverter_8h}{fermiqcd\_\-cg\_\-inverter.h}\end{DoxyCompactItemize}
+\hyperlink{fermiqcd__cg__inverter_8h}{fermiqcd\+\_\+cg\+\_\+inverter.\+h}\end{DoxyCompactItemize}

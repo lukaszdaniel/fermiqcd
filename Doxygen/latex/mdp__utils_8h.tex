@@ -1,27 +1,42 @@
-\hypertarget{mdp__utils_8h}{
-\section{/Users/mdipierro/fermiqcd/development/Libraries/mdp\_\-utils.h File Reference}
-\label{mdp__utils_8h}\index{/Users/mdipierro/fermiqcd/development/Libraries/mdp\_\-utils.h@{/Users/mdipierro/fermiqcd/development/Libraries/mdp\_\-utils.h}}
-}
+\hypertarget{mdp__utils_8h}{}\section{mdp\+\_\+utils.\+h File Reference}
+\label{mdp__utils_8h}\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{classmdp__args}{mdp\+\_\+args}
+\end{DoxyCompactItemize}
 \subsection*{Functions}
 \begin{DoxyCompactItemize}
 \item 
-string \hyperlink{mdp__utils_8h_a4c09da28f8404ff19b6ba537b93c404e}{tostring} (int k)
+string \hyperlink{mdp__utils_8h_ab0f3718f91f4f4181466300a4f30e625}{tostring} (int k, int length=5)
+\item 
+bool \hyperlink{mdp__utils_8h_a3d9888de1b6fb7c24d53bddf802de14f}{file\+\_\+exists} (string filename)
 \item 
 vector$<$ string $>$ \hyperlink{mdp__utils_8h_a687cc150ae32362c32fb6fa1a23b63e8}{glob} (string pattern)
 \item 
-string \hyperlink{mdp__utils_8h_ac8bcf308ef3ea527239fdabad0530e24}{latest\_\-file} (string pattern)
+string \hyperlink{mdp__utils_8h_ac8bcf308ef3ea527239fdabad0530e24}{latest\+\_\+file} (string pattern)
 \item 
-string \hyperlink{mdp__utils_8h_a6d7e1e687a03b12ce53f60e631908d09}{next\_\-to\_\-latest\_\-file} (string pattern)
+string \hyperlink{mdp__utils_8h_a6d7e1e687a03b12ce53f60e631908d09}{next\+\_\+to\+\_\+latest\+\_\+file} (string pattern)
 \item 
-string \hyperlink{mdp__utils_8h_ae946a9283724264660f7b906aa1cb2d2}{tostring} (float k)
+string \hyperlink{mdp__utils_8h_a32dc5ccfc8147f5458d27c5bf373ac1f}{tostring} (\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} k)
 \item 
-int \hyperlink{mdp__utils_8h_a4f48f3e20bf9c00d2e658278703f1ecb}{is\_\-file} (string filename, char permission\mbox{[}$\,$\mbox{]}=\char`\"{}r\char`\"{})
+int \hyperlink{mdp__utils_8h_ab15b84226af5b03ca7d23a1f807f426d}{is\+\_\+file} (string filename, const char permission\mbox{[}$\,$\mbox{]}=\char`\"{}r\char`\"{})
 \item 
-\hyperlink{classmdp__field__file__header}{mdp\_\-field\_\-file\_\-header} \hyperlink{mdp__utils_8h_ac4ba93201272261cc12c9916715d46ca}{get\_\-info} (string filename, int proc=0)
+\hyperlink{classmdp__field__file__header}{mdp\+\_\+field\+\_\+file\+\_\+header} \hyperlink{mdp__utils_8h_ac4ba93201272261cc12c9916715d46ca}{get\+\_\+info} (string filename, int proc=0)
 \item 
 int \hyperlink{mdp__utils_8h_a8e37fdbe469f44066bdf9af4ffe157b6}{mail} (string email, string message)
 \item 
-int \hyperlink{mdp__utils_8h_a43b5c4df4b97a766174eb46526c1c5f1}{mail\_\-file} (string email, string filename)
+int \hyperlink{mdp__utils_8h_a43b5c4df4b97a766174eb46526c1c5f1}{mail\+\_\+file} (string email, string filename)
+\item 
+bool \hyperlink{mdp__utils_8h_a2eea0f4ece1c8dedaa0ae65bd0256e19}{startswith} (string a, string b)
+\item 
+bool \hyperlink{mdp__utils_8h_a39ec30c1f829bb11a97bc29aa47acd07}{endswith} (string a, string b)
+\item 
+int \hyperlink{mdp__utils_8h_a0c74579156f9a91e65364d0d38a86806}{parse\+\_\+int} (string a, string b, int value=0)
+\item 
+float \hyperlink{mdp__utils_8h_a96db2cbfb37bbfc6ca36f1a5a8bd399a}{parse\+\_\+float} (string a, string b, float value=0.\+0)
+\item 
+string \hyperlink{mdp__utils_8h_a376d3b3d36eb71d1117cf311dda0fa4c}{parse\+\_\+string} (string a, string b, string value=\char`\"{}\char`\"{})
 \end{DoxyCompactItemize}
 
 
@@ -30,55 +45,100 @@ int \hyperlink{mdp__utils_8h_a43b5c4df4b97a766174eb46526c1c5f1}{mail\_\-file} (s
 2009-\/12-\/21 
 \end{DoxyVersion}
 \begin{DoxyAuthor}{Author}
-Massimo Di Pierro $<$\href{mailto:mdipierro@cs.depaul.edu}{\tt mdipierro@cs.depaul.edu}$>$
+Massimo Di Pierro \href{mailto:mdipierro@cs.depaul.edu}{\tt mdipierro@cs.\+depaul.\+edu}
 \end{DoxyAuthor}
 Other junk that did not fit anywhere else
 
-Licensed under GPL2 license Read attached license in file mdp\_\-license.pdf This file cannot be distributed without file mdp\_\-license.pdf 
+Licensed under G\+P\+L2 license Read attached license in file mdp\+\_\+license.\+pdf This file cannot be distributed without file mdp\+\_\+license.\+pdf 
 
 \subsection{Function Documentation}
-\hypertarget{mdp__utils_8h_ac4ba93201272261cc12c9916715d46ca}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!get\_\-info@{get\_\-info}}
-\index{get\_\-info@{get\_\-info}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{get\_\-info}]{\setlength{\rightskip}{0pt plus 5cm}{\bf mdp\_\-field\_\-file\_\-header} get\_\-info (string {\em filename}, \/  int {\em proc} = {\ttfamily 0})}}
-\label{mdp__utils_8h_ac4ba93201272261cc12c9916715d46ca}
-\hypertarget{mdp__utils_8h_a687cc150ae32362c32fb6fa1a23b63e8}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!glob@{glob}}
-\index{glob@{glob}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{glob}]{\setlength{\rightskip}{0pt plus 5cm}vector$<$string$>$ glob (string {\em pattern})}}
-\label{mdp__utils_8h_a687cc150ae32362c32fb6fa1a23b63e8}
-\hypertarget{mdp__utils_8h_a4f48f3e20bf9c00d2e658278703f1ecb}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!is\_\-file@{is\_\-file}}
-\index{is\_\-file@{is\_\-file}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{is\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}int is\_\-file (string {\em filename}, \/  char {\em permission}\mbox{[}$\,$\mbox{]} = {\ttfamily \char`\"{}r\char`\"{}})}}
-\label{mdp__utils_8h_a4f48f3e20bf9c00d2e658278703f1ecb}
-\hypertarget{mdp__utils_8h_ac8bcf308ef3ea527239fdabad0530e24}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!latest\_\-file@{latest\_\-file}}
-\index{latest\_\-file@{latest\_\-file}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{latest\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}string latest\_\-file (string {\em pattern})}}
-\label{mdp__utils_8h_ac8bcf308ef3ea527239fdabad0530e24}
-\hypertarget{mdp__utils_8h_a8e37fdbe469f44066bdf9af4ffe157b6}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!mail@{mail}}
-\index{mail@{mail}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{mail}]{\setlength{\rightskip}{0pt plus 5cm}int mail (string {\em email}, \/  string {\em message})}}
-\label{mdp__utils_8h_a8e37fdbe469f44066bdf9af4ffe157b6}
-\hypertarget{mdp__utils_8h_a43b5c4df4b97a766174eb46526c1c5f1}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!mail\_\-file@{mail\_\-file}}
-\index{mail\_\-file@{mail\_\-file}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{mail\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}int mail\_\-file (string {\em email}, \/  string {\em filename})}}
-\label{mdp__utils_8h_a43b5c4df4b97a766174eb46526c1c5f1}
-\hypertarget{mdp__utils_8h_a6d7e1e687a03b12ce53f60e631908d09}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!next\_\-to\_\-latest\_\-file@{next\_\-to\_\-latest\_\-file}}
-\index{next\_\-to\_\-latest\_\-file@{next\_\-to\_\-latest\_\-file}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{next\_\-to\_\-latest\_\-file}]{\setlength{\rightskip}{0pt plus 5cm}string next\_\-to\_\-latest\_\-file (string {\em pattern})}}
-\label{mdp__utils_8h_a6d7e1e687a03b12ce53f60e631908d09}
-\hypertarget{mdp__utils_8h_ae946a9283724264660f7b906aa1cb2d2}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!tostring@{tostring}}
-\index{tostring@{tostring}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{tostring}]{\setlength{\rightskip}{0pt plus 5cm}string tostring (float {\em k})}}
-\label{mdp__utils_8h_ae946a9283724264660f7b906aa1cb2d2}
-\hypertarget{mdp__utils_8h_a4c09da28f8404ff19b6ba537b93c404e}{
-\index{mdp\_\-utils.h@{mdp\_\-utils.h}!tostring@{tostring}}
-\index{tostring@{tostring}!mdp_utils.h@{mdp\_\-utils.h}}
-\subsubsection[{tostring}]{\setlength{\rightskip}{0pt plus 5cm}string tostring (int {\em k})}}
-\label{mdp__utils_8h_a4c09da28f8404ff19b6ba537b93c404e}
+\mbox{\Hypertarget{mdp__utils_8h_a39ec30c1f829bb11a97bc29aa47acd07}\label{mdp__utils_8h_a39ec30c1f829bb11a97bc29aa47acd07}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!endswith@{endswith}}
+\index{endswith@{endswith}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{endswith()}{endswith()}}
+{\footnotesize\ttfamily bool endswith (\begin{DoxyParamCaption}\item[{string}]{a,  }\item[{string}]{b }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a3d9888de1b6fb7c24d53bddf802de14f}\label{mdp__utils_8h_a3d9888de1b6fb7c24d53bddf802de14f}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!file\+\_\+exists@{file\+\_\+exists}}
+\index{file\+\_\+exists@{file\+\_\+exists}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{file\+\_\+exists()}{file\_exists()}}
+{\footnotesize\ttfamily bool file\+\_\+exists (\begin{DoxyParamCaption}\item[{string}]{filename }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_ac4ba93201272261cc12c9916715d46ca}\label{mdp__utils_8h_ac4ba93201272261cc12c9916715d46ca}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!get\+\_\+info@{get\+\_\+info}}
+\index{get\+\_\+info@{get\+\_\+info}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{get\+\_\+info()}{get\_info()}}
+{\footnotesize\ttfamily \hyperlink{classmdp__field__file__header}{mdp\+\_\+field\+\_\+file\+\_\+header} get\+\_\+info (\begin{DoxyParamCaption}\item[{string}]{filename,  }\item[{int}]{proc = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a687cc150ae32362c32fb6fa1a23b63e8}\label{mdp__utils_8h_a687cc150ae32362c32fb6fa1a23b63e8}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!glob@{glob}}
+\index{glob@{glob}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{glob()}{glob()}}
+{\footnotesize\ttfamily vector$<$string$>$ glob (\begin{DoxyParamCaption}\item[{string}]{pattern }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_ab15b84226af5b03ca7d23a1f807f426d}\label{mdp__utils_8h_ab15b84226af5b03ca7d23a1f807f426d}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!is\+\_\+file@{is\+\_\+file}}
+\index{is\+\_\+file@{is\+\_\+file}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{is\+\_\+file()}{is\_file()}}
+{\footnotesize\ttfamily int is\+\_\+file (\begin{DoxyParamCaption}\item[{string}]{filename,  }\item[{const char}]{permission\mbox{[}$\,$\mbox{]} = {\ttfamily \char`\"{}r\char`\"{}} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_ac8bcf308ef3ea527239fdabad0530e24}\label{mdp__utils_8h_ac8bcf308ef3ea527239fdabad0530e24}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!latest\+\_\+file@{latest\+\_\+file}}
+\index{latest\+\_\+file@{latest\+\_\+file}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{latest\+\_\+file()}{latest\_file()}}
+{\footnotesize\ttfamily string latest\+\_\+file (\begin{DoxyParamCaption}\item[{string}]{pattern }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a8e37fdbe469f44066bdf9af4ffe157b6}\label{mdp__utils_8h_a8e37fdbe469f44066bdf9af4ffe157b6}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!mail@{mail}}
+\index{mail@{mail}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{mail()}{mail()}}
+{\footnotesize\ttfamily int mail (\begin{DoxyParamCaption}\item[{string}]{email,  }\item[{string}]{message }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a43b5c4df4b97a766174eb46526c1c5f1}\label{mdp__utils_8h_a43b5c4df4b97a766174eb46526c1c5f1}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!mail\+\_\+file@{mail\+\_\+file}}
+\index{mail\+\_\+file@{mail\+\_\+file}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{mail\+\_\+file()}{mail\_file()}}
+{\footnotesize\ttfamily int mail\+\_\+file (\begin{DoxyParamCaption}\item[{string}]{email,  }\item[{string}]{filename }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a6d7e1e687a03b12ce53f60e631908d09}\label{mdp__utils_8h_a6d7e1e687a03b12ce53f60e631908d09}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!next\+\_\+to\+\_\+latest\+\_\+file@{next\+\_\+to\+\_\+latest\+\_\+file}}
+\index{next\+\_\+to\+\_\+latest\+\_\+file@{next\+\_\+to\+\_\+latest\+\_\+file}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{next\+\_\+to\+\_\+latest\+\_\+file()}{next\_to\_latest\_file()}}
+{\footnotesize\ttfamily string next\+\_\+to\+\_\+latest\+\_\+file (\begin{DoxyParamCaption}\item[{string}]{pattern }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a96db2cbfb37bbfc6ca36f1a5a8bd399a}\label{mdp__utils_8h_a96db2cbfb37bbfc6ca36f1a5a8bd399a}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!parse\+\_\+float@{parse\+\_\+float}}
+\index{parse\+\_\+float@{parse\+\_\+float}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{parse\+\_\+float()}{parse\_float()}}
+{\footnotesize\ttfamily float parse\+\_\+float (\begin{DoxyParamCaption}\item[{string}]{a,  }\item[{string}]{b,  }\item[{float}]{value = {\ttfamily 0.0} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a0c74579156f9a91e65364d0d38a86806}\label{mdp__utils_8h_a0c74579156f9a91e65364d0d38a86806}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!parse\+\_\+int@{parse\+\_\+int}}
+\index{parse\+\_\+int@{parse\+\_\+int}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{parse\+\_\+int()}{parse\_int()}}
+{\footnotesize\ttfamily int parse\+\_\+int (\begin{DoxyParamCaption}\item[{string}]{a,  }\item[{string}]{b,  }\item[{int}]{value = {\ttfamily 0} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a376d3b3d36eb71d1117cf311dda0fa4c}\label{mdp__utils_8h_a376d3b3d36eb71d1117cf311dda0fa4c}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!parse\+\_\+string@{parse\+\_\+string}}
+\index{parse\+\_\+string@{parse\+\_\+string}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{parse\+\_\+string()}{parse\_string()}}
+{\footnotesize\ttfamily string parse\+\_\+string (\begin{DoxyParamCaption}\item[{string}]{a,  }\item[{string}]{b,  }\item[{string}]{value = {\ttfamily \char`\"{}\char`\"{}} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a2eea0f4ece1c8dedaa0ae65bd0256e19}\label{mdp__utils_8h_a2eea0f4ece1c8dedaa0ae65bd0256e19}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!startswith@{startswith}}
+\index{startswith@{startswith}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{startswith()}{startswith()}}
+{\footnotesize\ttfamily bool startswith (\begin{DoxyParamCaption}\item[{string}]{a,  }\item[{string}]{b }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_ab0f3718f91f4f4181466300a4f30e625}\label{mdp__utils_8h_ab0f3718f91f4f4181466300a4f30e625}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!tostring@{tostring}}
+\index{tostring@{tostring}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{tostring()}{tostring()}\hspace{0.1cm}{\footnotesize\ttfamily [1/2]}}
+{\footnotesize\ttfamily string tostring (\begin{DoxyParamCaption}\item[{int}]{k,  }\item[{int}]{length = {\ttfamily 5} }\end{DoxyParamCaption})}
+
+\mbox{\Hypertarget{mdp__utils_8h_a32dc5ccfc8147f5458d27c5bf373ac1f}\label{mdp__utils_8h_a32dc5ccfc8147f5458d27c5bf373ac1f}} 
+\index{mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}!tostring@{tostring}}
+\index{tostring@{tostring}!mdp\+\_\+utils.\+h@{mdp\+\_\+utils.\+h}}
+\subsubsection{\texorpdfstring{tostring()}{tostring()}\hspace{0.1cm}{\footnotesize\ttfamily [2/2]}}
+{\footnotesize\ttfamily string tostring (\begin{DoxyParamCaption}\item[{\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real}}]{k }\end{DoxyParamCaption})}
+

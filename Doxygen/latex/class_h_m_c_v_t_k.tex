@@ -1,0 +1,293 @@
+\hypertarget{class_h_m_c_v_t_k}{}\section{H\+M\+C\+V\+TK$<$ Gauge\+Class, Fermi\+Class $>$ Class Template Reference}
+\label{class_h_m_c_v_t_k}\index{H\+M\+C\+V\+T\+K$<$ Gauge\+Class, Fermi\+Class $>$@{H\+M\+C\+V\+T\+K$<$ Gauge\+Class, Fermi\+Class $>$}}
+
+
+{\ttfamily \#include $<$fermiqcd\+\_\+hmc\+\_\+vtk.\+h$>$}
+
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_h_m_c_v_t_k_a2142d0912c699151a5ff53039ad7389c}{H\+M\+C\+V\+TK} (Gauge\+Class \&U, Fermi\+Class \&F, \hyperlink{classcoefficients}{coefficients} \&\hyperlink{class_h_m_c_v_t_k_a6b8e384e877ba74f193b28c6799ca837}{coeff})
+\item 
+\hyperlink{class_h_m_c_v_t_k_ad4c849424d6ccd199101173c18d5175a}{$\sim$\+H\+M\+C\+V\+TK} ()
+\item 
+void \hyperlink{class_h_m_c_v_t_k_a2f14e19e4dd44528d4c62d49b9ca32e4}{step} ()
+\item 
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k_a9edf4ea22315f10fec9f6270387ed09d}{acceptance\+\_\+rate} ()
+\item 
+void \hyperlink{class_h_m_c_v_t_k_a5babc3c0b3fb9e28ad0ed64a94bb691d}{initialize} ()
+\item 
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k_a2a2f070a2272aa1da44728bce6664357}{compute\+\_\+gaussian\+\_\+momenta} (Gauge\+Class \&U)
+\item 
+void \hyperlink{class_h_m_c_v_t_k_a7b804e29bf066992f30b0fa91ace5126}{set\+\_\+gaussian} (Fermi\+Class \&F)
+\item 
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k_aa623dc6c375c7c0b6afdb9e1ee2f0063}{compute\+\_\+kinetic\+\_\+energy} (Gauge\+Class \&p\+\_\+U, Fermi\+Class \&p\+\_\+F)
+\item 
+void \hyperlink{class_h_m_c_v_t_k_a907e9d51b216657fec45d44d7ac56646}{compute\+\_\+effective\+\_\+links} (Gauge\+Class \&U, Gauge\+Class \&V)
+\item 
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k_a3f7dc73a7b73b5def83ed6aa81b56baf}{compute\+\_\+action} (Gauge\+Class \&U, Gauge\+Class \&V, Fermi\+Class \&F)
+\item 
+void \hyperlink{class_h_m_c_v_t_k_adc97bfb3acf63780adb9e7af9ae578a7}{compute\+\_\+fields\+\_\+evolution} (Gauge\+Class \&U, Gauge\+Class \&p\+\_\+U, Gauge\+Class \&f\+\_\+U, Fermi\+Class \&F, Fermi\+Class \&p\+\_\+F, Fermi\+Class \&f\+\_\+F)
+\item 
+void \hyperlink{class_h_m_c_v_t_k_a9705754538f098bab074dfa9c5486f54}{compute\+\_\+force} (Gauge\+Class \&U, Gauge\+Class \&f\+\_\+U, Fermi\+Class \&F, Fermi\+Class \&f\+\_\+F)
+\item 
+void \hyperlink{class_h_m_c_v_t_k_a6bd487e5258df0c909fba60c63fe4101}{compute\+\_\+fermion\+\_\+forces} (Gauge\+Class \&U, Gauge\+Class \&f\+\_\+U, Fermi\+Class \&sol, Fermi\+Class \&psol)
+\end{DoxyCompactItemize}
+\subsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static \hyperlink{classmdp__matrix}{mdp\+\_\+matrix} \hyperlink{class_h_m_c_v_t_k_a94c7ed3416594292430064dabd62e504}{spinor} (Fermi\+Class \&psi, \hyperlink{classmdp__site}{mdp\+\_\+site} x, int b)
+\end{DoxyCompactItemize}
+\subsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{classcoefficients}{coefficients} \hyperlink{class_h_m_c_v_t_k_a6b8e384e877ba74f193b28c6799ca837}{coeff}
+\item 
+double \hyperlink{class_h_m_c_v_t_k_a6aa71649ab9cc4d95094b7ff552ae0f0}{bs}
+\item 
+double \hyperlink{class_h_m_c_v_t_k_a8be797b779ed5996e1a2f1b357ac06d0}{bs\+\_\+old}
+\item 
+double \hyperlink{class_h_m_c_v_t_k_a5c0664c21a199655f601be5f7a777612}{fs}
+\item 
+double \hyperlink{class_h_m_c_v_t_k_ae9cfa8c2ba17452e2002c1e127ad6844}{fs\+\_\+old}
+\item 
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k_a73b3049364eea7f9f0b57594ef48dbf6}{s\+\_\+old}
+\item 
+int \hyperlink{class_h_m_c_v_t_k_a881b6b88d434759d784a66eab366a6fd}{numgen}
+\item 
+int \hyperlink{class_h_m_c_v_t_k_a113313b896f2ba1cfbb12fab060e30c3}{accepted}
+\item 
+int \hyperlink{class_h_m_c_v_t_k_ac8beb987b81e5cb2d1efac1c972f7da5}{steps}
+\item 
+vector$<$ \hyperlink{classmdp__matrix}{mdp\+\_\+matrix} $>$ \hyperlink{class_h_m_c_v_t_k_a3462cb4648e6c2994fc69d1f709858ef}{S}
+\item 
+vector$<$ \hyperlink{classmdp__matrix}{mdp\+\_\+matrix} $>$ \hyperlink{class_h_m_c_v_t_k_ae84586a5a07180518b7d0eacf2a90265}{lambda}
+\end{DoxyCompactItemize}
+\subsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+static const int \hyperlink{class_h_m_c_v_t_k_affeaaf576332c14490744646825d1834}{F\+U\+N\+D\+A\+M\+E\+N\+T\+AL} = 0
+\item 
+static const int \hyperlink{class_h_m_c_v_t_k_a6e113bbf213d3912e17705edaad6abdc}{S\+Y\+M\+M\+E\+T\+R\+IC} = 1
+\item 
+static const int \hyperlink{class_h_m_c_v_t_k_affb37f648aabe12dc443875541d592a2}{A\+N\+T\+I\+S\+Y\+M\+M\+E\+T\+R\+IC} = 2
+\item 
+static const int \hyperlink{class_h_m_c_v_t_k_a742969bcc172c8de8bd0b9b7968569dd}{S\+O4} = 14
+\end{DoxyCompactItemize}
+
+
+\subsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a2142d0912c699151a5ff53039ad7389c}\label{class_h_m_c_v_t_k_a2142d0912c699151a5ff53039ad7389c}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{H\+M\+C\+V\+T\+K()}{HMCVTK()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::\hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK} (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{U,  }\item[{Fermi\+Class \&}]{F,  }\item[{\hyperlink{classcoefficients}{coefficients} \&}]{coeff }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_ad4c849424d6ccd199101173c18d5175a}\label{class_h_m_c_v_t_k_ad4c849424d6ccd199101173c18d5175a}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!````~H\+M\+C\+V\+TK@{$\sim$\+H\+M\+C\+V\+TK}}
+\index{````~H\+M\+C\+V\+TK@{$\sim$\+H\+M\+C\+V\+TK}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{$\sim$\+H\+M\+C\+V\+T\+K()}{~HMCVTK()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::$\sim$\hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK} (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+\subsection{Member Function Documentation}
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a9edf4ea22315f10fec9f6270387ed09d}\label{class_h_m_c_v_t_k_a9edf4ea22315f10fec9f6270387ed09d}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!acceptance\+\_\+rate@{acceptance\+\_\+rate}}
+\index{acceptance\+\_\+rate@{acceptance\+\_\+rate}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{acceptance\+\_\+rate()}{acceptance\_rate()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::acceptance\+\_\+rate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a3f7dc73a7b73b5def83ed6aa81b56baf}\label{class_h_m_c_v_t_k_a3f7dc73a7b73b5def83ed6aa81b56baf}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!compute\+\_\+action@{compute\+\_\+action}}
+\index{compute\+\_\+action@{compute\+\_\+action}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{compute\+\_\+action()}{compute\_action()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::compute\+\_\+action (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{U,  }\item[{Gauge\+Class \&}]{V,  }\item[{Fermi\+Class \&}]{F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a907e9d51b216657fec45d44d7ac56646}\label{class_h_m_c_v_t_k_a907e9d51b216657fec45d44d7ac56646}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!compute\+\_\+effective\+\_\+links@{compute\+\_\+effective\+\_\+links}}
+\index{compute\+\_\+effective\+\_\+links@{compute\+\_\+effective\+\_\+links}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{compute\+\_\+effective\+\_\+links()}{compute\_effective\_links()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+void \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::compute\+\_\+effective\+\_\+links (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{U,  }\item[{Gauge\+Class \&}]{V }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a6bd487e5258df0c909fba60c63fe4101}\label{class_h_m_c_v_t_k_a6bd487e5258df0c909fba60c63fe4101}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!compute\+\_\+fermion\+\_\+forces@{compute\+\_\+fermion\+\_\+forces}}
+\index{compute\+\_\+fermion\+\_\+forces@{compute\+\_\+fermion\+\_\+forces}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{compute\+\_\+fermion\+\_\+forces()}{compute\_fermion\_forces()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+void \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::compute\+\_\+fermion\+\_\+forces (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{U,  }\item[{Gauge\+Class \&}]{f\+\_\+U,  }\item[{Fermi\+Class \&}]{sol,  }\item[{Fermi\+Class \&}]{psol }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_adc97bfb3acf63780adb9e7af9ae578a7}\label{class_h_m_c_v_t_k_adc97bfb3acf63780adb9e7af9ae578a7}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!compute\+\_\+fields\+\_\+evolution@{compute\+\_\+fields\+\_\+evolution}}
+\index{compute\+\_\+fields\+\_\+evolution@{compute\+\_\+fields\+\_\+evolution}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{compute\+\_\+fields\+\_\+evolution()}{compute\_fields\_evolution()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+void \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::compute\+\_\+fields\+\_\+evolution (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{U,  }\item[{Gauge\+Class \&}]{p\+\_\+U,  }\item[{Gauge\+Class \&}]{f\+\_\+U,  }\item[{Fermi\+Class \&}]{F,  }\item[{Fermi\+Class \&}]{p\+\_\+F,  }\item[{Fermi\+Class \&}]{f\+\_\+F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a9705754538f098bab074dfa9c5486f54}\label{class_h_m_c_v_t_k_a9705754538f098bab074dfa9c5486f54}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!compute\+\_\+force@{compute\+\_\+force}}
+\index{compute\+\_\+force@{compute\+\_\+force}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{compute\+\_\+force()}{compute\_force()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+void \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::compute\+\_\+force (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{U,  }\item[{Gauge\+Class \&}]{f\+\_\+U,  }\item[{Fermi\+Class \&}]{F,  }\item[{Fermi\+Class \&}]{f\+\_\+F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a2a2f070a2272aa1da44728bce6664357}\label{class_h_m_c_v_t_k_a2a2f070a2272aa1da44728bce6664357}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!compute\+\_\+gaussian\+\_\+momenta@{compute\+\_\+gaussian\+\_\+momenta}}
+\index{compute\+\_\+gaussian\+\_\+momenta@{compute\+\_\+gaussian\+\_\+momenta}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{compute\+\_\+gaussian\+\_\+momenta()}{compute\_gaussian\_momenta()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::compute\+\_\+gaussian\+\_\+momenta (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{U }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_aa623dc6c375c7c0b6afdb9e1ee2f0063}\label{class_h_m_c_v_t_k_aa623dc6c375c7c0b6afdb9e1ee2f0063}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!compute\+\_\+kinetic\+\_\+energy@{compute\+\_\+kinetic\+\_\+energy}}
+\index{compute\+\_\+kinetic\+\_\+energy@{compute\+\_\+kinetic\+\_\+energy}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{compute\+\_\+kinetic\+\_\+energy()}{compute\_kinetic\_energy()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::compute\+\_\+kinetic\+\_\+energy (\begin{DoxyParamCaption}\item[{Gauge\+Class \&}]{p\+\_\+U,  }\item[{Fermi\+Class \&}]{p\+\_\+F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a5babc3c0b3fb9e28ad0ed64a94bb691d}\label{class_h_m_c_v_t_k_a5babc3c0b3fb9e28ad0ed64a94bb691d}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!initialize@{initialize}}
+\index{initialize@{initialize}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{initialize()}{initialize()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+void \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::initialize (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a7b804e29bf066992f30b0fa91ace5126}\label{class_h_m_c_v_t_k_a7b804e29bf066992f30b0fa91ace5126}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!set\+\_\+gaussian@{set\+\_\+gaussian}}
+\index{set\+\_\+gaussian@{set\+\_\+gaussian}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{set\+\_\+gaussian()}{set\_gaussian()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+void \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::set\+\_\+gaussian (\begin{DoxyParamCaption}\item[{Fermi\+Class \&}]{F }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a94c7ed3416594292430064dabd62e504}\label{class_h_m_c_v_t_k_a94c7ed3416594292430064dabd62e504}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!spinor@{spinor}}
+\index{spinor@{spinor}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{spinor()}{spinor()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+static \hyperlink{classmdp__matrix}{mdp\+\_\+matrix} \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::spinor (\begin{DoxyParamCaption}\item[{Fermi\+Class \&}]{psi,  }\item[{\hyperlink{classmdp__site}{mdp\+\_\+site}}]{x,  }\item[{int}]{b }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a2f14e19e4dd44528d4c62d49b9ca32e4}\label{class_h_m_c_v_t_k_a2f14e19e4dd44528d4c62d49b9ca32e4}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!step@{step}}
+\index{step@{step}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{step()}{step()}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+void \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::step (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+C\+H\+E\+C\+K\+ED UP TO H\+E\+R\+E! 
+
+\subsection{Member Data Documentation}
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a113313b896f2ba1cfbb12fab060e30c3}\label{class_h_m_c_v_t_k_a113313b896f2ba1cfbb12fab060e30c3}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!accepted@{accepted}}
+\index{accepted@{accepted}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{accepted}{accepted}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+int \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::accepted}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_affb37f648aabe12dc443875541d592a2}\label{class_h_m_c_v_t_k_affb37f648aabe12dc443875541d592a2}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!A\+N\+T\+I\+S\+Y\+M\+M\+E\+T\+R\+IC@{A\+N\+T\+I\+S\+Y\+M\+M\+E\+T\+R\+IC}}
+\index{A\+N\+T\+I\+S\+Y\+M\+M\+E\+T\+R\+IC@{A\+N\+T\+I\+S\+Y\+M\+M\+E\+T\+R\+IC}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{A\+N\+T\+I\+S\+Y\+M\+M\+E\+T\+R\+IC}{ANTISYMMETRIC}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+const int \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::A\+N\+T\+I\+S\+Y\+M\+M\+E\+T\+R\+IC = 2\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a6aa71649ab9cc4d95094b7ff552ae0f0}\label{class_h_m_c_v_t_k_a6aa71649ab9cc4d95094b7ff552ae0f0}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!bs@{bs}}
+\index{bs@{bs}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{bs}{bs}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+double \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::bs}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a8be797b779ed5996e1a2f1b357ac06d0}\label{class_h_m_c_v_t_k_a8be797b779ed5996e1a2f1b357ac06d0}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!bs\+\_\+old@{bs\+\_\+old}}
+\index{bs\+\_\+old@{bs\+\_\+old}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{bs\+\_\+old}{bs\_old}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+double \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::bs\+\_\+old}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a6b8e384e877ba74f193b28c6799ca837}\label{class_h_m_c_v_t_k_a6b8e384e877ba74f193b28c6799ca837}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!coeff@{coeff}}
+\index{coeff@{coeff}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{coeff}{coeff}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{classcoefficients}{coefficients} \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::coeff}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a5c0664c21a199655f601be5f7a777612}\label{class_h_m_c_v_t_k_a5c0664c21a199655f601be5f7a777612}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!fs@{fs}}
+\index{fs@{fs}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{fs}{fs}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+double \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::fs}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_ae9cfa8c2ba17452e2002c1e127ad6844}\label{class_h_m_c_v_t_k_ae9cfa8c2ba17452e2002c1e127ad6844}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!fs\+\_\+old@{fs\+\_\+old}}
+\index{fs\+\_\+old@{fs\+\_\+old}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{fs\+\_\+old}{fs\_old}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+double \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::fs\+\_\+old}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_affeaaf576332c14490744646825d1834}\label{class_h_m_c_v_t_k_affeaaf576332c14490744646825d1834}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!F\+U\+N\+D\+A\+M\+E\+N\+T\+AL@{F\+U\+N\+D\+A\+M\+E\+N\+T\+AL}}
+\index{F\+U\+N\+D\+A\+M\+E\+N\+T\+AL@{F\+U\+N\+D\+A\+M\+E\+N\+T\+AL}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{F\+U\+N\+D\+A\+M\+E\+N\+T\+AL}{FUNDAMENTAL}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+const int \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::F\+U\+N\+D\+A\+M\+E\+N\+T\+AL = 0\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_ae84586a5a07180518b7d0eacf2a90265}\label{class_h_m_c_v_t_k_ae84586a5a07180518b7d0eacf2a90265}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!lambda@{lambda}}
+\index{lambda@{lambda}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{lambda}{lambda}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+vector$<$\hyperlink{classmdp__matrix}{mdp\+\_\+matrix}$>$ \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::lambda}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a881b6b88d434759d784a66eab366a6fd}\label{class_h_m_c_v_t_k_a881b6b88d434759d784a66eab366a6fd}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!numgen@{numgen}}
+\index{numgen@{numgen}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{numgen}{numgen}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+int \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::numgen}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a3462cb4648e6c2994fc69d1f709858ef}\label{class_h_m_c_v_t_k_a3462cb4648e6c2994fc69d1f709858ef}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!S@{S}}
+\index{S@{S}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{S}{S}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+vector$<$\hyperlink{classmdp__matrix}{mdp\+\_\+matrix}$>$ \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::S}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a73b3049364eea7f9f0b57594ef48dbf6}\label{class_h_m_c_v_t_k_a73b3049364eea7f9f0b57594ef48dbf6}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!s\+\_\+old@{s\+\_\+old}}
+\index{s\+\_\+old@{s\+\_\+old}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{s\+\_\+old}{s\_old}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+\hyperlink{mdp__global__vars_8h_a69d96b74c791e0bbdb888b3913a69450}{mdp\+\_\+real} \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::s\+\_\+old}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a742969bcc172c8de8bd0b9b7968569dd}\label{class_h_m_c_v_t_k_a742969bcc172c8de8bd0b9b7968569dd}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!S\+O4@{S\+O4}}
+\index{S\+O4@{S\+O4}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{S\+O4}{SO4}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+const int \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::S\+O4 = 14\hspace{0.3cm}{\ttfamily [static]}}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_ac8beb987b81e5cb2d1efac1c972f7da5}\label{class_h_m_c_v_t_k_ac8beb987b81e5cb2d1efac1c972f7da5}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!steps@{steps}}
+\index{steps@{steps}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{steps}{steps}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+int \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::steps}
+
+\mbox{\Hypertarget{class_h_m_c_v_t_k_a6e113bbf213d3912e17705edaad6abdc}\label{class_h_m_c_v_t_k_a6e113bbf213d3912e17705edaad6abdc}} 
+\index{H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}!S\+Y\+M\+M\+E\+T\+R\+IC@{S\+Y\+M\+M\+E\+T\+R\+IC}}
+\index{S\+Y\+M\+M\+E\+T\+R\+IC@{S\+Y\+M\+M\+E\+T\+R\+IC}!H\+M\+C\+V\+TK@{H\+M\+C\+V\+TK}}
+\subsubsection{\texorpdfstring{S\+Y\+M\+M\+E\+T\+R\+IC}{SYMMETRIC}}
+{\footnotesize\ttfamily template$<$class Gauge\+Class , class Fermi\+Class $>$ \\
+const int \hyperlink{class_h_m_c_v_t_k}{H\+M\+C\+V\+TK}$<$ Gauge\+Class, Fermi\+Class $>$\+::S\+Y\+M\+M\+E\+T\+R\+IC = 1\hspace{0.3cm}{\ttfamily [static]}}
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+\hyperlink{fermiqcd__hmc__vtk_8h}{fermiqcd\+\_\+hmc\+\_\+vtk.\+h}\end{DoxyCompactItemize}
