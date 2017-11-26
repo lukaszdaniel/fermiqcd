@@ -1,0 +1,8 @@
+Converters/*.exe
+Documentation/manual.aux
+Documentation/manual.log
+Examples/*.exe
+
+.cproject
+.project
+.settings/
