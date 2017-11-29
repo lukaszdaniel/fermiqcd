@@ -17,7 +17,7 @@ using namespace std;
 
 float mdp_jackboot_plain(float *x, void *a);
 
-/// @brief coniatiner class for jackknife and boostrap analysis
+/// @brief container class for jackknife and boostrap analysis
 ///
 /// Example:
 /// @verbatim
