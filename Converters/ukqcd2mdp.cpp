@@ -323,7 +323,7 @@ class _generic_field_file_header {
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  float endianess;
+  unsigned int endianess;
   int  ndim;
   int  box_size[10];
   long bytes_per_site;
