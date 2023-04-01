@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
     
     mdp << "k=" << k << endl;
     //if(k>0) ApeSmearing::smear(U,0.7,1,10);
-    sprintf(filename,"%s.%i.vtk",argv[0],k);
+    snprintf(filename, 128,"%s.%i.vtk",argv[0],k);
     mdp << "top=" << topological_charge_vtk(U,filename) << endl;    
   }
   mdp.close_wormholes();

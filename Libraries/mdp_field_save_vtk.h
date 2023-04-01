@@ -37,9 +37,9 @@ bool mdp_field<T>::save_vtk(string filename,
 
   int max_buffer_size=1024;
   int timeslice;
-  mdp_int header_size=0;
-  mdp_int psize=field_components*Tsize;
-  mdp_int idx_gl, nvol_gl=lattice().nvol_gl, k;
+  // mdp_int header_size=0;
+  // mdp_int psize=field_components*Tsize;
+  mdp_int idx_gl, nvol_gl=lattice().nvol_gl;
   double mytime=mpi.time();
   header.reset();
   if(lattice().ndim<3 || lattice().ndim>4) error("mdp_field::save_vtk only works for ndim=3 and 4");
@@ -59,7 +59,7 @@ bool mdp_field<T>::save_vtk(string filename,
     float fval;
     char tmp[1024];
     char header[1024];
-    int skip_bytes=0;
+    // int skip_bytes=0;
         
     int space_volume=lattice().size()/lattice().size(0);
     int LZ=lattice().size(1);
@@ -72,10 +72,11 @@ bool mdp_field<T>::save_vtk(string filename,
       LX=lattice().size(2);
       t=-1;
     }
-    int fc,fc2;
-    if(component==-1) fc2=fc=field_components; else fc2=fc=component;
+    int fc;
+    // int fc2;
+    // if(component==-1) fc2=fc=field_components; else fc2=fc=component;
 
-    sprintf(header,
+    snprintf(header, 1024,
 	    "# vtk DataFile Version 2.0\n"
 	    "%s\n"
 	    "%s\n"
@@ -99,19 +100,19 @@ bool mdp_field<T>::save_vtk(string filename,
 	  mpi.get(&(large_buffer(process,0,0)), 
 		  buffer_size[process]*field_components, process);
 	}
-	for(k=0; k<field_components; k++)
+	for(int k=0; k<field_components; k++)
 	  short_buffer[k]=large_buffer(process,buffer_ptr[process],k);
 	buffer_ptr[process]++;
 	if(buffer_ptr[process]==buffer_size[process]) buffer_ptr[process]=0; 
       }
       if(process==processIO) {
-	for(k=0; k<field_components; k++)
+	for(int k=0; k<field_components; k++)
 	  short_buffer[k]=*(m+lattice().local(idx_gl)*field_components+k);
       }
       if(process!=NOWHERE) {
 	timeslice=idx_gl/space_volume;
 	if(idx_gl % space_volume==0 && (t<0 || timeslice==t)) {	  
-	  sprintf(header,"\nSCALARS scalars_t%i float\nLOOKUP_TABLE default\n",timeslice);
+	  snprintf(header, 1024,"\nSCALARS scalars_t%i float\nLOOKUP_TABLE default\n",timeslice);
 	  fwrite(header,sizeof(char),strlen(header),fp);
 	}
 	if(t<0 || timeslice==t || lattice().ndim==3) {	  
@@ -122,7 +123,7 @@ bool mdp_field<T>::save_vtk(string filename,
 	      if(fwrite(&fval,sizeof(fval),1,fp)!=1) 
 		error("probably out of disk space");
 	    } else {
-	      sprintf(tmp,"%e ",fval);
+	      snprintf(tmp, 1024,"%e ",fval);
 	      if(fwrite(tmp,strlen(tmp), 1,fp)!=1)
 		error("probably out of disk space");
 	    }
@@ -153,7 +154,7 @@ bool mdp_field<T>::save_vtk(string filename,
       if((buffer_size==max_buffer_size) || 
 	 ((idx_gl==nvol_gl-1) && (buffer_size>0))) {
 	for(idx=0; idx<buffer_size; idx++)
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    local_buffer(idx,k)=*(m+local_index[idx]*field_components+k);
 	mpi.put(buffer_size, processIO, request);
 	mpi.wait(request);

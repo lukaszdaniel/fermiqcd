@@ -38,7 +38,7 @@ bool mdp_field<T>::load(string filename,
   filename=latest_file(filename);
   if(filename=="?") return false;
   mdp_int header_size=0;
-  size_t idx_gl, nvol_gl=lattice().nvol_gl, k;
+  size_t idx_gl, nvol_gl=lattice().nvol_gl;
   size_t psize=field_components*Tsize;
   double mytime=mpi.time();
   bool reversed_header_endianess=false;
@@ -133,7 +133,7 @@ bool mdp_field<T>::load(string filename,
 	exception = true;	
       }
       if((process!=NOWHERE) && (process!=processIO)) {
-	for(k=0; k<field_components; k++)
+	for(int k=0; k<field_components; k++)
 	  large_buffer(process,buffer_size[process],k)=short_buffer[k];
 	buffer_size[process]++;
 	if(buffer_size[process]==max_buffer_size) {
@@ -154,7 +154,7 @@ bool mdp_field<T>::load(string filename,
 	    }
       }
       if(process==processIO) {
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    *(m+lattice().local(idx_gl)*field_components+k)=short_buffer[k];
       }
     }
@@ -176,7 +176,7 @@ bool mdp_field<T>::load(string filename,
 	 ((idx_gl==nvol_gl-1) && (buffer_size>0))) {
 	mpi.get(&(local_buffer(0,0)), buffer_size*field_components, processIO);
 	for(idx=0; idx<buffer_size; idx++)
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    *(m+local_index[idx]*field_components+k)=local_buffer(idx,k);
 	buffer_size=0;
       }

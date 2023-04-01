@@ -33,11 +33,10 @@ class mdp_field_file_header {
     endianess=mdp_local_endianess;
   }
   void set_time() {
-    int i;
     time_t time_and_date;
     time(&time_and_date);
     strcpy(creation_date, ctime(&time_and_date));
-    for(i = strlen(creation_date)+1; i<sizeof(creation_date); i++)
+    for(mdp_uint i = strlen(creation_date)+1; i<sizeof(creation_date); i++)
       creation_date[i] = '\0';
   }
   /// tries to swicth the endianess of the numerical members of the header
@@ -210,12 +209,12 @@ class mdp_field  {
       update();
       if(i==+1) {
 	forallsites(x)
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    tmp(x,k)=(*this)(x-mu,k); // mind here
 	i--;
       } else if(i==-1) {
 	forallsites(x)
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    tmp(x,k)=(*this)(x+mu,k); // mind here
 	i++;
       }
@@ -272,13 +271,12 @@ class mdp_field  {
   void switch_endianess_4bytes() {
     // I am not sure if this workd for complex<double>
     int32_t *p;
-    uint i;
 
     if(Tsize*field_components % 4 !=0) error("Field not % 4");
     mdp_site x(lattice());
     forallsitesandcopies(x) {
       p=(int32_t*) address(x);
-      for(i=0; i<Tsize*field_components/4; i++) {	
+      for(mdp_int i=0; i<Tsize*field_components/4; i++) {	
 	switch_endianess_byte4(*(p+i));
       }
     }

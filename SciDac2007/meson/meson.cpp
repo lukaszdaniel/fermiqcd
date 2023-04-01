@@ -19,7 +19,7 @@ void dump(mdp_field<float>& s,
        LZ=s.lattice().size(2);
   FILE *file=NULL;
   
-  sprintf(header,
+  snprintf(header, 1024,
 	  "# vtk DataFile Version 2.0\n"
 	  "Really cool data\n"
 	  "%s\n"
@@ -49,13 +49,13 @@ void dump(mdp_field<float>& s,
 
         fval=(float)s(p,site_idx);
 	memset(number, 0, sizeof(number));
-	sprintf(number,"%e\n",fval);
+	snprintf(number, 1024,"%e\n",fval);
 	fwrite(number, sizeof(char), strlen(number), file);
 
 	/*
         fval=(float)s(p,1);
 	memset(number, 0, sizeof(number));
-	sprintf(number,"%e\n",fval);
+	snprintf(number, 1024,"%e\n",fval);
 	fwrite(number, sizeof(char), strlen(number), file);	
 	*/
       }
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
 	for(int b=0; b<4; b++)	  
 	  s(x3,t)+=real(phi(x,b,0)*conj(phi(x,b,0)));
       }
-    sprintf(filename,"meson.%.3i.vtk",t);
+    snprintf(filename, 128,"meson.%.3i.vtk",t);
     dump(s,t,filename);
     }
   }

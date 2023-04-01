@@ -13,15 +13,15 @@
 string tostring(int k, int length=5) {
   char buf[128];
   if(length>=5)
-    sprintf(buf,"%.5i",k);
+    snprintf(buf, 128,"%.5i",k);
   else if(length==4)
-    sprintf(buf,"%.4i",k);
+    snprintf(buf, 128,"%.4i",k);
   else if(length==3)
-    sprintf(buf,"%.3i",k);
+    snprintf(buf, 128,"%.3i",k);
   else if(length==2)
-    sprintf(buf,"%.2i",k);
+    snprintf(buf, 128,"%.2i",k);
   else if(length==1)
-    sprintf(buf,"%.1i",k);
+    snprintf(buf, 128,"%.1i",k);
   return string(buf);
 }
 
@@ -39,7 +39,7 @@ vector<string> glob(string pattern) {
   pglob.gl_offs=2;
   if(glob(pattern.c_str(),0,0,&pglob)!=0) v.push_back("?");
   else
-    for(int i=0; i<pglob.gl_pathc; i++)
+    for(mdp_uint i=0; i<pglob.gl_pathc; i++)
       v.push_back(string(pglob.gl_pathv[i]));  
   globfree(&pglob);
   return v;
@@ -66,13 +66,13 @@ string next_to_latest_file(string pattern) {
 
 string tostring(float k) {
   char buf[128];
-  sprintf(buf,"%f",k);
+  snprintf(buf, 128,"%f",k);
   return string(buf);
 }
 
-int is_file(string filename, char permission[]="r") {
+int is_file(string filename, const char permission[]="r") {
   FILE *fp=fopen(filename.c_str(), permission);
-  if(fp>0) {
+  if(fp) {
     fclose(fp);
     return true;
   }
@@ -84,8 +84,11 @@ mdp_field_file_header get_info(string filename, int proc=0) {
   if(ME==proc) {
     FILE *fp=fopen(filename.c_str(), "r");
     if(fp==0) error("Unable to open file");
-    fread(&myheader, sizeof(char),
-	  sizeof(mdp_field_file_header)/sizeof(char), fp);
+    size_t count = sizeof(mdp_field_file_header) / sizeof(char);
+    if (fread(&myheader, sizeof(char), count, fp) != count)
+    {
+      error("Error while reading file");
+    }
     switch_header_endianess(myheader);
     fclose(fp); // fixed by Lucky [lucky@sfu.ca]
   }
@@ -152,7 +155,7 @@ float parse_float(string a, string b, float value=0.0) {
 
 string parse_string(string a, string b, string value="") {
   int i=a.find(string(":")+b),j=0;
-  char cvalue[512];
+  // char cvalue[512];
   if(i<0) return value;
   else {
     i += b.length()+2;
@@ -173,19 +176,19 @@ class mdp_args {
     return args.size();
   }
   bool have(string name) {
-    for(int i=0; i<this->args.size(); i++)
+    for(size_t i=0; i<this->args.size(); i++)
       if(this->args[i]==name || startswith(this->args[i],name+":"))
 	return true;
     return false;
   }
   float get(string name, string key, float value=0.0) {
-    for(int i=0; i<this->args.size(); i++)
+    for(size_t i=0; i<this->args.size(); i++)
       if(startswith(this->args[i],name+":"))
 	return parse_float(this->args[i],key,value);
     return value;
   }
   float get(string name, string key, double value=0.0) {
-    for(int i=0; i<this->args.size(); i++)
+    for(size_t i=0; i<this->args.size(); i++)
       if(startswith(this->args[i],name+":")) {
 	value = parse_float(this->args[i],key,value);
 	break;
@@ -194,7 +197,7 @@ class mdp_args {
     return value;
   }
   int get(string name, string key, int value=0) {
-    for(int i=0; i<this->args.size(); i++)
+    for(size_t i=0; i<this->args.size(); i++)
       if(startswith(this->args[i],name+":")) {
 	value = parse_int(this->args[i],key,value);
 	break;
@@ -206,7 +209,7 @@ class mdp_args {
     int i = value.find('|') ;
     if (i>=0)
       value = value.substr(0,i);
-    for(int i=0; i<this->args.size(); i++)
+    for(size_t i=0; i<this->args.size(); i++)
       if(startswith(this->args[i],name+":")) {
 	value = parse_string(this->args[i],key,value);
 	break;

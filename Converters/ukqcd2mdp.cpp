@@ -133,7 +133,7 @@ void read_t_gauge(short_field &U, char fileprefix[],
   if(precision=='D') file_length=Nspace*Ndim*12*sizeof(double);
 
   // CARE HERE!
-  sprintf(filename, "%sT%02d", fileprefix, time);
+  snprintf(filename, 200, "%sT%02d", fileprefix, time);
 
   printf("Opening file: %s\n", filename);
 
@@ -262,7 +262,7 @@ void read_t_prop(short_field &S, char fileprefix[],
     for(source_colour=0; source_colour<3; source_colour++) {
       
       // Construct filename
-      sprintf(filename, "%s%01d%01dT%02d", fileprefix, source_spin,
+      snprintf(filename, 200, "%s%01d%01dT%02d", fileprefix, source_spin,
 	      source_colour, time);	
       printf("Opening file: %s\n", filename);
 	

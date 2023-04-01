@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
       Q3(x3)=abs((F(x3,0)+F(x3,1)+F(x3,2)-F(x3,3)-F(x3,4)-F(x3,5))/d-
 		 (F(x3,6)+F(x3,7)+F(x3,8)-F(x3,9)-F(x3,10)-F(x3,11))/L[0]/(conf+1));
     cout << "saving vtk file\n";
-    sprintf(name,"qqbar_%i.vtk", conf);
+    snprintf(name, 100,"qqbar_%i.vtk", conf);
     dump(Q3,name);
   }
   // compute correlatiton between three (or four) polyakov lines.

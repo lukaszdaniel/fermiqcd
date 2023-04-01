@@ -138,13 +138,13 @@ int main(int argc, char** argv) {
 
   for(int conf=0; conf<1000; conf++) {
     /* WilsonGaugeAction::heatbath(V,gauge,50);    
-    sprintf(filename,"gauge_from_hot_10x16x10x10.%.3i.fixed.mdp",conf);
+    snprintf(filename, 100,"gauge_from_hot_10x16x10x10.%.3i.fixed.mdp",conf);
     V.save(filename);
 
     U=V;
     ape_smearing(U,0.7,20,10);
     */
-    sprintf(filename,"gauge_from_hot_10x16x10x10.%.3i.fixed.mdp",conf);
+    snprintf(filename, 100,"gauge_from_hot_10x16x10x10.%.3i.fixed.mdp",conf);
     U.load(filename);    
 
     // GaugeFixing::fix(U,GaugeFixing::Landau,20);
@@ -208,7 +208,7 @@ int main(int argc, char** argv) {
     cout << "m=" << m << endl;
     forallsites(x3) Q3(x3)-=m;    
     cout << "saving vtk file\n";
-    sprintf(filename,"energy_density_E2B2_XYT_Wilson5x5.%.3i.vtk", conf);
+    snprintf(filename, 100,"energy_density_E2B2_XYT_Wilson5x5.%.3i.vtk", conf);
     dump(Q3,0,filename);
   }
   

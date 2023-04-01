@@ -12,7 +12,7 @@ void make_slices(int nt, int nx, char* filename) {
   mdp << "success in allocating vector\n";
   char filename2[128];
   U.load(filename);
-  sprintf(filename2,"%s.topological_charge_20.vtk",filename);
+  snprintf(filename2, 128,"%s.topological_charge_20.vtk",filename);
   float tc=topological_charge_vtk(U,filename2,-1);
   mdp << "topological_charge =" << tc << endl;
 }

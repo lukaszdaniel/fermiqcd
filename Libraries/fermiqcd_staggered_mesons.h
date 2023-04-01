@@ -351,10 +351,10 @@ int main(int argc, char **argv) {
 
   for(conf=0; conf<nconf; conf++) {
     c2.conf=conf;
-    sprintf(s, "/home/mdp/data/gauge_improved_b7.4_u0.8629/gauge32x08_b7.4_u0.8629_n%.6i", conf+1);
+    snprintf(s, 256, "/home/mdp/data/gauge_improved_b7.4_u0.8629/gauge32x08_b7.4_u0.8629_n%.6i", conf+1);
  
     U.load(s);
-    sprintf(s, "/home/mdp/data/gauge_improved_b7.4_u0.8629/gauge24x08_b7.4_u0.8629_n%.6i", conf+1);
+    snprintf(s, 256, "/home/mdp/data/gauge_improved_b7.4_u0.8629/gauge24x08_b7.4_u0.8629_n%.6i", conf+1);
     U.save(s);
 
     pU=pow(u0,4);

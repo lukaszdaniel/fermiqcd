@@ -110,7 +110,7 @@ private:
     close_sockets();
 
     char buffer[256];
-    sprintf(buffer, "process %i of %i created with pid=%i",
+    snprintf(buffer, 256, "process %i of %i created with pid=%i",
 	    _processID, _processCount, getpid());
     log(buffer,1);
     
@@ -141,7 +141,7 @@ private:
     }
     
     char buffer[256];
-    sprintf(buffer, "process %i terminating", _processID);
+    snprintf(buffer, 256, "process %i terminating", _processID);
     log(buffer,1);
 
     close_log();
@@ -185,7 +185,7 @@ private:
     for (int source=0; source<_processCount; source++) {
       for (int dest=0; dest<_processCount; dest++) {
 	
-	sprintf(filename,".fifo.%i.%i", source, dest);
+	snprintf(filename, 512,".fifo.%i.%i", source, dest);
 	while(mkfifo(filename,0666)<0) {
 	  if(errno==EEXIST) unlink(filename);
 	  else throw string("PSIM ERROR: unable to mkfifo ")+filename;
@@ -203,7 +203,7 @@ private:
     char buffer[256];    
     for (int source=0; source<_processCount; source++) 
       for (int dest=0; dest<_processCount; dest++) {
-	sprintf(buffer,"_socketFD[%i*%i+%i]={%i,%i}",
+	snprintf(buffer, 256,"_socketFD[%i*%i+%i]={%i,%i}",
 		source,_processCount,dest,
 		_socketFD[_processCount*source+dest][COMM_SEND],
 		_socketFD[_processCount*source+dest][COMM_RECV]);
@@ -253,7 +253,7 @@ private:
 	(processID >= _processCount)) {
       
       char buffer[256];
-      sprintf(buffer, "PSIM ERROR: process %i referencing %i.",
+      snprintf(buffer, 256, "PSIM ERROR: process %i referencing %i.",
 	      _processID, processID);
       log(buffer);
       throw string( buffer );
@@ -323,7 +323,7 @@ private:
     const char cmdSendRecv[2][8] = { "send", "recv" };
     const char stepSendRecv[3][12] = { "starting...", "failed!", "success." };
     
-    sprintf(buffer, "%i %s(%i,%s) %s", 
+    snprintf(buffer, 256, "%i %s(%i,%s) %s", 
 	    _processID, cmdSendRecv[method], 
 	    sourcedestProcessID, tag.c_str(), stepSendRecv[step]);
     log(buffer);
@@ -362,7 +362,7 @@ private:
     char filename[512];
     counter++;
     int destIndex = get_dest_index(destProcessID);
-    sprintf(filename,".fifo.%i.%i.%i",_processID,destProcessID,counter);
+    snprintf(filename, 512,".fifo.%i.%i.%i",_processID,destProcessID,counter);
     int fd = open(filename,O_WRONLY|O_CREAT,0700);    
     if (write(fd, pdataToSend, dataSize) != dataSize) {
       log("PSIM ERROR: failure to write to socket");
@@ -412,7 +412,7 @@ private:
       log("PSIM ERROR: timeout error in readin from socket");
       throw string("PSIM ERROR: timeout error in readin from socket");
     }
-    sprintf(filename,".fifo.%i.%i.%i",sourceProcessID,_processID,counter);
+    snprintf(filename, 512,".fifo.%i.%i.%i",sourceProcessID,_processID,counter);
     int fd = open(filename,O_RDONLY);
     if(read(fd,(char*) pdataToReceive,dataSize)!=dataSize) {
       log("PSIM ERROR: timeout error in readin from socket");
@@ -455,7 +455,7 @@ private:
 	recv_buffer(sourceProcessID, buffer, size);
 	buffer[size] = 0;
 	tagReceived = buffer;
-	delete buffer;
+	delete[] buffer;
 
 	if (tagReceived == tag) {
 	  recv_buffer(sourceProcessID, &size, sizeof(size));
@@ -489,7 +489,7 @@ private:
     if (begEnd == LOG_BEGIN) be = (char*)"BEGIN";
     else  be = (char*)"END";
     
-    sprintf(buffer, "%i %s [%s]", _processID, be, method.c_str());
+    snprintf(buffer, 256, "%i %s [%s]", _processID, be, method.c_str());
     log(buffer);
   }
     
@@ -639,7 +639,7 @@ public:
 	    T *pdataToSend, mdp_int dataSize) {
     logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);  
     vector<char> data(sizeof(T)*dataSize);
-    for(mdp_int k=0; k<data.size(); k++) 
+    for(mdp_uint k=0; k<data.size(); k++) 
       data[k]=((char*)pdataToSend)[k];
     send_binary(destProcessID, dataTag, data);    
     logSendRecv(destProcessID, dataTag,LOG_SR_SEND, LOG_SR_SUCCESS);
@@ -689,7 +689,7 @@ public:
       log("PSIM ERROR: recv invalid data size");
       throw string("PSIM ERROR: recv invalid data size");
     }
-    for(mdp_int k=0; k<data.size(); k++) 
+    for(mdp_uint k=0; k<data.size(); k++) 
       ((char*)pdataToReceive)[k]=data[k];
     logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_SUCCESS);   
   }
@@ -820,7 +820,7 @@ public:
     T total=0;
     dataList=collect(PROCESS_PARENT,item);
     if(_processID==PROCESS_PARENT) 
-      for (int i=0; i<dataList.size(); i++) {
+      for (size_t i=0; i<dataList.size(); i++) {
 	total += dataList[i];   
       }
     broadcast(PROCESS_PARENT,total);

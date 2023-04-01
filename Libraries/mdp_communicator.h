@@ -83,7 +83,7 @@ class mdp_communicator : public mdp_log {
     add(c,nproc());
     char buffer[256];
     for(i=0; i<nproc(); i++) {
-      sprintf(buffer,
+      snprintf(buffer, 256
 	      "* Process %i stats: CPU=%.2f%% PROCESS=%.2f%% COMM=%.2f%%\n",
 	      i, a[i],b[i],c[i]);
       (*this) << buffer;
@@ -420,14 +420,14 @@ class mdp_communicator : public mdp_log {
   }
   void add(mdp_matrix &a) {
 #ifndef NO_POSIX
-    for(mdp_int i=0; i<a.size(); i++) 
+    for(mdp_uint i=0; i<a.size(); i++) 
       a.address()[i]=nodes->add(a.address()[i]);
 #endif
   }
   void add(mdp_matrix *a, mdp_int length) {
 #ifndef NO_POSIX
     for(mdp_int j=0; j<length; j++)
-      for(mdp_int i=0; i<a[j].size(); i++) 
+      for(mdp_uint i=0; i<a[j].size(); i++) 
 	a[j].address()[i]=nodes->add(a[j].address()[i]);
 #endif
   }
@@ -512,7 +512,7 @@ class mdp_communicator : public mdp_log {
     add(c,nproc());
     char buffer[256];
     for(i=0; i<nproc(); i++) {
-      sprintf(buffer,
+      snprintf(buffer, 256,
 	      "* Process %i stats: CPU=%.2f%% PROCESS=%.2f%% COMM=%.2f%%\n",
 	      i, a[i],b[i],c[i]);
       (*this) << buffer;

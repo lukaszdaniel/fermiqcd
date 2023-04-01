@@ -55,7 +55,10 @@ void getcpuusage(double &user, double &total) {
   s[3]=t[3];
   fp=fopen("/proc/stat", "r");
   if(!fp) return;
-  fscanf(fp, "cpu  %i%i%i%i",&t[0],&t[1],&t[2],&t[3]);
+  if (fscanf(fp, "cpu  %i%i%i%i",&t[0],&t[1],&t[2],&t[3]) != 4)
+  {
+    error("Error while reading cpu stats");
+  }
   fclose(fp);
   usage[0]=(t[0]-s[0]);
   usage[1]=(t[1]-s[1]);

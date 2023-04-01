@@ -19,7 +19,7 @@ void dump(mdp_field<float>& s,
        LZ=s.lattice().size(2);
   FILE *file=NULL;
   
-  sprintf(header,
+  snprintf(header, 1024,
 	  "# vtk DataFile Version 2.0\n"
 	  "Really cool data\n"
 	  "%s\n"
@@ -49,13 +49,13 @@ void dump(mdp_field<float>& s,
 
         fval=(float)s(p,site_idx);
 	memset(number, 0, sizeof(number));
-	sprintf(number,"%e\n",fval);
+	snprintf(number, 1024,"%e\n",fval);
 	fwrite(number, sizeof(char), strlen(number), file);
 
 	/*
         fval=(float)s(p,1);
 	memset(number, 0, sizeof(number));
-	sprintf(number,"%e\n",fval);
+	snprintf(number, 1024,"%e\n",fval);
 	fwrite(number, sizeof(char), strlen(number), file);	
 	*/
       }
@@ -97,11 +97,11 @@ int main(int argc, char** argv) {
       s(x3,1)=imag(phi(x,0));
       s(x3,2)=abs(phi(x,0));
     }
-    sprintf(filename,"staggered.real.%.3i.vtk",t);
+    snprintf(filename, 128,"staggered.real.%.3i.vtk",t);
     dump(s,0,filename);
-    sprintf(filename,"staggered.imag.%.3i.vtk",t);
+    snprintf(filename, 128,"staggered.imag.%.3i.vtk",t);
     dump(s,1,filename);
-    sprintf(filename,"staggered.abs.%.3i.vtk",t);
+    snprintf(filename, 128,"staggered.abs.%.3i.vtk",t);
     dump(s,2,filename);
 
     forallsites(x) if(imag(phi(x,0))!=0) cout << x << endl;

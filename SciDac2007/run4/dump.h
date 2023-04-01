@@ -15,7 +15,7 @@ void dump(mdp_field<float>& s,
        LZ=s.lattice().size(2);
   FILE *file=NULL;
   
-  sprintf(header,
+  snprintf(header, 1024,
 	  "# vtk DataFile Version 2.0\n"
 	  "Really cool data\n"
 	  "%s\n"
@@ -45,7 +45,7 @@ void dump(mdp_field<float>& s,
         fval=(float)s(p,site_idx);
 	if(bASCII){
           memset(number, 0, sizeof(number));
-          sprintf(number,"%e\n",fval);
+          snprintf(number, 1024,"%e\n",fval);
 	  fwrite(number, sizeof(char), strlen(number), file);
         }
         else{	

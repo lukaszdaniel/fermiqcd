@@ -60,7 +60,8 @@ class mdp_lattice {
     mdp_int buffer[2];
     mdp_int *dynamic_buffer;
     mdp_int length;
-    int dp, process, process2, np, idx;
+    int dp, process, np, idx;
+    // int process2;
     mdp_request request;
     
     // sending length ///////////////////////////
@@ -482,7 +483,7 @@ class mdp_lattice {
     int process, new_idx;
     delete[] nx;
     for(process=0; process<Nproc; process++) if(process!=ME) {
-      if(len_to_send[process]!=0) delete[] to_send[process];
+      if(len_to_send[process][0] + len_to_send[process][1] != 0) delete[] to_send[process];
     }
     for(new_idx=0; new_idx<nvol; new_idx++) {
       delete[] dw[new_idx];

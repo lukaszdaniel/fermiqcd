@@ -18,7 +18,7 @@ void mdp_field<T>::load(char filename[],
 			mdp_int header_size,
 			mdp_int (*sort_x)(mdp_lattice&,mdp_int),
 			int auto_switch_endianess) {
-  mdp_int idx_gl, nvol_gl=lattice().nvol_gl, k;
+  mdp_int idx_gl, nvol_gl=lattice().nvol_gl;
   double mytime=mpi.time();
   int try_switch_endianess=false;
   if(ME==processIO) {
@@ -56,7 +56,7 @@ void mdp_field<T>::load(char filename[],
 	    error("unexpected end of file");
 	}
 	if((process!=NOWHERE) && (process!=processIO)) {
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    large_buffer(process,buffer_size[process],k)=short_buffer[k];
 	  buffer_size[process]++;
 	  if(buffer_size[process]==max_buffer_size) {
@@ -77,7 +77,7 @@ void mdp_field<T>::load(char filename[],
 	      }
 	}
 	if(process==processIO) {
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    *(m+lattice().lg[idx_gl]*field_components+k)=short_buffer[k];
 	}
       }
@@ -99,7 +99,7 @@ void mdp_field<T>::load(char filename[],
 	   ((idx_gl==nvol_gl-1) && (buffer_size>0))) {
 	  mpi.get(&(local_buffer(0,0)), buffer_size*field_components, processIO);
 	  for(idx=0; idx<buffer_size; idx++)
-	    for(k=0; k<field_components; k++)
+	    for(int k=0; k<field_components; k++)
 	      *(m+local_index[idx]*field_components+k)=local_buffer(idx,k);
 	  buffer_size=0;
 	}
@@ -125,7 +125,7 @@ void mdp_field<T>::save(char filename[],
 			mdp_int header_size,
 			mdp_int (*sort_x)(mdp_lattice&,mdp_int),
 			char *mode) {
-  mdp_int idx_gl, nvol_gl=lattice().nvol_gl, k;
+  mdp_int idx_gl, nvol_gl=lattice().nvol_gl;
   double mytime=mpi.time();
     if(ME==processIO) {
       mdp_int *buffer_size=new mdp_int[Nproc];
@@ -158,13 +158,13 @@ void mdp_field<T>::save(char filename[],
 	    mpi.get(&(large_buffer(process,0,0)), 
 		    buffer_size[process]*field_components, process);
 	  }
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    short_buffer[k]=large_buffer(process,buffer_ptr[process],k);
 	  buffer_ptr[process]++;
 	  if(buffer_ptr[process]==buffer_size[process]) buffer_ptr[process]=0; 
 	}
 	if(process==processIO) {
-	  for(k=0; k<field_components; k++)
+	  for(int k=0; k<field_components; k++)
 	    short_buffer[k]=*(m+lattice().lg[idx_gl]*field_components+k);
 	}
 	if(process!=NOWHERE) {
@@ -198,7 +198,7 @@ void mdp_field<T>::save(char filename[],
 	if((buffer_size==max_buffer_size) || 
 	   ((idx_gl==nvol_gl-1) && (buffer_size>0))) {
 	  for(idx=0; idx<buffer_size; idx++)
-	    for(k=0; k<field_components; k++)
+	    for(int k=0; k<field_components; k++)
 	      local_buffer(idx,k)=*(m+local_index[idx]*field_components+k);
 	  mpi.put(buffer_size, processIO, request);
 	  mpi.wait(request);

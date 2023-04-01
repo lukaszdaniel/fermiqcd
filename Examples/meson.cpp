@@ -165,7 +165,7 @@ int main(int argc, char** argv) {
   // load it if it exists already
   light_quark["kappa"]=lkappa;
   light_quark["c_{sw}"]=lcsw;
-  sprintf(output,"fp_%s_l_kappa%.4f_csw%.4f",input,lkappa,lcsw);
+  snprintf(output, 1024,"fp_%s_l_kappa%.4f_csw%.4f",input,lkappa,lcsw);
   if(is_file(output) && !clean) 
     Sl.load(output);
   else {
@@ -177,7 +177,7 @@ int main(int argc, char** argv) {
   // load it if it exists already
   heavy_quark["kappa"]=hkappa;
   heavy_quark["c_{sw}"]=hcsw;
-  sprintf(output,"fp_%s_l_kappa%.4f_csw%.4f",input,hkappa,hcsw);
+  snprintf(output, 1024, "fp_%s_l_kappa%.4f_csw%.4f",input,hkappa,hcsw);
   if(is_file(output) && !clean) 
     Sh.load(output);
   else {

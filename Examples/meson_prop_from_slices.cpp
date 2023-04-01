@@ -32,7 +32,7 @@ void meson_prop_from_slice(int nt, int nx, char* filename) {
 	    if(w!=0) Q(y)+=real(w*trace(S(x,a,b)*hermitian(S(x,d,c))));
 	  }
   }
-  sprintf(filename2,"%s.meson.vtk",filename);
+  snprintf(filename2, 128,"%s.meson.vtk",filename);
   Q.save_vtk(filename2);
 }
 

@@ -3,14 +3,14 @@
 #include <stdlib.h>
 // #include "fermiqcd_cg_inverter.hpp"
 
-#include <sstream>
-const char* output(string file, int num){
-  std::ostringstream ostr;
-  string os;
-  ostr << file << num << ends;
-  os=ostr.str();
-  return os.c_str();
-}
+// #include <sstream>
+// const char* output(string file, int num){
+//   std::ostringstream ostr;
+//   string os;
+//   ostr << file << num << ends;
+//   os=ostr.str();
+//   return os.c_str();
+// }
 
 class parameters {
 public:

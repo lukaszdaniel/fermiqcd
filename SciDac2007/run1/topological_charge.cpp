@@ -82,7 +82,7 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
 	Q3(x3)=Q4(x4);
       }
       cout << "dumping...\n";
-      sprintf(filename,"topological.%.3i.%.3i.%.3i.vtk",code,i1,t);
+      snprintf(filename, 128,"topological.%.3i.%.3i.%.3i.vtk",code,i1,t);
       dump(Q3,0,filename);
     }  
   }
@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
   for(int k=0; k<1000; k++) { 
     cout << k << endl;
     ModifiedWilsonGaugeAction::heatbath(U,gauge,1000);
-    sprintf(filename,"gauge_32x16x16x16.%.5i.mdp",k);
+    snprintf(filename, 128,"gauge_32x16x16x16.%.5i.mdp",k);
     U.save(filename);
     V=U;
     save_top_charge(V, k, 1, 20, 0, 1);

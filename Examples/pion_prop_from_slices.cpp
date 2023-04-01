@@ -28,7 +28,7 @@ void pion_prop_from_slice(int nt, int nx, char* filename) {
 	  for(int j=0; j<S.nc; j++)
 	    Q(y)+=pow(abs(S(x,a,b,i,j)),2);
   }  
-  sprintf(filename2,"%s.pion.vtk",filename);
+  snprintf(filename2, 128,"%s.pion.vtk",filename);
   Q.save_vtk(filename2);
 }
 

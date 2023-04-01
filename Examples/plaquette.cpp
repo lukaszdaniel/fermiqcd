@@ -21,7 +21,7 @@ void compute_plaquette(int nt, int nx, string filename) {
   }
   
   /// FIX FILE NAMES depends on T, beta, and K
-  sprintf(output,"%s.plaquette.vtk",filename.c_str());
+  snprintf(output, 512,"%s.plaquette.vtk",filename.c_str());
   q.save_vtk(output,0);
 }
 

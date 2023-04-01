@@ -254,7 +254,7 @@ void read_t_prop(short_field &S, char fileprefix[],
     for(source_colour=0; source_colour<3; source_colour++) {
       
       // Construct filename
-      sprintf(filename, "%s%01d%01dT%02d", fileprefix, source_spin,
+      snprintf(filename, 200, "%s%01d%01dT%02d", fileprefix, source_spin,
 	      source_colour, time);	
       printf("Opening file: %s\n", filename);
 	

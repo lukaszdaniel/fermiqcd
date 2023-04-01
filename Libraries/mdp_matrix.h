@@ -204,7 +204,7 @@ inline void mdp_matrix::allocate() {
 #endif 
     m=new mdp_complex[imax];
   if(imax!=0 && m==0) error("mdp_matrix::allocate()\nOut of memory");
-  memset(m,0,imax*sizeof(mdp_complex));
+  // memset(m,0,imax*sizeof(mdp_complex));
 }
 
 inline void mdp_matrix::deallocate() {
@@ -774,7 +774,8 @@ mdp_matrix sin(const mdp_matrix& a) {
   tmp=t1;
   // pruintf("\n");
   do { 
-    t1=((mdp_real) -1.0/(++i)/(++i))*t1*a*a;
+    t1 = ((mdp_real)-1.0 / (++i)) * t1 * a * a;
+    t1 *= (mdp_real)1.0 / (++i);
     tmp+=t1;
   } while (max(t1)>mdp_precision);
   return tmp;
@@ -789,7 +790,8 @@ mdp_matrix cos(const mdp_matrix& a) {
   t1=mdp_identity(a.rows());
   tmp=t1;
   do { 
-    t1=((mdp_real) -1.0/(++i)/(++i))*t1*a*a;
+    t1 = ((mdp_real)-1.0 / (++i)) * t1 * a * a;
+    t1 *= (mdp_real)1.0 / (++i);
       tmp+=t1;
   } while (max(t1)>mdp_precision);
   return tmp;

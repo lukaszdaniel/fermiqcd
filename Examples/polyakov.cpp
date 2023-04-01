@@ -39,9 +39,9 @@ void polyakov(int nt, int nx, string filename) {
     q(y,1)=imag(z);
   }
   /// FIX FILE NAMES depends on T, beta, and K
-  sprintf(output,"%s.polyakov.real.vtk",filename.c_str());
+  snprintf(output, 512,"%s.polyakov.real.vtk",filename.c_str());
   q.save_vtk(output,-1,0,0,false);
-  sprintf(output,"%s.polyakov.real.vtk",filename.c_str());
+  snprintf(output, 512,"%s.polyakov.real.vtk",filename.c_str());
   q.save_vtk(output,-1,1,0,false);
 }
 

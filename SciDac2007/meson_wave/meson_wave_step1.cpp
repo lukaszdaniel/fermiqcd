@@ -88,7 +88,7 @@ int main(int argc, char** argv) {
 	}
       }
     }
-    sprintf(filename,"wave.%.3i.mdp",k);
+    snprintf(filename, 128,"wave.%.3i.mdp",k);
     s.save(filename);
   }
   mdp.close_wormholes();

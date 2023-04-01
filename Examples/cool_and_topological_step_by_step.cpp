@@ -13,7 +13,7 @@ void test_gauge(int nt, int nx, char* filename) {
   U.load(filename);
   // U.switch_endianess_4bytes();
   for(int k=0; k<=20; k+=5) {
-      sprintf(filename2,"%s.topological_charge_%i.vtk",filename,k);
+      snprintf(filename2, 200,"%s.topological_charge_%i.vtk",filename,k);
       float tc=topological_charge_vtk(U,filename2,0);
       mdp << "topological_charge=" << tc << endl;
       ApeSmearing::smear(U,0.7,5,10);

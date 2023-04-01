@@ -19,7 +19,7 @@ void dump(mdp_field<float>& s,
        LZ=s.lattice().size(2);
   FILE *file=NULL;
   
-  sprintf(header,
+  snprintf(header, 1024,
 	  "# vtk DataFile Version 2.0\n"
 	  "Really cool data\n"
 	  "%s\n"
@@ -49,13 +49,13 @@ void dump(mdp_field<float>& s,
 
         fval=(float)s(p,site_idx);
 	memset(number, 0, sizeof(number));
-	sprintf(number,"%e\n",fval);
+	snprintf(number, 1024,"%e\n",fval);
 	fwrite(number, sizeof(char), strlen(number), file);
 
 	/*
         fval=(float)s(p,1);
 	memset(number, 0, sizeof(number));
-	sprintf(number,"%e\n",fval);
+	snprintf(number, 1024,"%e\n",fval);
 	fwrite(number, sizeof(char), strlen(number), file);	
 	*/
       }
@@ -105,23 +105,23 @@ int main(int argc, char** argv) {
       s(x3,8)=sqrt(real(phi(x,0,0)*conj(phi(x,0,0))+phi(x,1,0)*conj(phi(x,1,0))+phi(x,2,0)*conj(phi(x,2,0))+phi(x,3,0)*conj(phi(x,3,0))));
 
     }
-    sprintf(filename,"wilson.s0.real.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s0.real.%.3i.vtk",t);
     dump(s,0,filename);
-    sprintf(filename,"wilson.s0.imag%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s0.imag%.3i.vtk",t);
     dump(s,1,filename);
-    sprintf(filename,"wilson.s1.real.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s1.real.%.3i.vtk",t);
     dump(s,2,filename);
-    sprintf(filename,"wilson.s1.imag.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s1.imag.%.3i.vtk",t);
     dump(s,3,filename);
-    sprintf(filename,"wilson.s2.real.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s2.real.%.3i.vtk",t);
     dump(s,4,filename);
-    sprintf(filename,"wilson.s2.imag.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s2.imag.%.3i.vtk",t);
     dump(s,5,filename);
-    sprintf(filename,"wilson.s3.real.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s3.real.%.3i.vtk",t);
     dump(s,6,filename);
-    sprintf(filename,"wilson.s3.imag.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.s3.imag.%.3i.vtk",t);
     dump(s,7,filename);
-    sprintf(filename,"wilson.squared.%.3i.vtk",t);
+    snprintf(filename, 128,"wilson.squared.%.3i.vtk",t);
     dump(s,8,filename);
   };
 

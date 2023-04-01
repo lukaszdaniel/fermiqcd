@@ -27,7 +27,7 @@ int main(int argc, char** argv) {
   mdp_complex z;
   for(int k=0; k<1000; k++) {
     cout << k << endl;
-    sprintf(filename,"wave.%.3i.mdp",k);
+    snprintf(filename, 128,"wave.%.3i.mdp",k);
     s.load(filename);
     forallsites(x) {
       z=0;
@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
       
     }
     forallsites(x) Q(x)=pow(abs(sum(x)),2)/(k+1)+1e-12;
-    sprintf(filename,"meson_wave_plus.%.3i.vtk",k);
+    snprintf(filename, 128,"meson_wave_plus.%.3i.vtk",k);
     dump(Q,0,filename);
   }
   mdp.close_wormholes();

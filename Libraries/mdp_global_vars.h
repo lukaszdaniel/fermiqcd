@@ -44,6 +44,28 @@ typedef double       mdp_real;
 typedef float        mdp_real;
 #endif
 
-typedef int mdp_int;
+    /** @brief Integer value
+     *
+     * Suitable for large integer values
+     *
+     * Used for ranges (roughly) +/- 2 bln
+     */
+    using mdp_int = int32_t;
+
+    /** @brief unsigned int
+     *
+     * Suitable for large non-negative values
+     *
+     * Used for ranges from 0 to (roughly) 4 bln
+     */
+    using mdp_uint = uint32_t;
+
+    /** @brief Short unsigned int
+     *
+     * Suitable for small non-negative values
+     *
+     * Used for ranges 0 to 255
+     */
+    using mdp_suint = uint8_t;
 
 void _mpi_error_message(string, string, int);

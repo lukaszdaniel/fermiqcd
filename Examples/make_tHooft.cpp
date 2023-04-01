@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     for(int mu=0; mu<U.ndim; mu++)
       U(x,mu)=exp(-I*A(x,mu));
     
-    sprintf(filename,"%s.vtk",argv[0]);
+    snprintf(filename, 128,"%s.vtk",argv[0]);
     mdp << "top=" << topological_charge_vtk(U,filename) << endl;    
   
   mdp.close_wormholes();

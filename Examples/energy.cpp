@@ -22,7 +22,7 @@ void compute_energy(int nt, int nx, string filename) {
   }
   
   /// FIX FILE NAMES depends on T, beta, and K
-  sprintf(output,"%s.e2b2.vtk",filename.c_str());
+  snprintf(output, 512,"%s.e2b2.vtk",filename.c_str());
   q.save_vtk(output,0);
 }
 

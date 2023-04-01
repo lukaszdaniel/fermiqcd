@@ -7,7 +7,7 @@
 void dump(mdp_field<int>& s, string filename="default.vtk") {
   char header[1024], number[1024];
   int LX=s.lattice().size(0), LY=s.lattice().size(1), LZ=s.lattice().size(2);
-  sprintf(header,
+  snprintf(header, 1024,
 	  "# vtk DataFile Version 2.0\n"
 	  "Really cool data\n"
 	  "ASCII\n"
@@ -28,7 +28,7 @@ void dump(mdp_field<int>& s, string filename="default.vtk") {
     for(int j=0; j<LY; j++)
       for(int k=0; k<LZ; k++) {
 	p.set(i,j,k);
-	sprintf(number,"%i\n", (int) s(p));
+	snprintf(number, 1024,"%i\n", (int) s(p));
 	write(sfd, number, strlen(number));
       }
   setFileUnlock(sfd);

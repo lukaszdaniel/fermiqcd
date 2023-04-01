@@ -10,7 +10,7 @@ vector<string> glob(string pattern) {
   pglob.gl_offs=2;
   if(glob(pattern.c_str(),0,0,&pglob)!=0) v.push_back("?");
   else
-    for(int i=0; i<pglob.gl_pathc; i++)
+    for(mdp_uint i=0; i<pglob.gl_pathc; i++)
       v.push_back(string(pglob.gl_pathv[i]));
   globfree(&pglob);
   return v;
