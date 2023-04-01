@@ -1,0 +1,41 @@
+name: Build fermiQCD
+
+on: [push, pull_request]
+
+concurrency:
+  group: ${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  unix:
+    name: FermiQCD on ${{ matrix.os }} with ${{ matrix.compiler }}.
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        compiler: [ g++, clang++ ]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Compile
+        run: CXX=${{matrix.compiler}} make
+
+  # windows:
+  #   name: FermiQCD on windows.
+  #   runs-on: windows-latest
+  #   timeout-minutes: 60
+
+  #   steps:
+  #     - name: Checkout Repository
+  #       uses: actions/checkout@v2
+
+  #     - name: Compile
+  #       run: make

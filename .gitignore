@@ -1,0 +1,13 @@
+Documentation/manual.aux
+Documentation/manual.log
+Doxygen/html/*
+Doxygen/latex/*
+**/*.exe
+**/*.o
+progs/qcdsun
+
+.cproject
+.project
+.settings/
+Libraries/libmdpFermi.a
+tests/*.out
