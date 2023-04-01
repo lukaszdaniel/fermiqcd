@@ -14,7 +14,7 @@
 void set_cold(gauge_field &U) {
   begin_function("set_cold");
   mdp << "Creating a cold gauge configuration" << '\n';
-  register site x(U.lattice());
+  site x(U.lattice());
   int mu;
   forallsites(x) 
     for(mu=0; mu<U.ndim; mu++) 
@@ -27,7 +27,7 @@ void set_cold(gauge_field &U) {
 void set_hot(gauge_field &U) { 
   begin_function("set_hot");
   mdp << "Creating a hot gauge configuration" << '\n';
-  register site x(U.lattice());
+  site x(U.lattice());
   int mu;
   forallsites(x) 
     for(mu=0; mu<U.ndim; mu++)

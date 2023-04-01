@@ -361,10 +361,10 @@ class mdp_complex_field : public mdp_field<mdp_complex> {
   inline friend mdp_real relative_residue(mdp_complex_field& p,
 					  mdp_complex_field& q,
 					  int parity=EVENODD) {
-    register double residue=0, num=0, den=0;
+    double residue=0, num=0, den=0;
     mdp_int i_min=p.physical_local_start(parity);
-    register mdp_int i_max=q.physical_local_stop(parity);
-    register mdp_int i=i_min;
+    mdp_int i_max=q.physical_local_stop(parity);
+    mdp_int i=i_min;
     //    this needs optimization.
     for(;i<i_max;) {
       num+=abs2(p[i]);

@@ -78,14 +78,14 @@ class em_field: public mdp_complex_field {
 #ifdef CHECK_ALL
     if(mu>=nu) error("em(x,mu,nu) for mu>=nu is not defined"); 
 #endif
-    register int k=ordered_index(mu,nu);
+    int k=ordered_index(mu,nu);
     return mdp_matrix(address(x,k*nc*nc),nc,nc);
   }
   inline mdp_complex& operator()(site x, int mu, int nu, int i, int j) {
 #ifdef CHECK_ALL
     if(mu>=nu) error("em(x,mu,nu) for mu>=nu is not defined"); 
 #endif
-    register int k=ordered_index(mu,nu);
+    int k=ordered_index(mu,nu);
     return *(address(x,(k*nc+i)*nc+j));
   }
   inline const mdp_complex& operator()(site x, int mu, int nu, 
@@ -93,7 +93,7 @@ class em_field: public mdp_complex_field {
 #ifdef CHECK_ALL
     if(mu>=nu) error("em(x,mu,nu) for mu>=nu is not defined"); 
 #endif
-    register int k=ordered_index(mu,nu);
+    int k=ordered_index(mu,nu);
     return *(address(x,(k*nc+i)*nc+j));
   }
 

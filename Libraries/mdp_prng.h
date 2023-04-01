@@ -147,10 +147,10 @@ public:
   /// returns a random SU(n) matrix using Cabibbo-Marinari
   mdp_matrix SU(int n) {
     mdp_matrix tmp, small;
-    register int i,j;
-    register float alpha, sin_alpha;
-    register float a0, a1, a2, a3;
-    register float phi, cos_theta, sin_theta;
+    int i,j;
+    float alpha, sin_alpha;
+    float a0, a1, a2, a3;
+    float phi, cos_theta, sin_theta;
     if(n==1) { 
       tmp.dimension(1,1);
       alpha=2.0*Pi*this->plain();

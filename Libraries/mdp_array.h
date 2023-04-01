@@ -74,7 +74,7 @@ class mdp_array {
 
   inline void dimension(const uint* p) {
     if(flag!=FREE) error("mdp_array::dimension(...)\nCannot redimension a HARD object");
-    register uint i;
+    uint i;
     for(imax=1, i=0; i<nc; i++) imax*=(c[i]=p[i]); 
     for(i=nc; i<IMAX; i++) c[i]=1; 
     if(m!=0) delete[] m;
@@ -159,20 +159,20 @@ class mdp_array {
 
   inline friend mdp_array operator+ (const mdp_array& a, const mdp_array& b) {
     mdp_array tmp(a.c);
-    for(register uint i=0; i<a.imax; i++) tmp[i]=a[i]+b[i];
+    for(uint i=0; i<a.imax; i++) tmp[i]=a[i]+b[i];
     return tmp;
   }
 
   inline friend mdp_array operator- (const mdp_array& a, const mdp_array& b) {
     mdp_array tmp(a.c);
-    for(register uint i=0; i<a.imax; i++) tmp[i]=a[i]-b[i];
+    for(uint i=0; i<a.imax; i++) tmp[i]=a[i]-b[i];
     return tmp;
   }
 
   template<class T2>
   inline friend mdp_array operator* (T2 x, const mdp_array& a) {
     mdp_array tmp(a.c);
-    for(register uint i=0; i<a.imax; i++) tmp[i]=a[i]*x;
+    for(uint i=0; i<a.imax; i++) tmp[i]=a[i]*x;
     return tmp;
   }
 
@@ -180,7 +180,7 @@ class mdp_array {
   inline friend mdp_array applytoall (const mdp_array& a, 
 				      T (*fptr)(T,void*), void *x=0) {
     mdp_array tmp(a.c);
-    for(register uint i=0; i<a.imax; i++) 
+    for(uint i=0; i<a.imax; i++) 
       tmp[i]=(*fptr)(a[i],x);
     return tmp;
   }
@@ -189,7 +189,7 @@ class mdp_array {
   inline friend mdp_array applytoall (const mdp_array& a, const mdp_array& b, 
 				       T (*fptr)(T,T,void*), void* x=0) {
     mdp_array tmp(a.c);
-    for(register uint i=0; i<a.imax; i++) 
+    for(uint i=0; i<a.imax; i++) 
       tmp[i]=(*fptr)(a[i], b[i],x);
     return tmp;
   }

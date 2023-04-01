@@ -39,17 +39,17 @@ class FermiCloverActionSSE2 {
 		    coefficients &coeff,
 		    int parity=EVENODD) { 
 
-    register int   ndim=psi_in.lattice().ndim;
-    register int   nspin=psi_in.nspin;
-    register int   nc=psi_in.nc;
-    register mdp_real kappa_t=0;
-    register mdp_real kappa_s=0;
-    register mdp_real r_t;
-    register mdp_real r_s;
-    register mdp_real cSW;
-    register mdp_real c_E;
-    register mdp_real c_B;
-    register int sign;
+    int   ndim=psi_in.lattice().ndim;
+    int   nspin=psi_in.nspin;
+    int   nc=psi_in.nc;
+    mdp_real kappa_t=0;
+    mdp_real kappa_s=0;
+    mdp_real r_t;
+    mdp_real r_s;
+    mdp_real cSW;
+    mdp_real c_E;
+    mdp_real c_B;
+    int sign;
 
     if(coeff.has_key("kappa")) kappa_s=kappa_t=coeff["kappa"];
     if(coeff.has_key("kappa_t")) kappa_t=coeff["kappa_t"];

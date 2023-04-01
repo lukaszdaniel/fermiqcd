@@ -42,17 +42,17 @@ class FermiCloverActionSlow {
     if(psi_in.nc!=U.nc) error("fermiqcd_fermi_algorithms/mul_Q_ONE: gauge and spinor have different nc");
     if(parity!=EVENODD) error("parity must be EVENODD here");
     
-    register int   ndim=psi_in.lattice().ndim;
-    register int   nspin=psi_in.nspin;
-    register int   nc=psi_in.nc;
-    register mdp_real kappa_t=0;
-    register mdp_real kappa_s=0;
-    register mdp_real r_t;
-    register mdp_real r_s;
-    register mdp_real cSW;
-    register mdp_real c_E;
-    register mdp_real c_B;
-    register mdp_real rsign;
+    int   ndim=psi_in.lattice().ndim;
+    int   nspin=psi_in.nspin;
+    int   nc=psi_in.nc;
+    mdp_real kappa_t=0;
+    mdp_real kappa_s=0;
+    mdp_real r_t;
+    mdp_real r_s;
+    mdp_real cSW;
+    mdp_real c_E;
+    mdp_real c_B;
+    mdp_real rsign;
 
     if(coeff.has_key("kappa")) kappa_s=kappa_t=coeff["kappa"];
     if(coeff.has_key("kappa_t")) kappa_t=coeff["kappa_t"];
@@ -67,7 +67,7 @@ class FermiCloverActionSlow {
     if(coeff.has_key("sign")) rsign=coeff["sign"];   else rsign=+1;
 
     site           x(psi_in.lattice());
-    register int   a,mu,nu;
+    int   a,mu,nu;
     
     mdp_matrix psi_up(nspin,nc);
     mdp_matrix psi_dw(nspin,nc);
@@ -143,17 +143,17 @@ class FermiCloverActionFast {
     if(psi_in.nc!=U.nc) error("fermiqcd_fermi_algorithms/mul_Q_TWO: gauge and spinor have different nc");
     if(parity!=EVENODD) error("parity must be EVENODD here");
 
-    register int   ndim=psi_in.lattice().ndim;
-    register int   nspin=psi_in.nspin;
-    register int   nc=psi_in.nc;
-    register mdp_real kappa_t=0;
-    register mdp_real kappa_s=0;
-    register mdp_real r_t;
-    register mdp_real r_s;
-    register mdp_real cSW;
-    register mdp_real c_E;
-    register mdp_real c_B;
-    register mdp_real rsign;
+    int   ndim=psi_in.lattice().ndim;
+    int   nspin=psi_in.nspin;
+    int   nc=psi_in.nc;
+    mdp_real kappa_t=0;
+    mdp_real kappa_s=0;
+    mdp_real r_t;
+    mdp_real r_s;
+    mdp_real cSW;
+    mdp_real c_E;
+    mdp_real c_B;
+    mdp_real rsign;
 
     if(coeff.has_key("kappa")) kappa_s=kappa_t=coeff["kappa"];
     if(coeff.has_key("kappa_t")) kappa_t=coeff["kappa_t"];
@@ -168,7 +168,7 @@ class FermiCloverActionFast {
     if(coeff.has_key("sign")) rsign=coeff["sign"];   else rsign=+1;
     
     site           x(psi_in.lattice());
-    register int   i,j,a,mu,nu,inc,anc,bnc;
+    int   i,j,a,mu,nu,inc,anc,bnc;
     mdp_real         coeff_kappa=0;
     mdp_real         coeff_sum=0;
     mdp_complex        coeff_dif=0;

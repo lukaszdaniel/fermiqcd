@@ -36,11 +36,11 @@ class DwFermiActionSSE2 {
     if(psi_in.nspin!=4) error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: nspin!=4");
     if(psi_in.nc!=U_in.nc) error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
     
-    register int    ndim=psi_in.lattice().ndim;
-    register int    nspin=psi_in.nspin;
-    register int    nc=psi_in.nc;
-    register int    L5=psi_in.L5;
-    register mdp_real m_5,m_f,sign;
+    int    ndim=psi_in.lattice().ndim;
+    int    nspin=psi_in.nspin;
+    int    nc=psi_in.nc;
+    int    L5=psi_in.L5;
+    mdp_real m_5,m_f,sign;
     if(coeff.has_key("m_5")) m_5=coeff["m_5"];
     else error("coefficients m_5 undeclared");
     if(coeff.has_key("m_f")) m_f=coeff["m_f"];
@@ -49,8 +49,8 @@ class DwFermiActionSSE2 {
     else sign=1;
     
     // check the sign and the 6.0 here
-    register mdp_real kappa5=0.5/(m_5-6.0);
-    register mdp_real kappaf=-m_f*kappa5;
+    mdp_real kappa5=0.5/(m_5-6.0);
+    mdp_real kappaf=-m_f*kappa5;
     
 #if !defined(USE_DOUBLE_PRECISION)
 
