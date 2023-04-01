@@ -4,5 +4,6 @@ all:
 
 doc:
 	cd Doxygen; doxygen Doxyfile
+
 clean:
 	rm */*.exe */*.o */*~

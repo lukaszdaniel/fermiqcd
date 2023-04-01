@@ -1,5 +1,4 @@
-CXX     = g++ -O2
-CXXFLAGS =
+CXXFLAGS = -O2 -std=c++17 -Wall -Werror -Wno-error=switch -Wno-error=sign-compare -Wno-error=attributes -pedantic
 
 all:
 	${CXX} ${CXXFLAGS} ukqcd2mdp.cpp -o ukqcd2mdp.exe

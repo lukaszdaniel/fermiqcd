@@ -8,9 +8,9 @@
 # If you know how to write a better makefile send it to me please!
 #
 
-CXX     = g++ -I../Libraries 
 # Basic compilation flags (-O2 for speed)
-CXXFLAGS = -O3
+CXXFLAGS_INC := -I../Libraries
+CXXFLAGS = -O2 -std=c++17 -Wall -Werror -Wno-error=switch -Wno-error=sign-compare -Wno-error=attributes -pedantic $(CXXFLAGS_INC)
 # Flags for double precision and sse (P4 optiomizations)
 #CXXFLAGS = -DSSE2 -O3
 # Flags for parallel (mpi) double precision and sse
