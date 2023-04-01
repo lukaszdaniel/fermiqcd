@@ -113,7 +113,7 @@ void operator_staggered_meson(staggered_field &out,
 	  paths+=U(x,P[1][0],P[1][1])*U(x1,P[2][0],P[2][1])*U(x1.hop(P[2][0],P[2][1]),P[0][0],P[0][1]);
 	  x1=x.hop(P[2][0],P[2][1]);
 	  paths+=U(x,P[2][0],P[2][1])*U(x1,P[0][0],P[0][1])*U(x1.hop(P[0][0],P[0][1]),P[1][0],P[1][1]);
-	  x1==x.hop(P[2][0],P[2][1]);
+	  x1=x.hop(P[2][0],P[2][1]);
 	  paths+=U(x,P[2][0],P[2][1])*U(x1,P[1][0],P[1][1])*U(x1.hop(P[1][0],P[1][1]),P[0][0],P[0][1]);
 	  paths/=(3*2);
 	}

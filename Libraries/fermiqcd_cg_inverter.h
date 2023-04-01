@@ -64,7 +64,7 @@ class CG2 {
 
 
     // int mulQ=1;
-    int guesszero=1,debug=0;
+    // int guesszero=1,debug=0;
 
     psi_out=0; 
     r=psi_in;

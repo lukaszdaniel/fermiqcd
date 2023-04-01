@@ -297,7 +297,7 @@ public:
 				FermiClass &p_F,
 				FermiClass &f_F) {
 			
-    int dynamical_fermions = coeff["dynamical_fermions"];
+    // int dynamical_fermions = coeff["dynamical_fermions"];
     GaugeClass nf_U(f_U);
     FermiClass nf_F(f_F);
     mdp_real dt = coeff["timestep"];
@@ -353,7 +353,7 @@ public:
 		     FermiClass &F,
 		     FermiClass &f_F) {
     
-    int dynamical_fermions = coeff["dynamical_fermions"];
+    // int dynamical_fermions = coeff["dynamical_fermions"];
     mdp_site x(U.lattice());
     mdp_matrix staple(U.nc, U.nc);
     GaugeClass Udag(U.lattice(), U.nc), utmp(U.lattice(), U.nc);
