@@ -1,7 +1,10 @@
-#include"stdio.h"
-#include"math.h"
-#include "complex.h"
-#include "time.h"
+#include <cstdio>
+#include <cmath>
+#include <complex>
+#include <ctime>
+#include <cstring>
+
+using namespace std;
 
 template<class T>
 void switch_endianess_byte4(T &a) {
@@ -19,7 +22,7 @@ void switch_endianess_byte4(T &a) {
   } else printf("error endianess\n");
 }
 
-#define Complex complex<float>
+#define Complex std::complex<float>
 
 #define TRUE  1;
 #define FALSE 0;
@@ -56,7 +59,7 @@ typedef int type32;
 /* 1. Header comes first    */
 
 typedef struct {
-  type32 magic_number;               /* Identifies file format */
+  uint32_t magic_number;               /* Identifies file format */
   type32 dims[4];                    /* Full lattice dimensions */
   char   time_stamp[MAX_TIME_STAMP]; 
                                      /* Date and time stamp - used to
@@ -81,7 +84,7 @@ class _generic_field_file_header {
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  float endianess;
+  unsigned int endianess;
   int  ndim;
   int  box_size[10];
   long bytes_per_site;
@@ -95,6 +98,11 @@ int number(char *x) {
   return 10*(((int) x[0])-48) + (((int) x[1]) -48); 
 };
 
+void error(const char s[]) {
+	printf("ERROR: %s\n", s);
+	exit(1);
+}
+
 class short_field {
 public:
   Complex *m;
@@ -103,7 +111,7 @@ public:
   short_field() {
     m=0;
   };
-  int initialize(int x1, int x2, int x3, int a=1, int b=1, int c=1, int d=1) {
+  void initialize(int x1, int x2, int x3, int a=1, int b=1, int c=1, int d=1) {
     size=x1*x2*x3*a*b*c*d;
     dim[0]=x1;
     dim[1]=x2;
@@ -138,8 +146,9 @@ int main(int argc, char **argv) {
   };
   sscanf(argv[2],"%ix%ix%ix%i", nx, nx+1, nx+2, nx+3);
 
-  int x0, x1, x2, x3, mu, Ndim=4;
-  long position;
+  int x0, x1, x2, x3, mu;
+  // int Ndim=4;
+  // long position;
   long time0= clock()/CLOCKS_PER_SEC;
 
   if(strcmp(argv[1],"-gauge")==0) {
@@ -152,7 +161,10 @@ int main(int argc, char **argv) {
 
     gauge_header               MILC_header;
     _generic_field_file_header myheader;
-    fread(&MILC_header, sizeof(gauge_header)/sizeof(char),1,MILC_fp);
+    size_t gauge_hader_size = sizeof(gauge_header) / sizeof(char);
+    if(fread(&MILC_header, gauge_hader_size, 1, MILC_fp) != gauge_hader_size) {
+      error("Error while reading from file");
+    }
 
     printf("%x\n", MILC_header.magic_number);
 
@@ -194,19 +206,23 @@ int main(int argc, char **argv) {
     short_field U;
     U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
 
-    int matrix_size=72;
-    char buffer[matrix_size];  // assumes single precision: 72 = 9 x 2 x 4
+    unsigned int matrix_size=72;
+    // char buffer[matrix_size];  // assumes single precision: 72 = 9 x 2 x 4
     for(x0=0; x0<nx[0]; x0++) {
       for(x3=0; x3<nx[3]; x3++) 
 	for(x2=0; x2<nx[2]; x2++) 
 	  for(x1=0; x1<nx[1]; x1++) 
 	    for(mu=1; mu<=4; mu++) 
-	      fread(&U(x1,x2,x3, mu % 4,0,0), matrix_size, 1, MILC_fp);
+	      if(fread(&U(x1, x2, x3, mu % 4, 0, 0), matrix_size, 1, MILC_fp) != matrix_size) {
+	      error("Error while reading from file");
+	      }
       
     if(MILC_header.magic_number==0x874e0000) 
-      for(mu=0; mu<U.size; mu++) {
+      {
+        for(mu=0; mu<U.size; mu++) {
 	switch_endianess_byte4(*((long*) U.m+2*mu));
 	switch_endianess_byte4(*((long*) U.m+2*mu+1));
+      }
       }
 
       fwrite(U.m,U.size, sizeof(Complex), MDP_fp);
@@ -214,7 +230,7 @@ int main(int argc, char **argv) {
     fclose(MILC_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
-    printf("Done in %i secs.\n", clock()/CLOCKS_PER_SEC-time0);
+    printf("Done in %li secs.\n", clock()/CLOCKS_PER_SEC-time0);
   } else {
     printf("I am sorry conversion of propagators not implemnetd yet!\n");
   };

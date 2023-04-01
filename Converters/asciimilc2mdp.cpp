@@ -1,8 +1,8 @@
-#include "stdlib.h"
-#include "stdio.h"
-#include "math.h"
-#include "string.h"
-#include "time.h"
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
+#include <cstring>
+#include <ctime>
 
 #define TRUE  1;
 #define FALSE 0;
@@ -11,7 +11,7 @@ struct _generic_field_file_header {
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  float endianess;
+  unsigned int endianess;
   int  ndim;
   int  box_size[10];
   long bytes_per_site;
@@ -24,6 +24,11 @@ struct _generic_field_file_header {
 int number(char *x) {
   return 10*(((int) x[0])-48) + (((int) x[1]) -48); 
 };
+
+void error(const char s[]) {
+	printf("ERROR: %s\n", s);
+	exit(1);
+}
 
 int nx[4];
 
@@ -72,9 +77,12 @@ int main(int argc, char **argv) {
     long a,b[4];
     char s[5][20];
 
-    fscanf(TONY_fp, "%i%s%s%s%s%s%i%i%i%i",&a,s[0],s[1],s[2],s[3],s[4],b,b+1,b+2,b+3);
+		if (fscanf(TONY_fp, "%li%s%s%s%s%s%li%li%li%li", &a, s[0], s[1], s[2],
+				s[3], s[4], b, b + 1, b + 2, b + 3) != 10) {
+			error("Error while reading from file");
+		}
 
-    printf("%i\n%s %s %s %s %s\n%i %i %i %i\n",a,s[0],s[1],s[2],s[3],s[4], b[0],b[1],b[2], b[3]);
+    printf("%li\n%s %s %s %s %s\n%li %li %li %li\n",a,s[0],s[1],s[2],s[3],s[4], b[0],b[1],b[2], b[3]);
 
     float buffer[18]; // this assumes data in single precision: 72 = 9 x 2 x 4
     for(x0=0; x0<nx[0]; x0++) 
@@ -84,9 +92,12 @@ int main(int argc, char **argv) {
 	    for(mu=1; mu<=4; mu++) {
 	      for(i=0; i<3; i++)
 		for(j=0; j<3; j++) {
-		  fscanf(TONY_fp, "%f%f", 
-			 &(buffer[6*i+2*j]), 
-			 &(buffer[6*i+2*j+1]));
+		  if (fscanf(TONY_fp, "%f%f",
+											&(buffer[6 * i + 2 * j]),
+											&(buffer[6 * i + 2 * j + 1]))
+											!= 2) {
+										error("Error while reading from file");
+									}
 		};
 
 	      // this map to the MDP ordering
@@ -97,7 +108,7 @@ int main(int argc, char **argv) {
     fclose(TONY_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
-    printf("Done in %i secs.\n", clock()/CLOCKS_PER_SEC-time0);
+    printf("Done in %li secs.\n", clock()/CLOCKS_PER_SEC-time0);
   } else if(strcmp(argv[1],"-quark")==0) {
 
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
@@ -127,7 +138,11 @@ int main(int argc, char **argv) {
 	  for(x1=0; x1<nx[1]; x1++) { 
 	    for(a=0; a<4; a++) 
 	      for(i=0; i<3; i++)
-		fscanf(TONY_fp,"%f%f", &buffer[6*a+2*i], &buffer[6*a+2*i+1]);
+		if (fscanf(TONY_fp, "%f%f",
+										&buffer[6 * a + 2 * i],
+										&buffer[6 * a + 2 * i + 1]) != 2) {
+									error("Error while reading from file");
+								}
 
 	    // this map to the MDP ordering
 	    position=(((x0*nx[1]+x1)*nx[2]+x2)*nx[3]+x3);
@@ -138,7 +153,7 @@ int main(int argc, char **argv) {
     fclose(TONY_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
-    printf("Done in %i secs.\n", clock()/CLOCKS_PER_SEC-time0);
+    printf("Done in %li secs.\n", clock()/CLOCKS_PER_SEC-time0);
   } else if(strcmp(argv[1],"-gauge:d")==0) {
     
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
@@ -169,9 +184,12 @@ int main(int argc, char **argv) {
 	    for(mu=0; mu<4; mu++) {
 	      for(i=0; i<3; i++)
 		for(j=0; j<3; j++) {
-		  fscanf(TONY_fp, "%lf%lf", 
-			 &(buffer[6*j+2*i]), 
-			 &(buffer[6*j+2*i+1]));
+		  if (fscanf(TONY_fp, "%lf%lf",
+											&(buffer[6 * j + 2 * i]),
+											&(buffer[6 * j + 2 * i + 1]))
+											!= 2) {
+										error("Error while reading from file");
+									}
 		  buffer[6*j+2*i+1]*=-1;
 		};
 	      // this map to the MDP ordering
@@ -182,7 +200,7 @@ int main(int argc, char **argv) {
     fclose(TONY_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
-    printf("Done in %i secs.\n", clock()/CLOCKS_PER_SEC-time0);
+    printf("Done in %li secs.\n", clock()/CLOCKS_PER_SEC-time0);
   } else if(strcmp(argv[1],"-quark:d")==0) {
     
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
@@ -212,7 +230,11 @@ int main(int argc, char **argv) {
 	  for(x1=0; x1<nx[1]; x1++) { 
 	    for(a=0; a<4; a++) 
 	      for(i=0; i<3; i++)
-		fscanf(TONY_fp,"%lf%lf", &buffer[6*a+2*i], &buffer[6*a+2*i+1]);
+		if (fscanf(TONY_fp, "%lf%lf",
+										&buffer[6 * a + 2 * i],
+										&buffer[6 * a + 2 * i + 1]) != 2) {
+									error("Error while reading from file");
+								}
 	    // this map to the MDP ordering
 	    position=(((x0*nx[1]+x1)*nx[2]+x2)*nx[3]+x3);
 	    fseek(MDP_fp, 192*position+offset, SEEK_SET);
@@ -222,7 +244,7 @@ int main(int argc, char **argv) {
     fclose(TONY_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
-    printf("Done in %i secs.\n", clock()/CLOCKS_PER_SEC-time0);
+    printf("Done in %li secs.\n", clock()/CLOCKS_PER_SEC-time0);
   };
 };
 

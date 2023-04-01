@@ -117,8 +117,10 @@ void read_t_gauge(short_field &U, char fileprefix[],
   unsigned char   *buffer;     // array to store the raw data 
   long            file_length; // file length in bytes (one time slice)
   long            bytes_read;  // monitor how many bytes we read
-  int x1,x2,x3,mu,a,b,c,muf;
-  long buf_index, site_index;  // indices for the temporary buffer 
+  int x1,x2,x3,mu,a,b,muf;
+  // int c;
+  long buf_index;  // indices for the temporary buffer 
+  // long site_index;
   FILE *fp;                    // pointer to input file
 
   // Check input makes sense -- ie that precision is correct
@@ -151,10 +153,12 @@ void read_t_gauge(short_field &U, char fileprefix[],
 
   // Do block swapping if necessary
   if(swap=='Y') 
+    {
     if(precision == 'F') {
       block_swap((float *)buffer,file_length/sizeof(float));
     } else {
       block_swap_double((double *)buffer, file_length/sizeof(double));
+    }
     }
 
   // for checking...
@@ -239,8 +243,10 @@ void read_t_prop(short_field &S, char fileprefix[],
   unsigned char *buffer;
   long bytes_to_read;
   long bytes_read;
-  int source_spin, source_colour, x0,x1,x2,x3;
-  int sink_spin, sink_colour,comp;
+  int source_spin, source_colour, x1,x2,x3;
+  // int x0;
+  int sink_spin, sink_colour;
+  // int comp;
   long buffer_index;
 
   printf("Reading propagator on timeslice %d ...\n", time);
@@ -277,11 +283,13 @@ void read_t_prop(short_field &S, char fileprefix[],
 
       // Do block swapping if necessary
       if(swap=='Y')
-	if(precision='F'){
+      {
+	if(precision=='F'){
 	  block_swap((float *)buffer,bytes_to_read/sizeof(float));
 	} else {
 	  block_swap_double((double *)buffer,bytes_to_read/sizeof(double));
 	}
+      }
 	
       buffer_index=0;
       for(x3=0; x3<nx[3]; x3++)

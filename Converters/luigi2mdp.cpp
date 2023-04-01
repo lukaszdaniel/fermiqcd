@@ -1,10 +1,11 @@
-#include "stdlib.h"
-#include "stdio.h"
-#include "math.h"
-#include "string.h"
-#include "time.h"
-#include "complex.h"
+#include <cstdlib>
+#include <cstdio>
+#include <cmath>
+#include <cstring>
+#include <ctime>
+#include <complex>
 
+using namespace std;
 
 template<class T>
 void switch_endianess_byte4(T &a) {
@@ -33,7 +34,7 @@ class _generic_field_file_header {
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  unsigned long endianess;
+  unsigned int endianess;
   int  ndim;
   int  box_size[10];
   long bytes_per_site;
@@ -46,6 +47,11 @@ class _generic_field_file_header {
 int number(char *x) {
   return 10*(((int) x[0])-48) + (((int) x[1]) -48); 
 };
+
+void error(const char s[]) {
+	printf("ERROR: %s\n", s);
+	exit(1);
+}
 
 class short_field {
 public:
@@ -122,7 +128,7 @@ int main(int argc, char **argv) {
     short_field U;
     U.initialize(nx[1], nx[2], nx[3], 4, nc, nc);
 
-    int matrix_size=nc*nc*sizeof(Complex);
+    unsigned int matrix_size=nc*nc*sizeof(Complex);
 
     for(x0=0; x0<nx[0]; x0++) {
       for(x3=0; x3<nx[3]; x3++) 
@@ -135,7 +141,10 @@ int main(int argc, char **argv) {
 		case 2: nu=2; break;
 		case 3: nu=1; break;
 	      }
-	      fread(&U(x1,x2,x3, nu,0,0), matrix_size, 1, LUIGI_fp);
+	      if(fread(&U(x1, x2, x3, nu, 0, 0), matrix_size, 1,
+									LUIGI_fp) != matrix_size) {
+								error("Error while reading from file");
+							}
 	    }
       
       fwrite(U.m, U.size, sizeof(Complex), MDP_fp);
