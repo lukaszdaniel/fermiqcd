@@ -8,20 +8,22 @@
 // run program with no arguments for help
 
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <complex.h>
-#include <time.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <complex>
+#include <ctime>
 
-#define Complex complex<float>
+using namespace std;
+
+#define Complex std::complex<float>
 #define Nspace  nx[1]*nx[2]*nx[3]
 #define Ndim 4
 
 //#define TRUE  1;
 //#define FALSE 0;
 
-void error(char s[]) {
+void error(const char s[]) {
   printf("ERROR: %s\n", s);
   exit(1);
 };
@@ -87,7 +89,7 @@ public:
   ~short_field() {
     if(m!=0) delete[] m;
   };
-  int initialize(int x1, int x2, int x3, int a=1, int b=1, int c=1, int d=1) {
+  void initialize(int x1, int x2, int x3, int a=1, int b=1, int c=1, int d=1) {
     size=x1*x2*x3*a*b*c*d;
     dim[0]=x1;
     dim[1]=x2;
@@ -408,7 +410,7 @@ int main(int argc, char **argv) {
   printf("Output file size is %li bytes.\n",
 	 myheader.bytes_per_site*myheader.sites+offset);
   printf("Output file name is: %s\n", argv[4]);
-  printf("Done in %i secs.\n", clock()/CLOCKS_PER_SEC-time0);
+  printf("Done in %li secs.\n", clock()/CLOCKS_PER_SEC-time0);
 
   return 0; // success
 };

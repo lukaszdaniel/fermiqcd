@@ -204,7 +204,6 @@ class mdp_field  {
   void shift(int i, int mu) {
     mdp_field tmp(lattice(),field_components);
     mdp_site x(lattice());
-    int k;
     while(i!=0) {
       update();
       if(i==+1) {
