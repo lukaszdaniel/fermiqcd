@@ -1,6 +1,5 @@
 #
 #
-# -DLINUX if on Linux/Unix NO -DLINUX on cygwin
 # -DUSE_DOUBLE_PRECISION for double precision (the most efficient option)
 # -DSSE2 -O3 for pentium4 optimizations
 # -DPARALLEL is you have mpi then compile with mpiCC and run with mpirun 
@@ -9,37 +8,37 @@
 # If you know how to write a better makefile send it to me please!
 #
 
-CC     = g++ -I../Libraries 
+CXX     = g++ -I../Libraries 
 # Basic compilation flags (-O2 for speed)
-CFLAGS = -DLINUX -O3
+CXXFLAGS = -O3
 # Flags for double precision and sse (P4 optiomizations)
-#CFLAGS = -DLINUX -DSSE2 -O3
+#CXXFLAGS = -DSSE2 -O3
 # Flags for parallel (mpi) double precision and sse
-#CFLAGS = -DPARALLEL -DLINUX -DUSE_DOUBLE_PRECISION -DSSE2 -O2
+#CXXFLAGS = -DPARALLEL -DUSE_DOUBLE_PRECISION -DSSE2 -O2
 
 all:
-	${CC} ${CFLAGS} example01.cpp -o example01.exe
-	${CC} ${CFLAGS} example02.cpp -o example02.exe
-	${CC} ${CFLAGS} example03.cpp -o example03.exe
-	${CC} ${CFLAGS} example04.cpp -o example04.exe
-	${CC} ${CFLAGS} example05.cpp -o example05.exe
-	${CC} ${CFLAGS} example06.cpp -o example06.exe
-	${CC} ${CFLAGS} example07.cpp -o example07.exe
-	${CC} ${CFLAGS} example08.cpp -o example08.exe
-	${CC} ${CFLAGS} example09.cpp -o example09.exe
-	${CC} ${CFLAGS} example10.cpp -o example10.exe
-	${CC} ${CFLAGS} example11.cpp -o example11.exe
-	${CC} ${CFLAGS} example12.cpp -o example12.exe
-	${CC} ${CFLAGS} example13.cpp -o example13.exe
-	${CC} ${CFLAGS} example14.cpp -o example14.exe
-	${CC} ${CFLAGS} example15.cpp -o example15.exe
-	${CC} ${CFLAGS} test_sse2.cpp -o test_sse2.exe
-	${CC} ${CFLAGS} test_actions.cpp -o test_actions.exe
-	${CC} ${CFLAGS} gauge.cpp        -o gauge.exe
-	${CC} ${CFLAGS} meson.cpp        -o meson.exe
-	${CC} ${CFLAGS} ks_meson.cpp     -o ks_meson.exe
-	${CC} ${CFLAGS} make_meson.cpp   -o make_meson.exe
-	${CC} ${CFLAGS} make_meson2.cpp  -o make_meson2.exe
+	${CXX} ${CXXFLAGS} example01.cpp -o example01.exe
+	${CXX} ${CXXFLAGS} example02.cpp -o example02.exe
+	${CXX} ${CXXFLAGS} example03.cpp -o example03.exe
+	${CXX} ${CXXFLAGS} example04.cpp -o example04.exe
+	${CXX} ${CXXFLAGS} example05.cpp -o example05.exe
+	${CXX} ${CXXFLAGS} example06.cpp -o example06.exe
+	${CXX} ${CXXFLAGS} example07.cpp -o example07.exe
+	${CXX} ${CXXFLAGS} example08.cpp -o example08.exe
+	${CXX} ${CXXFLAGS} example09.cpp -o example09.exe
+	${CXX} ${CXXFLAGS} example10.cpp -o example10.exe
+	${CXX} ${CXXFLAGS} example11.cpp -o example11.exe
+	${CXX} ${CXXFLAGS} example12.cpp -o example12.exe
+	${CXX} ${CXXFLAGS} example13.cpp -o example13.exe
+	${CXX} ${CXXFLAGS} example14.cpp -o example14.exe
+	${CXX} ${CXXFLAGS} example15.cpp -o example15.exe
+	${CXX} ${CXXFLAGS} test_sse2.cpp -o test_sse2.exe
+	${CXX} ${CXXFLAGS} test_actions.cpp -o test_actions.exe
+	${CXX} ${CXXFLAGS} gauge.cpp        -o gauge.exe
+	${CXX} ${CXXFLAGS} meson.cpp        -o meson.exe
+	${CXX} ${CXXFLAGS} ks_meson.cpp     -o ks_meson.exe
+	${CXX} ${CXXFLAGS} make_meson.cpp   -o make_meson.exe
+	${CXX} ${CXXFLAGS} make_meson2.cpp  -o make_meson2.exe
 
 test:
 	./test_actions.exe

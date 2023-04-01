@@ -1,9 +1,9 @@
-CC     = g++ -O2
-CFLAGS =
+CXX     = g++ -O2
+CXXFLAGS =
 
 all:
-	${CC} ${CFLAGS} ukqcd2mdp.cpp -o ukqcd2mdp.exe
-	${CC} ${CFLAGS} milc2mdp.cpp -o milc2mdp.exe
-	${CC} ${CFLAGS} asciimilc2mdp.cpp -o asciimilc2mdp.exe
-	${CC} ${CFLAGS} duncan2mdp.cpp -o duncan2mdp.exe
-	${CC} ${CFLAGS} luigi2mdp.cpp -o luigi2mdp.exe
+	${CXX} ${CXXFLAGS} ukqcd2mdp.cpp -o ukqcd2mdp.exe
+	${CXX} ${CXXFLAGS} milc2mdp.cpp -o milc2mdp.exe
+	${CXX} ${CXXFLAGS} asciimilc2mdp.cpp -o asciimilc2mdp.exe
+	${CXX} ${CXXFLAGS} duncan2mdp.cpp -o duncan2mdp.exe
+	${CXX} ${CXXFLAGS} luigi2mdp.cpp -o luigi2mdp.exe
