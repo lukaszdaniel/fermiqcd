@@ -1,7 +1,7 @@
 #include "fermiqcd.h"
 #include "mdp_all.h"
 #include "dump.h"
-#include "fermiqcd_topological_charge.hpp"
+#include "run4/fermiqcd_topological_charge.hpp"
 
 int main(int argc, char** argv) {
   mdp.open_wormholes(argc,argv);
@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
   WilsonGaugeAction::heatbath(U,gauge,100);
   for(int conf=0; conf<100; conf++) {
     WilsonGaugeAction::heatbath(U,gauge,10);
-    ape_smearing(U,0.7,5,10);
+    ApeSmearing::smear(U,0.7,5,10);
     compute_em_field(U);
 
     x.set(0,L[1]/4,L[2]/2,L[3]/2);
@@ -73,7 +73,7 @@ int main(int argc, char** argv) {
 		 (F(x3,6)+F(x3,7)+F(x3,8)-F(x3,9)-F(x3,10)-F(x3,11))/L[0]/(conf+1));
     cout << "saving vtk file\n";
     snprintf(name, 100,"qqbar_%i.vtk", conf);
-    dump(Q3,name);
+    dump(Q3,0, name);
   }
   // compute correlatiton between three (or four) polyakov lines.
   // average over gauge configurations.

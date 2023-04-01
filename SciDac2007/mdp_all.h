@@ -1,18 +1,20 @@
 // BEGIN FILE: mdp_all.h
 // C headers
 #include "sys/types.h"
+#ifndef _WIN64
 #include "sys/socket.h"
+#endif
 #include "sys/time.h"
-#include "time.h"
+#include <ctime>
 #include "netinet/in.h"
 #include "arpa/inet.h"
-#include "errno.h"
+#include <cerrno>
 #include "fcntl.h"
 #include "netdb.h"
 #include "signal.h"
-#include "stdio.h"
-#include "stdlib.h"
-#include "string.h"
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 #include "sys/stat.h"
 #include "sys/uio.h"
 #include "unistd.h"
@@ -29,13 +31,13 @@
 #else
 #include "sys/select.h"
 #endif
- 
+
 // C++ headers and STL headers
-#include "iostream"
-#include "string"
-#include "vector"
-#include "deque"
-#include "map"
+#include <iostream>
+#include <string>
+#include <vector>
+#include <deque>
+#include <map>
 using namespace std;
  
 #ifndef HAVE_INET_NTOP
@@ -261,6 +263,7 @@ private:
 void* thread_function(void *p) {
   Thread* pt=(Thread*) p;
   pt->run();
+  return pt;
 }
 
 Thread::Thread() {

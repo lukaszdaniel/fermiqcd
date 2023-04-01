@@ -205,7 +205,7 @@ class IBootstrap:
 	    n=len(sq)
 	    mu=sum(sq)/n
 	    sd2=sum([(k-mu)**2 for k in sq])/n	    
-	    for i in range(0,n/2):
+	    for i in range(0, n//2):
 		auto=0.0
 		for j in range(i,n):
 		    auto+=(sq[j-i]-mu)*(sq[j]-mu)

@@ -142,7 +142,7 @@ int main(int argc, char** argv) {
     V.save(filename);
 
     U=V;
-    ape_smearing(U,0.7,20,10);
+    ApeSmearing::smear(U,0.7,20,10);
     */
     snprintf(filename, 100,"gauge_from_hot_10x16x10x10.%.3i.fixed.mdp",conf);
     U.load(filename);    

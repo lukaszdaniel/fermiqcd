@@ -26,7 +26,7 @@ public:
     plattice=0;
     pU=0;
     prefix=make_prefix();    
-    if(ME==0) system((string("mkdir ")+prefix).c_str());    
+    // if(ME==0) system((string("mkdir ")+prefix).c_str());    
     if(ME==0) os.open((prefix+"README.log").c_str());
     os << "prefix=" << prefix << endl;
     os << "initialization completed\n";
@@ -162,6 +162,7 @@ public:
   void compute_partitioning() {
     mdp_site x(*plattice);
     mdp_field<float> Q(*plattice);
+    mdp_field<float> p(*plattice);
     forallsites(x)
       p(x)=on_which_process(*plattice,x(0),x(1),x(2),x(3));
     Q.save_vtk(prefix+"partitioning");

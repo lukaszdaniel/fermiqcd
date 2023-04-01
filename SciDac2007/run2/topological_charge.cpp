@@ -71,7 +71,7 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
   char filename[128];
 
   for(int i1=0; i1<c1; i1++) {
-    ape_smearing(U,0.7,c2,10);
+    ApeSmearing::smear(U,0.7,c2,10);
     cout << "topological charge...\n";
     topological_charge(Q4,U);
     Q4.save("sample_topological_charge.mdp");

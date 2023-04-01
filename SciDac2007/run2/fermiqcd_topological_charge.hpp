@@ -1,5 +1,5 @@
 // from Bonnet et al. Phys Rev D 62, 094509
-
+/*
 void ape_smearing(gauge_field &U, 
 		  mdp_real alpha=0.7, 
 		  int iterations=20, 
@@ -47,3 +47,4 @@ void topological_charge(mdp_field<float> &Q, gauge_field &U) {
   }
   Q.update();
 }
+*/
