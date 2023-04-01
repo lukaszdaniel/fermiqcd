@@ -112,7 +112,7 @@ void read_t_gauge(short_field &U, FILE* file,
   
   // char            filename[200];
   unsigned char   *buffer;     // array to store the raw data 
-  long            file_length; // file length in bytes (one time slice)
+  long            file_length = Ndim*6*rows*sizeof(float); // file length in bytes (one time slice)
   long            bytes_read;  // monitor how many bytes we read
   int x1,x2,x3,mu,a,b,muf;
   // int c;
