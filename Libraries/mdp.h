@@ -23,11 +23,8 @@
 #include <ctime>
 #include <cassert>
 #include <typeinfo>
-#include <stdint.h>
-#ifdef __APPLE__
-#define OSX
-#endif
-#ifndef OSX
+#include <cstdint>
+#ifndef __APPLE__
 #include <malloc.h>
 #endif
 #include <string>
@@ -35,14 +32,18 @@
 #include <map>
 #include <deque>
 #include <climits>
+#ifndef _WIN64
 #include "glob.h"
+#endif
 #ifndef NO_POSIX
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/file.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/socket.h>
+#ifndef _WIN64
+#include "sys/socket.h"
+#endif
 #include <fcntl.h>
 #endif
 using namespace std;
@@ -54,7 +55,7 @@ using namespace std;
 #include "mdp_version.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// all gobal macros used by MDP
+// all global macros used by MDP
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_macros.h"
 
@@ -64,7 +65,7 @@ using namespace std;
 #include "mdp_global_vars.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// faster dynamic allocation (no excpections)
+// faster dynamic allocation (no exceptions)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_dynalloc.h"
 
@@ -79,12 +80,12 @@ using namespace std;
 #include "mdp_timer.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// mdp implementation of complex numbres (portable ansi)
+// mdp implementation of complex numbers (portable ansi)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_complex.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// integer delta function
+// delta function
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_delta.h"
 
@@ -122,19 +123,19 @@ using namespace std;
 
 // ///////////////////////////////////////////////////////////////////////////
 // this is a wrapper to Message Passing Interface (is one uses it)
-// replace this funcitons to change communication protocol
+// replace this functions to change communication protocol
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_communicator.h"
 
 // ///////////////////////////////////////////////////////////////////////////
 // this defined the class mdp_prng and the obj mdp_random
-// (attantion that ::SU<T>(int n) only works with gcc,
+// (attention that ::SU<T>(int n) only works with gcc,
 //  VC does not support templates, therefore ::SU(int n) only for float)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_prng.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// mdp_jackboot is a class for statictical analysis
+// mdp_jackboot is a class for statistical analysis
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_jackboot.h"
 
@@ -144,14 +145,13 @@ using namespace std;
 #include "mdp_topologies.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// a collection of possible lattice partitionings
+// a collection of possible lattice partitioning
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_partitionings.h"
 
-
 // ///////////////////////////////////////////////////////////////////////////
 // implementation of the class mdp_lattice
-// (used to ge generic_lattice)
+// (used to be generic_lattice)
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_lattice.h"
 
@@ -175,7 +175,7 @@ using namespace std;
 // various other utilities
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_utils.h"
-// #include "mdp_postscript.h"
+#include "mdp_postscript.h"
 
 // ///////////////////////////////////////////////////////////////////////////
 // implementation of the communicaton function mdp_field::update()
@@ -255,6 +255,12 @@ using namespace std;
 // a container class for experimental results
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_measure.h"
+
+// #include "mdp_fitting_functions.h"
+#include "mdp_header.h"
+#include "mdp_nvector_field.h"
+// #include "mdp_prng_sfmt.h"
+#include "mdp_swap.h"
 
 // ///////////////////////////////////////////////////////////////////////////
 // test almost all up to here

@@ -21,7 +21,8 @@ int main(int argc, char **argv) {
   mdp_site A(cylinder);
   mdp_site B(cylinder);
   float precision, old_u;
-  float c, J=1, deltaJ, deltaR, Rtot, local_Rtot;
+  float c = 0, J=1, deltaJ, deltaR, Rtot;
+  // float local_Rtot;
   A.set(15,7);
   B.set(62,3);
   forallsitesandcopies(x) { 

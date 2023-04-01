@@ -13,13 +13,13 @@ int main(int argc, char** argv) {
      U(x,mu)=lattice.random(x).SU(3);
 
   U.update();
-  for(k=0; k<1000; k++) {
+  for(mdp_uint k=0; k<1000; k++) {
     /*
     forallsites(x) 
       for(int mu=0; mu<4; mu++)
 	U(x,mu) = (U(x+0,mu)+U(x-0,mu)+U(x+1,mu)+U(x-1,mu))/4;
     */
-    U.save('somename');
+    U.save("somename");
   }
 
   U.update();

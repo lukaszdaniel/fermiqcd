@@ -175,7 +175,7 @@ void mdp_complex_field_fft(int t,
 
   if(psi_in.lattice().ndim!=4) error("fft3D requires TxXxXxX");
 
-  int i,x1,x2,x3,k;
+  int i,x1,x2,x3;
   int size=psi_in.lattice().size(1);
   if(psi_in.lattice().size(2)>size) size=psi_in.lattice().size(2);
   if(psi_in.lattice().size(3)>size) size=psi_in.lattice().size(3);

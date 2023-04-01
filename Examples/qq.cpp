@@ -27,7 +27,8 @@ int main(int argc, char** argv) {
 
   
   int length=2*size1+2*size2;
-  int path[length][2];
+  // int path[length][2];
+  auto path = new int[length][2];
 
   // make a generic path
   for(int i=0; i<size1; i++) {
@@ -48,7 +49,8 @@ int main(int argc, char** argv) {
       result+=real(average_path(U,length,path))/6;
     }
   cout << "average loop " << size1 << "x" << size2 << " = " << result << endl;
-  
+  delete[] path;
+
   mdp.close_wormholes();                     // STOP
   return 0;
 }

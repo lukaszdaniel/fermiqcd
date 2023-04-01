@@ -15,7 +15,7 @@ int main(int argc, char** argv) {
 
   mdp_site x(lattice);
   mdp_matrix c2(box[0],1);
-  for(int t=0; t<c2.size(); t++) c2(t)=0;
+  for(mdp_uint t=0; t<c2.size(); t++) c2(t)=0;
   coefficients quark;
   quark["kappa"]=1.1;
   quark["c_{sw}"]=0.3;
@@ -28,7 +28,7 @@ int main(int argc, char** argv) {
         source=0;
       x.set(0,0,0,0);
       source(x,alpha,i)=1;
-      mul_invQ(sink,source,U,quark,absolute_precison=1E-6);
+      mul_invQ(sink,source,U,quark,/*absolute_precison=*/1E-6);
       for(int beta=0; beta<4; beta++)
 	for(int j=0; j<nc; j++) {
 	  forallsites(x) 
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
 	}
     }
   mdp.add(c2);
-  for(int t=0; t<c2.size(); t++) 
+  for(mdp_uint t=0; t<c2.size(); t++) 
     mdp << t << "\t" << c2(t) << endl;
   mdp.close_wormholes();
   return 0;

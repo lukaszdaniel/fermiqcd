@@ -12,14 +12,16 @@ int main(int argc, char** argv) {
   set_cold(U);
   vector<mdp_real> p(4);
   for(int mu=0; mu<4; mu++) p[mu]=L[mu]/2;
-  int i,j;
+  int i = 0, j = 0;
 
   Instanton4D A(3,i,j, 1.0,3,p);
   
   forallsites(x)
+    {
     for(int mu=0; mu<U.ndim; mu++)
       U(x,mu)=exp(-I*A(x,mu));
-    
+    }
+
     snprintf(filename, 128,"%s.vtk",argv[0]);
     mdp << "top=" << topological_charge_vtk(U,filename) << endl;    
   

@@ -16,7 +16,7 @@ void cool(int nt, int nx, char* filename) {
   for(int k=0; k<100; k++) {
     ApeSmearing::smear(U,0.15,1,10);
     snprintf(filename2, 128,"%s.cooled.step%.3i.topologicalchange.vtk",filename,k);    
-    float tc=topological_charge_vtk(U,filename2,0);
+    // float tc=topological_charge_vtk(U,filename2,0);
   }
 }
 

@@ -18,8 +18,8 @@ void polyakov(int nt, int nx, string filename) {
   mdp_site x(lattice);
   mdp_site y(lattice3d);
   
-  int k,mu=0,nu=1;
-  mdp_complex s=0;
+  // int k,mu=0,nu=1;
+  // mdp_complex s=0;
   
   forallsites(y)
       V(y)=1;

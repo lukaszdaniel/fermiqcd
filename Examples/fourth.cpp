@@ -16,9 +16,9 @@ int main(int argc, char** argv) {
 
 
   U.update();
-  for(k=0; k<1000; k++) {
+  for(mdp_uint k=0; k<1000; k++) {
     WilsonGaugeAction::heatbath(U,gauge,1);
-    U.save('somename');
+    U.save("somename");
   }
 
   mdp << "hello world\n";

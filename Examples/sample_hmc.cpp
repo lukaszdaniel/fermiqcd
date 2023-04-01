@@ -69,25 +69,25 @@ int main(int argc, char** argv)
 {  
   mdp.open_wormholes(argc,argv);
 
-  double starttime;
+  // double starttime;
 
   parameters param;
   // param.read("input");
 
   define_base_matrices("FERMILAB");
   int box[]={param.T,param.L,param.L,param.L};
-  int sweep, number=0;
+  // int sweep, number=0;
   mdp_lattice lattice(param.ndim,box);
   // unsigned int r=param.seed;
 
   gauge_field U(lattice,param.nc);
-  int dimrep;
+  int dimrep = 1;
   if(param.representation=="SYMMETRIC")
     dimrep=U.nc*(U.nc+1)/2;
   else if(param.representation=="FUNDAMENTAL") 
     dimrep=U.nc;
   fermi_field psi(lattice,dimrep,param.nspin);
-  mdp_real pl;  
+  // mdp_real pl;  
   coefficients coeff;
   coeff["time"]=param.T;
   coeff["length"]=param.L;

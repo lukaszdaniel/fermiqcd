@@ -83,7 +83,7 @@ private:
   }
 
   void gen_rand_all(void) {
-    int i;
+    unsigned int i;
     w128_t *r1, *r2;
     
     r1 = &sfmt[N - 2];
@@ -156,7 +156,8 @@ int main() {
   const int n=30;
   int c[n];
   long long sum1=0,sum2=0;
-  float mean,sd;
+  float mean;
+  float sd;
   int i,counter=0;
   float x;
   for(int j=0; j<n; j++) c[j]=0;
@@ -171,8 +172,8 @@ int main() {
     sum2+=2*c[i]-1;
     mean=sum1/n;
     sd=sqrt(sum2/n-mean*mean);
-    // cout << counter << "\t" << mean << "\t" << sum2/counter << "\t" << sd/mean << endl;
-    // if(counter==20) break;
+    cout << counter << "\t" << mean << "\t" << sum2/counter << "\t" << sd/mean << endl;
+    if(counter==20) break;
   }
   
   return 0;

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////
-/// @file fermiqcd_fermi_algorithms.h
+/// @file fermiqcd_instanton4d.h
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
@@ -20,6 +20,7 @@ private:
     if(i==2 && j==3 && k==1) return 1;
     if(i==3 && j==1 && k==2) return 1;
     if(i==3 && j==2 && k==1) return -1;
+    return 0;
   }
 public:
   vector<mdp_real> p; // location of the instanton
@@ -39,6 +40,7 @@ public:
     mdp_matrix sigma_rot1[4];    
     mdp_matrix sigma_rot2[4];
     mdp_matrix sigma_rot3[4];
+    mdp_real alpha = 0.0, beta = 0.0, gamma = 0.0; // ???
 
     sigma_rot1[3]=sigma[3];
     sigma_rot1[1]=cos(alpha)*sigma[1]+sin(alpha)*sigma[2];
@@ -104,7 +106,7 @@ public:
   }
   mdp_matrix operator()(mdp_site &x, int mu) {
     int v[4];
-    mdp_lattice &lattice=x.lattice();
+    // mdp_lattice &lattice=x.lattice();
     for(int nu=0; nu<4; nu++) v[nu] = x(nu)-this->p[nu];
     float d2 = v[0]*v[0]+v[1]*v[1]+v[2]*v[2]+v[3]*v[3];
     mdp_matrix A(this->nc,this->nc);

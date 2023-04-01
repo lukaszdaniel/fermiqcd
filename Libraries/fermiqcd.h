@@ -23,12 +23,16 @@
 #include "fermiqcd_set_random.h"
 #include "fermiqcd_coefficients.h"
 
+// ///////////////////////////////////////////////////////////////////////////
+// this file includes stuff for sse2 optimization
+// ///////////////////////////////////////////////////////////////////////////
+// #include "fermiqcd_sse.h"
 #include "fermiqcd_sse_su3.h"
 #include "fermiqcd_gauge_field.h"
 #include "fermiqcd_gauge_routines.h"
 #include "fermiqcd_gauge_actions.h"
 #include "fermiqcd_gauge_algorithms.h"
-#include "fermiqcd_gauge_fixing.h" 
+#include "fermiqcd_gauge_fixing.h"
 #include "fermiqcd_topological_charge.h"
 
 #include "fermiqcd_minres_inverter.h"
@@ -62,8 +66,18 @@
 #include "fermiqcd_hmc.h"
 #include "fermiqcd_instanton_generator_4d.h"
 
-// #include "fermiqcd_instanton4d.h"
-// #include "fermiqcd_ffts.h"
+#include "fermiqcd_instanton4d.h"
+#include "fermiqcd_ffts.h"
 
+// #include "fermiqcd_dwfermi_actions_sse2.h"
+// #include "fermiqcd_fermilab_action.h"
+// #include "fermiqcd_fermilab_coefficients.h" // not a proper header file
+// #include "fermiqcd_gauge_actions_sse2.h"
+// #include "fermiqcd_hmc_vtk.h"
+// #include "fermiqcd_ildg_gauge_reader.h"
+// #include "fermiqcd_MILC_IO.h"
+// #include "fermiqcd_sdwf_actions.h"
+// #include "fermiqcd_sdwf_algorithms.h"
+// #include "fermiqcd_sdwf_field.h"
 
 

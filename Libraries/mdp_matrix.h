@@ -331,14 +331,13 @@ inline mdp_matrix operator* (const mdp_matrix& x, const mdp_matrix& y) {
   mdp_matrix z(x.rows(),y.cols());
 #if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
   if(x.rows()==x.cols() && y.rows()==3) {
-    int i, cols()=y.cols(), cols()2=2*cols();
     _sse_su3    *u  =(_sse_su3*) x.m;   
     _sse_double *in =(_sse_double*) y.m; 
     _sse_double *out=(_sse_double*) z.m;
-    for(i=0; i<cols(); i++, in++, out++) {
-      _sse_double_load_123(*in, *(in+cols()), *(in+cols()2));
+    for(int i=0; i<x.cols(); i++, in++, out++) {
+      _sse_double_load_123(*in, *(in+x.cols()), *(in+2*x.cols()));
       _sse_double_su3_multiply(*u);
-      _sse_double_store_up_123(*out, *(out+cols()), *(out+cols()2));
+      _sse_double_store_up_123(*out, *(out+x.cols()), *(out+2*x.cols()));
     }
     return z;
   }
