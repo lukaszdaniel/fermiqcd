@@ -283,13 +283,12 @@ class mdp_field  {
   void switch_endianess_8bytes() {
     // I am not sure if this workd for complex<double>
     int64_t *p;
-    uint i;
 
     if(Tsize*field_components % 8 !=0) error("Field not % 8");
     mdp_site x(lattice());
     forallsitesandcopies(x) {
       p=(int64_t*) address(x);
-      for(i=0; i<Tsize*field_components/8; i++) {
+      for(mdp_int i=0; i<Tsize*field_components/8; i++) {
 	cout << '.';
 	switch_endianess_byte8(*(p+i));
       }

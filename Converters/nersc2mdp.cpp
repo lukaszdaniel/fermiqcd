@@ -4,13 +4,13 @@
 // compile with something like: g++ -o ukqcd2mdp ukqcd2mdp.C
 // run program with no arguments for help
 
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <complex.h>
-#include <time.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <complex>
+#include <ctime>
 #include <iostream>
+
 using namespace std;
 
 #define Complex complex<float>
@@ -20,7 +20,7 @@ using namespace std;
 //#define TRUE  1;
 //#define FALSE 0;
 
-void error(char s[]) {
+void error(const char s[]) {
   printf("ERROR: %s\n", s);
   exit(1);
 };
@@ -86,7 +86,7 @@ public:
   ~short_field() {
     if(m!=0) delete[] m;
   };
-  int initialize(int x1, int x2, int x3, int a=1, int b=1, int c=1, int d=1) {
+  void initialize(int x1, int x2, int x3, int a=1, int b=1, int c=1, int d=1) {
     size=x1*x2*x3*a*b*c*d;
     dim[0]=x1;
     dim[1]=x2;
@@ -110,13 +110,15 @@ public:
 void read_t_gauge(short_field &U, FILE* file,
 		  char precision, char swap, int rows=2) {
   
-  char            filename[200];
+  // char            filename[200];
   unsigned char   *buffer;     // array to store the raw data 
   long            file_length; // file length in bytes (one time slice)
   long            bytes_read;  // monitor how many bytes we read
-  int x1,x2,x3,mu,a,b,c,muf;
-  long buf_index, site_index;  // indices for the temporary buffer 
-  FILE *fp;                    // pointer to input file
+  int x1,x2,x3,mu,a,b,muf;
+  // int c;
+  long buf_index;  // indices for the temporary buffer 
+  // long site_index;
+  // FILE *fp;                    // pointer to input file
 
   // Check input makes sense -- ie that precision is correct
   if((precision != 'F') && (precision != 'D')) 
@@ -140,10 +142,12 @@ void read_t_gauge(short_field &U, FILE* file,
 
   // Do block swapping if necessary
   if(swap=='Y') 
+    {
     if(precision == 'F') {
       block_swap((float *)buffer,file_length/sizeof(float));
     } else {
       block_swap_double((double *)buffer, file_length/sizeof(double));
+    }
     }
 
   // for checking...
@@ -229,8 +233,10 @@ void read_t_prop(short_field &S, char fileprefix[],
   unsigned char *buffer;
   long bytes_to_read;
   long bytes_read;
-  int source_spin, source_colour, x0,x1,x2,x3;
-  int sink_spin, sink_colour,comp;
+  int source_spin, source_colour, x1,x2,x3;
+  // int x0;
+  int sink_spin, sink_colour;
+  // int comp;
   long buffer_index;
 
   printf("Reading propagator on timeslice %d ...\n", time);
@@ -267,11 +273,13 @@ void read_t_prop(short_field &S, char fileprefix[],
 
       // Do block swapping if necessary
       if(swap=='Y')
-	if(precision='F'){
+	{
+  if(precision=='F'){
 	  block_swap((float *)buffer,bytes_to_read/sizeof(float));
 	} else {
 	  block_swap_double((double *)buffer,bytes_to_read/sizeof(double));
 	}
+  }
 	
       buffer_index=0;
       for(x3=0; x3<nx[3]; x3++)
@@ -305,7 +313,7 @@ class _generic_field_file_header {
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  float endianess;
+  unsigned int endianess;
   int  ndim;
   int  box_size[10];
   long bytes_per_site;
@@ -330,7 +338,7 @@ int main(int argc, char **argv) {
 
   if(argc<4) {
     printf("Sample usage:\n\n");
-    printf("nersc2mdp -skip %i -gauge 16x8x8x8FN input_prefix output\n");
+    printf("nersc2mdp -skip -gauge 16x8x8x8FN input_prefix output\n");
     printf("F=float, D=double, Y=swap, N=no swap\n\n");
     exit(0);
   };
@@ -401,7 +409,7 @@ int main(int argc, char **argv) {
   printf("Output file size is %li bytes.\n",
 	 myheader.bytes_per_site*myheader.sites+offset);
   printf("Output file name is: %s\n", argv[6]);
-  printf("Done in %i secs.\n", clock()/CLOCKS_PER_SEC-time0);
+  printf("Done in %li secs.\n", clock()/CLOCKS_PER_SEC-time0);
 
   return 0; // success
 };
