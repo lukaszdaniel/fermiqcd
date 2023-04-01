@@ -40,7 +40,7 @@ class DWFermiActionSlow {
     int    nspin=psi_in.nspin;
     int    nc=psi_in.nc;
     int    L5=psi_in.L5;
-    mdp_real m_5,m_f,sign;
+    mdp_real m_5 = 0,m_f = 0,sign = 0;
     if(coeff.has_key("m_5")) m_5=coeff["m_5"];
     else error("coefficients m_5 undeclared");
     if(coeff.has_key("m_f")) m_f=coeff["m_f"];
@@ -122,7 +122,7 @@ class DWFermiActionFast {
     int    nspin=psi_in.nspin;
     int    nc=psi_in.nc;
     int    L5=psi_in.L5;
-    mdp_real m_5,m_f,sign;
+    mdp_real m_5 = 0,m_f = 0,sign = 0;
     if(coeff.has_key("m_5")) m_5=coeff["m_5"];
     else error("coefficients m_5 undeclared");
     if(coeff.has_key("m_f")) m_f=coeff["m_f"];

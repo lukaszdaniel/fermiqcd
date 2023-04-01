@@ -45,7 +45,7 @@ class StaggeredAsqtadActionSSE2 {
     mdp_int   start=U_in.lattice().start_index(ME,parity); 
     mdp_int   stop =U_in.lattice().stop_index(ME,parity);  
     
-    mdp_real two_mass;
+    mdp_real two_mass = 1;
     int sign;
     if(coeff.has_key("mass")) two_mass=2.0*coeff["mass"];
     else error("coefficient mass undefined");

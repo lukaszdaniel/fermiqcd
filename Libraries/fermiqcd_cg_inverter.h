@@ -44,7 +44,8 @@ class CG2 {
 				  bool qdaggerq=false) {
     mpi.begin_function("ConjugateGradientInverter");
     int             step=0;
-    double          residue, rresidue=-1, old_rresidue;
+    double          residue, rresidue=-1;
+    // double old_rresidue;
     double          time=mpi.time();
     inversion_stats stats;
 
@@ -62,7 +63,8 @@ class CG2 {
     //mpi << "\tstep\tresidue\t\ttime (sec)\n";
 
 
-    int mulQ=1, guesszero=1,debug=0;
+    // int mulQ=1;
+    int guesszero=1,debug=0;
 
     psi_out=0; 
     r=psi_in;
@@ -92,7 +94,7 @@ class CG2 {
       beta=rrtmp2/rrtmp;	  
       pnew=rnew;
       mdp_add_scaled_field(pnew, beta, p);
-      old_rresidue=rresidue;
+      // old_rresidue=rresidue;
       residue=sqrt(rrtmp2/(psi_in.global_size()));	  
       rresidue=relative_residue(rnew,psi_out);         
       p=pnew;

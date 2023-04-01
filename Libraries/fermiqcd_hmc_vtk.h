@@ -212,7 +212,8 @@ public:
 
   mdp_real compute_gaussian_momenta(GaugeClass &U) {
     mdp_site x(U.lattice());
-    mdp_real re, im;
+    mdp_real re;
+    // mdp_real im;
     forallsites(x) {
       for(int mu = 0; mu<U.ndim; mu++) {
 	U(x, mu) = 0;

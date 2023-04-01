@@ -33,7 +33,7 @@ class StaggeredAsqtadActionSlow {
 		    int parity=EVENODD) {
 
     int   ndim=U.ndim;
-    mdp_real sign, two_mass;
+    mdp_real sign = 1, two_mass = 1;
     if(coeff.has_key("mass")) two_mass=2.0*coeff["mass"];
     else error("coefficient mass undefined");
     if(coeff.has_key("sign")) sign=coeff["sign"];
@@ -97,7 +97,7 @@ class StaggeredAsqtadActionFast {
 		    int   parity=EVENODD) {
     int   nc=U.nc;
     int   ndim=U.ndim;
-    mdp_real sign, two_mass;
+    mdp_real sign = 1, two_mass = 1;
     if(coeff.has_key("mass")) two_mass=2.0*coeff["mass"];
     else error("coefficient mass undefined");
     if(coeff.has_key("sign")) sign=coeff["sign"];
