@@ -43,7 +43,7 @@ int main(int argc, char **argv) {
   // //////////////////////////////////////////////////////
   int          Nt=12, Nx=4, Ny=4, Nz=4; // lattice size
   int          Nc=3;          // set colors, SU(Nc)
-  float        beta=5.7;      // set lattice spacing
+  // float        beta=5.7;      // set lattice spacing
   float        mq=0.2*GeV;    // set light quark pole-mass
   float        mh=0.7*GeV;    // set heavy quark pole-mass
   
@@ -51,7 +51,7 @@ int main(int argc, char **argv) {
   // additional parameters (they only depend on beta!)
   // //////////////////////////////////////////////////////
   float        a      =0.91/GeV; // lattice spacing  
-  float        cSW    =1.57;   
+  // float        cSW    =1.57;   
   float        kappa_c=0.14315;
 
   // //////////////////////////////////////////////////////

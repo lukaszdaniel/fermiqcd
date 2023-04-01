@@ -291,7 +291,7 @@ class mdp_communicator : public mdp_log {
 #ifndef NO_POSIX
   mdp_psim *nodes;
 #endif
-  int    communicator;
+  // int    communicator;
   int    wormholes_open;
   double  mytime; // total time
   double MPI_Wtime() {

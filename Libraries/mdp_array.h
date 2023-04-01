@@ -27,7 +27,7 @@ class mdp_array {
   uint imax;      // total n. of elements
  public:
 
-  inline const int& ndim() const {
+  inline const int ndim() const {
     return nc;
   }
 

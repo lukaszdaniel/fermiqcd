@@ -67,7 +67,7 @@ inversion_stats mul_invQ(staggered_field &psi_out,
 /// Takes a plaquette and a type of action and returns a 1D array
 /// with weights of paths required to build fat links for the action
 /// @see lepage_improved_links()
-mdp_array<mdp_real,1> lepage_coefficients(mdp_real plaquette, char type[]) {
+mdp_array<mdp_real,1> lepage_coefficients(mdp_real plaquette, const char type[]) {
   begin_function("lepage_coefficients");
 
   mdp_real u0=pow((double)plaquette,(double)0.25);

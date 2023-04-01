@@ -376,7 +376,7 @@ class mdp_field  {
 	    char *header,
 	    mdp_int header_size=0,
 	    mdp_int (*sort_x)(mdp_lattice&,mdp_int)=0,
-	    char *mode="w");
+	    const char *mode="w");
 #endif
   
 };

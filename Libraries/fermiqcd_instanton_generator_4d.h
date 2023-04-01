@@ -86,7 +86,7 @@ class InstantonGenerator4D {
     for(int i=0; i<4; i++) x[i]=xn(i);
     for(int m=0; m<steps; m++) {
       x[mu] = (0.5+m)/steps + xn(mu);
-      for(int k=0; k<instantons.size(); k++)
+      for(size_t k=0; k<instantons.size(); k++)
 	A += make_singular_instanton(x,mu, instantons[k]);
       a[0] = imag(A(0,1))*dx;
       a[1] = real(A(0,1))*dx;

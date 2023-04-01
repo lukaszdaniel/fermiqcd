@@ -34,7 +34,7 @@ all:
 	${CXX} ${CXXFLAGS} example15.cpp -o example15.exe
 	${CXX} ${CXXFLAGS} test_sse2.cpp -o test_sse2.exe
 	${CXX} ${CXXFLAGS} test_actions.cpp -o test_actions.exe
-	${CXX} ${CXXFLAGS} gauge.cpp        -o gauge.exe
+##	${CXX} ${CXXFLAGS} gauge.cpp        -o gauge.exe
 	${CXX} ${CXXFLAGS} meson.cpp        -o meson.exe
 	${CXX} ${CXXFLAGS} ks_meson.cpp     -o ks_meson.exe
 	${CXX} ${CXXFLAGS} make_meson.cpp   -o make_meson.exe

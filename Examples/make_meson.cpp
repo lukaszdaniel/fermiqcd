@@ -34,8 +34,8 @@ int main(int argc, char **argv) {
 #endif
   default_fermi_inverter=MinimumResidueInverter<fermi_field,gauge_field>;
 
-  int nt=12, nc=3, t,a,b,i,j,n;
-  double alpha=0.0;
+  int nt=12, nc=3, t,a,b,i,j;
+  // double alpha=0.0;
 
   int mybox[]={nt,4,4,4};
 

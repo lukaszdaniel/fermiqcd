@@ -24,7 +24,7 @@ int main(int argc, char** argv) {
   }
   
   mdp_field_file_header header;
-  int ndim=4,nc,t,i,j;
+  int ndim=4,nc,t,i;
   int *L;
   int verbose=false;
   char meson[1024]="5x5";

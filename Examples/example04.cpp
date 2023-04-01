@@ -18,10 +18,9 @@ mdp_array<mdp_matrix,3> initialize() {
 
 mdp_array<mdp_matrix,3> f(mdp_array<mdp_matrix,3>& c) {
   mdp_array<mdp_matrix,3> d(c.size(0),c.size(1),c.size(2));
-  int i,j,k;
-  for(i=0; i<c.size(0); i++)
-    for(j=0; j<c.size(1); j++)
-      for(k=0; k<c.size(2); k++)
+  for(mdp_uint i=0; i<c.size(0); i++)
+    for(mdp_uint j=0; j<c.size(1); j++)
+      for(mdp_uint k=0; k<c.size(2); k++)
         d(i,j,k)=sin(c(i,j,k));
   return(d);
 }

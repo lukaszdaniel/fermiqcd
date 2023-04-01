@@ -36,7 +36,7 @@ class WupperthalSmearing {
 
     fermi_field chi(psi.lattice(),psi.nc, psi.nspin);
     site x(psi.lattice());
-    int a,mu,i,j;
+    int a,mu,i;
     for(i=0; i<steps; i++) {
       chi=psi;
       forallsites(x) 

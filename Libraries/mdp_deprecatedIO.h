@@ -36,7 +36,6 @@ void mdp_field<T>::load(char filename[],
       if(fp==0) error("Unable to open file");
 
       // #ifdef INSERT_HEADER
-      int i;
       if(strcmp(header,"NATIVE")==0) {
 	error("NATIVE HEADER IN DEPRECATED FUNCTION NOT SUPPORTED ANY MORE");
       } else if(header!=0 && strcmp(header, "NOHEADER")!=0) {
@@ -124,7 +123,7 @@ void mdp_field<T>::save(char filename[],
 			char *header, 
 			mdp_int header_size,
 			mdp_int (*sort_x)(mdp_lattice&,mdp_int),
-			char *mode) {
+			const char *mode) {
   mdp_int idx_gl, nvol_gl=lattice().nvol_gl;
   double mytime=mpi.time();
     if(ME==processIO) {
@@ -142,7 +141,6 @@ void mdp_field<T>::save(char filename[],
 
 
       // #ifdef INSERT_HEADER
-      int i;
       if(strcmp(header,"NATIVE")==0) {
 	error("NATIVE HEADER IN DEPRECATED FUNCTION NOT SUPPORTED ANY MORE");
       } else if(header!=0 && strcmp(header, "NOHEADER")!=0) {
