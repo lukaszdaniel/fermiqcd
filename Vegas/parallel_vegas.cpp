@@ -64,10 +64,10 @@ public:
   virtual double function(double*)=0;
 private:
   // constants
-  static const double ALPHA=1.5;
-  static const int    NDMX=200;      
-  static const int    MXDIM=10;     // max grid size
-  static const double TINY=1.0e-30;
+  static constexpr double ALPHA=1.5;
+  static constexpr int    NDMX=200;      
+  static constexpr int    MXDIM=10;     // max grid size
+  static constexpr double TINY=1.0e-30;
 
   // ////////////////////////////////////////////
   // Make all variables members of the class to
@@ -100,7 +100,7 @@ private:
       fprintf(OutputFile,"Present iteration        = %i\n", it);
       fprintf(OutputFile,"Number of iterations     = %i\n", niterations);
       fprintf(OutputFile,"Number of function calls = %i\n", ncalls );
-      fprintf(OutputFile,"ALPHA                    = %i\n", ALPHA);
+      fprintf(OutputFile,"ALPHA                    = %f\n", ALPHA);
       fprintf(OutputFile,"mds(?)                   = %i\n", mds);
       fprintf(OutputFile,"nd                       = %i\n\n",nd);
       fprintf(OutputFile,"Integration Limits: i\tmin(x[i])\tmax(x[i])\n");
@@ -114,7 +114,7 @@ private:
     }
   }
   void PrintOutputParameters() {
-    int i, j;
+    // int i, j;
     if(OutputFile!=0 && ME==0) {
       if(it==it1) {
 	fprintf(OutputFile,
@@ -147,7 +147,7 @@ private:
   void rebin(double rc, int nd, double r[], double xin[], double xi[]) {
     int i;
     int k = 0;
-    double xo;
+    double xo = 0;
     double dr = 0.0;
     double xn = 0.0;
     for(i=0; i<nd-1; i++) {
@@ -442,8 +442,8 @@ public:
     } 
     if(((ConvergenceCriteria==RelativePrecision) && 
 	(fabs(StandardDeviation/Integral)>TargetPrecision)) ||
-       ((ConvergenceCriteria==AbsolutePrecision) && 
-	(fabs(StandardDeviation)>TargetPrecision)) && ME==0)
+       (((ConvergenceCriteria==AbsolutePrecision) && 
+	(fabs(StandardDeviation)>TargetPrecision)) && ME==0))
       fprintf(OutputFile,"Vegas failed to reach target precision.\n");
     return Integral;
   }
