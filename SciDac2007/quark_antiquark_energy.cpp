@@ -1,7 +1,6 @@
 #include "fermiqcd.h"
 #include "mdp_all.h"
 #include "dump.h"
-#include "run4/fermiqcd_topological_charge.hpp"
 
 int main(int argc, char** argv) {
   mdp.open_wormholes(argc,argv);

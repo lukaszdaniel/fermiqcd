@@ -1,7 +1,6 @@
 // #define SSE2
 #include "fermiqcd.h"
 #include "dump.h"
-#include "fermiqcd_topological_charge.hpp"
 /* 
    this program compute the wave function of a heavy-light meson by 
    computing s(x3) = |<B(x) q(y) \bar q (y) \bar B(z)>|^2

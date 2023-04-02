@@ -1,7 +1,6 @@
 #include "fermiqcd.h"
 #include "mdp_all.h"
 #include "dump.h"
-#include "fermiqcd_topological_charge.hpp"
 
 class ModifiedWilsonGaugeAction : public WilsonGaugeAction {
  public:
