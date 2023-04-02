@@ -11,9 +11,10 @@
 //////////////////////////////////////////////////////////////////
 
 /// Returns +1 is x%2==0 -1 otherwise
-int mdp_mod2sign(int x) {
-  if((x % 2)==0) 
-    return +1; 
-  else 
+int mdp_mod2sign(int x)
+{
+  if ((x % 2) == 0)
+    return +1;
+  else
     return -1;
 }

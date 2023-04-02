@@ -10,4 +10,4 @@
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
 
-const char mdp_version[]="MDP version 4.0";
+const char mdp_version[] = "MDP version 4.0";

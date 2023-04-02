@@ -7,18 +7,19 @@
 */
 #include "fermiqcd.h"
 
-int main(int argc, char** argv) {
-   mdp.open_wormholes(argc,argv);
-   string filename;
-   coefficients coeff;
-   int L[]={16,4,4,4};
-   mdp_lattice spacetime(4,L);
-   int nc=3;
-   gauge_field U(spacetime,nc);
-   set_cold(U);
+int main(int argc, char **argv)
+{
+    mdp.open_wormholes(argc, argv);
+    string filename;
+    coefficients coeff;
+    int L[] = {16, 4, 4, 4};
+    mdp_lattice spacetime(4, L);
+    int nc = 3;
+    gauge_field U(spacetime, nc);
+    set_cold(U);
 
-   save_partitioning_vtk(spacetime,"partitining");
+    save_partitioning_vtk(spacetime, "partitining");
 
-   mdp.close_wormholes();
-   return 0;
+    mdp.close_wormholes();
+    return 0;
 }

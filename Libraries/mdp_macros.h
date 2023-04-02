@@ -12,39 +12,39 @@
 
 #define CHECK_ALL
 #define MDP_MPI
-#define INCLUDE_DEPRECATED_IO 
+#define INCLUDE_DEPRECATED_IO
 
 /// Loop on all local siltes of this process
-#define forallsites(x)                                     \
-        for(x.start(); x.is_in(); x.next())
+#define forallsites(x) \
+     for (x.start(); x.is_in(); x.next())
 
 /// Loop on all local sites of this process with given parity
 /// If pofx is EVENODD=2 then loops on even and odd sites
-#define forallsitesofparity(x,pofx)                        \
-  for(x.start(), x.idx=x.lattice().start[ME][pofx % 2];               \
-      x.idx<x.lattice().stop[ME][(pofx+(pofx % 2))/2];     \
-      x.idx++)
+#define forallsitesofparity(x, pofx)                             \
+     for (x.start(), x.idx = x.lattice().start[ME][pofx % 2];    \
+          x.idx < x.lattice().stop[ME][(pofx + (pofx % 2)) / 2]; \
+          x.idx++)
 
 /// Loop on all sites stored by this process
-#define forallsitesandcopies(x)                            \
-     for(x.start(), x.idx=0; x.idx<x.lattice().nvol; x.idx++)
+#define forallsitesandcopies(x) \
+     for (x.start(), x.idx = 0; x.idx < x.lattice().nvol; x.idx++)
 
 /// Loop on all sites stored by this process with given parity
 
 // if pofx is EVENODD=2 then loops on even and odd sites
-#define forallsitesandcopiesofparity(x,pofx)                     \
-     for(int __process=0; __process<Nproc; __process++)          \
-     for(x.start(), x.idx=x.lattice().start[__process][pofx % 2];           \
-         x.idx<x.lattice().stop[__process][(pofx+(pofx % 2))/2]; \
-         x.idx++)
+#define forallsitesandcopiesofparity(x, pofx)                                \
+     for (int __process = 0; __process < Nproc; __process++)                 \
+          for (x.start(), x.idx = x.lattice().start[__process][pofx % 2];    \
+               x.idx < x.lattice().stop[__process][(pofx + (pofx % 2)) / 2]; \
+               x.idx++)
 
 /// Returns the unique id of this process
-#define ME     mpi.me()
+#define ME mpi.me()
 /// Returns the total number of parallel processes for this job
-#define Nproc  mpi.nproc()
+#define Nproc mpi.nproc()
 
 /// Reports a runtime error and the line that caused it
-#define error(a) _mpi_error_message(a,__FILE__, __LINE__);
+#define error(a) _mpi_error_message(a, __FILE__, __LINE__);
 
 #ifndef TRUE
 #define TRUE true
@@ -52,5 +52,3 @@
 #ifndef FALSE
 #define FALSE false
 #endif
-
-

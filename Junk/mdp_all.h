@@ -22,7 +22,7 @@
 #include "poll.h"
 #include "strings.h"
 #include "pthread.h"
- 
+
 // C++ headers and STL headers
 #include "iostream"
 #include "string"
@@ -30,13 +30,14 @@
 #include "deque"
 #include "map"
 using namespace std;
- 
+
 #ifndef HAVE_INET_NTOP
-#define inet_ntop(a,b) inet_ntoa(b)
-#define inet_pton(a,b,c) inet_aton(b,c)
+#define inet_ntop(a, b) inet_ntoa(b)
+#define inet_pton(a, b, c) inet_aton(b, c)
 #endif
- 
-void exit_message(int en, string message) {
+
+void exit_message(int en, string message)
+{
   cerr << "FROM PROCESS PID: " << getpid() << endl;
   cerr << "CHILD OF PROCESS PID: " << getppid() << endl;
   cerr << "FATAL ERROR: " << message << endl;

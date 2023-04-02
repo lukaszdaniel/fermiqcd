@@ -6,7 +6,7 @@
 /// Constants and parameters used by FermiQCD
 ///
 /// Distributed under GPL2 License
-/// 
+///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
 
@@ -19,16 +19,14 @@
 #define DAGGER -1
 #endif
 
-mdp_real fermi_inversion_precision=1e-6;
-mdp_real staggered_inversion_precision=1e-6;
-mdp_real dwfermi_inversion_precision=1e-6;
-mdp_real sdwf_inversion_precision=1e-6;
+mdp_real fermi_inversion_precision = 1e-6;
+mdp_real staggered_inversion_precision = 1e-6;
+mdp_real dwfermi_inversion_precision = 1e-6;
+mdp_real sdwf_inversion_precision = 1e-6;
 
 /// Set this to true to run BuCGStab with restart
-bool BiCGStabRestart=false;
+bool BiCGStabRestart = false;
 
 #ifdef BLOCKSITE
 mdp_matrix OmegaTwist[BLOCKSITE];
 #endif
-
-

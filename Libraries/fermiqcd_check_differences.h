@@ -6,25 +6,28 @@
 /// Constants and parameters used by FermiQCD
 ///
 /// Distributed under GPL2 License
-/// 
+///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
 
-// compares two fields and returns the max distrance between 
+// compares two fields and returns the max distrance between
 // equivalent components.
 float check_differences(mdp_field<mdp_complex> &chi,
-			mdp_field<mdp_complex> &psi) {
+                        mdp_field<mdp_complex> &psi)
+{
   begin_function("check_differences");
 
   mdp_int i;
-  mdp_int i_min=psi.physical_local_start();
-  mdp_int i_max=psi.physical_local_stop();
-  float max=0, tmp;
-  if(&chi.lattice()!=&psi.lattice()) 
+  mdp_int i_min = psi.physical_local_start();
+  mdp_int i_max = psi.physical_local_stop();
+  float max = 0, tmp;
+  if (&chi.lattice() != &psi.lattice())
     error("check_differences()\nFields defined on different lattices");
-  for(i=i_min; i<i_max; i++) {
-    tmp=abs(chi[i]-psi[i]);
-    if(tmp>max) max=tmp;
+  for (i = i_min; i < i_max; i++)
+  {
+    tmp = abs(chi[i] - psi[i]);
+    if (tmp > max)
+      max = tmp;
   }
   mdp << "Fields agree/disagree within precision=" << max << '\n';
 

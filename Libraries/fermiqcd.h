@@ -6,12 +6,14 @@
 /// Main header file for FermiQCD libraries
 ///
 /// Distributed under GPL2 License
-/// 
+///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
 
 #define FERMIQCD 1
-#define forspincolor(a,i,nc) for(int a=0; a<4; a++) for(int i=0; i<nc; i++)
+#define forspincolor(a, i, nc)  \
+    for (int a = 0; a < 4; a++) \
+        for (int i = 0; i < nc; i++)
 #include "mdp.h"
 
 #include "fermiqcd_su_generators.h"
@@ -79,5 +81,3 @@
 #include "fermiqcd_sdwf_field.h"
 #include "fermiqcd_sdwf_actions.h"
 #include "fermiqcd_sdwf_algorithms.h"
-
-

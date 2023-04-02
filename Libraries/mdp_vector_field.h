@@ -11,7 +11,7 @@
 //////////////////////////////////////////////////////////////////
 
 /// @brief a field of vectors of complex numbers
-/// 
+///
 /// Example:
 /// @verbatim
 ///    int box[]={10,10,10};
@@ -21,40 +21,47 @@
 ///    forallsites(x)
 ///      h(x)=0.0+0.0*I;
 /// @endverbatim
-class mdp_vector_field: public mdp_field<mdp_complex> {
+class mdp_vector_field : public mdp_field<mdp_complex>
+{
 public:
   int rows, columns, imax;
-  mdp_vector_field() {
-    rows=columns=imax=0;
+  mdp_vector_field()
+  {
+    rows = columns = imax = 0;
     mdp_field<mdp_complex>::reset_field();
   }
-  mdp_vector_field(mdp_vector_field &field) {
-    rows=field.rows;
-    columns=field.columns;
-    imax=field.imax;
-    allocate_field(field.lattice(),field.imax);
+  mdp_vector_field(mdp_vector_field &field)
+  {
+    rows = field.rows;
+    columns = field.columns;
+    imax = field.imax;
+    allocate_field(field.lattice(), field.imax);
   }
-  mdp_vector_field(mdp_lattice &a, int i) {
-    rows=i;
-    columns=1;
-    imax=i;
-    allocate_field(a,imax);
+  mdp_vector_field(mdp_lattice &a, int i)
+  {
+    rows = i;
+    columns = 1;
+    imax = i;
+    allocate_field(a, imax);
   }
-  void allocate_mdp_vector_field(mdp_lattice &a, int i) {
+  void allocate_mdp_vector_field(mdp_lattice &a, int i)
+  {
     deallocate_field();
-    rows=i;
-    columns=1;
-    imax=i;
-    allocate_field(a,imax);
+    rows = i;
+    columns = 1;
+    imax = i;
+    allocate_field(a, imax);
   }
-  mdp_matrix operator() (mdp_site x) {
-    return mdp_matrix(address(x),rows,columns);
+  mdp_matrix operator()(mdp_site x)
+  {
+    return mdp_matrix(address(x), rows, columns);
   }
-  mdp_complex& operator() (mdp_site x, int i) {
+  mdp_complex &operator()(mdp_site x, int i)
+  {
     return address(x)[i];
   }
-  const mdp_complex& operator() (mdp_site x, int i) const {
+  const mdp_complex &operator()(mdp_site x, int i) const
+  {
     return address(x)[i];
   }
 };
-

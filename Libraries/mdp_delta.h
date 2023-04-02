@@ -11,8 +11,8 @@
 //////////////////////////////////////////////////////////////////
 
 /// True if i==j, false otherwise
-template<class T>
-const bool delta(const T& i, const T& j) {
-  return (i==j)?true:false;
+template <class T>
+const bool delta(const T &i, const T &j)
+{
+  return (i == j) ? true : false;
 }
-   

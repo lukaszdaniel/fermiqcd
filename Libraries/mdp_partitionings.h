@@ -10,21 +10,25 @@
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
 
-int default_partitioning0(int *x, 
-			  int ndim, 
-			  int *nx) {
-  float tpp1=(float) nx[0]/Nproc;
-  int   tpp2=(int)   tpp1;
-  if(tpp1-tpp2>0) tpp2+=1;
-  return x[0]/tpp2;
+int default_partitioning0(int *x,
+                          int ndim,
+                          int *nx)
+{
+  float tpp1 = (float)nx[0] / Nproc;
+  int tpp2 = (int)tpp1;
+  if (tpp1 - tpp2 > 0)
+    tpp2 += 1;
+  return x[0] / tpp2;
 }
 
-template<int dim>
-int default_partitioning(int *x, 
-			 int ndim, 
-			 int *nx) {
-  float tpp1=(float) nx[dim]/Nproc;
-  int   tpp2=(int)   tpp1;
-  if(tpp1-tpp2>0) tpp2+=1;
-  return x[dim]/tpp2;
+template <int dim>
+int default_partitioning(int *x,
+                         int ndim,
+                         int *nx)
+{
+  float tpp1 = (float)nx[dim] / Nproc;
+  int tpp2 = (int)tpp1;
+  if (tpp1 - tpp2 > 0)
+    tpp2 += 1;
+  return x[dim] / tpp2;
 }

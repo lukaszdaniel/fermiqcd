@@ -11,30 +11,34 @@
 */
 #include "fermiqcd.h"
 
-int main(int argc, char** argv) {
-   mdp.open_wormholes(argc,argv);
+int main(int argc, char **argv)
+{
+   mdp.open_wormholes(argc, argv);
    string filename;
    coefficients coeff;
-   int L[]={4,4,4,4};
-   mdp_lattice spacetime(4,L);
-   int nc=3;
-   gauge_field U(spacetime,nc);
+   int L[] = {4, 4, 4, 4};
+   mdp_lattice spacetime(4, L);
+   int nc = 3;
+   gauge_field U(spacetime, nc);
    set_hot(U);
 
-   for(int i0=0; i0<10; i0++) {
-      coeff["beta"]=5.0;
-      WilsonGaugeAction::heatbath(U,coeff,1);
+   for (int i0 = 0; i0 < 10; i0++)
+   {
+      coeff["beta"] = 5.0;
+      WilsonGaugeAction::heatbath(U, coeff, 1);
       mdp << "average_plaquette=" << average_plaquette(U) << endl;
    }
 
-   for(int i0=0; i0<10; i0++) {
-      ApeSmearing::smear(U,0.7,1,10);
+   for (int i0 = 0; i0 < 10; i0++)
+   {
+      ApeSmearing::smear(U, 0.7, 1, 10);
       U.save("test*");
       mdp << "average_plaquette=" << average_plaquette(U) << endl;
-      {float tc=topological_charge_vtk(U,"topological_charge*",-1);
-      mdp << "total topological charge=" << tc << endl; }
+      {
+         float tc = topological_charge_vtk(U, "topological_charge*", -1);
+         mdp << "total topological charge=" << tc << endl;
+      }
    }
-
 
    mdp.close_wormholes();
    return 0;

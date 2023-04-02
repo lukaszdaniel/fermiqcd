@@ -6,7 +6,7 @@
 /// Main header file for FermiQCD libraries
 ///
 /// Distributed under GPL2 License
-/// 
+///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
 
