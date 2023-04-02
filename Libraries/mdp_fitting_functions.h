@@ -208,7 +208,7 @@ float BaesyanLevenbergMarquardt(float *x, Measure *y,
   mdp_matrix sigma(ma,ma);
   mdp_matrix beta(ma,1);
   mdp_matrix oneda(ma,1);
-  mdp_int i,j,k,n;
+  mdp_int i,j,n;
 
   if(max(covar)<=1e-6) 
     for(i=0; i<ma; i++)
@@ -261,6 +261,8 @@ float BaesyanLevenbergMarquardt(float *x, Measure *y,
     } 
     //    printf("%f %f %f\n", a[0], a[1], lambda);
   }
+
+  return chi_square;
 }
 
 /**

@@ -89,7 +89,7 @@ bool load_milc(gauge_field &U, string filename,
 	       mdp_int max_buffer_size=128, int processIO=0) {
 
   struct {
-    mdp_int magic_number;               /* Identifies file format */
+    mdp_uint magic_number;               /* Identifies file format */
     mdp_int dims[4];                    /* Full lattice dimensions */
     char   time_stamp[64];           /* Date and time stamp - used to
 					check consistency between the
@@ -108,7 +108,7 @@ bool load_milc(gauge_field &U, string filename,
   } milc_header;
 
   bool ew=false;
-  int size=sizeof(milc_header);
+  mdp_uint size=sizeof(milc_header);
   FILE *fp=fopen(filename.c_str(),"r");
   if(fp==0) return false;
   if(fread(&milc_header, 1, size, fp)!=size) {

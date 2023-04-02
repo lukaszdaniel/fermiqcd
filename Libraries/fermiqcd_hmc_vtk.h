@@ -210,7 +210,7 @@ public:
     */
   }
 
-  mdp_real compute_gaussian_momenta(GaugeClass &U) {
+  void compute_gaussian_momenta(GaugeClass &U) {
     mdp_site x(U.lattice());
     mdp_real re;
     // mdp_real im;

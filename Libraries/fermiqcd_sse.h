@@ -7,6 +7,8 @@
 ///
 //////////////////////////////////////////////////////////////////
 
+#ifdef SSE2
+
 #pragma fPIC
 
 #define ALIGN16 __attribute__ ((aligned (16)))
@@ -1715,3 +1717,4 @@ static void _sse_check_alignment(void* var, unsigned int base) {
   }
 }
 
+#endif // SSE2

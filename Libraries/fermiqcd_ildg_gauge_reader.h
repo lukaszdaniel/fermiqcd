@@ -1,11 +1,11 @@
 
 void ildg_gauge_reader(gauge_field& U, 
-		       filename, 
-		       header_bytes=0, 
-		       precision=16) {
+		       std::string filename, 
+		       mdp_int header_bytes=0, 
+		       mdp_int precision=16) {
   
-  mdp_site x(lattice());
-  mdp_site y(lattice());
+  mdp_site x(U.lattice());
+  mdp_site y(U.lattice());
   mdp_matrix v[4];
   if(precision==16) U.load_as_float(filename,0,512,false,header_bytes);
   else if(precision==32) U.load_as_double(filename,0,512,false,header_bytes);

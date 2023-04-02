@@ -42,7 +42,7 @@
 class ImprovedGaugeActionSSE2 : public WilsonGaugeAction {
  private:
 
-#if !defined(SSE2) && !defined(USE_DOUBLE_PRECISION)
+#if !defined(SSE2) || !defined(USE_DOUBLE_PRECISION)
 
   static mdp_matrix rectangles_0i_H(gauge_field &U, site x, int mu) {
     mdp_matrix tmp(3,3);

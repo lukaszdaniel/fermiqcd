@@ -51,10 +51,10 @@ private:
     }
   }
   void rshift128(w128_t *out, w128_t const *in, int shift) {
-    unsigned int mdp_int th, tl, oh, ol;
+    size_t th, tl, oh, ol;
     
-    th = ((unsigned int mdp_int)in->u[3] << 32) | ((unsigned int mdp_int)in->u[2]);
-    tl = ((unsigned int mdp_int)in->u[1] << 32) | ((unsigned int mdp_int)in->u[0]);
+    th = ((size_t)in->u[3] << 32) | ((unsigned int)in->u[2]);
+    tl = ((size_t)in->u[1] << 32) | ((unsigned int)in->u[0]);
     
     oh = th >> (shift * 8);
     ol = tl >> (shift * 8);
@@ -65,10 +65,10 @@ private:
     out->u[2] = (unsigned int)oh;
   }
   void lshift128(w128_t *out, w128_t const *in, int shift) {
-    unsigned int mdp_int th, tl, oh, ol;
+    size_t th, tl, oh, ol;
 
-    th = ((unsigned int mdp_int)in->u[3] << 32) | ((unsigned int mdp_int)in->u[2]);
-    tl = ((unsigned int mdp_int)in->u[1] << 32) | ((unsigned int mdp_int)in->u[0]);
+    th = ((size_t)in->u[3] << 32) | ((unsigned int)in->u[2]);
+    tl = ((size_t)in->u[1] << 32) | ((unsigned int)in->u[0]);
 
     oh = th << (shift * 8);
     ol = tl << (shift * 8);
@@ -80,7 +80,7 @@ private:
   }
 
   void gen_rand_all(void) {
-    int i;
+    mdp_uint i;
     w128_t *r1, *r2;
     
     r1 = &sfmt[N - 2];
