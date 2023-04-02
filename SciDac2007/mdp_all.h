@@ -67,7 +67,6 @@ public:
     strncpy(tmp,inet_ntop(AF_INET,*((struct in_addr*)  h->h_addr_list[0])),16);
     ipaddress=tmp;    
 
-    this->ipaddress=ipaddress;
     this->port=port;
     memset(&address,0,sizeof(address));
     address.sin_family=AF_INET;
