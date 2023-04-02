@@ -155,12 +155,13 @@ int newTcpClientSocket(string ipaddress, int port, int sleep_time=10) {
 }
 
 int Bind(int sfd, int port) {
+  int server_fd = sfd;
   struct sockaddr_in address;
   memset(&address,0,sizeof(address));
   address.sin_family=AF_INET;
   address.sin_port=htons(port);
   address.sin_addr.s_addr=htonl(INADDR_ANY);
-  return bind(sfd,(struct sockaddr*) &address,(socklen_t) sizeof(address));  
+  return ::bind(server_fd,(struct sockaddr*) &address,(socklen_t) sizeof(address));  
 }
 
 int setSocketKeepAlive(int sfd, int on=1) {
