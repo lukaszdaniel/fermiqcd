@@ -22,17 +22,27 @@ void dump(mdp_field<int>& s, string filename="default.vtk") {
   int sfd=open("tmp.vtk",O_WRONLY);
   cout << "saving... " << filename << " as fd=" << sfd << endl;
   setFileLock(sfd);
-  write(sfd,header,strlen(header));
+  if (write(sfd,header,strlen(header)) == -1)
+  {
+    error("Error writing to file");
+  }
+  
   site p(s.lattice());
   for(int i=0; i<LX; i++)
     for(int j=0; j<LY; j++)
       for(int k=0; k<LZ; k++) {
 	p.set(i,j,k);
 	snprintf(number, 1024,"%i\n", (int) s(p));
-	write(sfd, number, strlen(number));
+	if (write(sfd, number, strlen(number)) == -1)
+  {
+    error("Error writing to file");
+  }
       }
   setFileUnlock(sfd);
-  system((string("cp tmp.vtk ")+filename).c_str());
+  if (system((string("cp tmp.vtk ")+filename).c_str()) == -1)
+  {
+    error("Error copying file");
+  }
   close(sfd);
 }
 
