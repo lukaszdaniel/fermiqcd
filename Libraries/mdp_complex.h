@@ -232,7 +232,7 @@ inline mdp_complex operator+(const int a, const mdp_complex &c)
 
 inline mdp_complex operator-(const int a, const mdp_complex &c)
 {
-  return mdp_complex(c.real() - a, c.imag());
+  return mdp_complex(a - c.real(), -c.imag());
 }
 
 inline mdp_complex operator*(const int a, const mdp_complex &c)
@@ -273,7 +273,7 @@ inline mdp_complex operator+(const float a, const mdp_complex &c)
 
 inline mdp_complex operator-(const float a, const mdp_complex &c)
 {
-  return mdp_complex(c.real() - a, c.imag());
+  return mdp_complex(a - c.real(), -c.imag());
 }
 
 inline mdp_complex operator*(const float a, const mdp_complex &c)
@@ -314,7 +314,7 @@ inline mdp_complex operator+(const double a, const mdp_complex &c)
 
 inline mdp_complex operator-(const double a, const mdp_complex &c)
 {
-  return mdp_complex(c.real() - a, c.imag());
+  return mdp_complex(a - c.real(), -c.imag());
 }
 
 inline mdp_complex operator*(const double a, const mdp_complex &c)
@@ -339,6 +339,9 @@ inline mdp_real abs2(const mdp_complex &a)
 
 ostream &operator<<(ostream &os, const mdp_complex &a)
 {
-  os << a.real() << "+" << a.imag() << "I";
+  if (a.imag() < 0)
+    os << a.real() << "-" << -a.imag() << "I";
+  else
+    os << a.real() << "+" << std::abs(a.imag()) << "I";
   return os;
 }

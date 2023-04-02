@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=24726
+PSIM LOG: process 0 of 1 created with pid=29609
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -24,16 +24,16 @@ Lattice created.
 Creating a hot gauge configuration
 </set_hot>
 0.0303253
-0.0303253+-0.00555165I
+0.0303253-0.00555165I
 <close_wormholes>
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=10.00% PROCESS=10.00% COMM=0.00%
+* Process 0 stats: CPU=16.67% PROCESS=16.67% COMM=0.01%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 0.013323 sec.
+PROCESS 0 ENDING AFTER 0.015159 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating

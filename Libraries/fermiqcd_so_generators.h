@@ -32,7 +32,7 @@ public:
       {
         temp = 0;
         temp(i, j) = z;
-        temp(i, j) = -z;
+        temp(j, i) = -z;
         lambda[k++] = temp;
       }
   }

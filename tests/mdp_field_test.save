@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=19412
+PSIM LOG: process 0 of 1 created with pid=29591
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -24,20 +24,20 @@ Initial M(0,1,0,0):
  [ 0+0I, 0+0I , 0+0I ]]
 
 Final M(0,1,0,0):
-[[ 0.484803+-0.258534I, 0.089114+0.138458I , 0.663984+-0.479727I ], 
- [ 0.632027+-0.153752I, 0.0500361+-0.690558I , -0.266914+0.162129I ], 
- [ 0.251822+-0.460015I, 0.433382+0.552897I , -0.231886+0.421529I ]]
+[[ 0.484803-0.258534I, 0.089114+0.138458I , 0.663984-0.479727I ], 
+ [ 0.632027-0.153752I, 0.0500361-0.690558I , -0.266914+0.162129I ], 
+ [ 0.251822-0.460015I, 0.433382+0.552897I , -0.231886+0.421529I ]]
 
 lattice and field ...test passed.
 <close_wormholes>
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=18.18% PROCESS=18.18% COMM=0.00%
+* Process 0 stats: CPU=16.67% PROCESS=25.00% COMM=0.00%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 0.014263 sec.
+PROCESS 0 ENDING AFTER 0.015163 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating
