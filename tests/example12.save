@@ -1,0 +1,132 @@
+PSIM LOG: process 0 of 1 created with pid=24706
+<PROGRAM>
+<open_wormholes>
+<head>
+*************************************************
+* Starting [Matrix Distributed Processing]      *
+* created by Massimo Di Pierro                  *
+* copyrighted by www.metacryption.com           *
+*************************************************
+</head>
+</open_wormholes>
+<allocate_lattice>
+Initializing a mdp_lattice...
+Lattice dimension: 10 x 10
+Communicating...
+Initializing random per mdp_site...
+Adopting random_seed=0
+Using a local random generator
+Lattice created.
+</allocate_lattice>
+Site=(0,0) is stored by 0
+Site=(2,0) is stored by 0
+Site=(4,0) is stored by 0
+Site=(6,0) is stored by 0
+Site=(8,0) is stored by 0
+Site=(1,1) is stored by 0
+Site=(3,1) is stored by 0
+Site=(5,1) is stored by 0
+Site=(7,1) is stored by 0
+Site=(9,1) is stored by 0
+Site=(0,2) is stored by 0
+Site=(2,2) is stored by 0
+Site=(4,2) is stored by 0
+Site=(6,2) is stored by 0
+Site=(8,2) is stored by 0
+Site=(1,3) is stored by 0
+Site=(3,3) is stored by 0
+Site=(5,3) is stored by 0
+Site=(7,3) is stored by 0
+Site=(9,3) is stored by 0
+Site=(0,4) is stored by 0
+Site=(2,4) is stored by 0
+Site=(4,4) is stored by 0
+Site=(6,4) is stored by 0
+Site=(8,4) is stored by 0
+Site=(1,5) is stored by 0
+Site=(3,5) is stored by 0
+Site=(5,5) is stored by 0
+Site=(7,5) is stored by 0
+Site=(9,5) is stored by 0
+Site=(0,6) is stored by 0
+Site=(2,6) is stored by 0
+Site=(4,6) is stored by 0
+Site=(6,6) is stored by 0
+Site=(8,6) is stored by 0
+Site=(1,7) is stored by 0
+Site=(3,7) is stored by 0
+Site=(5,7) is stored by 0
+Site=(7,7) is stored by 0
+Site=(9,7) is stored by 0
+Site=(0,8) is stored by 0
+Site=(2,8) is stored by 0
+Site=(4,8) is stored by 0
+Site=(6,8) is stored by 0
+Site=(8,8) is stored by 0
+Site=(1,9) is stored by 0
+Site=(3,9) is stored by 0
+Site=(5,9) is stored by 0
+Site=(7,9) is stored by 0
+Site=(9,9) is stored by 0
+Site=(1,0) is stored by 0
+Site=(3,0) is stored by 0
+Site=(5,0) is stored by 0
+Site=(7,0) is stored by 0
+Site=(9,0) is stored by 0
+Site=(0,1) is stored by 0
+Site=(2,1) is stored by 0
+Site=(4,1) is stored by 0
+Site=(6,1) is stored by 0
+Site=(8,1) is stored by 0
+Site=(1,2) is stored by 0
+Site=(3,2) is stored by 0
+Site=(5,2) is stored by 0
+Site=(7,2) is stored by 0
+Site=(9,2) is stored by 0
+Site=(0,3) is stored by 0
+Site=(2,3) is stored by 0
+Site=(4,3) is stored by 0
+Site=(6,3) is stored by 0
+Site=(8,3) is stored by 0
+Site=(1,4) is stored by 0
+Site=(3,4) is stored by 0
+Site=(5,4) is stored by 0
+Site=(7,4) is stored by 0
+Site=(9,4) is stored by 0
+Site=(0,5) is stored by 0
+Site=(2,5) is stored by 0
+Site=(4,5) is stored by 0
+Site=(6,5) is stored by 0
+Site=(8,5) is stored by 0
+Site=(1,6) is stored by 0
+Site=(3,6) is stored by 0
+Site=(5,6) is stored by 0
+Site=(7,6) is stored by 0
+Site=(9,6) is stored by 0
+Site=(0,7) is stored by 0
+Site=(2,7) is stored by 0
+Site=(4,7) is stored by 0
+Site=(6,7) is stored by 0
+Site=(8,7) is stored by 0
+Site=(1,8) is stored by 0
+Site=(3,8) is stored by 0
+Site=(5,8) is stored by 0
+Site=(7,8) is stored by 0
+Site=(9,8) is stored by 0
+Site=(0,9) is stored by 0
+Site=(2,9) is stored by 0
+Site=(4,9) is stored by 0
+Site=(6,9) is stored by 0
+Site=(8,9) is stored by 0
+<close_wormholes>
+<foot>
+*************************************************
+* Ending [Matrix Distributed Processing]        *
+* Process 0 stats: CPU=0.00% PROCESS=0.00% COMM=0.00%
+* (above numbers make no sense under windows)
+*************************************************
+</foot>
+PROCESS 0 ENDING AFTER 0.004739 sec.
+</close_wormholes>
+</PROGRAM>
+PSIM LOG: process 0 terminating

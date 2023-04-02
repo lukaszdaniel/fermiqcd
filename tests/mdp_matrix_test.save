@@ -1,0 +1,11 @@
+inversion                   ...test passed
+operator*                   ...test passed
+operator+ and operator-     ...test passed
+exp, sin and cos            ...test passed
+exp, log                    ...test passed
+*=, /=, +=, -= (mdp_complex)    ...test passed
+*=, /=, +=, -= (Real)       ...test passed
+*=, /=, +=, -= (mdp_matrix)     ...test passed
+sizeof(a) = 32
+sizeof(b) = 32
+sizeof(c) = 32

@@ -1,0 +1,4 @@
+<define_base_matrices>
+</define_base_matrices>
+PSIM LOG: process 0 of 1 created with pid=26102
+terminate called after throwing an instance of 'std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >'

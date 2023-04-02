@@ -1,0 +1,48 @@
+PSIM LOG: process 0 of 1 created with pid=24718
+<PROGRAM>
+<open_wormholes>
+<head>
+*************************************************
+* Starting [Matrix Distributed Processing]      *
+* created by Massimo Di Pierro                  *
+* copyrighted by www.metacryption.com           *
+*************************************************
+</head>
+</open_wormholes>
+<define_base_matrices>
+</define_base_matrices>
+<allocate_lattice>
+Initializing a mdp_lattice...
+Lattice dimension: 8 x 4 x 4 x 4
+Communicating...
+Initializing random per mdp_site...
+Adopting random_seed=0
+Lattice created.
+</allocate_lattice>
+<allocate_lattice>
+Initializing a mdp_lattice...
+Lattice dimension: 4 x 4 x 4
+Communicating...
+Initializing random per mdp_site...
+Adopting random_seed=0
+Lattice created.
+</allocate_lattice>
+Loading file gauge.cold from process 0 (buffer = 1024 sites)
+reverse: 0
+... Loading time: 0.000556 (sec)
+Saving file gauge.cold.polyakov.real.vtk from process 0 (buffer = 1024 sites)
+... Saving time: 0.000067 (sec)
+Saving file gauge.cold.polyakov.real.vtk from process 0 (buffer = 1024 sites)
+... Saving time: 0.000061 (sec)
+<close_wormholes>
+<foot>
+*************************************************
+* Ending [Matrix Distributed Processing]        *
+* Process 0 stats: CPU=0.00% PROCESS=0.00% COMM=0.00%
+* (above numbers make no sense under windows)
+*************************************************
+</foot>
+PROCESS 0 ENDING AFTER 0.001291 sec.
+</close_wormholes>
+</PROGRAM>
+PSIM LOG: process 0 terminating

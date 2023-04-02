@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////
-/// @file mdp_matrix_test.h
+/// @file mdp_matrix_test.cpp
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
@@ -9,6 +9,9 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+
+#include <cassert>
+#include "mdp.h"
 
 /// For debugging only
 bool mdp_matrix_test()
@@ -59,4 +62,27 @@ bool mdp_matrix_test()
   printf("*=, /=, +=, -= (mdp_matrix)     ...test passed\n");
 
   return 1;
+}
+
+void test_size()
+{
+  mdp_matrix a(3, 3);
+  mdp_matrix b(2, 2);
+  mdp_matrix c;
+
+  b(0, 0) = 2;
+  b(0, 1) = 1;
+  b(1, 0) = 1;
+  b(1, 1) = 4;
+
+  std::cout << "sizeof(a) = " << sizeof(a) << "\n";
+  std::cout << "sizeof(b) = " << sizeof(b) << "\n";
+  std::cout << "sizeof(c) = " << sizeof(c) << "\n";
+}
+
+int main(int argc, char **argv)
+{
+  mdp_matrix_test();
+  test_size();
+  return 0;
 }

@@ -14,8 +14,9 @@ int main(int argc, char **argv)
   mdp_field<mystruct> myfield(mylattice);
   mdp_site x(mylattice);
   forallsites(x)
-      myfield(x)
-          .value = mylattice.random(x).gaussian();
+  {
+    myfield(x).value = mylattice.random(x).gaussian();
+  }
   myfield.update();
   mpi.close_wormholes();
 }

@@ -1,0 +1,6 @@
+Result x[0]/x[1] = 0.093359
+Jackknife error  = 0.057997
+Bootstrap error  = 0.0448316
+Result x[0]*x[1] = 5.75849
+Jackknife error  = 2.42375
+Bootstrap error  = 2.35708

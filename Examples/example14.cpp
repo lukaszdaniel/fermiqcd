@@ -14,8 +14,9 @@ int main(int argc, char **argv)
   mdp_field<mystruct> myfield(mylattice);
   mdp_site x(mylattice);
   forallsites(x)
-      myfield(x)
-          .value = 0;
+  {
+    myfield(x).value = 0;
+  }
   myfield.update();
   mpi.close_wormholes();
 }

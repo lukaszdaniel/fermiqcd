@@ -1,0 +1,33 @@
+PSIM LOG: process 0 of 1 created with pid=24723
+<PROGRAM>
+<open_wormholes>
+<head>
+*************************************************
+* Starting [Matrix Distributed Processing]      *
+* created by Massimo Di Pierro                  *
+* copyrighted by www.metacryption.com           *
+*************************************************
+</head>
+</open_wormholes>
+<allocate_lattice>
+Initializing a mdp_lattice...
+Lattice dimension: 10 x 10
+Communicating...
+Initializing random per mdp_site...
+Adopting random_seed=0
+Using a local random generator
+Lattice created.
+</allocate_lattice>
+hello world
+<close_wormholes>
+<foot>
+*************************************************
+* Ending [Matrix Distributed Processing]        *
+* Process 0 stats: CPU=0.00% PROCESS=0.00% COMM=0.00%
+* (above numbers make no sense under windows)
+*************************************************
+</foot>
+PROCESS 0 ENDING AFTER 0.00521 sec.
+</close_wormholes>
+</PROGRAM>
+PSIM LOG: process 0 terminating

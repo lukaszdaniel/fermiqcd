@@ -15,10 +15,13 @@ int main(int argc, char **argv)
   fermi_field_fft(phi, psi, 1, true);
   fermi_field_fft(chi, phi, -1, true);
 
-  forallsites(x) if (max(chi(x) - psi(x)) > 0.01)
+  forallsites(x)
   {
-    mdp << psi(x) << endl;
-    mdp << chi(x) << endl;
+    if (max(chi(x) - psi(x)) > 0.01)
+    {
+      mdp << psi(x) << endl;
+      mdp << chi(x) << endl;
+    }
   }
 
   mdp.close_wormholes();

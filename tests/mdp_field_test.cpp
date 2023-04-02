@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////
-/// @file mdp_field_test.h
+/// @file mdp_field_test.cpp
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
@@ -10,6 +10,9 @@
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
 
+#include <cassert>
+#include "mdp.h"
+
 /// For debugging purposes only
 bool mdp_field_test(int argc, char **argv)
 {
@@ -19,6 +22,15 @@ bool mdp_field_test(int argc, char **argv)
   mdp_lattice lattice(4, box);
   mdp_matrix_field M(lattice, 3, 3);
   mdp_site x(lattice);
+  mdp_site y(lattice);
+  y.set(0, 1, 0, 0);
+
+  std::cout << "Initial M(0,1,0,0):\n";
+  std::cout << M(y) << "\n";
+  std::cout << "Final M(0,1,0,0):\n";
+  M(y) = M.lattice().random(y).SU(3);
+  std::cout << M(y) << "\n";
+
   double counter = 0;
 
   forallsites(x)
@@ -35,4 +47,10 @@ bool mdp_field_test(int argc, char **argv)
 
   mpi.close_wormholes();
   return (mdp_int)counter;
+}
+
+int main(int argc, char **argv)
+{
+  mdp_field_test(argc, argv);
+  return 0;
 }
