@@ -30,8 +30,8 @@ static _sse_float _sse_float_sgn14 __attribute__ ((unused)) = {-1.0f,1.0f,1.0f,-
 static _sse_float _sse_float_sgn23 __attribute__ ((unused)) = {1.0f,-1.0f,-1.0f,1.0f};
 static _sse_float _sse_float_sgn24 __attribute__ ((unused)) = {1.0f,-1.0f,1.0f,-1.0f};
 static _sse_float _sse_float_sgn34 __attribute__ ((unused)) = {1.0f,1.0f,-1.0f,-1.0f};
-static _sse_int   _sse_double_sgn  __attribute__ ((unused)) = {0x0,0x80000000,0x0,0x0};
-static _sse_int   _sse_double_sgn2 __attribute__ ((unused)) = {0x0,0x0,0x0,0x80000000};
+// static _sse_int   _sse_double_sgn  __attribute__ ((unused)) = {0x0,0x80000000,0x0,0x0};
+// static _sse_int   _sse_double_sgn2 __attribute__ ((unused)) = {0x0,0x0,0x0,0x80000000};
 
 #define _sse_float_su3_multiply(u) { \
  _ASM ("movss %0, %%xmm3 \n\t" \

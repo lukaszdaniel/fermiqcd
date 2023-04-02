@@ -3,6 +3,7 @@ all:
 	cd Converters; make all
 	cd SciDac2007; make all
 	cd Vegas; make all
+	cd Junk; make all
 
 doc:
 	cd Doxygen; doxygen Doxyfile

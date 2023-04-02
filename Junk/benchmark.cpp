@@ -34,7 +34,9 @@ void test_wilson() {
   t1=(mpi.time()-t0)/lattice.nvol_gl/stats.steps;
   cout << "Wilson BiCGStab TIME=" << t1 << endl;
 
+#ifdef SSE2
   default_fermi_action=FermiCloverActionSSE2::mul_Q;
+#endif
 
   default_fermi_inverter=MinimumResidueInverter<fermi_field,gauge_field>;
   t0=mpi.time();
@@ -84,7 +86,9 @@ void test_clover() {
   t1=(mpi.time()-t0)/lattice.nvol_gl/stats.steps;
   cout << "Clover BiCGStab TIME=" << t1 << endl;
 
+#ifdef SSE2
   default_fermi_action=FermiCloverActionSSE2::mul_Q;
+#endif
 
   default_fermi_inverter=MinimumResidueInverter<fermi_field,gauge_field>;
   t0=mpi.time();
@@ -140,7 +144,9 @@ void test_staggered() {
   t1=(mpi.time()-t0)/lattice.nvol_gl/stats.steps;
   cout << "Staggered SSE BiCGStabUML TIME=" << t1 << endl;
 
+#ifdef SSE2
   default_staggered_action=StaggeredAsqtadActionSSE2::mul_Q;
+#endif
 
   default_staggered_inverter=MinimumResidueInverter<staggered_field,gauge_field>;
   t0=mpi.time();
@@ -203,7 +209,9 @@ void test_asqtad() {
   t1=(mpi.time()-t0)/lattice.nvol_gl/stats.steps;
   cout << "Asqtad SSE BiCGStabUML TIME=" << t1 << endl;
 
+#ifdef SSE2
   default_staggered_action=StaggeredAsqtadActionSSE2::mul_Q;
+#endif
 
   default_staggered_inverter=MinimumResidueInverter<staggered_field,gauge_field>;
   t0=mpi.time();
