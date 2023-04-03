@@ -51,7 +51,7 @@ public:
 
   inline T &operator[](const uint i)
   {
-#if defined(CHECK_ALL)
+#ifdef CHECK_ALL
     if (i >= size())
       error("mdp_array::operator[]\nIndex out of bounds");
 #endif
@@ -60,7 +60,7 @@ public:
 
   inline const T &operator[](const uint i) const
   {
-#if defined(CHECK_ALL)
+#ifdef CHECK_ALL
     if (i >= size())
       error("mdp_array::operator[]\nIndex out of bounds");
 #endif
@@ -79,7 +79,7 @@ public:
 
   inline uint size(uint i) const
   {
-#if defined(CHECK_ALL)
+#ifdef CHECK_ALL
     if (i >= size())
       error("mdp_array::size(...)\nIndex out of bounds");
 #endif
@@ -258,7 +258,7 @@ public:
                        const uint i3 = 0,
                        const uint i4 = 0)
   {
-#if defined(CHECK_ALL)
+#ifdef CHECK_ALL
     if ((i1 != 0 && nc < 2) ||
         (i2 != 0 && nc < 3) ||
         (i3 != 0 && nc < 4) ||
@@ -284,7 +284,7 @@ public:
                              const uint i3 = 0,
                              const uint i4 = 0) const
   {
-#if defined(CHECK_ALL)
+#ifdef CHECK_ALL
     if ((i1 != 0 && nc < 2) ||
         (i2 != 0 && nc < 3) ||
         (i3 != 0 && nc < 4) ||

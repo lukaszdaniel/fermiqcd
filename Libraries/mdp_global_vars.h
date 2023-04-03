@@ -37,7 +37,7 @@ bool mdp_shutup = false;
 /// mdp_matrix::sin(), mdp_matrix::cos() and mdp_matrix::exp()
 double mdp_precision = 1e-5;
 
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
 typedef double mdp_real;
 #else
 typedef float mdp_real;

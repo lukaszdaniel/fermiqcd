@@ -4,7 +4,7 @@ void select_action_and_inverter(std::string quark_action, std::string inverter)
     default_fermi_action = FermiCloverActionFast::mul_Q;
   else if (quark_action == "clover_slow")
     default_fermi_action = FermiCloverActionSlow::mul_Q;
-#if defined(SSE2)
+#ifdef SSE2
   else if (quark_action == "clover_sse2")
     default_fermi_action = FermiCloverActionSSE2::mul_Q;
 #endif
@@ -12,7 +12,7 @@ void select_action_and_inverter(std::string quark_action, std::string inverter)
     default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
   else if (quark_action == "staggered_slow")
     default_staggered_action = StaggeredAsqtadActionSlow::mul_Q;
-#if defined(SSE2)
+#ifdef SSE2
   else if (quark_action == "staggered_sse2")
     default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
 #endif

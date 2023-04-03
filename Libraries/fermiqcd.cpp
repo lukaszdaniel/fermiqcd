@@ -539,7 +539,7 @@ int main(int argc, char **argv)
           WilsonGaugeAction::heatbath(U, gauge, niter);
         else if (gauge_action == "wilson_improved")
           ImprovedGaugeAction::heatbath(U, gauge, niter);
-#if defined(SS2)
+#ifdef SSE2
         else if (gauge_action == "wilson_sse2")
           ImprovedGaugeActionSSE2::heatbath(U, gauge, niter);
 #endif

@@ -10,7 +10,7 @@
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
 
-#if defined(SSE2)
+#ifdef SSE2
 
 class FermiFermilabActionNew
 {

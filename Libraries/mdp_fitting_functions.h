@@ -197,7 +197,7 @@ float BLMaux(float *x, Measure *y,
 
   for (i = 0; i < ma; i++)
     for (j = 0; j < ma; j++)
-      chi_square += (a0[i] - a[i]) * sigma(i, j).re * (a0[j] - a[j]);
+      chi_square += (a0[i] - a[i]) * sigma(i, j).real() * (a0[j] - a[j]);
 
   delete[] dyda;
   return chi_square;

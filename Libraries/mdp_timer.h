@@ -17,7 +17,7 @@ double walltime()
   double mic, time;
   double mega = 0.000001;
   struct timeval tp;
-#if defined(HAVE_NO_TIMEZONE)
+#ifdef HAVE_NO_TIMEZONE
   struct timezone
   {
     int tz_minuteswest; // minutes of Greenwich

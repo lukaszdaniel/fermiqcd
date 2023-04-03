@@ -428,7 +428,7 @@ public:
                      bool load_header = true,
                      mdp_int skip_bytes = 0)
   {
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
     header.bytes_per_site /= 2;
     save(filename, processIO, max_buffer_size, load_header, skip_bytes,
          mdp_write_double_as_float);
@@ -446,7 +446,7 @@ public:
                      mdp_int skip_bytes = 0)
   {
 
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
     header.bytes_per_site /= 2;
     load(filename, processIO, max_buffer_size, load_header, skip_bytes,
          mdp_read_double_as_float, true);

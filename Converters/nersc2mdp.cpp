@@ -13,7 +13,7 @@
 
 using namespace std;
 
-#define Complex complex<float>
+#define Complex std::complex<float>
 #define Nspace nx[1] * nx[2] * nx[3]
 #define Ndim 4
 

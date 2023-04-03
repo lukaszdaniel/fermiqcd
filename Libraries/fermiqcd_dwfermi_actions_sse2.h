@@ -9,7 +9,7 @@
 
 /// WARNING!!!! THIS WAS NOT TESTED !!!!
 
-#if defined(SSE2)
+#ifdef SSE2
 
 /// @brief Domain Wilson action SSE/SSE2
 ///

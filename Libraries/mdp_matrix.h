@@ -356,7 +356,7 @@ inline mdp_matrix operator+(const mdp_matrix &x,
                             const mdp_matrix &y)
 {
   mdp_matrix z(x.rows(), x.cols());
-#if defined(CHECK_ALL)
+#ifdef CHECK_ALL
   if (x.rows() != y.rows() || x.cols() != y.cols())
     error("mdp_matrix::operator+()\nWrong argument size");
 #endif
@@ -452,7 +452,7 @@ inline mdp_matrix operator*(const mdp_matrix &y, mdp_complex x)
 {
   uint i;
   mdp_matrix z(y.rows(), y.cols());
-#if defined(MATRIX_SSE2)
+#ifdef MATRIX_SSE2
   if (y.rows() == 3)
   {
     static _sse_float factor1 ALIGN16;
@@ -461,7 +461,7 @@ inline mdp_matrix operator*(const mdp_matrix &y, mdp_complex x)
     static _sse_double factor4 ALIGN16;
     _sse_su3_vector *in = (_sse_su3_vector *)y.m;
     _sse_su3_vector *out = (_sse_su3_vector *)z.m;
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
     factor3.c1 = factor3.c2 = x.imag();
     factor4.c1 = factor4.c2 = x.real() / x.imag();
     for (i = 0; i < y.cols(); i++, in++, out++)
@@ -536,7 +536,7 @@ inline mdp_matrix operator+(const mdp_matrix &a, mdp_real b)
   uint i;
   tmp = a;
   for (i = 0; i < a.cols(); i++)
-    tmp(i, i).real() += b;
+    tmp(i, i) += b;
   return tmp;
 }
 
@@ -548,7 +548,7 @@ inline mdp_matrix operator-(const mdp_matrix &a, mdp_real b)
   uint i;
   tmp = a;
   for (i = 0; i < a.cols(); i++)
-    tmp(i, i).real() -= b;
+    tmp(i, i) -= b;
   return tmp;
 }
 
@@ -556,7 +556,7 @@ inline mdp_matrix operator*(const mdp_matrix &y, mdp_real x)
 {
   uint i;
   mdp_matrix z(y.rows(), y.cols());
-#if defined(MATRIX_SSE2)
+#ifdef MATRIX_SSE2
   if (y.rows() == 3)
   {
     static _sse_float factor1 ALIGN16;
@@ -564,7 +564,7 @@ inline mdp_matrix operator*(const mdp_matrix &y, mdp_real x)
 
     _sse_su3_vector *in = (_sse_su3_vector *)y.m;
     _sse_su3_vector *out = (_sse_su3_vector *)z.m;
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
     factor2.c1 = factor2.c2 = x;
     for (i = 0; i < y.cols(); i++, in++, out++)
     {

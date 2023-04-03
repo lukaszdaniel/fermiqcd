@@ -321,7 +321,7 @@ public:
   }
   void switch_endianess_4bytes()
   {
-    // I am not sure if this workd for complex<double>
+    // I am not sure if this works for complex<double>
     int32_t *p;
 
     if (Tsize * field_components % 4 != 0)
@@ -338,7 +338,7 @@ public:
   }
   void switch_endianess_8bytes()
   {
-    // I am not sure if this workd for complex<double>
+    // I am not sure if this works for complex<double>
     int64_t *p;
 
     if (Tsize * field_components % 8 != 0)

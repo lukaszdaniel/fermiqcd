@@ -68,7 +68,7 @@ void test_fermi()
   mpi << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
   check_differences(chi1, chi2);
 
-#if defined(SSE2)
+#ifdef SSE2
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
   mul_invQ(chi2, psi, U, coeff);
@@ -123,7 +123,7 @@ void test_staggered()
   mpi << "\n\nCheching that AsqtadActionSlow and AsqtadActionFast agree\n\n";
   check_differences(chi1, chi2);
 
-#if defined(SSE2)
+#ifdef SSE2
   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
   default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
   mul_invQ(chi2, psi, V, coeff);

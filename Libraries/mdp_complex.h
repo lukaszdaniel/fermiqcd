@@ -10,9 +10,11 @@
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
 
-#if defined(DO_NOT_USE_MDP_COMPLEX)
-#include "complex.h"
-typedef complex<mdp_real> mdp_complex;
+// #define DO_NOT_USE_MDP_COMPLEX
+
+#ifdef DO_NOT_USE_MDP_COMPLEX
+#include <complex>
+typedef std::complex<mdp_real> mdp_complex;
 #else
 
 /// @brief portable complex numbers

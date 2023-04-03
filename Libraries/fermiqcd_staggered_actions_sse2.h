@@ -10,7 +10,7 @@
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
 
-#if defined(SSE2)
+#ifdef SSE2
 
 /// @brief Staggered/Asqtad action optimized for Pentium 4
 ///
@@ -60,7 +60,7 @@ public:
 
     site x(psi_in.lattice());
 
-#if defined(USE_DOUBLE_PRECISION)
+#ifdef USE_DOUBLE_PRECISION
 
     static _sse_double fact1 ALIGN16;
     static _sse_su3_vector r ALIGN16;

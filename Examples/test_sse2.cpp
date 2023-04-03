@@ -32,7 +32,7 @@ void test_fermi()
   mpi << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
   check_differences(chi1, chi2);
 
-#if defined(SSE2)
+#ifdef SSE2
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
   mul_Q(chi2, psi, U, coeff);
