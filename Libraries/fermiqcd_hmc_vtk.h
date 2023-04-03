@@ -31,8 +31,8 @@ public:
   int numgen;
   int accepted;
   int steps;
-  vector<mdp_matrix> S;
-  vector<mdp_matrix> lambda;
+  std::vector<mdp_matrix> S;
+  std::vector<mdp_matrix> lambda;
 
   HMCVTK(GaugeClass &U, FermiClass &F, coefficients &coeff)
   {
@@ -55,7 +55,7 @@ public:
     this->to_old_F = new FermiClass(F.lattice(), F.nc);
     this->to_old_f_F = new FermiClass(F.lattice(), F.nc);
 
-    cout << to_p_U->lattice().ndim << endl;
+    std::cout << to_p_U->lattice().ndim << std::endl;
 
     initialize();
   }
@@ -124,7 +124,7 @@ public:
     k_new = compute_kinetic_energy(p_U, p_F);
     h_new = s_new + k_new;
 
-    cout << "h_new " << h_new << endl;
+    std::cout << "h_new " << h_new << std::endl;
 
     // metropolis test
     float random_number = mdp_random.plain();
@@ -133,7 +133,7 @@ public:
     if (always_accept || random_number < exp(h_old - h_new))
     {
       // ACCEPT
-      mdp << "DH: " << abs(h_new - h_old) / h_new << endl;
+      mdp << "DH: " << abs(h_new - h_old) / h_new << "\n";
       s_old = s_new;
       bs_old = bs;
       fs_old = fs;
@@ -200,7 +200,7 @@ public:
     }
     else if (coeff["representation"] == ANTISYMMETRIC)
     {
-      throw string("ANTISYMMETRIC representation is not defined yet");
+      throw std::string("ANTISYMMETRIC representation is not defined yet");
     }
     else if (coeff["representation"] == SO4)
     {
@@ -306,7 +306,7 @@ public:
     }
     else if (coeff["representation"] == ANTISYMMETRIC)
     {
-      throw string("ANTISYMMETRIC representation is not defined yet");
+      throw std::string("ANTISYMMETRIC representation is not defined yet");
     }
     else if (coeff["representation"] == SO4)
     {
@@ -368,7 +368,7 @@ public:
         U(x, mu) = A * U(x, mu);
       }
     }
-    Q.save_vtk(string("pressure_" + tostring(this->steps) + ".vtk"));
+    Q.save_vtk(std::string("pressure_" + tostring(this->steps) + ".vtk"));
     U.update();
 
     compute_force(U, nf_U, F, nf_F);
@@ -549,7 +549,7 @@ public:
       }
     }
     else
-      throw string("representation not supported");
+      throw std::string("representation not supported");
     f_U.update();
   }
 

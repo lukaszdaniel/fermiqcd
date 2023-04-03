@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   for (int k = 0; k < nconfig; k++)
   {
     WilsonGaugeAction::heatbath(U, gauge); // do heatbath
-    U.save(string("gauge") + tostring(k)); // save config
+    U.save(std::string("gauge") + tostring(k)); // save config
     if (quark["c_{SW}"] != 0)
       compute_em_field(U);
     generate(S, U, quark, 1e-20, 1e-12); // make propagator
@@ -32,7 +32,7 @@ int main(int argc, char **argv)
         Cpi[x(TIME)] += real(trace(S(x, a, b) * hermitian(S(x, a, b))));
     mpi.add(Cpi.address(), Cpi.size()); // parallel add
     for (int t = 0; t < L[TIME]; t++)
-      mdp << t << " " << Cpi(t) << endl; // print output
+      mdp << t << " " << Cpi(t) << "\n"; // print output
   }
   mdp.close_wormholes(); // STOP
   return 0;

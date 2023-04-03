@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     {
       a = 5 * 7;
       mpi.add(a);
-      cout << "a=" << a << '\n';
+      std::cout << "a=" << a << '\n';
     }
   }
   else

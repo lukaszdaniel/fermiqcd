@@ -1,6 +1,8 @@
 // Program: application2.cpp
 #include "mdp.h"
 
+using namespace std;
+
 void open_cylinder(int mu, int *x_dw, int *x, int *x_up,
                    int ndim, int *nx)
 {
@@ -30,12 +32,14 @@ int main(int argc, char **argv)
   // float local_Rtot;
   A.set(15, 7);
   B.set(62, 3);
+
   forallsitesandcopies(x)
   {
     u(x) = 0;
     r(x, 0) = resistance(x(0), x(1), 0);
     r(x, 1) = resistance(x(0), x(1), 1);
   }
+
   do
   {
     precision = 0;
@@ -45,7 +49,7 @@ int main(int argc, char **argv)
       if (x == A)
       {
         c = +J;
-        cout << ME << '\n';
+        std::cout << ME << "\n";
       };
       if (x == B)
         c = -J;
@@ -72,12 +76,16 @@ int main(int argc, char **argv)
     u.update();
     mdp.add(precision);
   } while (sqrt(precision) > 0.00001);
+
   Rtot = 0;
   if (A.is_in())
     Rtot += u(A) / J;
   if (B.is_in())
     Rtot -= u(B) / J;
+
   mdp.add(Rtot);
-  mdp << "R_A-R_B=" << Rtot << '\n';
+  mdp << "R_A-R_B=" << Rtot << "\n";
+
   mdp.close_wormholes();
+  return 0;
 }

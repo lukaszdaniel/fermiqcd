@@ -11,7 +11,7 @@ int main(int argc, char **argv)
   char filename[128];
   mdp_site x(lattice);
   set_cold(U);
-  vector<mdp_real> p(4);
+  std::vector<mdp_real> p(4);
   for (int mu = 0; mu < 4; mu++)
     p[mu] = L[mu] / 2;
 
@@ -28,10 +28,10 @@ int main(int argc, char **argv)
         U(x, mu) = exp(-I * (A1(x, mu) + A2(x, mu)));
     }
 
-    mdp << "k=" << k << endl;
+    mdp << "k=" << k << "\n";
     // if(k>0) ApeSmearing::smear(U,0.7,1,10);
     snprintf(filename, 128, "%s.%i.vtk", argv[0], k);
-    mdp << "top=" << topological_charge_vtk(U, filename) << endl;
+    mdp << "top=" << topological_charge_vtk(U, filename) << "\n";
   }
   mdp.close_wormholes();
   return 0;

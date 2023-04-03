@@ -38,25 +38,30 @@ int main(int argc, char **argv)
 #ifndef TEST
   for (int k = 0; k < 2000; k++)
   {
-    cout << k << endl;
+    std::cout << k << std::endl;
     WilsonGaugeAction::heatbath(U, gauge, 10);
     U.save("gauge_20x10x10x10.mdp");
   }
 #endif
 
-  forallsites(x3) for (int b = 0; b < 4; b++) for (int c = 0; c < 4; c++) for (int i = 0; i < nc; i++)
-      s(x3, 4 * c + b) = 0;
+  forallsites(x3)
+  {
+    for (int b = 0; b < 4; b++)
+      for (int c = 0; c < 4; c++)
+        for (int i = 0; i < nc; i++)
+          s(x3, 4 * c + b) = 0;
+  }
 
 #ifdef TEST
   for (int k = 0; k < 1; k++)
   {
-    cout << k << endl;
+    std::cout << k << std::endl;
     WilsonGaugeAction::heatbath(U, gauge, 1);
     U.save("gauge_20x10x10x10.mdp");
 #else
   for (int k = 0; k < 1000; k++)
   {
-    cout << k << endl;
+    std::cout << k << std::endl;
     WilsonGaugeAction::heatbath(U, gauge, 50);
     U.save("gauge_20x10x10x10.mdp");
 #endif

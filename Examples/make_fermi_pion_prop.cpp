@@ -28,7 +28,7 @@ int main(int argc, char **argv)
   }
   mdp.add(c2);
   for (mdp_uint t = 0; t < c2.size(); t++)
-    mdp << t << "\t" << c2(t) << endl;
+    mdp << t << "\t" << c2(t) << "\n";
   mdp.close_wormholes();
   return 0;
 }

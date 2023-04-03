@@ -28,27 +28,30 @@
 ///
 /// Why? This allows the creating of new actions while reusing inverters
 /// and simplify passing parameters to the action.
-class coefficients : public map<string, mdp_real>
+class coefficients : public std::map<std::string, mdp_real>
 {
 public:
-  bool has_key(const string s) const
+  bool has_key(const std::string s) const
   {
     if (this->find(s) == this->end())
       return false;
     return true;
   }
   /* for some reason the const declaration does not do anything. removing
-  const mdp_real &operator[] (const string s) const {
-    cout << "HERE\n";
-    if(!has_key(s)) {
-      mdp << "coefficient " << s << " is undefined but required" << endl;
+  const mdp_real &operator[](const std::string s) const
+  {
+    std::cout << "HERE\n";
+    if (!has_key(s))
+    {
+      mdp << "coefficient " << s << " is undefined but required" << "\n";
       exit(1);
     }
-    return static_cast<map<string,mdp_real> >(*this)[s];
+    return static_cast<std::map<std::string, mdp_real>>(*this)[s];
   }
-  mdp_real &operator[] (const string s) {
-    cout << "THERE\n";
-    return static_cast<map<string,mdp_real> * >(this)->operator[](s);
+  mdp_real &operator[](const std::string s)
+  {
+    std::cout << "THERE\n";
+    return static_cast<std::map<std::string, mdp_real> *>(this)->operator[](s);
   }
   */
 };
@@ -61,13 +64,13 @@ void dagger(coefficients &coeff)
     coeff["sign"] = -coeff["sign"];
 }
 
-ostream &operator<<(ostream &os, const coefficients &coeff)
+std::ostream &operator<<(std::ostream &os, const coefficients &coeff)
 {
   begin_function("print_coefficients");
   coefficients::const_iterator iter;
   for (iter = coeff.begin(); iter != coeff.end(); iter++)
   {
-    cout << "<coefficient name=\"" << iter->first << "\">" << iter->second
+    std::cout << "<coefficient name=\"" << iter->first << "\">" << iter->second
          << "</coefficient>" << '\n';
   }
   end_function("print_coefficients");

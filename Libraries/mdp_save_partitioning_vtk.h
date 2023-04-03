@@ -1,4 +1,4 @@
-void save_partitioning_vtk(mdp_lattice &lattice, string filename)
+void save_partitioning_vtk(mdp_lattice &lattice, std::string filename)
 {
   mdp_field<int> where(lattice);
   mdp_site x(lattice);

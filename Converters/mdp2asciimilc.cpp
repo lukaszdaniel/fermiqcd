@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   int *L = header.box;
   mdp << "Lattice size: "
       << L[0] << "x" << L[1] << "x"
-      << L[2] << "x" << L[3] << endl;
+      << L[2] << "x" << L[3] << "\n";
 
   int n = 3; // number of colors;
   mdp_lattice lattice(4, L);

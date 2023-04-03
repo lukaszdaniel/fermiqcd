@@ -24,7 +24,7 @@ class mdp_matrix
 private:
   /// MATRIXOPTIMIZE is still under development and does not work yet
 #ifdef MATRIXOPTIMIZE
-  map<int, deque<mdp_complex *>> stored;
+  std::map<int, deque<mdp_complex *>> stored;
 #endif
   enum
   {
@@ -130,7 +130,7 @@ public:
   friend mdp_matrix conj(const mdp_matrix &a);
 };
 
-ostream &operator<<(ostream &os, const mdp_matrix &a)
+std::ostream &operator<<(std::ostream &os, const mdp_matrix &a)
 {
   uint i, j; // AW - unsigned added
   for (i = 0; i < a.rows(); i++)
@@ -155,7 +155,7 @@ ostream &operator<<(ostream &os, const mdp_matrix &a)
 // this is a compatibility function
 void print(const mdp_matrix &a)
 {
-  cout << a;
+  std::cout << a;
 }
 
 void mdp_matrix::dimension(const uint a, const uint b)

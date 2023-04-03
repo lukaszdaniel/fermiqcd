@@ -349,7 +349,7 @@ public:
       p = (int64_t *)address(x);
       for (mdp_int i = 0; i < Tsize * field_components / 8; i++)
       {
-        cout << '.';
+        std::cout << '.';
         switch_endianess_byte8(*(p + i));
       }
     }
@@ -405,7 +405,7 @@ public:
   //   By default buffersize=1024 and it works reasonably fast.
   // ///////////////////////////////////////////////////////////
 
-  bool load(string filename,
+  bool load(std::string filename,
             int processIO = 0,
             mdp_int max_buffer_size = 1024,
             bool load_header = true,
@@ -413,14 +413,14 @@ public:
             bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = 0,
             bool try_switch_endianess = true);
 
-  bool save(string filename,
+  bool save(std::string filename,
             int processIO = 0,
             mdp_int max_buffer_size = 1024,
             bool load_header = true,
             mdp_int skip_bytes = 0,
             bool (*user_write)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = 0);
 
-  bool save_vtk(string filename,
+  bool save_vtk(std::string filename,
                 int t = -1,
                 int component = -1,
                 int processIO = 0,

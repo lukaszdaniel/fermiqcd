@@ -17,7 +17,7 @@ void test_gauge(int nt, int nx, char *filename)
   {
     snprintf(filename2, 200, "%s.topological_charge_%i.vtk", filename, k);
     float tc = topological_charge_vtk(U, filename2, 0);
-    mdp << "topological_charge=" << tc << endl;
+    mdp << "topological_charge=" << tc << "\n";
     ApeSmearing::smear(U, 0.7, 5, 10);
   }
 }

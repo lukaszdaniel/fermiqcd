@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
   for (int k = 0; k < 10; k++)
   {
-    cout << k << endl;
+    std::cout << k << std::endl;
     WilsonGaugeAction::heatbath(U, gauge, 1);
   }
   topological_charge_vtk(U, "top_charge_simple.vtk");

@@ -28,7 +28,7 @@ int main(int argc, char **argv)
     }
     mpi.add(dH);
     H = H + dH;
-    mdp << "magnetization=" << H << endl;
+    mdp << "magnetization=" << H << "\n";
   }
   mdp.close_wormholes();
   return 1;

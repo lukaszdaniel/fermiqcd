@@ -17,7 +17,7 @@ bool milc_read_as_float_noswitch(FILE *fp,
                                  mdp_int position,
                                  const mdp_lattice &lattice)
 {
-  cout << position << '\n';
+  std::cout << position << '\n';
   double *p = (double *)data;
   site x(lattice);
   x.set_global(position);
@@ -58,7 +58,7 @@ bool milc_read_as_float_switch(FILE *fp,
                                mdp_int position,
                                const mdp_lattice &lattice)
 {
-  cout << "switch" << position << '\n';
+  std::cout << "switch" << position << '\n';
   double *p = (double *)data;
   site x(lattice);
   x.set_global(position);
@@ -93,7 +93,7 @@ bool milc_read_as_float_switch(FILE *fp,
   return true;
 }
 
-bool load_milc(gauge_field &U, string filename,
+bool load_milc(gauge_field &U, std::string filename,
                mdp_int max_buffer_size = 128, int processIO = 0)
 {
 

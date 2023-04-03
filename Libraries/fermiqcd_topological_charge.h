@@ -4,8 +4,8 @@ Under development - DOES NOT WORK!!!!
 class HypSmearing
 {
 public:
-  vector<float> alpha;
-  bool in(int x, vector<int> set)
+  std::vector<float> alpha;
+  bool in(int x, std::vector<int> set)
   {
     for (int i = 0; i < set.size(); i++)
       if (x == set[i])
@@ -15,7 +15,7 @@ public:
 
 public:
   static void smear_aux(gauge_field &U,
-                        vector<int> set,
+                        std::vector<int> set,
                         int cooling_steps = 10)
   {
     mdp_site x(U.lattice());
@@ -82,7 +82,7 @@ public:
     mdp_site x(U.lattice());
     for (int iter = 0; iter < iterations; iter++)
     {
-      cout << "smearing step " << iter << "/" << iterations << endl;
+      std::cout << "smearing step " << iter << "/" << iterations << std::endl;
       V = U;
       for (int mu = 0; mu < 4; mu++)
       {
@@ -126,7 +126,7 @@ void topological_charge(mdp_field<float> &Q, gauge_field &U)
   Q.update();
 }
 
-float topological_charge_vtk(gauge_field &U, string filename, int t = -1)
+float topological_charge_vtk(gauge_field &U, std::string filename, int t = -1)
 {
   mdp_field<float> Q(U.lattice()), P(U.lattice());
   mdp_site x(U.lattice());

@@ -33,13 +33,13 @@ private:
   }
 
 public:
-  vector<mdp_real> p; // location of the instanton
+  std::vector<mdp_real> p; // location of the instanton
   int nc;
   int sub_i, sub_j;
   mdp_real charge; // this is 1/g
   mdp_real lambda;
   mdp_matrix eta[4][4];
-  Instanton4D(int nc, int sub_i, int sub_j, mdp_real charge, mdp_real lambda, vector<mdp_real> &p)
+  Instanton4D(int nc, int sub_i, int sub_j, mdp_real charge, mdp_real lambda, std::vector<mdp_real> &p)
   {
     this->nc = nc;
     this->sub_i = sub_i;
@@ -92,33 +92,47 @@ public:
         }
       }
     /*
-    for(int mu=0; mu<4; mu++)
-      for(int nu=0; nu<4; nu++) {
-  this->eta[mu][nu].dimension(nc,nc);
-  for(int i=0; i<nc; i++)
-    for(int j=0; j<nc; j++)
-      if(i==j && (i!=sub_i && i!=sub_j)) {
-        this->eta[mu][nu](i,j) = 1;
-      } else if((i!=sub_i && i!=sub_j) || (j!=sub_i && j!=sub_j)) {
-        this->eta[mu][nu](i,j) = 0;
-      } else if(mu==0 && nu==0) {
-        this->eta[mu][nu](i,j) = 0;
-      } else {
-        int i0=(i==sub_i?0:1);
-        int j0=(j==sub_i?0:1);
-        for(int a=1; a<4; a++) {
-    if(mu==0) {
-      //this->eta[mu][nu](i,j) += ((a==nu)?-1:0);
-      this->eta[mu][nu](i,j) += sigma[a](i0,j0)*((a==nu)?-1:0);
-    } else if(nu==0) {
-      //this->eta[mu][nu](i,j) += ((a==mu)?+1:0);
-      this->eta[mu][nu](i,j) += sigma[a](i0,j0)*((a==mu)?+1:0);
-    } else {
-      // this->eta[mu][nu](i,j) += epsilon123(a,mu,nu);
-      this->eta[mu][nu](i,j) += sigma[a](i0,j0)*epsilon123(a,mu,nu);
-    }
-        }
-      }
+    for (int mu = 0; mu < 4; mu++)
+      for (int nu = 0; nu < 4; nu++)
+      {
+        this->eta[mu][nu].dimension(nc, nc);
+        for (int i = 0; i < nc; i++)
+          for (int j = 0; j < nc; j++)
+            if (i == j && (i != sub_i && i != sub_j))
+            {
+              this->eta[mu][nu](i, j) = 1;
+            }
+            else if ((i != sub_i && i != sub_j) || (j != sub_i && j != sub_j))
+            {
+              this->eta[mu][nu](i, j) = 0;
+            }
+            else if (mu == 0 && nu == 0)
+            {
+              this->eta[mu][nu](i, j) = 0;
+            }
+            else
+            {
+              int i0 = (i == sub_i ? 0 : 1);
+              int j0 = (j == sub_i ? 0 : 1);
+              for (int a = 1; a < 4; a++)
+              {
+                if (mu == 0)
+                {
+                  // this->eta[mu][nu](i,j) += ((a==nu)?-1:0);
+                  this->eta[mu][nu](i, j) += sigma[a](i0, j0) * ((a == nu) ? -1 : 0);
+                }
+                else if (nu == 0)
+                {
+                  // this->eta[mu][nu](i,j) += ((a==mu)?+1:0);
+                  this->eta[mu][nu](i, j) += sigma[a](i0, j0) * ((a == mu) ? +1 : 0);
+                }
+                else
+                {
+                  // this->eta[mu][nu](i,j) += epsilon123(a,mu,nu);
+                  this->eta[mu][nu](i, j) += sigma[a](i0, j0) * epsilon123(a, mu, nu);
+                }
+              }
+            }
       }
     */
   }
@@ -149,7 +163,7 @@ int main(int argc, char** argv) {
   char filename[128];
   mdp_site x(lattice);
   set_cold(U);
-  vector<mdp_real> p(4);
+  std::vector<mdp_real> p(4);
   for(int mu=0; mu<4; mu++) p[mu]=L[mu]/2;
 
   for(int k=0; k<40; k++) {
@@ -162,10 +176,10 @@ int main(int argc, char** argv) {
       for(int mu=0; mu<U.ndim; mu++)
   U(x,mu)=exp(-I*(A1(x,mu)+A2(x,mu)));
 
-    mdp << "k=" << k << endl;
+    mdp << "k=" << k << "\n";
     //if(k>0) ApeSmearing::smear(U,0.7,1,10);
     snprintf(filename, 128,"%s.%i.vtk",argv[0],k);
-    mdp << "top=" << topological_charge_vtk(U,filename) << endl;
+    mdp << "top=" << topological_charge_vtk(U,filename) << "\n";
   }
   mdp.close_wormholes();
   return 0;

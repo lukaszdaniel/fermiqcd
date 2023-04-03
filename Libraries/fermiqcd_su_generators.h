@@ -16,7 +16,7 @@
 class SU_Generators
 {
 public:
-  vector<mdp_matrix> lambda;
+  std::vector<mdp_matrix> lambda;
   int n;
   int ngenerators;
   SU_Generators(int n)
@@ -36,7 +36,7 @@ public:
     int pos2 = (n * (n - 1));
     mdp_matrix mat(n, n);
     mdp_complex mult = 0;
-    vector<mdp_complex> vec(ngenerators);
+    std::vector<mdp_complex> vec(ngenerators);
     for (int i = 0; i < ngenerators; i++)
       vec[i] = (i == a) ? 1 : 0;
 

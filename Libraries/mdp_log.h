@@ -17,8 +17,8 @@ class mdp_log
 private:
   int level;
   int max_level;
-  vector<string> level_tag;
-  ostream *os;
+  std::vector<std::string> level_tag;
+  std::ostream *os;
 
 public:
   bool print;
@@ -35,17 +35,17 @@ public:
     level = 0;
     max_level = 100000;
     print = true;
-    connect(cout);
+    connect(std::cout);
   }
-  void connect(ostream &os1)
+  void connect(std::ostream &os1)
   {
     os = &os1;
   }
-  void connect(ofstream &os2)
+  void connect(std::ofstream &os2)
   {
     os = &os2; // is this correct? I think so!
   }
-  void error_message(string s, string file = "unkown", int line = 0)
+  void error_message(std::string s, std::string file = "unkown", int line = 0)
   {
     if (print)
     {
@@ -59,14 +59,14 @@ public:
     }
     throw s;
   }
-  void begin_function(string s)
+  void begin_function(std::string s)
   {
     level_tag.resize(++level);
     level_tag[level - 1] = s;
     if (print && level < max_level)
       *os << "<" << s << ">" << '\n';
   }
-  void end_function(string s)
+  void end_function(std::string s)
   {
     if (level_tag[level - 1] == s)
     {

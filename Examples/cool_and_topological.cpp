@@ -19,7 +19,7 @@ void test_gauge(int nt, int nx, char *filename)
   U.save(filename2);
   snprintf(filename2, 128, "%s.topological_charge_20.vtk", filename);
   float tc = topological_charge_vtk(U, filename2, 0);
-  mdp << "topological_charge=" << tc << endl;
+  mdp << "topological_charge=" << tc << "\n";
 }
 
 int main(int argc, char **argv)

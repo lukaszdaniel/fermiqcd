@@ -45,7 +45,7 @@ int main(int argc, char **argv)
       if (x == A)
       {
         c = +J;
-        cout << ME << '\n';
+        std::cout << ME << '\n';
       };
       if (x == B)
         c = -J;

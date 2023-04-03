@@ -42,7 +42,7 @@
 /// Note that mul_invQ(chi,psi,U,coeff) reads
 /// \f$ \chi=(/\!\!\!D[U]+m)^{-1}\psi \f$
 
-string inversion_vtk_prefix = "test";
+std::string inversion_vtk_prefix = "test";
 
 class MinResVtk
 {
@@ -59,7 +59,7 @@ public:
 
     mpi.begin_function("MinimumResidueInverter");
 
-    const string filename_prefix = inversion_vtk_prefix;
+    const std::string filename_prefix = inversion_vtk_prefix;
     const int tc = 0;
 
     fieldT q(psi_in);
@@ -71,8 +71,8 @@ public:
     double time = mpi.time();
     inversion_stats stats;
     mdp_site x(psi_in.lattice());
-    string filename1;
-    string filename2;
+    std::string filename1;
+    std::string filename2;
 
     psi_in.update();
     mul_Q(r, psi_in, U, coeff);

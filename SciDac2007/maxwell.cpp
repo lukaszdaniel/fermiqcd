@@ -4,7 +4,7 @@
 #define Y 1
 #define Z 2
 
-void dump(mdp_field<int> &s, string filename = "default.vtk")
+void dump(mdp_field<int> &s, std::string filename = "default.vtk")
 {
   char header[1024], number[1024];
   int LX = s.lattice().size(0), LY = s.lattice().size(1), LZ = s.lattice().size(2);
@@ -22,7 +22,7 @@ void dump(mdp_field<int> &s, string filename = "default.vtk")
            LX, LY, LZ, LX * LY * LZ);
 
   int sfd = open("tmp.vtk", O_WRONLY);
-  cout << "saving... " << filename << " as fd=" << sfd << endl;
+  std::cout << "saving... " << filename << " as fd=" << sfd << std::endl;
   setFileLock(sfd);
   if (write(sfd, header, strlen(header)) == -1)
   {
@@ -42,7 +42,7 @@ void dump(mdp_field<int> &s, string filename = "default.vtk")
         }
       }
   setFileUnlock(sfd);
-  if (system((string("cp tmp.vtk ") + filename).c_str()) == -1)
+  if (system((std::string("cp tmp.vtk ") + filename).c_str()) == -1)
   {
     error("Error copying file");
   }

@@ -59,7 +59,7 @@ void mdp_field<T>::update(int np, int d, int ncomp)
           dynamic_buffer[idx * ncomp + k] =
               *(m + lattice().to_send[process][start_to_send + idx] * field_components + d * ncomp + k);
       mpi.put(dynamic_buffer, length * ncomp, process, request);
-      cout.flush();
+      std::cout.flush();
     }
     else
     {

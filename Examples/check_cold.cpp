@@ -12,18 +12,18 @@ int main(int argc, char **argv)
   U.load(argv[2]);
   mdp_site x(lattice);
   x.set(0, 0, 0, 0);
-  cout << U(x, 0) << endl;
+  std::cout << U(x, 0) << std::endl;
   forallsites(x)
   {
     for (int mu = 0; mu < 4; mu++)
       if (max(U(x, mu) - 1) > 0)
       {
-        cout << x << mu << "\n"
-             << U(x, mu) << endl;
+        std::cout << x << mu << "\n"
+             << U(x, mu) << std::endl;
         break;
       }
   }
-  mdp << "plaquette:" << average_plaquette(U) << endl;
+  mdp << "plaquette:" << average_plaquette(U) << "\n";
   mdp.close_wormholes();
   return 0;
 }

@@ -24,7 +24,6 @@
 #include <sys/socket.h>
 #include <sys/errno.h>
 #include <fcntl.h>
-using namespace std;
 
 #ifndef FERMIQCD
 typedef int mdp_int; // this in case this lib is used without fermiqcd
@@ -89,7 +88,7 @@ private:
   // Class variables
   int _verbatim;       // 0 for no output, 1 for some, 2 more
   int _processCount;   // Holds the number of processes
-  string _logFileName; // filename of the log file
+  std::string _logFileName; // filename of the log file
   bool _doLogging;     // do logging or not?
   FILE *_logfileFD;    // file descriptor for the logging file
   int _processID;      // process ID of "this" process
@@ -97,7 +96,7 @@ private:
   int (*_socketFD)[2]; // array to hold all of the sockets
   int _commTimeout;    // defaults to COMM_TIMEOUT_DEFAULT
 
-  map<string, vector<char>> *_hash;
+  std::map<std::string, std::vector<char>> *_hash;
   // Hash Map to hold out of sequence (send/receive) data
 
   // *******************************************************************
@@ -106,7 +105,7 @@ private:
   // ***  Used by the constructor ONLY                               ***
   // *******************************************************************
 
-  void psim_begin(int processCount, string logFileName, int verbatim)
+  void psim_begin(int processCount, std::string logFileName, int verbatim)
   {
     _processCount = processCount;
     _logFileName = logFileName;
@@ -116,7 +115,7 @@ private:
     if ((processCount < PROCESS_COUNT_MIN) || (processCount < PROCESS_COUNT_MIN))
     {
       log("PSIM ERROR: Invalid number of processes");
-      throw string("PSIM ERROR: Invalid number of processes");
+      throw std::string("PSIM ERROR: Invalid number of processes");
     }
 
     initialize(processCount);
@@ -181,17 +180,17 @@ private:
     _processID = PROCESS_PARENT;
     _commTimeout = COMM_TIMEOUT_DEFAULT;
 
-    _hash = new map<string, vector<char>>[_processCount];
+    _hash = new std::map<std::string, std::vector<char>>[_processCount];
     if (_hash == NULL)
     {
       log("PSIM ERROR: failure to allocate hash");
-      throw string("PSIM ERROR: failure to allocate hash");
+      throw std::string("PSIM ERROR: failure to allocate hash");
     }
     _socketFD = new int[_processCount * _processCount][2];
     if (_socketFD == NULL)
     {
       log("PSIM ERROR: failed to create socket array");
-      throw string("PSIM ERROR: failed to create socket array");
+      throw std::string("PSIM ERROR: failed to create socket array");
     }
   }
 
@@ -217,7 +216,7 @@ private:
           if (errno == EEXIST)
             unlink(filename);
           else
-            throw string("PSIM ERROR: unable to mkfifo ") + filename;
+            throw std::string("PSIM ERROR: unable to mkfifo ") + filename;
         }
         _socketFD[_processCount * source + dest][COMM_RECV] = open(filename, O_RDONLY | O_NONBLOCK);
         _socketFD[_processCount * source + dest][COMM_SEND] = open(filename, O_WRONLY);
@@ -226,7 +225,7 @@ private:
         if (_socketFD[_processCount * source + dest][COMM_SEND] <= 0 ||
             _socketFD[_processCount * source + dest][COMM_RECV] <= 0)
         {
-          throw string("PSIM ERROR: unable to open fifo");
+          throw std::string("PSIM ERROR: unable to open fifo");
         }
       }
     }
@@ -298,7 +297,7 @@ private:
       snprintf(buffer, 256, "PSIM ERROR: process %i referencing %i.",
                _processID, processID);
       log(buffer);
-      throw string(buffer);
+      throw std::string(buffer);
     }
   }
 
@@ -322,7 +321,7 @@ private:
     if ((_logfileFD = fopen(_logFileName.c_str(), "w")) == NULL)
     {
       log("PSIM ERROR: unable to create logfile");
-      throw string("PSIM ERROR: unable to create logfile");
+      throw std::string("PSIM ERROR: unable to create logfile");
     }
     // close the log file
     close_log();
@@ -331,7 +330,7 @@ private:
     if ((_logfileFD = fopen(_logFileName.c_str(), "a")) == NULL)
     {
       log("PSIM ERROR: unable to open logfile");
-      throw string("PSIM ERROR: unable to open logfile");
+      throw std::string("PSIM ERROR: unable to open logfile");
     }
     _doLogging = true;
   }
@@ -358,7 +357,7 @@ private:
   // *******************************************************************
 
   void logSendRecv(int sourcedestProcessID,
-                   string tag,
+                   std::string tag,
                    enumSendRecv method,
                    enumSendRecvStep step)
   {
@@ -414,12 +413,12 @@ private:
     if (write(fd, pdataToSend, dataSize) != dataSize)
     {
       log("PSIM ERROR: failure to write to socket");
-      throw string("PSIM ERROR: failure to write to socket");
+      throw std::string("PSIM ERROR: failure to write to socket");
     }
     if (write(_socketFD[destIndex][COMM_SEND], &counter, sizeof(counter)) != sizeof(counter))
     {
       log("PSIM ERROR: failure to write to socket");
-      throw string("PSIM ERROR: failure to write to socket");
+      throw std::string("PSIM ERROR: failure to write to socket");
     }
     close(fd);
   }
@@ -432,8 +431,8 @@ private:
   // *******************************************************************
 
   void send_binary(int destProcessID,
-                   const string &tag,
-                   const vector<char> &data)
+                   const std::string &tag,
+                   const std::vector<char> &data)
   {
 
     int tagSize = tag.size();
@@ -460,14 +459,14 @@ private:
     if (read(_socketFD[sourceIndex][COMM_RECV], &counter, sizeof(counter)) != sizeof(counter))
     {
       log("PSIM ERROR: timeout error in readin from socket");
-      throw string("PSIM ERROR: timeout error in readin from socket");
+      throw std::string("PSIM ERROR: timeout error in readin from socket");
     }
     snprintf(filename, 512, ".fifo.%i.%i.%i", sourceProcessID, _processID, counter);
     int fd = open(filename, O_RDONLY);
     if (read(fd, (char *)pdataToReceive, dataSize) != dataSize)
     {
       log("PSIM ERROR: timeout error in readin from socket");
-      throw string("PSIM ERROR: timeout error in readin from socket");
+      throw std::string("PSIM ERROR: timeout error in readin from socket");
     }
     else
     {
@@ -485,15 +484,15 @@ private:
   // *******************************************************************
 
   void recv_binary(int sourceProcessID,
-                   const string &tag,
-                   vector<char> &data)
+                   const std::string &tag,
+                   std::vector<char> &data)
   {
 
-    static vector<char> dataTmp;
-    static string tagReceived;
+    static std::vector<char> dataTmp;
+    static std::string tagReceived;
     int size;
 
-    map<string, vector<char>>::iterator itr;
+    std::map<std::string, std::vector<char>>::iterator itr;
 
     while (true)
     {
@@ -541,7 +540,7 @@ private:
   // ***                                                             ***
   // *******************************************************************
 
-  void doBegEndLog(string method, enumBegEnd begEnd)
+  void doBegEndLog(std::string method, enumBegEnd begEnd)
   {
     char buffer[256];
     char *be;
@@ -572,7 +571,7 @@ public:
   // ***                                                             ***
   // *******************************************************************
 
-  mdp_psim(int processCount, string logFileName = ".psim.log", int verbatim = 0)
+  mdp_psim(int processCount, std::string logFileName = ".psim.log", int verbatim = 0)
   {
     psim_begin(processCount, logFileName, verbatim);
   }
@@ -580,7 +579,7 @@ public:
   mdp_psim(int argc, char **argv)
   {
     int processCount = parse_argv_nprocs(argc, argv);
-    string logFileName = parse_argv_logfile(argc, argv);
+    std::string logFileName = parse_argv_logfile(argc, argv);
     int verbatim = parse_argv_verbatim(argc, argv);
     psim_begin(processCount, logFileName, verbatim);
   }
@@ -609,7 +608,7 @@ public:
   // ***                                                             ***
   // *******************************************************************
 
-  void log(string message, int level = 2)
+  void log(std::string message, int level = 2)
   {
     if (_doLogging)
     {
@@ -624,8 +623,8 @@ public:
     }
     if (_verbatim >= level)
     {
-      cout << "PSIM LOG: " << message << endl;
-      cout.flush();
+      std::cout << "PSIM LOG: " << message << std::endl;
+      std::cout.flush();
     }
   }
 
@@ -679,10 +678,10 @@ public:
   // *******************************************************************
 
   template <class T>
-  void send(int destProcessID, string dataTag, T &dataToSend)
+  void send(int destProcessID, std::string dataTag, T &dataToSend)
   {
     logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);
-    vector<char> data(sizeof(T));
+    std::vector<char> data(sizeof(T));
     for (unsigned int k = 0; k < sizeof(T); k++)
       data[k] = ((char *)&dataToSend)[k];
     send_binary(destProcessID, dataTag, data);
@@ -700,11 +699,11 @@ public:
   // *******************************************************************
 
   template <class T>
-  void send(int destProcessID, string dataTag,
+  void send(int destProcessID, std::string dataTag,
             T *pdataToSend, mdp_int dataSize)
   {
     logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);
-    vector<char> data(sizeof(T) * dataSize);
+    std::vector<char> data(sizeof(T) * dataSize);
     for (mdp_uint k = 0; k < data.size(); k++)
       data[k] = ((char *)pdataToSend)[k];
     send_binary(destProcessID, dataTag, data);
@@ -721,15 +720,15 @@ public:
   // *******************************************************************
 
   template <class T>
-  void recv(int sourceProcessID, string dataTag, T &dataToReceive)
+  void recv(int sourceProcessID, std::string dataTag, T &dataToReceive)
   {
     logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_START);
-    vector<char> data;
+    std::vector<char> data;
     recv_binary(sourceProcessID, dataTag, data);
     if (data.size() != sizeof(T))
     {
       log("PSIM ERROR: recv invalid data)");
-      throw string("PSIM ERROR: recv invalid data)");
+      throw std::string("PSIM ERROR: recv invalid data)");
     };
     for (unsigned int k = 0; k < sizeof(T); k++)
       ((char *)&dataToReceive)[k] = data[k];
@@ -747,16 +746,16 @@ public:
   // *******************************************************************
 
   template <class T>
-  void recv(int sourceProcessID, string dataTag,
+  void recv(int sourceProcessID, std::string dataTag,
             T *pdataToReceive, mdp_int dataSize)
   {
     logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_START);
-    vector<char> data;
+    std::vector<char> data;
     recv_binary(sourceProcessID, dataTag, data);
     if (data.size() != sizeof(T) * dataSize)
     {
       log("PSIM ERROR: recv invalid data size");
-      throw string("PSIM ERROR: recv invalid data size");
+      throw std::string("PSIM ERROR: recv invalid data size");
     }
     for (mdp_uint k = 0; k < data.size(); k++)
       ((char *)pdataToReceive)[k] = data[k];
@@ -775,7 +774,7 @@ public:
   template <class T>
   void broadcast(int sourceProcessID, T &data)
   {
-    static string tag = "BROADCAST:0";
+    static std::string tag = "BROADCAST:0";
     doBegEndLog(tag, LOG_BEGIN);
     if (_processID == sourceProcessID)
     {
@@ -801,7 +800,7 @@ public:
   template <class T>
   void broadcast(int sourceProcessID, T *data, int dataSize)
   {
-    static string tag = "BROADCASTV:0";
+    static std::string tag = "BROADCASTV:0";
     doBegEndLog(tag, LOG_BEGIN);
     if (_processID == sourceProcessID)
     {
@@ -833,10 +832,10 @@ public:
   // *******************************************************************
 
   template <class T>
-  vector<T> collect(int dest, T &data)
+  std::vector<T> collect(int dest, T &data)
   {
-    static string tag = "COLLECT";
-    vector<T> dataList;
+    static std::string tag = "COLLECT";
+    std::vector<T> dataList;
     T dataToReceive;
     dataList.resize(_processCount);
     doBegEndLog(tag, LOG_BEGIN);
@@ -877,13 +876,13 @@ public:
   // *******************************************************************
 
   template <class T>
-  vector<T> combine(T &data)
+  std::vector<T> combine(T &data)
   {
-    vector<T> dataList = collect(PROCESS_PARENT, data);
-    cout << id() << " size=" << dataList.size() << endl;
+    std::vector<T> dataList = collect(PROCESS_PARENT, data);
+    std::cout << id() << " size=" << dataList.size() << std::endl;
 
     broadcast(PROCESS_PARENT, &dataList[0], dataList.size());
-    cout << id() << " list=" << dataList[0] << dataList[1] << dataList[2] << endl;
+    std::cout << id() << " list=" << dataList[0] << dataList[1] << dataList[2] << std::endl;
     return dataList;
   }
 
@@ -913,7 +912,7 @@ public:
   template <class T>
   T add(T &item)
   {
-    vector<T> dataList;
+    std::vector<T> dataList;
     T total = 0;
     dataList = collect(PROCESS_PARENT, item);
     if (_processID == PROCESS_PARENT)
@@ -946,14 +945,14 @@ public:
     return n;
   }
 
-  static string parse_argv_logfile(int argc, char **argv)
+  static std::string parse_argv_logfile(int argc, char **argv)
   {
     for (int i = 1; i < argc; i++)
       if (strncmp(argv[i], "-PSIM_LOGFILE=", 14) == 0)
       {
-        return string(argv[i] + 14);
+        return std::string(argv[i] + 14);
       }
-    return string("");
+    return std::string("");
   }
 
   static int parse_argv_verbatim(int argc, char **argv)

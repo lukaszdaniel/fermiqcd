@@ -290,7 +290,7 @@ public:
       add(a[i]);
   }
   template <class T>
-  void add(vector<T> &a)
+  void add(std::vector<T> &a)
   {
     add(&a[0], a.size());
   }
@@ -512,7 +512,7 @@ public:
 #endif
   }
   template <class T>
-  void add(vector<T> &a)
+  void add(std::vector<T> &a)
   {
     add(&a[0], a.size());
   }
@@ -653,19 +653,19 @@ mdp_communicator mdp;
 /// alias for mdp
 mdp_communicator &mpi = mdp;
 
-void _mpi_error_message(string a, string b = "unkown", int c = 0)
+void _mpi_error_message(std::string a, std::string b = "unkown", int c = 0)
 {
   mpi.error_message(a, b, c);
 }
 
 /// Logs in xml the start of a function with message s
-inline void begin_function(string s)
+inline void begin_function(std::string s)
 {
   mpi.begin_function(s);
 }
 
 /// Logs in xml the end of a function with message s
-inline void end_function(string s)
+inline void end_function(std::string s)
 {
   mpi.end_function(s);
 }

@@ -118,7 +118,7 @@ public:
         {
           S(x, a, b, i, j) = chi(x, a, i);
         }
-        cout << "Statistics: residue=" << stats.residue
+        std::cout << "Statistics: residue=" << stats.residue
              << ", steps=" << stats.steps
              << ", time=" << stats.time << '\n';
       }
@@ -150,8 +150,8 @@ void print_propagator(fermi_propagator &S)
     mdp << "Enter the coordinates (x0,x1,x2,x3 or 'quit' to end): ";
     if (ME == 0)
     {
-      string stringa;
-      cin >> stringa;
+      std::string stringa;
+      std::cin >> stringa;
       if (stringa == "quit")
         do_exit = true;
       else

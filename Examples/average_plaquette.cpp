@@ -13,7 +13,7 @@ int main(int argc, char **argv)
   y.set(31, 23, 23, 23);
   for (int mu = 0; mu < 4; mu++)
     U(y, mu) = U(x, mu);
-  cout << average_plaquette(U) << endl;
+  std::cout << average_plaquette(U) << std::endl;
 
   mdp.close_wormholes();
   return 0;

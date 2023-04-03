@@ -422,7 +422,7 @@ public:
     return sqrt(residue / p.lattice().global_volume());
   }
 
-  bool save_as_float(string filename,
+  bool save_as_float(std::string filename,
                      int processIO = 0,
                      mdp_int max_buffer_size = 1024,
                      bool load_header = true,
@@ -439,7 +439,7 @@ public:
     return true;
   }
 
-  bool load_as_float(string filename,
+  bool load_as_float(std::string filename,
                      int processIO = 0,
                      mdp_int max_buffer_size = 1024,
                      bool load_header = true,
@@ -457,7 +457,7 @@ public:
     return true;
   }
 
-  bool load_as_double(string filename,
+  bool load_as_double(std::string filename,
                       int processIO = 0,
                       mdp_int max_buffer_size = 1024,
                       bool load_header = true,
@@ -474,7 +474,7 @@ public:
     return true;
   }
 
-  bool save_as_double(string filename,
+  bool save_as_double(std::string filename,
                       int processIO = 0,
                       mdp_int max_buffer_size = 1024,
                       bool load_header = true,

@@ -1,6 +1,6 @@
 #include "fermiqcd.h"
 
-void polyakov(int nt, int nx, string filename)
+void polyakov(int nt, int nx, std::string filename)
 {
   int L[] = {nt, nx, nx, nx};
   char output[512];

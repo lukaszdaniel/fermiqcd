@@ -26,7 +26,7 @@
  *   Returns true on success, throws an error for unexpected conditions.
  */
 template <class T>
-bool mdp_field<T>::save_vtk(string filename,
+bool mdp_field<T>::save_vtk(std::string filename,
                             int t,
                             int component,
                             int processIO,
@@ -34,7 +34,7 @@ bool mdp_field<T>::save_vtk(string filename,
 {
 
   filename = next_to_latest_file(filename);
-  string filename_tmp = filename + ".tmp";
+  std::string filename_tmp = filename + ".tmp";
 
   int max_buffer_size = 1024;
   int timeslice;
@@ -54,7 +54,7 @@ bool mdp_field<T>::save_vtk(string filename,
     int process;
     for (process = 0; process < Nproc; process++)
       buffer_ptr[process] = 0;
-    cout << "Saving file " << filename
+    std::cout << "Saving file " << filename
          << " from process " << processIO
          << " (buffer = " << max_buffer_size << " sites)" << '\n';
     fflush(stdout);
@@ -198,10 +198,10 @@ bool mdp_field<T>::save_vtk(string filename,
   return true;
 }
 
-mdp_field<float> &cumulate_field(mdp_field<float> &field, string filename)
+mdp_field<float> &cumulate_field(mdp_field<float> &field, std::string filename)
 {
-  static map<string, int> counter;
-  static map<string, mdp_field<float> *> fields;
+  static std::map<std::string, int> counter;
+  static std::map<std::string, mdp_field<float> *> fields;
   mdp_site p(field.lattice());
   int k = 0;
   if (counter.find(filename) == counter.end())
@@ -221,14 +221,14 @@ mdp_field<float> &cumulate_field(mdp_field<float> &field, string filename)
 
 /*
 void save_vtk(mdp_field<float> &field,
-              string filename,
+              std::string filename,
               int t = -1,
               int component = -1,
               int processIO = 0,
               bool ASCII = false)
 {
-  static map<string, int> counter;
-  static map<string, mdp_field<float> *> fields;
+  static std::map<std::string, int> counter;
+  static std::map<std::string, mdp_field<float> *> fields;
   mdp_site p(field.lattice());
   int k = 0;
   if (counter.find(filename) == counter.end())
@@ -251,7 +251,7 @@ void save_vtk(mdp_field<float> &field,
   }
   else
   {
-    string filename2 = filename.substr(0, filename.size() - 1);
+    std::string filename2 = filename.substr(0, filename.size() - 1);
     field.save_vtk(filename2 + "_" + tostring(k) + ".vtk", t, component, processIO, ASCII);
     fields[filename]->save_vtk(filename2 + "_average_" + tostring(k) + ".vtk", t, component, processIO, ASCII);
   }

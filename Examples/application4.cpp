@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     if (onwhichprocess(space, 0, 0, 0, 0) == ME)
     {
       x.set(0, 0, 0, 0);
-      cout << real(U(x, 0, 0)) << '\n';
+      std::cout << real(U(x, 0, 0)) << "\n";
     }
     */
     U.update();
@@ -39,4 +39,4 @@ int main(int argc, char **argv)
   U.save("U_field.dat");
   mdp.close_wormholes();
   return 0;
-};
+}

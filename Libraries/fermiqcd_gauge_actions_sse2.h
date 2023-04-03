@@ -503,7 +503,7 @@ public:
   static gauge_stats heatbath(gauge_field &U,
                               coefficients &coeff,
                               int n_iter = 1,
-                              string model = "MILC")
+                              std::string model = "MILC")
   {
 
     begin_function("ImprovedGaugeAction__heatbath");

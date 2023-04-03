@@ -304,7 +304,7 @@ public:
     return m[(((i0 * c[1] + i1) * c[2] + i2) * c[3] + i3) * c[4] + i4];
   }
 
-  friend ostream &operator<<(ostream &os, const mdp_array &a)
+  friend std::ostream &operator<<(std::ostream &os, const mdp_array &a)
   {
     uint i;
     os << "{";

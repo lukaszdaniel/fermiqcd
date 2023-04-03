@@ -16,8 +16,8 @@ int main(int argc, char **argv)
   forallsites(x)
   {
     F(x) = 1.0 / 7.0 * (F(x) + F(x + 0) + F(x - 0) + F(x + 1) + F(x - 1) + F(x + 2) + F(x - 2));
-    cout << "F(x) for x=(" << x(0) << "," << x(1) << ")\n";
-    cout << F(x) << "\n";
+    std::cout << "F(x) for x=(" << x(0) << "," << x(1) << ")\n";
+    std::cout << F(x) << "\n";
   }
   mpi.close_wormholes();
   return 0;

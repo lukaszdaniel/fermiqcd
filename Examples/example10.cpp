@@ -14,7 +14,7 @@ int main(int argc, char **argv)
     if (i % 2 == 0)
       mpi.barrier();
     mpi.broadcast(j, 0);
-    cout << "I am process " << ME
+    std::cout << "I am process " << ME
          << ", i=" << i
          << ", j=" << j << '\n';
   }

@@ -5,7 +5,7 @@
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // START
-  string gauge_filename = "gauge.cold";
+  std::string gauge_filename = "gauge.cold";
   int size1 = 2;
   int size2 = 3;
   mdp_field_file_header header;
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
       result += real(average_path(U, length, path)) / 6;
     }
-  cout << "average loop " << size1 << "x" << size2 << " = " << result << endl;
+  std::cout << "average loop " << size1 << "x" << size2 << " = " << result << std::endl;
   delete[] path;
 
   mdp.close_wormholes(); // STOP

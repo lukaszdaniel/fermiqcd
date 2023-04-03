@@ -31,9 +31,9 @@ int main(int argc, char **argv)
   gauge_field U(lattice, nc);
   int mu = 0, nu = 1;
   U.load(argv[1]);
-  mdp << "plaquette:" << average_plaquette(U, mu, nu) << endl;
-  mdp << "plaquette:" << average_plaquette1(U, mu, nu) << endl;
-  mdp << "plaquette:" << average_plaquette2(U, mu, nu) << endl;
+  mdp << "plaquette:" << average_plaquette(U, mu, nu) << "\n";
+  mdp << "plaquette:" << average_plaquette1(U, mu, nu) << "\n";
+  mdp << "plaquette:" << average_plaquette2(U, mu, nu) << "\n";
   mdp.close_wormholes();
   return 0;
 }

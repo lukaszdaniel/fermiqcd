@@ -42,11 +42,11 @@ double walltime()
   return (time);
 }
 
-string getname()
+std::string getname()
 {
   static char tmp[1024];
   gethostname(tmp, 1024);
-  return string(tmp);
+  return std::string(tmp);
 }
 
 void getcpuusage(double &user, double &total)
@@ -85,9 +85,9 @@ double walltime()
   return (double)clock() / CLOCKS_PER_SEC;
 }
 
-string getname()
+std::string getname()
 {
-  return string("localhost");
+  return std::string("localhost");
 }
 
 void getcpuusage(double &user, double &total)

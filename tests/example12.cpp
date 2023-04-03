@@ -9,7 +9,7 @@ int main(int argc, char **argv)
   site x(mylattice);
   forallsites(x)
   {
-    cout << "Site=(" << x(0) << "," << x(1)
+    std::cout << "Site=(" << x(0) << "," << x(1)
          << ") is stored by " << ME << '\n';
   }
   mpi.close_wormholes();

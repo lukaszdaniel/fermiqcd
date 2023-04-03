@@ -23,7 +23,7 @@ int main(int argc, char **argv)
   /*
   set_cold(U);
   for(int k=0; k<100; k++) {
-    cout << k << endl;
+    std::cout << k << std::endl;
     WilsonGaugeAction::heatbath(U,gauge,1);
   }
   */
@@ -49,7 +49,7 @@ int main(int argc, char **argv)
       x = x + 0;
       B = B * U(x, 0);
     }
-    cout << "1" << endl;
+    std::cout << "1" << std::endl;
     C = A * hermitian(B);
     d += L[0] * trace(C); // quark and antiquark
     forallsites(x)
@@ -69,22 +69,24 @@ int main(int argc, char **argv)
       F(x3, 11) += trace(plaquette(U, x, 2, 3));
     }
     /*
-    for(int k=0; k<6; k++) {
-      for(int mu=0; mu<12; mu++) {
-  forallsitesofparity(x3,k%2) F(x3,mu)=0.8*F(x3,mu)+0.2/6*(F(x3+0,mu)+
-                 F(x3-0,mu)+
-                 F(x3+1,mu)+
-                 F(x3-1,mu)+
-                 F(x3+2,mu)+
-                 F(x3-2,mu));
+    for (int k = 0; k < 6; k++)
+    {
+      for (int mu = 0; mu < 12; mu++)
+      {
+        forallsitesofparity(x3, k % 2)
+        {
+          F(x3, mu) = 0.8 * F(x3, mu) + 0.2 / 6 * (F(x3 + 0, mu) + F(x3 - 0, mu) + F(x3 + 1, mu) + F(x3 - 1, mu) + F(x3 + 2, mu) + F(x3 - 2, mu));
+        }
       }
     }
     */
-    cout << "projecting to 3D...\n";
+    std::cout << "projecting to 3D...\n";
     forallsites(x3)
-        Q3(x3) = abs((F(x3, 0) + F(x3, 1) + F(x3, 2) - F(x3, 3) - F(x3, 4) - F(x3, 5)) / d -
-                     (F(x3, 6) + F(x3, 7) + F(x3, 8) - F(x3, 9) - F(x3, 10) - F(x3, 11)) / L[0] / (conf + 1));
-    cout << "saving vtk file\n";
+    {
+      Q3(x3) = abs((F(x3, 0) + F(x3, 1) + F(x3, 2) - F(x3, 3) - F(x3, 4) - F(x3, 5)) / d -
+                   (F(x3, 6) + F(x3, 7) + F(x3, 8) - F(x3, 9) - F(x3, 10) - F(x3, 11)) / L[0] / (conf + 1));
+    }
+    std::cout << "saving vtk file\n";
     snprintf(name, 100, "qqbar_%i.vtk", conf);
     dump(Q3, 0, name);
   }

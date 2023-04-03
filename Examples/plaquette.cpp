@@ -1,6 +1,6 @@
 #include "fermiqcd.h"
 
-void compute_plaquette(int nt, int nx, string filename)
+void compute_plaquette(int nt, int nx, std::string filename)
 {
   int L[] = {nt, nx, nx, nx};
   int nc = 3;

@@ -8,9 +8,9 @@ void test_gauge()
   generic_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   set_hot(U);
-  cout << average_plaquette(U, 0, 1) << endl;
+  std::cout << average_plaquette(U, 0, 1) << std::endl;
   int path[][2] = {{+1, 0}, {+1, 1}, {-1, 0}, {-1, 1}};
-  cout << average_path(U, 4, path) << endl;
+  std::cout << average_path(U, 4, path) << std::endl;
 }
 
 int main(int argc, char **argv)

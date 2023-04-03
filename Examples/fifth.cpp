@@ -49,7 +49,7 @@ int main(int argc, char **argv)
     }
   }
 
-  mdp << s / 100 / (6 * 6 * 6 * 6) / 12 << endl;
+  mdp << s / 100 / (6 * 6 * 6 * 6) / 12 << "\n";
 
   mdp.close_wormholes();
   return 0;

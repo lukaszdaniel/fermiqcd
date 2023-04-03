@@ -16,7 +16,7 @@
 class SO_Generators
 {
 public:
-  vector<mdp_matrix> lambda;
+  std::vector<mdp_matrix> lambda;
   int n;
   int ngenerators;
   SO_Generators(int n)

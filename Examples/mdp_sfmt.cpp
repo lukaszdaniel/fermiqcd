@@ -1,6 +1,7 @@
-#include "assert.h"
-#include "iostream"
-#include "cmath"
+#include <cassert>
+#include <iostream>
+#include <cmath>
+
 using namespace std;
 
 #define MSK1 0xdfffffefU
@@ -181,16 +182,16 @@ int main()
   while (1)
   {
     x = r.uniform();
-    cout << x << endl;
+    std::cout << x << std::endl;
     i = int(10.0 * x);
-    // cout << i << endl;
+    // std::cout << i << std::endl;
     c[i]++;
     counter++;
     sum1 += 1;
     sum2 += 2 * c[i] - 1;
     mean = sum1 / n;
     sd = sqrt(sum2 / n - mean * mean);
-    cout << counter << "\t" << mean << "\t" << sum2 / counter << "\t" << sd / mean << endl;
+    std::cout << counter << "\t" << mean << "\t" << sum2 / counter << "\t" << sd / mean << std::endl;
     if (counter == 20)
       break;
   }

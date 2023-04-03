@@ -26,7 +26,7 @@ bool mdp_default_user_write(FILE *fp,
 
 /// Best way to save a field
 template <class T>
-bool mdp_field<T>::save(string filename,
+bool mdp_field<T>::save(std::string filename,
                         int processIO,
                         mdp_int max_buffer_size,
                         bool save_header,
@@ -50,7 +50,7 @@ bool mdp_field<T>::save(string filename,
     int process;
     for (process = 0; process < Nproc; process++)
       buffer_ptr[process] = 0;
-    cout << "Saving file " << filename
+    std::cout << "Saving file " << filename
          << " from process " << processIO
          << " (buffer = " << max_buffer_size << " sites)" << '\n';
     fflush(stdout);

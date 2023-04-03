@@ -10,7 +10,7 @@
 int main(int argc, char **argv)
 {
     mdp.open_wormholes(argc, argv);
-    string filename;
+    std::string filename;
     coefficients coeff;
     int L[] = {16, 4, 4, 4};
     mdp_lattice spacetime(4, L);

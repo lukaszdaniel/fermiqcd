@@ -1,4 +1,4 @@
-void select_action_and_inverter(string quark_action, string inverter)
+void select_action_and_inverter(std::string quark_action, std::string inverter)
 {
   if (quark_action == "clover_fast")
     default_fermi_action = FermiCloverActionFast::mul_Q;

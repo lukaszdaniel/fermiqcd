@@ -166,38 +166,38 @@ int main(int argc, char **argv)
   mdp_matrix G1; // spin structure of the meson
   mdp_matrix G2; // flavour structure ot the meson
 
-  if (string(meson) == "5x5")
+  if (std::string(meson) == "5x5")
   {
     // this is the Goldston pion !!!
     G1 = Gamma5;
     G2 = Gamma5;
   }
-  else if (string(meson) == "05x05")
+  else if (std::string(meson) == "05x05")
   {
     G1 = Gamma[0] * Gamma5;
     G2 = Gamma[0] * Gamma5;
   }
-  else if (string(meson) == "5x35")
+  else if (std::string(meson) == "5x35")
   {
     G1 = Gamma5;
     G2 = Gamma[3] * Gamma5;
   }
-  else if (string(meson) == "05x12")
+  else if (std::string(meson) == "05x12")
   {
     G1 = Gamma[0] * Gamma5;
     G2 = Gamma[1] * Gamma[2];
   }
-  else if (string(meson) == "5x03")
+  else if (std::string(meson) == "5x03")
   {
     G1 = Gamma5;
     G2 = Gamma[0] * Gamma[3];
   }
-  else if (string(meson) == "05x3")
+  else if (std::string(meson) == "05x3")
   {
     G1 = Gamma[0] * Gamma5;
     G2 = Gamma[3];
   }
-  else if (string(meson) == "5x0")
+  else if (std::string(meson) == "5x0")
   {
     G1 = Gamma5;
     G2 = Gamma[0];

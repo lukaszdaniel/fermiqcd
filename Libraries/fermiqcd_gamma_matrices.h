@@ -51,7 +51,7 @@ mdp_matrix Sigma[4][4], sigma[4];
 /// - "Minkowsky-Dirac" (not ok for lattice qcd)
 /// - "Minkowsky-Chiral" (not ok for lattice qcd)
 /// Convention can be changed within the program.
-void define_base_matrices(string convention = "FERMILAB")
+void define_base_matrices(std::string convention = "FERMILAB")
 {
   begin_function("define_base_matrices");
   int i, j, a, b, mu, nu; // was int i,j,k;
@@ -349,7 +349,7 @@ void define_base_matrices(string convention = "FERMILAB")
   end_function("define_base_matrices");
 }
 
-mdp_matrix parse_gamma(string g)
+mdp_matrix parse_gamma(std::string g)
 {
   if (g == "I")
     return Gamma1;
@@ -383,5 +383,5 @@ mdp_matrix parse_gamma(string g)
     return Gamma[1] * Gamma[3];
   if (g == "23")
     return Gamma[2] * Gamma[3];
-  throw string("undefined gamma structure");
+  throw std::string("undefined gamma structure");
 }

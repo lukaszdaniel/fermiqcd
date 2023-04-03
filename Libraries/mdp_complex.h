@@ -337,7 +337,7 @@ inline mdp_real abs2(const mdp_complex &a)
   return real(a) * real(a) + imag(a) * imag(a);
 }
 
-ostream &operator<<(ostream &os, const mdp_complex &a)
+std::ostream &operator<<(std::ostream &os, const mdp_complex &a)
 {
   if (a.imag() < 0)
     os << a.real() << "-" << -a.imag() << "I";

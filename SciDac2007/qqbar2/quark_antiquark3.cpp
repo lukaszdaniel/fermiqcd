@@ -7,7 +7,7 @@ class PunchedWilsonGaugeAction : public WilsonGaugeAction
 public:
   static gauge_stats heatbath(gauge_field &U,
                               coefficients &coeff,
-                              vector<mdp_site> &sites,
+                              std::vector<mdp_site> &sites,
                               int n_iter = 1)
   {
     begin_function("WilsonGaugeAction__heatbath");
@@ -78,7 +78,7 @@ public:
 };
 
 void punched_ape_smearing(gauge_field &U,
-                          vector<mdp_site> &sites,
+                          std::vector<mdp_site> &sites,
                           mdp_real alpha = 0.7,
                           int iterations = 20,
                           int cooling_steps = 10)
@@ -87,7 +87,7 @@ void punched_ape_smearing(gauge_field &U,
   mdp_site x(U.lattice());
   for (int iter = 0; iter < iterations; iter++)
   {
-    cout << "smearing step " << iter << "/" << iterations << endl;
+    std::cout << "smearing step " << iter << "/" << iterations << std::endl;
     V = U;
     for (int mu = 0; mu < 4; mu++)
     {
@@ -137,7 +137,7 @@ int main(int argc, char **argv)
   char filename[100];
   coefficients gauge;
   gauge["beta"] = 2.2;
-  vector<mdp_site> sites;
+  std::vector<mdp_site> sites;
 
   int path[20][2] = {{+1, 0}, {+1, 0}, {+1, 0}, {+1, 0}, {+1, 0}, {+1, 1}, {+1, 1}, {+1, 1}, {+1, 1}, {+1, 1}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 1}, {-1, 1}, {-1, 1}, {-1, 1}, {-1, 1}};
 
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
   /*
   set_hot(V);
   for(int k=0; k<4000; k++) {
-    cout << k << endl;
+    std::cout << k << std::endl;
     WilsonGaugeAction::heatbath(V,gauge,10);
   }
   */
@@ -227,9 +227,9 @@ int main(int argc, char **argv)
     }
     // x3.set(0,0,0); Q3(x3)=0;
     forallsites(x3) if (Q3(x3) < m) m = Q3(x3);
-    cout << "m=" << m << endl;
+    std::cout << "m=" << m << std::endl;
     forallsites(x3) Q3(x3) -= m;
-    cout << "saving vtk file\n";
+    std::cout << "saving vtk file\n";
     snprintf(filename, 100, "energy_density_E2B2_XYT_Wilson5x5.%.3i.vtk", conf);
     dump(Q3, 0, filename);
   }

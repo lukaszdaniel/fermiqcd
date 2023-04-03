@@ -198,8 +198,8 @@ public:
     mdp_int idx2 = lattice().up[idx][mu];
     if (idx2 == NOWHERE)
     {
-      cout << ME << " " << (*this)(0) << (*this)(1)
-           << (*this)(2) << (*this)(3) << " " << mu << endl;
+      std::cout << ME << " " << (*this)(0) << (*this)(1)
+           << (*this)(2) << (*this)(3) << " " << mu << std::endl;
       error("You cannot exit from your portion of the lattice");
     }
 #ifdef BLOCKSITE
@@ -458,7 +458,7 @@ inline int in_block(mdp_site x)
   return true;
 };
 
-ostream &operator<<(ostream &os, mdp_site &x)
+std::ostream &operator<<(std::ostream &os, mdp_site &x)
 {
   for (int i = 0; i < x.lattice().ndim; i++)
   {

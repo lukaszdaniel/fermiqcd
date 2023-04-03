@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     WilsonGaugeAction::heatbath(U, coeff, 1);
     mdp << "config=" << config
         << "plaquette="
-        << average_plaquette(U) << endl;
+        << average_plaquette(U) << "\n";
   }
   mdp.close_wormholes();
   return 0;

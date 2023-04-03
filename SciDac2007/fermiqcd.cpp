@@ -7,14 +7,14 @@ public:
   int L[4];
   mdp_lattice *plattice;
   gauge_field *pU;
-  string prefix;
+  std::string prefix;
   int counter;
-  ofstream os;
-  string make_prefix()
+  std::ofstream os;
+  std::string make_prefix()
   {
     time_t time0;
     time(&time0);
-    string s = ctime(&time0);
+    std::string s = ctime(&time0);
     while (1)
     {
       int i = s.find(" ");
@@ -33,16 +33,16 @@ public:
     // if(ME==0) system((string("mkdir ")+prefix).c_str());
     if (ME == 0)
       os.open((prefix + "README.log").c_str());
-    os << "prefix=" << prefix << endl;
+    os << "prefix=" << prefix << std::endl;
     os << "initialization completed\n";
     os << "running on npocs=" << Nproc << " parallel processes\n";
-    os << endl;
+    os << std::endl;
     counter = 0;
   }
   template <class T>
   FermiQCD &operator<<(const T &obj)
   {
-    cout << ME << ":" << obj;
+    std::cout << ME << ":" << obj;
     if (ME == 0)
     {
       os << obj;
@@ -66,11 +66,11 @@ public:
     this->L[2] = LY;
     this->L[3] = LZ;
     this->nc = nc;
-    os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << endl;
+    os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;
     this->plattice = new mdp_lattice(4, L);
-    os << "making a cold gauge configuration U with nc=" << nc << endl;
+    os << "making a cold gauge configuration U with nc=" << nc << std::endl;
     this->pU = new gauge_field(*plattice, nc);
-    cout << ME << endl;
+    std::cout << ME << std::endl;
     pU->update();
     // set_cold(*pU);
     // prefix=prefix+string("C")+tostring((int)mdp.time());
@@ -83,15 +83,15 @@ public:
     this->L[2] = LY;
     this->L[3] = LZ;
     this->nc = nc;
-    os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << endl;
+    os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;
     this->plattice = new mdp_lattice(4, L);
-    os << "making a hot gauge configuration U with nc=" << nc << endl;
+    os << "making a hot gauge configuration U with nc=" << nc << std::endl;
     this->pU = new gauge_field(*plattice, nc);
     set_hot(*pU);
-    prefix = string("C") + tostring((int)mdp.time());
+    prefix = std::string("C") + tostring((int)mdp.time());
     counter = 0;
   }
-  void init_load(string filename)
+  void init_load(std::string filename)
   {
     mdp_field_file_header header = get_info(filename);
     this->L[0] = header.box[0];
@@ -183,9 +183,9 @@ public:
       this->nc = 10;
       break;
     }
-    os << "making an lattice TxXxYxZ=" << this->L[0] << "x" << this->L[1] << "x" << this->L[2] << "x" << this->L[3] << endl;
+    os << "making an lattice TxXxYxZ=" << this->L[0] << "x" << this->L[1] << "x" << this->L[2] << "x" << this->L[3] << std::endl;
     this->plattice = new mdp_lattice(4, L);
-    os << "loading gauge configuration " << filename << " into U with nc=" << nc << endl;
+    os << "loading gauge configuration " << filename << " into U with nc=" << nc << std::endl;
     this->pU = new gauge_field(*plattice, nc);
     if (precision == 4)
       pU->load_as_float(filename);
@@ -200,7 +200,7 @@ public:
     gauge["beta"] = beta;
     for (int step = 0; step < steps; step++)
     {
-      (*this) << "WilsonGaugeAction::heatbath(beta=" << beta << ") step=" << step << endl;
+      (*this) << "WilsonGaugeAction::heatbath(beta=" << beta << ") step=" << step << "\n";
       WilsonGaugeAction::heatbath(*pU, gauge, 1);
     }
     (*this) << "average_plaquette=" << average_plaquette(*pU);

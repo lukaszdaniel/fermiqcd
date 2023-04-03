@@ -317,14 +317,14 @@ void lepage_improved_links(gauge_field &V,
         V.long_links(x, mu, i, j) *= c[5];
   }
 
-  cout << "Freeing temporary vectors...";
+  std::cout << "Freeing temporary vectors...";
 
   for (imn = 0; imn < (ndim - 1); imn++)
     Delta1[imn].deallocate_memory();
   for (im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
     Delta2[im2].deallocate_memory();
 
-  cout << "done.\n";
+  std::cout << "done.\n";
 
   end_function("lepage_improved_links");
 }

@@ -14,7 +14,7 @@
 int main(int argc, char **argv)
 {
    mdp.open_wormholes(argc, argv);
-   string filename;
+   std::string filename;
    coefficients coeff;
    int L[] = {4, 4, 4, 4};
    mdp_lattice spacetime(4, L);
@@ -26,17 +26,17 @@ int main(int argc, char **argv)
    {
       coeff["beta"] = 5.0;
       WilsonGaugeAction::heatbath(U, coeff, 1);
-      mdp << "average_plaquette=" << average_plaquette(U) << endl;
+      mdp << "average_plaquette=" << average_plaquette(U) << "\n";
    }
 
    for (int i0 = 0; i0 < 10; i0++)
    {
       ApeSmearing::smear(U, 0.7, 1, 10);
       U.save("test*");
-      mdp << "average_plaquette=" << average_plaquette(U) << endl;
+      mdp << "average_plaquette=" << average_plaquette(U) << "\n";
       {
          float tc = topological_charge_vtk(U, "topological_charge*", -1);
-         mdp << "total topological charge=" << tc << endl;
+         mdp << "total topological charge=" << tc << "\n";
       }
    }
 

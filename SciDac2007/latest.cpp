@@ -14,7 +14,7 @@
 int main(int argc, char **argv)
 {
    mdp.open_wormholes(argc, argv);
-   string filename;
+   std::string filename;
    coefficients coeff;
    int L[] = {16, 4, 4, 4};
    mdp_lattice spacetime(4, L);
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
       ApeSmearing::smear(U, 0.7, 1, 10);
       {
          float tc = topological_charge_vtk(U, "topological_charge_*.vtk", -1);
-         mdp << "topological_charge=" << tc << endl;
+         mdp << "topological_charge=" << tc << "\n";
       }
    }
 

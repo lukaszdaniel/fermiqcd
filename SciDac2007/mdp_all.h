@@ -38,19 +38,18 @@
 #include <vector>
 #include <deque>
 #include <map>
-using namespace std;
 
 #ifndef HAVE_INET_NTOP
 #define inet_ntop(a, b) inet_ntoa(b)
 #define inet_pton(a, b, c) inet_aton(b, c)
 #endif
 
-void exit_message(int en, string message)
+void exit_message(int en, std::string message)
 {
-  cerr << "FROM PROCESS PID: " << getpid() << endl;
-  cerr << "CHILD OF PROCESS PID: " << getppid() << endl;
-  cerr << "FATAL ERROR: " << message << endl;
-  cerr << "EXITING WITH ERROR NUMBER: " << en << endl;
+  std::cerr << "FROM PROCESS PID: " << getpid() << std::endl;
+  std::cerr << "CHILD OF PROCESS PID: " << getppid() << std::endl;
+  std::cerr << "FATAL ERROR: " << message << std::endl;
+  std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
   exit(en);
 }
 
@@ -58,17 +57,17 @@ class InternetAddress
 {
 public:
   struct sockaddr_in address;
-  string ipaddress;
+  std::string ipaddress;
   int port;
-  InternetAddress(string hostname = "127.0.0.1", int port = 0)
+  InternetAddress(std::string hostname = "127.0.0.1", int port = 0)
   {
 
     char tmp[16];
     struct hostent *h = gethostbyname(hostname.c_str());
     if (h == 0)
-      throw string("Invalid hostname");
+      throw std::string("Invalid hostname");
     if (h->h_length != 4)
-      throw string("Invalid hostname");
+      throw std::string("Invalid hostname");
     strncpy(tmp, inet_ntop(AF_INET, *((struct in_addr *)h->h_addr_list[0])), 16);
     ipaddress = tmp;
 
@@ -83,7 +82,7 @@ public:
   {
     return ntohs(address.sin_port);
   }
-  string getIPAddress()
+  std::string getIPAddress()
   {
     return inet_ntop(AF_INET, address.sin_addr);
   }
@@ -163,7 +162,7 @@ int newUdpSocket(int flags = 0)
   return socket(AF_INET, SOCK_DGRAM, flags);
 }
 
-int newTcpClientSocket(string ipaddress, int port, int sleep_time = 10)
+int newTcpClientSocket(std::string ipaddress, int port, int sleep_time = 10)
 {
   InternetAddress peer = InternetAddress(ipaddress, port);
   int sfd = newTcpSocket();
@@ -256,7 +255,7 @@ int setSocketSendMulticast(int sfd, int ttl = 1)
   return setsockopt(sfd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl));
 }
 
-int setSocketRecvMulticast(int sfd, string from)
+int setSocketRecvMulticast(int sfd, std::string from)
 {
   setSocketReusable(sfd, 1);
   struct ip_mreq mreq;
@@ -357,16 +356,16 @@ public:
   virtual void handler(int s) = 0;
 };
 
-map<int, SignalHandler *> _signal_handlers;
+std::map<int, SignalHandler *> _signal_handlers;
 void SignalHandler::catch_signal(int signalnum)
 {
   if (sigemptyset(&action.sa_mask) != 0)
-    throw string("sigemptyset");
+    throw std::string("sigemptyset");
   if (sigaddset(&action.sa_mask, signalnum) != 0)
-    throw string("sigaddset");
+    throw std::string("sigaddset");
   action.sa_handler = _handler;
   if (sigaction(signalnum, &action, NULL) != 0)
-    throw string("sigaction");
+    throw std::string("sigaction");
   _signal_handlers[signalnum] = this;
 }
 
@@ -390,9 +389,9 @@ sigset_t signalBlock(int signum)
 {
   sigset_t set, oset;
   if (sigemptyset(&set) < 0)
-    throw string("sigemptyset");
+    throw std::string("sigemptyset");
   if (sigaddset(&set, signum) < 0)
-    throw string("sigaddset");
+    throw std::string("sigaddset");
   sigprocmask(SIG_BLOCK, &set, &oset);
   return oset;
 }
@@ -414,9 +413,9 @@ sigset_t signalUnblock(int signum)
 {
   sigset_t set, oset;
   if (sigemptyset(&set) < 0)
-    throw string("sigemptyset");
+    throw std::string("sigemptyset");
   if (sigaddset(&set, signum) < 0)
-    throw string("sigaddset");
+    throw std::string("sigaddset");
   sigprocmask(SIG_UNBLOCK, &set, &oset);
   return oset;
 }

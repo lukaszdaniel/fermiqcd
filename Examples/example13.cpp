@@ -13,7 +13,7 @@ int main(int argc, char **argv)
     x.set(0, 0);
     do
     {
-      cout << "x=(" << x(0) << "," << x(1) << ")\n";
+      std::cout << "x=(" << x(0) << "," << x(1) << ")\n";
       if (x.is_in_boundary())
         error("I found the boundary");
       x = x + mu;

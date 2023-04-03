@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     }
     mdp.add(sum); // add the local sums
 
-    mdp << sum << endl; // print total number of sites alive
+    mdp << sum << "\n"; // print total number of sites alive
 
     if (diff == 0)
       break; // if board unchanged stop

@@ -96,8 +96,8 @@ void print_fermi_field(fermi_field &psi)
     mdp << "Enter the coordinates (x0,x1,x2,x3 or 'quit' to end): ";
     if (ME == 0)
     {
-      string stringa;
-      cin >> stringa;
+      std::string stringa;
+      std::cin >> stringa;
       if (stringa == "quit")
         do_exit = true;
       else

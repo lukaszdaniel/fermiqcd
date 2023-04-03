@@ -16,7 +16,7 @@ int main()
       a = (sigma * random.gaussian() + a_bar);
       b = random.distribution(Q);
       average += a + b;
-      cout << "average=" << average / (i + 1) << '\n';
+      std::cout << "average=" << average / (i + 1) << '\n';
    }
    return 0;
 }

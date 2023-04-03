@@ -11,7 +11,7 @@ int main(int argc, char **argv)
   char filename[128];
   mdp_site x(lattice);
   set_cold(U);
-  vector<mdp_real> p(4);
+  std::vector<mdp_real> p(4);
   for (int mu = 0; mu < 4; mu++)
     p[mu] = L[mu] / 2;
   int i = 0, j = 0;
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   }
 
   snprintf(filename, 128, "%s.vtk", argv[0]);
-  mdp << "top=" << topological_charge_vtk(U, filename) << endl;
+  mdp << "top=" << topological_charge_vtk(U, filename) << "\n";
 
   mdp.close_wormholes();
   return 0;

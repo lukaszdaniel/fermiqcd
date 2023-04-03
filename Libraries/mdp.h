@@ -46,8 +46,6 @@
 #endif
 #include <fcntl.h>
 #endif
-using namespace std;
-#define endl "\n"
 
 // ///////////////////////////////////////////////////////////////////////////
 // this file includes the version number

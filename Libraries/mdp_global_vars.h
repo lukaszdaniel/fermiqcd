@@ -67,4 +67,4 @@ using mdp_uint = uint32_t;
  */
 using mdp_suint = uint8_t;
 
-void _mpi_error_message(string, string, int);
+void _mpi_error_message(std::string, std::string, int);

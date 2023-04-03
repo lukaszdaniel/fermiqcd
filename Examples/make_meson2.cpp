@@ -200,7 +200,7 @@ int main(int argc, char **argv)
       if (on_which_process(lattice, t) == ME)
       {
         F.plain(t);
-        cout << t << "\t" << F.mean() << "\t" << F.b_err() << '\n';
+        std::cout << t << "\t" << F.mean() << "\t" << F.b_err() << '\n';
       }
     }
     mpi << "==================================\n\n";

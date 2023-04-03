@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     P(3) += -real(average_path(U, 12, path3x3)); // compute 3x3 path
   }
   for (int r = 1; r < 4; r++) // print output
-    mdp << "V(" << r << ")=" << -log(P(r) / N) / r << endl;
+    mdp << "V(" << r << ")=" << -log(P(r) / N) / r << "\n";
   mdp.close_wormholes(); // STOP
   return 0;
 }

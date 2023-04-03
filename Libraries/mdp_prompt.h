@@ -15,16 +15,16 @@ const char STD_INPUT[] = "";
 const char STD_INPUT_FILE[] = "<stdin>";
 
 /// Converts string to float
-double val(string s)
+double val(std::string s)
 {
 	return atof(s.c_str());
 }
 
 /// Try prompt("<stdin>","VALUE","4.0")
 /// It will prompt the user for variable VALUE and take 4.0 as default
-string prompt(string filename,
-			  string variable,
-			  string def_val = "0.0",
+std::string prompt(std::string filename,
+			  std::string variable,
+			  std::string def_val = "0.0",
 			  int p = 0)
 {
 	FILE *fp = 0;
@@ -43,7 +43,7 @@ string prompt(string filename,
 		{
 			printf("Input value of %s (default is `%s'): ",
 				   variable.c_str(), def_val.c_str());
-			cin >> response;
+			std::cin >> response;
 		}
 		else
 		{
@@ -144,6 +144,6 @@ string prompt(string filename,
 #ifdef PARALLEL
 	mpi.broadcast(response, 1024, p);
 #endif
-	string s(response);
+	std::string s(response);
 	return s;
 }

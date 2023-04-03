@@ -22,7 +22,7 @@ void cool(gauge_field &U, mdp_args &arguments)
     mdp.error_message("cooling algorithm not supported");
 }
 
-void cool_vtk(gauge_field &U, mdp_args &arguments, string filename)
+void cool_vtk(gauge_field &U, mdp_args &arguments, std::string filename)
 {
   if (arguments.get("-cool", "alg", "ape") == "ape")
     for (int k = 0; k < arguments.get("-cool_vtk", "n", 20); k++)
@@ -37,7 +37,7 @@ void cool_vtk(gauge_field &U, mdp_args &arguments, string filename)
     mdp.error_message("cooling algorithm not supported");
 }
 
-void plaquette_vtk(gauge_field &U, string filename)
+void plaquette_vtk(gauge_field &U, std::string filename)
 {
   mdp_field<mdp_real> q(U.lattice());
   mdp_site x(U.lattice());
@@ -51,7 +51,7 @@ void plaquette_vtk(gauge_field &U, string filename)
   q.save_vtk(filename, -1);
 }
 
-void polyakov_vtk(gauge_field &U, string filename)
+void polyakov_vtk(gauge_field &U, std::string filename)
 {
   int L[3];
   L[0] = U.lattice().size(1);
@@ -88,28 +88,28 @@ void polyakov_vtk(gauge_field &U, string filename)
   q.save_vtk(filename, -1, 0, 0, false);
 }
 
-void pretty_print(string prefix, vector<mdp_real> data)
+void pretty_print(std::string prefix, std::vector<mdp_real> data)
 {
   if (ME == 0)
   {
     for (int t = 0; t < data.size(); t++)
     {
-      cout << prefix << "[" << t << "] = " << data[t] << endl;
+      std::cout << prefix << "[" << t << "] = " << data[t] << std::endl;
     }
   }
 }
 
 void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
-                mdp_args &arguments, string newfilename)
+                mdp_args &arguments, std::string newfilename)
 {
 
   float abs_precision = arguments.get("-quark", "abs_precision", 1e-12);
   float rel_precision = arguments.get("-quark", "rel_precision", 1e-12);
-  string quark_action =
+  std::string quark_action =
       arguments.get("-quark", "action", "clover_fast|clover_slow|clover_sse2");
-  string inverter =
+  std::string inverter =
       arguments.get("-quark", "alg", "bicgstab|minres|bicgstabvtk|minresvtk");
-  mdp << "using action=" << quark_action << " inverter=" << inverter << endl;
+  mdp << "using action=" << quark_action << " inverter=" << inverter << "\n";
 
   select_action_and_inverter(quark_action, inverter);
 
@@ -121,17 +121,17 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   fermi_field phi(U.lattice(), nc);
   mdp_site x(U.lattice());
   mdp_site z(U.lattice());
-  vector<mdp_real> pion(U.lattice().size(TIME));
-  vector<mdp_real> meson(U.lattice().size(TIME));
-  vector<mdp_real> current(U.lattice().size(TIME));
+  std::vector<mdp_real> pion(U.lattice().size(TIME));
+  std::vector<mdp_real> meson(U.lattice().size(TIME));
+  std::vector<mdp_real> current(U.lattice().size(TIME));
   int NT = U.lattice().size(TIME);
   int L[3];
   L[0] = U.lattice().size(1);
   L[1] = U.lattice().size(2);
   L[2] = U.lattice().size(3);
   mdp_field<float> Q(U.lattice());
-  string prefix;
-  string quarkfilename;
+  std::string prefix;
+  std::string quarkfilename;
   mdp_real tmp;
   mdp_complex s1, s2;
   mdp_matrix G1, G2, G3, G4;
@@ -159,11 +159,11 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     z0 = L[2] / 2;
   }
 
-  string source_type = arguments.get("-quark", "source_type", "point|wall");
+  std::string source_type = arguments.get("-quark", "source_type", "point|wall");
   for (int a = 0; a < 4; a++)
     for (int i = 0; i < nc; i++)
     {
-      mdp << "quark source spin=" << a << " color=" << i << endl;
+      mdp << "quark source spin=" << a << " color=" << i << "\n";
       if (source_type == "point")
       {
         psi = 0;
@@ -352,7 +352,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       }
     }
     mdp_matrix G1, G2;
-    string op4q = arguments.get("-4quark", "operator", "5Ix5I|0Ix0I|1Ix1I|2Ix2I|3Ix3I|05Ix05I|15Ix15I|25Ix25I|35Ix35I|01Ix01I|02Ix02I|03Ix03I|12Ix12I|13Ix13I|23Ix23I|5Tx5T|0Tx0T|1Tx1T|2Tx2T|3Tx3T|05Tx05T|15Tx15T|25Tx25T|35Tx35T|01Tx01T|02Tx02T|03Tx03T|12Tx12T|13Tx13T|23Tx23T");
+    std::string op4q = arguments.get("-4quark", "operator", "5Ix5I|0Ix0I|1Ix1I|2Ix2I|3Ix3I|05Ix05I|15Ix15I|25Ix25I|35Ix35I|01Ix01I|02Ix02I|03Ix03I|12Ix12I|13Ix13I|23Ix23I|5Tx5T|0Tx0T|1Tx1T|2Tx2T|3Tx3T|05Tx05T|15Tx15T|25Tx25T|35Tx35T|01Tx01T|02Tx02T|03Tx03T|12Tx12T|13Tx13T|23Tx23T");
     bool rotate = false;
     if (op4q[op4q.size() - 1] == 'T')
       rotate = true;
@@ -400,22 +400,22 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                                      4;
                             }
               }
-        mdp << "C3a[" << t1 << "][" << t2 << "] = " << c3a << endl;
-        mdp << "C3b[" << t1 << "][" << t2 << "] = " << c3b << endl;
+        mdp << "C3a[" << t1 << "][" << t2 << "] = " << c3a << "\n";
+        mdp << "C3b[" << t1 << "][" << t2 << "] = " << c3b << "\n";
       }
   }
   if (arguments.have("-wave_static"))
   {
-    throw string("NotImplemented");
+    throw std::string("NotImplemented");
     // WORK IN PROGRESS - only works on cold - no paths
-    string source_gamma = arguments.get("-wave_static", "source_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I");
+    std::string source_gamma = arguments.get("-wave_static", "source_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I");
     int smear_steps = arguments.get("-wave_static", "smear_steps", 10);
     G1 = parse_gamma(source_gamma) * (1 + Gamma[0]) / 2;
     Q = 0;
     forallsites(x) for (int a = 0; a < 4; a++) for (int b = 0; b < 4; b++) if (G1(a, b) != 0) for (int i = 0; i < U.nc; i++)
         Q(x) += pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
     // smear_propagator(S,U,smear_steps);
-    Q.save_vtk(prefix + string(".") + source_gamma + ".wave.vtk");
+    Q.save_vtk(prefix + std::string(".") + source_gamma + ".wave.vtk");
   }
 }
 
@@ -430,8 +430,8 @@ int main(int argc, char **argv)
   coefficients quark;
   int ndim = 4;
   int size[4];
-  string filename, newfilename, vtkfilename;
-  vector<string> filenames;
+  std::string filename, newfilename, vtkfilename;
+  std::vector<std::string> filenames;
   int nt = arguments.get("-gauge", "nt", 16);
   int nx = arguments.get("-gauge", "nx", 4);
   int ny = arguments.get("-gauge", "ny", nx);
@@ -441,7 +441,7 @@ int main(int argc, char **argv)
   size[1] = nx;
   size[2] = ny;
   size[3] = nz;
-  string gauge_start = arguments.get("-gauge", "start", "load|cold|hot|instantons");
+  std::string gauge_start = arguments.get("-gauge", "start", "load|cold|hot|instantons");
   if (gauge_start == "cold")
     filenames.push_back("cold.mdp");
   else if (gauge_start == "hot")
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
     filenames.push_back("custom.mdp");
   else if (gauge_start == "load")
   {
-    string pattern = arguments.get("-gauge", "load", "demo.mdp");
+    std::string pattern = arguments.get("-gauge", "load", "demo.mdp");
     filenames = glob(pattern);
     if (filenames.size() == 0)
       mdp.error_message("No files to read");
@@ -474,8 +474,8 @@ int main(int argc, char **argv)
   gauge["zeta"] = arguments.get("-gauge", "zeta", 1.0);
   gauge["u_t"] = arguments.get("-gauge", "u_t", 1.0);
   gauge["u_s"] = arguments.get("-gauge", "u_s", 1.0);
-  string prefix = arguments.get("-gauge", "prefix", "");
-  string gauge_action = arguments.get("-gauge", "action",
+  std::string prefix = arguments.get("-gauge", "prefix", "");
+  std::string gauge_action = arguments.get("-gauge", "action",
                                       "wilson|wilson_improved|wilson_sse2");
   quark["kappa"] = arguments.get("-quark", "kappa", 0.12);
   quark["kappa_t"] = arguments.get("-quark", "kappa_t", quark["kappa"]);
@@ -519,7 +519,7 @@ int main(int argc, char **argv)
       float z1 = arguments.get("-gauge", "z1", 1);
       float r1 = arguments.get("-gauge", "r1", 0.0);
       InstantonGenerator4D generator;
-      vector<SingleInstanton4D> instantons;
+      std::vector<SingleInstanton4D> instantons;
       instantons.push_back(SingleInstanton4D(t0, x0, y0, z0, abs(r0), (r0 > 0) ? +1 : -1));
       if (r1 != 0)
         instantons.push_back(SingleInstanton4D(t1, x1, y1, z1, abs(r1), (r1 > 0) ? +1 : -1));
@@ -527,7 +527,7 @@ int main(int argc, char **argv)
     }
     else if (gauge_start == "load")
     {
-      cout << filename << "\n";
+      std::cout << filename << "\n";
       U.load(filename);
     }
     for (int n = -1; n < nconfigs; n++)
@@ -560,7 +560,7 @@ int main(int argc, char **argv)
       }
       if (arguments.have("-plaquette"))
       {
-        mdp << "plaquette = " << average_plaquette(U) << endl;
+        mdp << "plaquette = " << average_plaquette(U) << "\n";
       }
       if (arguments.have("-cool_vtk"))
       {
@@ -581,7 +581,7 @@ int main(int argc, char **argv)
       if (arguments.have("-topcharge_vtk"))
       {
         float tc = topological_charge_vtk(U, newfilename + ".topcharge.vtk", -1);
-        mdp << "topcharge = " << tc << endl;
+        mdp << "topcharge = " << tc << "\n";
       }
       if (arguments.have("-quark"))
       {

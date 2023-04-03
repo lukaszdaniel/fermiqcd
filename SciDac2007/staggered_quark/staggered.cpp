@@ -8,7 +8,7 @@
 
 void dump(mdp_field<float> &s,
           int site_idx = 0,
-          string filename = "default.vtk",
+          std::string filename = "default.vtk",
           bool bASCII = true)
 {
   static const char *tempfile = "tmp.vtk";
@@ -38,7 +38,7 @@ void dump(mdp_field<float> &s,
   remove(tempfile); // remove tmp.vtk file if exists
   file = fopen(tempfile, "wb");
   int sfd = fileno(file);
-  cout << "saving... " << filename << " as fd=" << sfd << endl;
+  std::cout << "saving... " << filename << " as fd=" << sfd << std::endl;
   fwrite(header, sizeof(char), strlen(header), file);
   site p(s.lattice());
 
@@ -108,7 +108,11 @@ int main(int argc, char **argv)
     snprintf(filename, 128, "staggered.abs.%.3i.vtk", t);
     dump(s, 2, filename);
 
-    forallsites(x) if (imag(phi(x, 0)) != 0) cout << x << endl;
+    forallsites(x)
+    {
+      if (imag(phi(x, 0)) != 0)
+        std::cout << x << std::endl;
+    }
   };
 
   mdp.close_wormholes();

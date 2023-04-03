@@ -74,7 +74,7 @@ int main(int argc, char **argv)
       sum = sum + S(x);
     }
     mdp.add(sum);
-    mdp << sum << endl;
+    mdp << sum << "\n";
     if (sum == 0)
       break;
   }

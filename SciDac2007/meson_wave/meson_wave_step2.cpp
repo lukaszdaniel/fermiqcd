@@ -27,7 +27,7 @@ int main(int argc, char **argv)
   mdp_complex z;
   for (int k = 0; k < 1000; k++)
   {
-    cout << k << endl;
+    std::cout << k << std::endl;
     snprintf(filename, 128, "wave.%.3i.mdp", k);
     s.load(filename);
     forallsites(x)

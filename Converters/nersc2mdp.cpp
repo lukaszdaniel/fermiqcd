@@ -401,8 +401,8 @@ int main(int argc, char **argv)
   if (strcmp(argv[1], "-skip") != 0)
     return 1;
   sscanf(argv[2], "%i", &skip_bytes);
-  cout << skip_bytes << endl;
-  cout << argv[4] << endl;
+  std::cout << skip_bytes << std::endl;
+  std::cout << argv[4] << std::endl;
   char precision, swap;
   sscanf(argv[4], "%ix%ix%ix%i:%i%c%c", nx, nx + 1, nx + 2, nx + 3, &rows, &precision, &swap);
 

@@ -4,9 +4,9 @@
 // #include "fermiqcd_cg_inverter.hpp"
 
 // #include <sstream>
-// const char* output(string file, int num){
+// const char* output(std::string file, int num){
 //   std::ostringstream ostr;
-//   string os;
+//   std::string os;
 //   ostr << file << num << ends;
 //   os=ostr.str();
 //   return os.c_str();
@@ -19,7 +19,7 @@ public:
   int therm, sweeps, gap, seed, nf;
   mdp_real trajectory_length, beta, timestep, mass;
   mdp_real cg_absolute_precision, cg_relative_precision, cg_max_steps;
-  string representation;
+  std::string representation;
   parameters()
   {
     L = 6;
@@ -43,7 +43,7 @@ public:
     // representation="SYMMETRIC";
     read_in = 0;
   }
-  void read(string filename)
+  void read(std::string filename)
   {
     L = (int)val(prompt(filename, "L", "8"));
     T = (int)val(prompt(filename, "T", "16"));
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
   else if (param.representation == "FUNDAMENTAL")
     coeff["representation"] = 0;
   else
-    throw string("representation not supported");
+    throw std::string("representation not supported");
   coeff["timestep"] = param.timestep;
   coeff["trajectory_length"] = param.trajectory_length;
   coeff["cg_absolute_precision"] = param.cg_absolute_precision;
@@ -119,14 +119,14 @@ int main(int argc, char **argv)
 #endif
 
   set_hot(U);
-  cout << "average_plaquette = " << average_plaquette(U) << endl;
+  std::cout << "average_plaquette = " << average_plaquette(U) << std::endl;
   set_random(psi);
 
   HMC<gauge_field, fermi_field> hmc(U, psi, coeff);
   for (int i = 0; i < 100; i++)
   {
     hmc.step();
-    mdp << "acceptance=" << (float)hmc.acceptance_rate() << endl;
+    mdp << "acceptance=" << (float)hmc.acceptance_rate() << "\n";
   }
 
   mdp.close_wormholes();

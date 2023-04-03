@@ -26,7 +26,7 @@ bool mdp_default_user_read(FILE *fp,
 
 /// Best way to load a field
 template <class T>
-bool mdp_field<T>::load(string filename,
+bool mdp_field<T>::load(std::string filename,
                         int processIO,
                         mdp_int max_buffer_size,
                         bool load_header,
@@ -36,7 +36,7 @@ bool mdp_field<T>::load(string filename,
 {
 
   if (!file_exists(filename))
-    throw string("file ") + filename + string(" does not exist");
+    throw std::string("file ") + filename + std::string(" does not exist");
   filename = latest_file(filename);
   if (filename == "?")
     return false;
@@ -56,7 +56,7 @@ bool mdp_field<T>::load(string filename,
 
     for (process = 0; process < Nproc; process++)
       buffer_size[process] = 0;
-    cout << "Loading file " << filename
+    std::cout << "Loading file " << filename
          << " from process " << processIO
          << " (buffer = " << max_buffer_size << " sites)" << '\n';
     fflush(stdout);
@@ -81,7 +81,7 @@ bool mdp_field<T>::load(string filename,
 
       reversed_header_endianess = switch_header_endianess(tmp_header);
 
-      cout << "reverse: " << reversed_header_endianess << endl;
+      std::cout << "reverse: " << reversed_header_endianess << std::endl;
 
       if (tmp_header.endianess != header.endianess)
         fprintf(stderr, "Unrecognized endianess... trying to read anyway\n");
@@ -139,12 +139,12 @@ bool mdp_field<T>::load(string filename,
         {
           if (exception && fseek(fp, idx_gl * psize + skip_bytes, SEEK_SET))
           {
-            cout << "debug info: " << idx_gl * psize + skip_bytes << " " << psize << endl;
+            std::cout << "debug info: " << idx_gl * psize + skip_bytes << " " << psize << std::endl;
             error("unexpected end of file");
           }
           if (fread(short_buffer, psize, 1, fp) != 1)
           {
-            cout << "failure to read" << endl;
+            std::cout << "failure to read" << std::endl;
             error("unexpected end of file");
           }
         }

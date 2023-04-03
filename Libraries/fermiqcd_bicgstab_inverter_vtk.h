@@ -51,9 +51,9 @@ public:
                                   int max_steps = 2000)
   {
     mpi.begin_function("BiConugateGradientStabilizedInverter");
-    const string filename_prefix = inversion_vtk_prefix;
+    const std::string filename_prefix = inversion_vtk_prefix;
     const int tc = 0;
-    string filename1, filename2;
+    std::string filename1, filename2;
     int step = 0;
     fieldT p(psi_in);
     fieldT q(psi_in);

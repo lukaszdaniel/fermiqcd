@@ -82,10 +82,10 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
   for (int i1 = 0; i1 < c1; i1++)
   {
     ApeSmearing::smear(U, 0.7, c2, 10);
-    cout << "topological charge...\n";
+    std::cout << "topological charge...\n";
     topological_charge(Q4, U);
     Q4.save("sample_topological_charge.mdp");
-    cout << "3d projection...\n";
+    std::cout << "3d projection...\n";
     for (int t = tmin; t < tmax; t++)
     {
       forallsites(x3)
@@ -93,7 +93,7 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
         x4.set(t, x3(0), x3(1), x3(2));
         Q3(x3) = Q4(x4);
       }
-      cout << "dumping...\n";
+      std::cout << "dumping...\n";
       // snprintf(filename, 128,"topological.%.3i.%.3i.%.3i.vtk",code,i1,t);
       snprintf(filename, 128, "topological.%.3i.vtk", code);
       dump(Q3, 0, filename);
@@ -133,7 +133,7 @@ int main(int argc, char **argv)
 
   for (int k = 1; k < 1000; k++)
   {
-    cout << k << endl;
+    std::cout << k << std::endl;
     ModifiedWilsonGaugeAction::heatbath(U, gauge, (k % 8) / 2, (k % 8) % 4);
     snprintf(filename, 128, "gauge_8x12x12x12.%.5i.mdp", k);
     U.save(filename);

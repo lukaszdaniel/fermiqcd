@@ -2,24 +2,26 @@
 /* EXAMPLE OF USAGE
 #include "fermiqcd.h"
 
-int main(int argc, char** argv) {
-  mdp.open_wormholes(argc,argv);
+int main(int argc, char **argv)
+{
+  mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int L[] = {8,32,32,32};
-  mdp_lattice lattice(4,L);
-  gauge_field U(lattice,3);
+  int L[] = {8, 32, 32, 32};
+  mdp_lattice lattice(4, L);
+  gauge_field U(lattice, 3);
   InstantonGenerator4D generator;
-  for(int k=0; k<100; k++) {
-    cout << k << endl;
-    vector<SingleInstanton4D> instantons;
-    instantons.push_back(SingleInstanton4D(7.5,15.5,15.5,10+0.1*k,1,+1)); // instanton
-    instantons.push_back(SingleInstanton4D(7.5,15.5,16.5,20-0.1*k,1,-1)); // anti-instanton
-    generator.generate(U,instantons);
+  for (int k = 0; k < 100; k++)
+  {
+    std::cout << k << endl;
+    std::vector<SingleInstanton4D> instantons;
+    instantons.push_back(SingleInstanton4D(7.5, 15.5, 15.5, 10 + 0.1 * k, 1, +1)); // instanton
+    instantons.push_back(SingleInstanton4D(7.5, 15.5, 16.5, 20 - 0.1 * k, 1, -1)); // anti-instanton
+    generator.generate(U, instantons);
     check_unitarity(U);
-      mdp_site x(lattice);
-      x.set(0,0,0,0);
-      cout << U(x,0) << endl;
-    topological_charge_vtk(U,string("engineered.topological.")+tostring(k)+".vtk",0);
+    mdp_site x(lattice);
+    x.set(0, 0, 0, 0);
+    std::cout << U(x, 0) << std::endl;
+    topological_charge_vtk(U, std::string("engineered.topological.") + tostring(k) + ".vtk", 0);
   }
   mdp.close_wormholes();
   return 0;
@@ -66,7 +68,7 @@ private:
     Matrix A;
     float x2, x[4], rho2;
     for (int i = 0; i < 4; i++)
-      x[i] = min((float)xl[i] - instanton.x[i],
+      x[i] = std::min((float)xl[i] - instanton.x[i],
                  (float)(*lattice).size(i) - xl[i] + instanton.x[i]);
     x2 = x[0] * x[0] + x[1] * x[1] + x[2] * x[2] + x[3] * x[3];
 
@@ -80,7 +82,7 @@ private:
     return A;
   }
 
-  Matrix make_su2_link(mdp_site xn, int mu, vector<SingleInstanton4D> &instantons)
+  Matrix make_su2_link(mdp_site xn, int mu, std::vector<SingleInstanton4D> &instantons)
   {
     Matrix A(2, 2);
     Matrix P = sigma[0];
@@ -109,14 +111,14 @@ private:
   }
 
 public:
-  void generate(gauge_field &U, vector<SingleInstanton4D> &instantons)
+  void generate(gauge_field &U, std::vector<SingleInstanton4D> &instantons)
   {
     init_tau_and_bar();
     lattice = &U.lattice();
     mdp_site x(U.lattice());
     Matrix A;
     if (U.ndim != 4)
-      throw string("instantons only in 4D");
+      throw std::string("instantons only in 4D");
     forallsites(x)
     {
       for (int mu = 0; mu < U.ndim; mu++)

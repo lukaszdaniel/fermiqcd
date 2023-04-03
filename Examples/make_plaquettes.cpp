@@ -16,9 +16,9 @@ int main(int argc, char **argv)
   U.load(argv[1]);
   mdp_site x(lattice);
   x.set(0, 0, 0, 0);
-  cout << U(x, 0) << endl;
-  cout << U(x, 0) * hermitian(U(x, 0)) << endl;
-  mdp << "plaquette:" << average_plaquette(U) << endl;
+  std::cout << U(x, 0) << std::endl;
+  std::cout << U(x, 0) * hermitian(U(x, 0)) << std::endl;
+  mdp << "plaquette:" << average_plaquette(U) << "\n";
   mdp.close_wormholes();
   return 0;
 }

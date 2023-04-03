@@ -3,20 +3,19 @@
 #include <map>
 #include <vector>
 
-using namespace std;
 
 class Step
 {
 public:
-  string algorithm;
-  map<string, float> parameters;
+  std::string algorithm;
+  std::map<std::string, float> parameters;
 };
 
 void parse(int argc, char **argv)
 {
-  vector<Step> steps;
+  std::vector<Step> steps;
   Step step;
-  string s;
+  std::string s;
   int i, j, k;
 
   for (i = 1; i < argc; i++)
@@ -30,7 +29,7 @@ void parse(int argc, char **argv)
       }
     }
 
-    cout << argv[i] << endl;
+    std::cout << argv[i] << std::endl;
   }
 }
 

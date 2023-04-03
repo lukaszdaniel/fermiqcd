@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   coefficients coeff;
   coeff["beta"] = 6.0;
   set_hot(U);
-  mdp << "average plaquette = " << average_plaquette(U) << endl;
+  mdp << "average plaquette = " << average_plaquette(U) << "\n";
   mdp.close_wormholes();
 
   return 0;

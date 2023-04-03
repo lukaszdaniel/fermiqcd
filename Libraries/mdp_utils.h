@@ -10,7 +10,7 @@
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
 
-string tostring(int k, int length = 5)
+std::string tostring(int k, int length = 5)
 {
   char buf[128];
   if (length >= 5)
@@ -23,10 +23,10 @@ string tostring(int k, int length = 5)
     snprintf(buf, 128, "%.2i", k);
   else if (length == 1)
     snprintf(buf, 128, "%.1i", k);
-  return string(buf);
+  return std::string(buf);
 }
 
-bool file_exists(string filename)
+bool file_exists(std::string filename)
 {
   if (FILE *file = fopen(filename.c_str(), "rb"))
   {
@@ -36,33 +36,33 @@ bool file_exists(string filename)
   return false;
 }
 
-vector<string> glob(string pattern)
+std::vector<std::string> glob(std::string pattern)
 {
-  vector<string> v;
+  std::vector<std::string> v;
   glob_t pglob;
   pglob.gl_offs = 2;
   if (glob(pattern.c_str(), 0, 0, &pglob) != 0)
     v.push_back("?");
   else
     for (mdp_uint i = 0; i < pglob.gl_pathc; i++)
-      v.push_back(string(pglob.gl_pathv[i]));
+      v.push_back(std::string(pglob.gl_pathv[i]));
   globfree(&pglob);
   return v;
 }
 
-string latest_file(string pattern)
+std::string latest_file(std::string pattern)
 {
-  vector<string> v = glob(pattern);
+  std::vector<std::string> v = glob(pattern);
   return v[v.size() - 1];
 }
 
-string next_to_latest_file(string pattern)
+std::string next_to_latest_file(std::string pattern)
 {
   int i = pattern.find("*");
   if (i < 0)
     return pattern;
-  vector<string> v = glob(pattern);
-  string latest = v[v.size() - 1];
+  std::vector<std::string> v = glob(pattern);
+  std::string latest = v[v.size() - 1];
   if (latest == "?")
     return pattern.replace(i, 1, tostring(0));
   int k;
@@ -72,14 +72,14 @@ string next_to_latest_file(string pattern)
   return pattern.replace(i, 1, tostring(k).c_str());
 }
 
-string tostring(float k)
+std::string tostring(float k)
 {
   char buf[128];
   snprintf(buf, 128, "%f", k);
-  return string(buf);
+  return std::string(buf);
 }
 
-int is_file(string filename, const char permission[] = "r")
+int is_file(std::string filename, const char permission[] = "r")
 {
   FILE *fp = fopen(filename.c_str(), permission);
   if (fp)
@@ -90,7 +90,7 @@ int is_file(string filename, const char permission[] = "r")
   return false;
 }
 
-mdp_field_file_header get_info(string filename, int proc = 0)
+mdp_field_file_header get_info(std::string filename, int proc = 0)
 {
   mdp_field_file_header myheader;
   if (ME == proc)
@@ -110,9 +110,9 @@ mdp_field_file_header get_info(string filename, int proc = 0)
   return myheader;
 }
 
-int mail(string email, string message)
+int mail(std::string email, std::string message)
 {
-  string s;
+  std::string s;
   static int ret;
   if (ME == 0)
   {
@@ -123,9 +123,9 @@ int mail(string email, string message)
   return ret;
 }
 
-int mail_file(string email, string filename)
+int mail_file(std::string email, std::string filename)
 {
-  string s;
+  std::string s;
   static int ret;
   if (ME == 0)
   {
@@ -136,12 +136,12 @@ int mail_file(string email, string filename)
   return ret;
 }
 
-bool startswith(string a, string b)
+bool startswith(std::string a, std::string b)
 {
   return (a.substr(0, b.length()) == b);
 }
 
-bool endswith(string a, string b)
+bool endswith(std::string a, std::string b)
 {
   int i = a.length();
   int j = b.length();
@@ -150,9 +150,9 @@ bool endswith(string a, string b)
   return (a.substr(i - j, j) == b);
 }
 
-int parse_int(string a, string b, int value = 0)
+int parse_int(std::string a, std::string b, int value = 0)
 {
-  int i = a.find(string(":") + b), j = 0;
+  int i = a.find(std::string(":") + b), j = 0;
   if (i < 0)
     return value;
   else
@@ -166,9 +166,9 @@ int parse_int(string a, string b, int value = 0)
   }
 }
 
-float parse_float(string a, string b, float value = 0.0)
+float parse_float(std::string a, std::string b, float value = 0.0)
 {
-  int i = a.find(string(":") + b), j = 0;
+  int i = a.find(std::string(":") + b), j = 0;
   if (i < 0)
     return value;
   else
@@ -182,9 +182,9 @@ float parse_float(string a, string b, float value = 0.0)
   }
 }
 
-string parse_string(string a, string b, string value = "")
+std::string parse_string(std::string a, std::string b, std::string value = "")
 {
-  int i = a.find(string(":") + b), j = 0;
+  int i = a.find(std::string(":") + b), j = 0;
   // char cvalue[512];
   if (i < 0)
     return value;
@@ -201,7 +201,7 @@ string parse_string(string a, string b, string value = "")
 class mdp_args
 {
 public:
-  vector<string> args;
+  std::vector<std::string> args;
   mdp_args(int argc, char **argv)
   {
     for (int i = 1; i < argc; i++)
@@ -211,21 +211,21 @@ public:
   {
     return args.size();
   }
-  bool have(string name)
+  bool have(std::string name)
   {
     for (size_t i = 0; i < this->args.size(); i++)
       if (this->args[i] == name || startswith(this->args[i], name + ":"))
         return true;
     return false;
   }
-  float get(string name, string key, float value = 0.0)
+  float get(std::string name, std::string key, float value = 0.0)
   {
     for (size_t i = 0; i < this->args.size(); i++)
       if (startswith(this->args[i], name + ":"))
         return parse_float(this->args[i], key, value);
     return value;
   }
-  float get(string name, string key, double value = 0.0)
+  float get(std::string name, std::string key, double value = 0.0)
   {
     for (size_t i = 0; i < this->args.size(); i++)
       if (startswith(this->args[i], name + ":"))
@@ -233,10 +233,10 @@ public:
         value = parse_float(this->args[i], key, value);
         break;
       }
-    mdp << "INPUT " << name << ":" << key << "=" << value << endl;
+    mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
     return value;
   }
-  int get(string name, string key, int value = 0)
+  int get(std::string name, std::string key, int value = 0)
   {
     for (size_t i = 0; i < this->args.size(); i++)
       if (startswith(this->args[i], name + ":"))
@@ -244,10 +244,10 @@ public:
         value = parse_int(this->args[i], key, value);
         break;
       }
-    mdp << "INPUT " << name << ":" << key << "=" << value << endl;
+    mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
     return value;
   }
-  string get(string name, string key, string value = "")
+  std::string get(std::string name, std::string key, std::string value = "")
   {
     int i = value.find('|');
     if (i >= 0)
@@ -258,7 +258,7 @@ public:
         value = parse_string(this->args[i], key, value);
         break;
       }
-    mdp << "INPUT " << name << ":" << key << "=" << value << endl;
+    mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
     return value;
   }
 };

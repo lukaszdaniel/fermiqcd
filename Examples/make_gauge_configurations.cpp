@@ -13,8 +13,8 @@ int main(int argc, char **argv)
   for (int k = 0; k < 100; k++)
   {
     WilsonGaugeAction::heatbath(U, gauge, 10);
-    mdp << "plaquette:" << average_plaquette(U) << endl;
-    U.save(string("gauge.") + tostring(k));
+    mdp << "plaquette:" << average_plaquette(U) << "\n";
+    U.save(std::string("gauge.") + tostring(k));
   }
   mdp.close_wormholes();
   return 0;

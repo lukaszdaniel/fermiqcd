@@ -8,6 +8,6 @@ int main()
    a(0, 1) = 3;
    a(1, 0) = 4;
    a(1, 1) = 5 * I;
-   cout << inv(exp(a)) << '\n';
+   std::cout << inv(exp(a)) << '\n';
    return 0;
 }

@@ -19,8 +19,8 @@ int main(int argc, char **argv)
   {
     if (max(chi(x) - psi(x)) > 0.01)
     {
-      mdp << psi(x) << endl;
-      mdp << chi(x) << endl;
+      mdp << psi(x) << "\n";
+      mdp << chi(x) << "\n";
     }
   }
 

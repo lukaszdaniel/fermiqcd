@@ -10,11 +10,11 @@ public:
   {
     allocate_field(a, 1);
     ndim = a.ndim;
-  };
+  }
   float &operator()(mdp_site x)
   {
     return *(address(x));
-  };
+  }
 };
 
 // /////////////////////////////////////////////////////
@@ -27,16 +27,16 @@ public:
   {
     allocate_field(a, 1);
     ndim = a.ndim;
-  };
+  }
   int &operator()(mdp_site x)
   {
     return *(address(x));
-  };
+  }
   friend void set_cold(ising_field &S)
   {
     mdp_site x(S.lattice());
     forallsites(x) S(x) = 1;
-  };
+  }
 
   friend void montecarlo_multihit(ising_field &S, scalar_field &H,
                                   int n_iter = 1, int n_hits = 1)
@@ -58,11 +58,11 @@ public:
             delta_action *= S.beta * (new_spin - S(x));
             if (delta_action < S.lattice().random(x).plain())
               S(x) = new_spin;
-          };
-        };
+          }
+        }
       S.update(parity);
-    };
-  };
+    }
+  }
   friend float average_spin(ising_field &S)
   {
     float res = 0;
@@ -70,7 +70,7 @@ public:
     forallsites(x) res += S(x);
     mdp.add(res);
     return res / (S.lattice().nvol_gl);
-  };
+  }
 };
 
 int main(int argc, char **argv)
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
     {
       S(x) = 1;
       H(x) = 0;
-    };
+    }
     S.update();
     H.update();
 
@@ -104,11 +104,14 @@ int main(int argc, char **argv)
     {
       montecarlo_multihit(S, H);
       jb(conf, 0) = average_spin(S);
-    };
+    }
+
     mdp << "beta = " << S.beta << ", "
         << "average plaquette = " << jb.mean()
         << "(" << jb.j_err() << ")\n";
-  };
+  }
+
   mdp.close_wormholes();
+
   return 0;
-};
+}
