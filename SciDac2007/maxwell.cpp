@@ -67,5 +67,5 @@ int main(int argc, char **argv)
   }
 
   mdp.close_wormholes();
-  return 1;
+  return 0;
 }

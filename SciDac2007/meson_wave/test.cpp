@@ -1,4 +1,4 @@
-#include "fermiqcd.h"
+#include "../../Libraries/fermiqcd.h"
 
 int main(int argc, char **argv)
 {

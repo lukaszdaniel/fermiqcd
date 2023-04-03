@@ -1,6 +1,6 @@
-#include "fermiqcd.h"
-#include "mdp_all.h"
-#include "dump.h"
+#include "../../Libraries/fermiqcd.h"
+#include "../mdp_all.h"
+#include "../dump.h"
 
 class ModifiedWilsonGaugeAction : public WilsonGaugeAction
 {
@@ -121,7 +121,14 @@ int main(int argc, char **argv)
   gauge["beta"] = 5.8;
 
   set_hot(U);
-  // forallsites(x) if(x(0)>L[0]/2) for(int mu=0; mu<4; mu++) U(x,mu)=1;
+#if 0
+  forallsites(x)
+  {
+    if (x(0) > L[0] / 2)
+      for (int mu = 0; mu < 4; mu++)
+        U(x, mu) = 1;
+  }
+#endif
 
   for (int k = 0; k < 1000; k++)
   {

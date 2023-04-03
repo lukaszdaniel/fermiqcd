@@ -12,14 +12,14 @@
 
   A number of errors corrected, in particular loops now
   run from 0 to n-1, while in the original version they
-  run from 1 to n, because transalted badly from fortran.
-  Moreover it does not need numerical recepies any more but relies
+  run from 1 to n, because translated badly from fortran.
+  Moreover it does not need numerical recipes any more but relies
   on the Marsagla random number generator in mdp.h
   The output is much nicer now.
   Moreover all the variables and functions required are
   local or private members of VegasClass.
 
-  Many of the original varibale names have been left
+  Many of the original variable names have been left
   unchanged form the original version.
 
   Goals:
@@ -91,16 +91,11 @@ private:
     int j;
     if (OutputFile != 0 && ME == 0)
     {
-      fprintf(OutputFile,
-              "======================================\n");
-      fprintf(OutputFile,
-              "Vegas Montecarlo Numerical Integration\n");
-      fprintf(OutputFile,
-              "======================================\n");
-      fprintf(OutputFile,
-              "Input Parameters:\n");
-      fprintf(OutputFile,
-              "Number of dimensions     = %i\n", NumberOfDimensions);
+      fprintf(OutputFile, "======================================\n");
+      fprintf(OutputFile, "Vegas Montecarlo Numerical Integration\n");
+      fprintf(OutputFile, "======================================\n");
+      fprintf(OutputFile, "Input Parameters:\n");
+      fprintf(OutputFile, "Number of dimensions     = %i\n", NumberOfDimensions);
       fprintf(OutputFile, "Present iteration        = %i\n", it);
       fprintf(OutputFile, "Number of iterations     = %i\n", niterations);
       fprintf(OutputFile, "Number of function calls = %i\n", ncalls);
@@ -158,7 +153,7 @@ private:
   {
     int i;
     int k = 0;
-    double xo = 0;
+    double xo = 0.0;
     double dr = 0.0;
     double xn = 0.0;
     for (i = 0; i < nd - 1; i++)
@@ -444,7 +439,7 @@ public:
         }
         if (k < 0)
           break;
-      } while (TRUE);
+      } while (true);
       // ////////////////////////////////////////////
       // Compute final results for this iteration.
       // ////////////////////////////////////////////

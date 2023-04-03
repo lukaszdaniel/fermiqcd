@@ -1,6 +1,6 @@
-#include "fermiqcd.h"
-#include "mdp_all.h"
-#include "dump.h"
+#include "../../Libraries/fermiqcd.h"
+#include "../mdp_all.h"
+#include "../dump.h"
 
 class PunchedWilsonGaugeAction : public WilsonGaugeAction
 {
@@ -141,75 +141,100 @@ int main(int argc, char **argv)
 
   int path[20][2] = {{+1, 0}, {+1, 0}, {+1, 0}, {+1, 0}, {+1, 1}, {+1, 1}, {+1, 1}, {+1, 1}, {+1, 1}, {+1, 1}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 0}, {-1, 1}, {-1, 1}, {-1, 1}, {-1, 1}, {-1, 1}, {-1, 1}};
 
-  forallsites(x3) for (int i = 0; i < 6; i++)
+  forallsites(x3)
+  {
+    for (int i = 0; i < 6; i++)
       PA(x3, i) = PB(x3, i) = 0;
+  }
   PC = 0;
 
-  /*
+#if 0
   set_hot(V);
   for (int k = 0; k < 4000; k++)
   {
     std::cout << k << std::endl;
     WilsonGaugeAction::heatbath(V, gauge, 10);
   }
-  */
+#endif
 
   for (int conf = 0; conf < 1000; conf++)
   {
-    /* WilsonGaugeAction::heatbath(V,gauge,50);
-    snprintf(filename, 100,"gauge_from_hot_10x16x10x10.%.3i.fixed.mdp",conf);
+#if 0
+    WilsonGaugeAction::heatbath(V, gauge, 50);
+    snprintf(filename, 100, "gauge_from_hot_10x16x10x10.%.3i.fixed.mdp", conf);
     V.save(filename);
 
-    U=V;
-    ApeSmearing::smear(U,0.7,20,10);
-    */
+    U = V;
+    ApeSmearing::smear(U, 0.7, 20, 10);
+#endif
     snprintf(filename, 100, "gauge_from_hot_10x16x10x10.%.3i.fixed.mdp", conf);
     U.load(filename);
 
-    // GaugeFixing::fix(U,GaugeFixing::Landau,20);
+    // GaugeFixing::fix(U, GaugeFixing::Landau, 20);
 
-    // for(int shift0=0; shift0<L[0]; shift0++) {
-    for (int shift1 = 0; shift1 < L[1]; shift1++)
+#if 0
+    for (int shift0 = 0; shift0 < L[0]; shift0++)
     {
-      for (int shift2 = 0; shift2 < L[2]; shift2++)
+#endif
+      for (int shift1 = 0; shift1 < L[1]; shift1++)
       {
-        for (int shift3 = 0; shift3 < L[3]; shift3++)
+        for (int shift2 = 0; shift2 < L[2]; shift2++)
         {
-
-          x.set(3, 5, L[2] / 2, L[3] / 2);
-
-          d = trace(build_path(U, x, 20, path));
-          PC += d;
-          forallsites(x3)
+          for (int shift3 = 0; shift3 < L[3]; shift3++)
           {
-            x.set(L[0] / 2, x3(0), x3(1), x3(2));
-            for (int h = 0; h < 6; h++)
+
+            x.set(3, 5, L[2] / 2, L[3] / 2);
+
+            d = trace(build_path(U, x, 20, path));
+            PC += d;
+            forallsites(x3)
             {
-              P = trace(plaquette(U, x, idx[h][1], idx[h][2]));
-              PA(x3, idx[h][0]) += d * P;
-              PB(x3, idx[h][0]) += P;
+              x.set(L[0] / 2, x3(0), x3(1), x3(2));
+              for (int h = 0; h < 6; h++)
+              {
+                P = trace(plaquette(U, x, idx[h][1], idx[h][2]));
+                PA(x3, idx[h][0]) += d * P;
+                PB(x3, idx[h][0]) += P;
+              }
             }
+
+            forallsites(x)
+            {
+              for (int mu = 0; mu < 4; mu++)
+                W(x, mu) = U(x - 3, mu);
+            }
+            W.update();
+            U = W;
           }
 
-          forallsites(x) for (int mu = 0; mu < 4; mu++) W(x, mu) = U(x - 3, mu);
+          forallsites(x)
+          {
+            for (int mu = 0; mu < 4; mu++)
+              W(x, mu) = U(x - 2, mu);
+          }
           W.update();
           U = W;
         }
 
-        forallsites(x) for (int mu = 0; mu < 4; mu++) W(x, mu) = U(x - 2, mu);
+        forallsites(x)
+        {
+          for (int mu = 0; mu < 4; mu++)
+            W(x, mu) = U(x - 1, mu);
+        }
         W.update();
         U = W;
       }
-      forallsites(x) for (int mu = 0; mu < 4; mu++) W(x, mu) = U(x - 1, mu);
+
+#if 0
+      forallsites(x)
+      {
+        for (int mu = 0; mu < 4; mu++)
+          W(x, mu) = U(x - 0, mu);
+      }
       W.update();
       U = W;
     }
-
-    /*
-      forallsites(x) for(int mu=0; mu<4; mu++) W(x,mu)=U(x-0,mu);
-      W.update(); U=W;
-        }
-    */
+#endif
 
     N = (conf + 1) * L[0];
     float m = 0;
@@ -223,18 +248,35 @@ int main(int argc, char **argv)
       for (int q = 3; q < 6; q++)
         Q += (real(PA(x3, q) / PC - PB(x3, q) / N));
       Q3(x3) += Q;
-      // x3b.set(L[1]-x3(0),x3(1),x3(2));      Q3(x3b)+=Q;
-      // x3b.set(x3(0),L[2]-x3(1),x3(2));      Q3(x3b)+=Q;
-      // x3b.set(x3(0),x3(1),L[3]-x3(2));      Q3(x3b)+=Q;
-      // x3b.set(L[1]-x3(0),L[2]-x3(1),x3(2));      Q3(x3b)+=Q;
-      // x3b.set(L[1]-x3(0),x3(1),L[3]-x3(2));      Q3(x3b)+=Q;
-      // x3b.set(x3(0),L[2]-x3(1),L[3]-x3(2));      Q3(x3b)+=Q;
-      // x3b.set(L[1]-x3(0),L[2]-x3(1),L[3]-x3(2));      Q3(x3b)+=Q;
+      // x3b.set(L[1] - x3(0), x3(1), x3(2));
+      // Q3(x3b) += Q;
+      // x3b.set(x3(0), L[2] - x3(1), x3(2));
+      // Q3(x3b) += Q;
+      // x3b.set(x3(0), x3(1), L[3] - x3(2));
+      // Q3(x3b) += Q;
+      // x3b.set(L[1] - x3(0), L[2] - x3(1), x3(2));
+      // Q3(x3b) += Q;
+      // x3b.set(L[1] - x3(0), x3(1), L[3] - x3(2));
+      // Q3(x3b) += Q;
+      // x3b.set(x3(0), L[2] - x3(1), L[3] - x3(2));
+      // Q3(x3b) += Q;
+      // x3b.set(L[1] - x3(0), L[2] - x3(1), L[3] - x3(2));
+      // Q3(x3b) += Q;
     }
-    // x3.set(0,0,0); Q3(x3)=0;
-    forallsites(x3) if (Q3(x3) < m) m = Q3(x3);
+
+    // x3.set(0, 0, 0);
+    // Q3(x3) = 0;
+
+    forallsites(x3)
+    {
+      if (Q3(x3) < m)
+        m = Q3(x3);
+    }
     std::cout << "m=" << m << std::endl;
-    forallsites(x3) Q3(x3) -= m;
+    forallsites(x3)
+    {
+      Q3(x3) -= m;
+    }
     std::cout << "saving vtk file\n";
     snprintf(filename, 100, "energy_density_E2B2_XYZ.%.3i.vtk", conf);
     dump(Q3, 0, filename);

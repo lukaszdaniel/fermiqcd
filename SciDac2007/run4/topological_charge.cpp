@@ -1,6 +1,6 @@
-#include "fermiqcd.h"
-#include "mdp_all.h"
-#include "dump.h"
+#include "../../Libraries/fermiqcd.h"
+#include "../mdp_all.h"
+#include "../dump.h"
 
 class ModifiedWilsonGaugeAction : public WilsonGaugeAction
 {
@@ -33,7 +33,6 @@ public:
 
     forallsitesofparity(x, n_iter)
     {
-
       mu = mu_set;
       {
 
@@ -94,7 +93,7 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
         Q3(x3) = Q4(x4);
       }
       std::cout << "dumping...\n";
-      // snprintf(filename, 128,"topological.%.3i.%.3i.%.3i.vtk",code,i1,t);
+      // snprintf(filename, 128, "topological.%.3i.%.3i.%.3i.vtk", code, i1, t);
       snprintf(filename, 128, "topological.%.3i.vtk", code);
       dump(Q3, 0, filename);
     }
@@ -122,12 +121,15 @@ int main(int argc, char **argv)
   gauge["beta"] = 5.6;
 
   set_cold(U);
-  forallsites(x) if (x(1) >= L[1] / 4 && x(1) < 3 * L[1] / 4)
+  forallsites(x)
   {
-    U(x, 0) = A0;
-    U(x, 1) = A1;
-    U(x, 2) = A2;
-    U(x, 3) = A3;
+    if (x(1) >= L[1] / 4 && x(1) < 3 * L[1] / 4)
+    {
+      U(x, 0) = A0;
+      U(x, 1) = A1;
+      U(x, 2) = A2;
+      U(x, 3) = A3;
+    }
   }
   save_top_charge(U, 0, 1, 20, 0, 1);
 
@@ -140,11 +142,11 @@ int main(int argc, char **argv)
     V = U;
     save_top_charge(V, k, 1, 20, 0, 1);
   }
-  /*
-  for(int k=10000; k<10100; k++)
+#if 0
+  for (int k = 10000; k < 10100; k++)
     save_top_charge(U, k, 1, 1, 0, 1);
   save_top_charge(U, 10100, 1, 0, 0, L[0]);
-  */
+#endif
   mdp.close_wormholes();
   return 0;
 }

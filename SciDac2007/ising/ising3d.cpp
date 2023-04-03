@@ -1,6 +1,6 @@
-#include "mdp.h"
-#include "mdp_all.h"
-#include "dump.h"
+#include "../../Libraries/mdp.h"
+#include "../mdp_all.h"
+#include "../dump.h"
 
 int main(int argc, char **argv)
 {
@@ -10,9 +10,16 @@ int main(int argc, char **argv)
   mdp_field<float> spin(cube);
   mdp_site point(cube);
   int dE = 0, H = cube.size(), dH = 0;
-  float kappa = atof(argv[1]); // try 0.5 or 0.25
-  forallsites(point) spin(point) = (point(0) > L[0] / 4 && point(0) <= 3 * L[0] / 4) ? (+1) : (-1);
-  while (1)
+  float kappa = 0.40;
+  if (argc > 1)
+    kappa = atof(argv[1]); // try 0.5 or 0.25
+
+  forallsites(point)
+  {
+    spin(point) = (point(0) > L[0] / 4 && point(0) <= 3 * L[0] / 4) ? (+1) : (-1);
+  }
+
+  while (true)
   {
     dH = 0;
     for (int parity = 0; parity < 2; parity++)
@@ -34,5 +41,5 @@ int main(int argc, char **argv)
     mdp << "magnetization=" << H << "\n";
   }
   mdp.close_wormholes();
-  return 1;
+  return 0;
 }

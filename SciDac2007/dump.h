@@ -13,7 +13,6 @@ void dump(mdp_field<float> &s,
   static const char *tempfile = "tmp.vtk";
   char header[1024];
   char number[1024];
-  char vectorHeader[512];
   int LX = s.lattice().size(0),
       LY = s.lattice().size(1),
       LZ = s.lattice().size(2);

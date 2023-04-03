@@ -2,7 +2,7 @@
 
   MyVegas.C  (requires MDP_Lib2.h)
 
-  parallel impementation of the Vegas algorithm
+  parallel implementation of the Vegas algorithm
 
   invented by Peter Lepage @ Cornell University
 
@@ -12,14 +12,14 @@
 
   A number of errors corrected, in particular loops now
   run from 0 to n-1, while in the original version they
-  run from 1 to n, because transalted badly from fortran.
-  Moreover it does not need numerical recepies any more but relies
+  run from 1 to n, because translated badly from fortran.
+  Moreover it does not need numerical recipes any more but relies
   on the Marsagla random number generator in MDP_Lib2.h
   The output is much nicer now.
   Moreover all the variables and functions required are
   local or private members of VegasClass.
 
-  Many of the original varibale names have been left
+  Many of the original variable names have been left
   unchanged form the original version.
 
   Goals:
@@ -156,7 +156,7 @@ private:
   {
     int i;
     int k = 0;
-    double xo;
+    double xo = 0.0;
     double dr = 0.0;
     double xn = 0.0;
     for (i = 0; i < nd - 1; i++)
@@ -442,7 +442,7 @@ public:
         }
         if (k < 0)
           break;
-      } while (TRUE);
+      } while (true);
       // ////////////////////////////////////////////
       // Compute final results for this iteration.
       // ////////////////////////////////////////////

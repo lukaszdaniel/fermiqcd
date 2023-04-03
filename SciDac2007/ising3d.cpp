@@ -14,8 +14,13 @@ int main(int argc, char **argv)
   float kappa = 0.40;
   if (argc > 1)
     kappa = atof(argv[1]); // try 0.5 or 0.25
-  forallsites(point) spin(point) = (point(0) > L[0] / 4 && point(0) <= 3 * L[0] / 4) ? (+1) : (-1);
-  while (1)
+
+  forallsites(point)
+  {
+    spin(point) = (point(0) > L[0] / 4 && point(0) <= 3 * L[0] / 4) ? (+1) : (-1);
+  }
+
+  while (true)
   {
     dH = 0;
     for (int parity = 0; parity < 2; parity++)
@@ -37,5 +42,5 @@ int main(int argc, char **argv)
     mdp << "magnetization=" << H << "\n";
   }
   mdp.close_wormholes();
-  return 1;
+  return 0;
 }

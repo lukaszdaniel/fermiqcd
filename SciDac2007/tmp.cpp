@@ -18,7 +18,7 @@ int main(int argc, char **argv)
     gauge_field U(spacetime, nc);
     set_cold(U);
 
-    save_partitioning_vtk(spacetime, "partitining");
+    save_partitioning_vtk(spacetime, "partitioning");
 
     mdp.close_wormholes();
     return 0;

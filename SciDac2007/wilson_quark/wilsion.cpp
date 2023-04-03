@@ -1,6 +1,6 @@
 // #define SSE2
 #define OSX
-#include "fermiqcd.h"
+#include "../../Libraries/fermiqcd.h"
 
 #define X 0
 #define Y 1
