@@ -132,7 +132,7 @@ public:
     if (random_number < exp(h_old - h_new))
     {
       // ACCEPT
-      mdp << "DH: " << abs(h_new - h_old) / h_new << "\n";
+      mdp << "DH: " << std::abs(h_new - h_old) / h_new << "\n";
       s_old = s_new;
       bs_old = bs;
       fs_old = fs;
