@@ -31,7 +31,7 @@ void cool_vtk(gauge_field &U, mdp_args &arguments, std::string filename)
                          arguments.get("-cool_vtk", "alpha", 0.7),
                          arguments.get("-cool_vtk", "steps", 1),
                          arguments.get("-cool_vtk", "cooling", 10));
-      topological_charge_vtk(U, filename + ".cool" + tostring(k, 2) + ".vtk", 0);
+      topological_charge_vtk(U, filename + ".cool" + std::to_string(k, 2) + ".vtk", 0);
     }
   else
     mdp.error_message("cooling algorithm not supported");
@@ -185,11 +185,11 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       }
       // optional ... smer source here
       psi.update();
-      prefix = newfilename + "." + source_type + ".k" + tostring(quark["kappa"]);
+      prefix = newfilename + "." + source_type + ".k" + std::to_string(quark["kappa"]);
       if (t0 * t0 + x0 * x0 + y0 * y0 + z0 * z0 > 0)
-        prefix = prefix + ".at" + tostring(t0) + "." + tostring(x0) +
-                 "." + tostring(y0) + "." + tostring(z0);
-      inversion_vtk_prefix = prefix + ".s" + tostring(a, 1) + ".c" + tostring(i, 1);
+        prefix = prefix + ".at" + std::to_string(t0) + "." + std::to_string(x0) +
+                 "." + std::to_string(y0) + "." + std::to_string(z0);
+      inversion_vtk_prefix = prefix + ".s" + std::to_string(a, 1) + ".c" + std::to_string(i, 1);
       quarkfilename = inversion_vtk_prefix + ".quark";
       if (arguments.get("-quark", "load", "false|true") == "true")
       {
@@ -206,7 +206,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         forspincolor(b, j, nc)
         {
           forallsites(x) Q(x) = abs(phi(x, b, j));
-          Q.save_vtk(inversion_vtk_prefix + ".quark" + tostring(b, 1) + tostring(j, 1) + ".vtk", -1);
+          Q.save_vtk(inversion_vtk_prefix + ".quark" + std::to_string(b, 1) + std::to_string(j, 1) + ".vtk", -1);
         }
       }
       if (arguments.have("-pion"))
@@ -546,11 +546,11 @@ int main(int argc, char **argv)
         else
           mdp.error_message("gauge action not supported");
         if (filename.substr(filename.size() - 4, 4) == ".mdp")
-          newfilename = filename.substr(0, filename.size() - 4) + "." + tostring(n) + ".mdp";
+          newfilename = filename.substr(0, filename.size() - 4) + "." + std::to_string(n) + ".mdp";
         else if (prefix != "")
-          newfilename = prefix + "." + tostring(n) + ".mdp";
+          newfilename = prefix + "." + std::to_string(n) + ".mdp";
         else
-          newfilename = filename + "." + tostring(n) + ".mdp";
+          newfilename = filename + "." + std::to_string(n) + ".mdp";
         if (arguments.get("-gauge", "save", "true") == "true")
           U.save(newfilename);
       }

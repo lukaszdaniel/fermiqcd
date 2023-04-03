@@ -17,7 +17,7 @@ int main(int argc, char **argv)
   {
     ImprovedGaugeAction::heatbath(U, gauge, 10, "MILC");
     mdp << "plaquette:" << average_plaquette(U) << "\n";
-    U.save(std::string("gauge.") + tostring(k));
+    U.save(std::string("gauge.") + std::to_string(k));
   }
   mdp.close_wormholes();
   return 0;

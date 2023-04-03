@@ -12,7 +12,7 @@ int main(int argc, char **argv)
   for (int k = 0; k < nconfig; k++)
   {
     WilsonGaugeAction::heatbath(U, gauge, 10); // do heathbath
-    U.save(std::string("gauge") + tostring(k));     // save gauge config
+    U.save(std::string("gauge") + std::to_string(k));     // save gauge config
     mdp << average_plaquette(U) << "\n";       // print plaquette
   }
   mdp.close_wormholes(); // STOP

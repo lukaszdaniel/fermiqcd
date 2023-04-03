@@ -252,8 +252,8 @@ void save_vtk(mdp_field<float> &field,
   else
   {
     std::string filename2 = filename.substr(0, filename.size() - 1);
-    field.save_vtk(filename2 + "_" + tostring(k) + ".vtk", t, component, processIO, ASCII);
-    fields[filename]->save_vtk(filename2 + "_average_" + tostring(k) + ".vtk", t, component, processIO, ASCII);
+    field.save_vtk(filename2 + "_" + std::to_string(k) + ".vtk", t, component, processIO, ASCII);
+    fields[filename]->save_vtk(filename2 + "_average_" + std::to_string(k) + ".vtk", t, component, processIO, ASCII);
   }
 }
 */

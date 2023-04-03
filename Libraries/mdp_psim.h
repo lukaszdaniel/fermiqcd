@@ -86,12 +86,12 @@ private:
   // Set this to true if you want verbose testing description
 
   // Class variables
-  int _verbatim;       // 0 for no output, 1 for some, 2 more
-  int _processCount;   // Holds the number of processes
+  int _verbatim;            // 0 for no output, 1 for some, 2 more
+  int _processCount;        // Holds the number of processes
   std::string _logFileName; // filename of the log file
-  bool _doLogging;     // do logging or not?
-  FILE *_logfileFD;    // file descriptor for the logging file
-  int _processID;      // process ID of "this" process
+  bool _doLogging;          // do logging or not?
+  FILE *_logfileFD;         // file descriptor for the logging file
+  int _processID;           // process ID of "this" process
 
   int (*_socketFD)[2]; // array to hold all of the sockets
   int _commTimeout;    // defaults to COMM_TIMEOUT_DEFAULT

@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   for (int k = 0; k < nconfig; k++)
   {
     WilsonGaugeAction::heatbath(U, gauge); // do heatbath
-    U.save(std::string("gauge") + tostring(k)); // save config
+    U.save(std::string("gauge") + std::to_string(k)); // save config
     if (quark["c_{SW}"] != 0)
       compute_em_field(U);
     generate(S, U, quark, 1e-20, 1e-12); // make propagator

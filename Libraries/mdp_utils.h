@@ -10,22 +10,6 @@
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
 
-std::string tostring(int k, int length = 5)
-{
-  char buf[128];
-  if (length >= 5)
-    snprintf(buf, 128, "%.5i", k);
-  else if (length == 4)
-    snprintf(buf, 128, "%.4i", k);
-  else if (length == 3)
-    snprintf(buf, 128, "%.3i", k);
-  else if (length == 2)
-    snprintf(buf, 128, "%.2i", k);
-  else if (length == 1)
-    snprintf(buf, 128, "%.1i", k);
-  return std::string(buf);
-}
-
 bool file_exists(std::string filename)
 {
   if (FILE *file = fopen(filename.c_str(), "rb"))
@@ -64,19 +48,12 @@ std::string next_to_latest_file(std::string pattern)
   std::vector<std::string> v = glob(pattern);
   std::string latest = v[v.size() - 1];
   if (latest == "?")
-    return pattern.replace(i, 1, tostring(0));
+    return pattern.replace(i, 1, std::to_string(0));
   int k;
   latest = latest.substr(i, 5);
   k = atoi(latest.c_str());
   k++;
-  return pattern.replace(i, 1, tostring(k).c_str());
-}
-
-std::string tostring(float k)
-{
-  char buf[128];
-  snprintf(buf, 128, "%f", k);
-  return std::string(buf);
+  return pattern.replace(i, 1, std::to_string(k).c_str());
 }
 
 int is_file(std::string filename, const char permission[] = "r")

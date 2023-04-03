@@ -67,11 +67,12 @@ void dagger(coefficients &coeff)
 std::ostream &operator<<(std::ostream &os, const coefficients &coeff)
 {
   begin_function("print_coefficients");
-  coefficients::const_iterator iter;
-  for (iter = coeff.begin(); iter != coeff.end(); iter++)
+
+  for (const auto &[coefficient, value] : coeff)
   {
-    std::cout << "<coefficient name=\"" << iter->first << "\">" << iter->second
-         << "</coefficient>" << '\n';
+    std::cout << "<coefficient name=\"" << coefficient << "\">" << value
+              << "</coefficient>"
+              << "\n";
   }
   end_function("print_coefficients");
   return os;

@@ -73,7 +73,7 @@ public:
     std::cout << ME << std::endl;
     pU->update();
     // set_cold(*pU);
-    // prefix=prefix+string("C")+tostring((int)mdp.time());
+    // prefix=prefix+string("C")+std::to_string((int)mdp.time());
     counter = 0;
   }
   void init_hot(int LT, int LX, int LY, int LZ, int nc)
@@ -88,7 +88,7 @@ public:
     os << "making a hot gauge configuration U with nc=" << nc << std::endl;
     this->pU = new gauge_field(*plattice, nc);
     set_hot(*pU);
-    prefix = std::string("C") + tostring((int)mdp.time());
+    prefix = std::string("C") + std::to_string((int)mdp.time());
     counter = 0;
   }
   void init_load(std::string filename)

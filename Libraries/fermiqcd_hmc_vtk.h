@@ -368,7 +368,7 @@ public:
         U(x, mu) = A * U(x, mu);
       }
     }
-    Q.save_vtk(std::string("pressure_" + tostring(this->steps) + ".vtk"));
+    Q.save_vtk(std::string("pressure_" + std::to_string(this->steps) + ".vtk"));
     U.update();
 
     compute_force(U, nf_U, F, nf_F);

@@ -112,7 +112,7 @@ public:
           for (int k = 0; k < psi_in.nc; k++)
             s(x) += sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
         }
-        filename1 = filename_prefix + ".field" + tostring(a) + "." + tostring(step) + ".vtk";
+        filename1 = filename_prefix + ".field" + std::to_string(a) + "." + std::to_string(step) + ".vtk";
         s.save_vtk(filename1, tc);
       }
       forallsites(x)
@@ -122,7 +122,7 @@ public:
           for (int k = 0; k < psi_in.nc; k++)
             s(x) += log(real(r(x, a, k) * conj(r(x, a, k))) + PRECISION);
       }
-      filename2 = filename_prefix + ".residue." + tostring(step) + ".vtk";
+      filename2 = filename_prefix + ".residue." + std::to_string(step) + ".vtk";
       s.save_vtk(filename2, tc);
 
       mpi << "\t\t<step>" << step << "</step>\n"
