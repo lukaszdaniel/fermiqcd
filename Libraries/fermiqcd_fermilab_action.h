@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMILAB_ACTION_
+#define FERMIQCD_FERMILAB_ACTION_
 
 #ifdef SSE2
 
@@ -566,3 +568,5 @@ public:
   }
 };
 #endif
+
+#endif /* FERMIQCD_FERMILAB_ACTION_ */

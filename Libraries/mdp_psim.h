@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_PSIM_
+#define MDP_PSIM_
 
 #include "cstdio"
 #include "cstdlib"
@@ -967,3 +969,5 @@ public:
     return n;
   }
 };
+
+#endif /* MDP_PSIM_ */

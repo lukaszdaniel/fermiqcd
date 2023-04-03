@@ -4,6 +4,8 @@
 /// @author Joseph Schneible <>
 ///
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_CG_INVERTER_
+#define FERMIQCD_CG_INVERTER_
 
 /// @brief the conjugate gradient inverter
 ///
@@ -150,3 +152,5 @@ public:
     return stats;
   }
 };
+
+#endif /* FERMIQCD_CG_INVERTER_ */

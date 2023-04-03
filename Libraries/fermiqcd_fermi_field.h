@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMI_FIELD_
+#define FERMIQCD_FERMI_FIELD_
 
 /// @brief wilson fermionic field
 ///
@@ -121,3 +123,5 @@ void print_fermi_field(fermi_field &psi)
   } while (1);
   end_function("print_fermi_field");
 }
+
+#endif /* FERMIQCD_FERMI_FIELD_ */

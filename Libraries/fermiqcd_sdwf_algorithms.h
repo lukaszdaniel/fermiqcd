@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SDWF_ALGORITHMS_
+#define FERMIQCD_SDWF_ALGORITHMS_
 
 const double MDP_SDWF_SGN = 1.0;
 
@@ -144,3 +146,5 @@ void compute_swirls_field(gauge_field &U)
     U.swirls(x) = inv(U.swirls(y));
   }
 }
+
+#endif /* FERMIQCD_SDWF_ALGORITHMS_ */

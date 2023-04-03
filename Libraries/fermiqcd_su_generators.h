@@ -4,6 +4,9 @@
 /// @author Simon Catterall and Massimo Di Pierro
 ///
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SU_GENERATORS_
+#define FERMIQCD_SU_GENERATORS_
+
 // Example:
 // #include "fermiqcd.h"
 // int main() {
@@ -62,3 +65,5 @@ public:
     return I * sqrt(2) * mat;
   }
 };
+
+#endif /* FERMIQCD_SU_GENERATORS_ */

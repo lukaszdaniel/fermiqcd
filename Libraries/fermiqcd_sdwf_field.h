@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SDWF_FIELD_
+#define FERMIQCD_SDWF_FIELD_
 
 /// @brief field for domain wall staggered fermions
 class sdwf_field : public mdp_complex_field
@@ -115,3 +117,5 @@ public:
     return (mdp_real)mdp_mod2sign(tmp);
   }
 };
+
+#endif /* FERMIQCD_SDWF_FIELD_ */

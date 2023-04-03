@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_
+#define FERMIQCD_
 
 #define FERMIQCD 1
 #define forspincolor(a, i, nc)  \
@@ -81,3 +83,5 @@
 #include "fermiqcd_sdwf_field.h"
 #include "fermiqcd_sdwf_actions.h"
 #include "fermiqcd_sdwf_algorithms.h"
+
+#endif /* FERMIQCD_ */

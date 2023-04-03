@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_STAGGERED_UML_INVERTER_
+#define FERMIQCD_STAGGERED_UML_INVERTER_
 
 // ////////////////////////////////////////////////
 // the MILC UML inverter
@@ -212,3 +214,5 @@ public:
     return stats;
   }
 };
+
+#endif /* FERMIQCD_STAGGERED_UML_INVERTER_ */

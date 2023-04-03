@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_MINRES_INVERTER_
+#define FERMIQCD_MINRES_INVERTER_
 
 /// @brief structure for inverstion stats
 ///
@@ -160,3 +162,5 @@ inversion_stats MinimumResidueInverter(fieldT &psi_out,
                           relative_precision,
                           max_steps);
 }
+
+#endif /* FERMIQCD_MINRES_INVERTER_ */

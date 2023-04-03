@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_MINRES_INVERTER_VTK_
+#define FERMIQCD_MINRES_INVERTER_VTK_
 
 // /////////////////////////////////////////////
 // implementation of the minimum residue inversion
@@ -175,3 +177,5 @@ inversion_stats MinimumResidueInverterVtk(fieldT &psi_out,
                              relative_precision,
                              max_steps);
 }
+
+#endif /* FERMIQCD_MINRES_INVERTER_VTK_ */

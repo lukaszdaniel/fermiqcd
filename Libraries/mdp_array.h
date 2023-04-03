@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_ARRAY_
+#define MDP_ARRAY_
 
 /// @brief generic container for multidimensional arrays
 ///
@@ -329,3 +331,5 @@ public:
     return os;
   }
 };
+
+#endif /* MDP_ARRAY_ */

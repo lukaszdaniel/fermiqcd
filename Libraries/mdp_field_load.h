@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_FIELD_LOAD_
+#define MDP_FIELD_LOAD_
 
 /// Auxiliary function
 bool mdp_default_user_read(FILE *fp,
@@ -232,3 +234,5 @@ bool mdp_field<T>::load(std::string filename,
   }
   return true;
 }
+
+#endif /* MDP_FIELD_LOAD_ */

@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_COEFFICIENTS_
+#define FERMIQCD_COEFFICIENTS_
 
 /// @brief container for action parameters
 ///
@@ -77,3 +79,5 @@ std::ostream &operator<<(std::ostream &os, const coefficients &coeff)
   end_function("print_coefficients");
   return os;
 }
+
+#endif /* FERMIQCD_COEFFICIENTS_ */

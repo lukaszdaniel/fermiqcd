@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_DWFERMI_ALGORITHMS_
+#define FERMIQCD_DWFERMI_ALGORITHMS_
 
 /// Projects a domain wall fermion (chi) into a wilson fermion (psi)
 void project(fermi_field &psi, dwfermi_field &chi)
@@ -68,3 +70,5 @@ inversion_stats mul_invQ(dwfermi_field &psi_out,
 {
 	return (*default_dwfermi_inverter)(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
 };
+
+#endif /* FERMIQCD_DWFERMI_ALGORITHMS_ */

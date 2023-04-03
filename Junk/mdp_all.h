@@ -1,3 +1,6 @@
+#ifndef MDP_ALL_
+#define MDP_APP_
+
 // BEGIN FILE: mdp_all.h
 // C headers
 #include "sys/types.h"
@@ -45,3 +48,5 @@ void exit_message(int en, std::string message)
   std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
   exit(en);
 }
+
+#endif /* MDP_ALL_ */

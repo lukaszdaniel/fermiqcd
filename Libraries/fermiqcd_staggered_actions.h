@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_STAGGERED_ACTIONS_
+#define FERMIQCD_STAGGERED_ACTIONS_
 
 /// @brief Staggered/Asqtad action (SLOW: DO NOT USE IN PRODUCTION)
 ///
@@ -234,3 +236,5 @@ public:
 		}
 	}
 };
+
+#endif /* FERMIQCD_STAGGERED_ACTIONS_ */

@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_COMPATIBILITY_MACROS_
+#define MDP_COMPATIBILITY_MACROS_
 
 #define myreal mdp_real
 #define site mdp_site
@@ -26,3 +28,5 @@
 #define Vector_field mdp_vector_field
 #define NMatrix_field mdp_nmatrix_field
 #define mdp_random_generator mdp_prng
+
+#endif /* MDP_COMPATIBILITY_MACROS_ */

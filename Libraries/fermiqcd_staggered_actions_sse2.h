@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_STAGGERED_ACTIONS_SSE2_
+#define FERMIQCD_STAGGERED_ACTIONS_SSE2_
 
 #ifdef SSE2
 
@@ -732,3 +734,5 @@ public:
 };
 
 #endif // id fefined(SSE2)
+
+#endif /* FERMIQCD_STAGGERED_ACTIONS_SSE2_ */

@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_GAUGE_ROUTINES_
+#define FERMIQCD_GAUGE_ROUTINES_
 
 // ///////////////////////////
 // If use class mdp_matrix
@@ -450,3 +452,5 @@ inline mdp_matrix plaquette(gauge_field &U, site x, int mu, int nu) {
   return tmp;
 }
 */
+
+#endif /* FERMIQCD_GAUGE_ROUTINES_ */

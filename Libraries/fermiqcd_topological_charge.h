@@ -1,3 +1,6 @@
+#ifndef FERMIQCD_TOPOLOGICAL_CHARGE_
+#define FERMIQCD_TOPOLOGICAL_CHARGE_
+
 /*
 Under development - DOES NOT WORK!!!!
 
@@ -150,3 +153,5 @@ float topological_charge_vtk(gauge_field &U, std::string filename, int t = -1)
   mdp.add(total);
   return total;
 }
+
+#endif /* FERMIQCD_TOPOLOGICAL_CHARGE_ */

@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_INSTANTON4D_
+#define FERMIQCD_INSTANTON4D_
 
 class Instanton4D
 {
@@ -186,3 +188,5 @@ int main(int argc, char** argv) {
 }
 
 */
+
+#endif /* FERMIQCD_INSTANTON4D_ */

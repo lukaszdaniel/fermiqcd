@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMI_ACTIONS_
+#define FERMIQCD_FERMI_ACTIONS_
 
 /// @brief Wilson/Clover action (SLOW: DO NOT USE IN PRODUCTION)
 ///
@@ -334,3 +336,5 @@ public:
     delete[] FHU_dw;
   }
 };
+
+#endif /* FERMIQCD_FERMI_ACTIONS_ */

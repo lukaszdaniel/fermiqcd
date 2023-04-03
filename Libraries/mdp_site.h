@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_SITE_
+#define MDP_SITE_
 
 /// checks which process of the lattice a stores locally the site of
 /// coordinates x0,x1,x2,...,x9
@@ -470,3 +472,5 @@ std::ostream &operator<<(std::ostream &os, mdp_site &x)
   os << ")";
   return os;
 }
+
+#endif /* MDP_SITE_ */

@@ -57,6 +57,9 @@
 
 */
 
+#ifndef MDP_PVEGAS_
+#define MDP_PVEGAS_
+
 class VegasClass
 {
 private:
@@ -509,3 +512,5 @@ public:
     return Integral;
   }
 } Vegas;
+
+#endif /* MDP_PVEGAS_ */

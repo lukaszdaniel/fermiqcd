@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_DWFERMI_ACTIONS_
+#define FERMIQCD_DWFERMI_ACTIONS_
 
 /// @brief domain wall action (SORRY THIS IS SLOW)
 ///
@@ -222,3 +224,5 @@ public:
     }
   }
 };
+
+#endif /* FERMIQCD_DWFERMI_ACTIONS_ */

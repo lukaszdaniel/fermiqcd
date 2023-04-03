@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SSE_SU3_
+#define FERMIQCD_SSE_SU3_
 
 #if defined(USE_DOUBLE_PRECISION) && defined(SSE2)
 
@@ -302,3 +304,5 @@ inline void _sse_sumAC_sub_31(mdp_complex *a, mdp_complex *c)
 }
 
 #endif
+
+#endif /* FERMIQCD_SSE_SU3_ */

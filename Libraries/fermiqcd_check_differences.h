@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_CHECK_DIFFERENCES_
+#define FERMIQCD_CHECK_DIFFERENCES_
 
 // compares two fields and returns the max distrance between
 // equivalent components.
@@ -34,3 +36,5 @@ float check_differences(mdp_field<mdp_complex> &chi,
   end_function("check_differences");
   return max;
 }
+
+#endif /* FERMIQCD_CHECK_DIFFERENCES_ */

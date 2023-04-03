@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_JACKBOOT_
+#define MDP_JACKBOOT_
 
 float mdp_jackboot_plain(float *x, void *a);
 
@@ -188,3 +190,5 @@ public:
     return (float)(vy - vx) / 2.0;
   }
 };
+
+#endif /* MDP_JACKBOOT_ */

@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_MEASURE_
+#define MDP_MEASURE_
 
 /// @brief implements error propagation
 ///
@@ -209,3 +211,5 @@ public:
 		printf("%f (%f)\n", a.mean, a.error);
 	}
 };
+
+#endif /* MDP_MEASURE_ */

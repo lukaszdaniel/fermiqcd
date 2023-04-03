@@ -1,3 +1,6 @@
+#ifndef MDP_ALL_
+#define MDP_APP_
+
 // BEGIN FILE: mdp_all.h
 // C headers
 #include "sys/types.h"
@@ -429,3 +432,5 @@ sigset_t signalRestoreBlocks(sigset_t set)
   sigprocmask(SIG_BLOCK, &set, &oset);
   return oset;
 }
+
+#endif /* MDP_ALL_ */

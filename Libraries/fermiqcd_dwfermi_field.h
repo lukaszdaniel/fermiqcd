@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_DWFERMI_FIELD_
+#define FERMIQCD_DWFERMI_FIELD_
 
 /// @brief domain wall fermionic field
 ///
@@ -77,3 +79,5 @@ public:
       m[i] = a;
   }
 };
+
+#endif /* FERMIQCD_DWFERMI_FIELD_ */

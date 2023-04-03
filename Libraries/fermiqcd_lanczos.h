@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_LANCZOS_
+#define FERMIQCD_LANCZOS_
 
 /// @brief Lanczos algorithms
 ///
@@ -110,3 +112,5 @@ public:
     return mdp_complex(alpha, beta);
   }
 };
+
+#endif /* FERMIQCD_LANCZOS_ */

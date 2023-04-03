@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_MATRIX_FIELD_
+#define MDP_MATRIX_FIELD_
 
 /// @brief a field of matrices
 ///
@@ -67,3 +69,5 @@ public:
     return address(x)[i * columns + j];
   }
 };
+
+#endif /* MDP_MATRIX_FIELD_ */

@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_STAGGERED_FIELD_
+#define FERMIQCD_STAGGERED_FIELD_
 
 /// @brief staggered fermionic field
 ///
@@ -107,3 +109,5 @@ public:
     return tmp;
   }
 };
+
+#endif /* FERMIQCD_STAGGERED_FIELD_ */

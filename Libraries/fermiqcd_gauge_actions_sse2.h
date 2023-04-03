@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_GAUGE_ACTIONS_SSE2_
+#define FERMIQCD_GAUGE_ACTIONS_SSE2_
 
 /// @brief the \f$ O(a^2)\f$ Improved Gauge Action for SU3 with SSE2
 ///        and double precision (UNTESTED)
@@ -643,3 +645,5 @@ public:
     return stats;
   }
 };
+
+#endif /* FERMIQCD_GAUGE_ACTIONS_SSE2_ */

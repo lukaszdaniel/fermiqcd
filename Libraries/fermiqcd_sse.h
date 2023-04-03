@@ -6,6 +6,8 @@
 /// Basic actions for Wilson Fermions optimized in assembler
 ///
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SSE_
+#define FERMIQCD_SSE_
 
 #ifdef SSE2
 
@@ -1663,3 +1665,5 @@ static void _sse_check_alignment(void *var, unsigned int base)
 }
 
 #endif // SSE2
+
+#endif /* FERMIQCD_SSE_ */

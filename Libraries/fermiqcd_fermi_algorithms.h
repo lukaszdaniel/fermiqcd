@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMI_ALGORITHMS_
+#define FERMIQCD_FERMI_ALGORITHMS_
 
 /// r(x,alpha,i) = Gamma5(alpha,beta) * s(x,beta,i)
 void multiply_by_gamma5(fermi_field &r, fermi_field &s)
@@ -141,3 +143,5 @@ mdp_real check_inversion(fermi_field &phi,
   begin_function("end_inversion");
   return precision;
 }
+
+#endif /* FERMIQCD_FERMI_ALGORITHMS_ */

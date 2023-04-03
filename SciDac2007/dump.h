@@ -1,3 +1,6 @@
+#ifndef DUMP_
+#define DUMP_
+
 #define X 0
 #define Y 1
 #define Z 2
@@ -63,3 +66,5 @@ void dump(mdp_field<float> &s,
   rename(tempfile, filename.c_str());
   return;
 }
+
+#endif /* DUMP_ */

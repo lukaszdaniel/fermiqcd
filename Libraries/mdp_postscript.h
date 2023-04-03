@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_POSTSCRIPT_
+#define MDP_POSTSCRIPT_
 
 /// @brief to output and draw in postscript
 ///
@@ -148,3 +150,5 @@ public:
     fflush(fp);
   };
 };
+
+#endif /* MDP_POSTSCRIPT_ */

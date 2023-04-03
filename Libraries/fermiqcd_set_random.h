@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SET_RANDOM_
+#define FERMIQCD_SET_RANDOM_
 
 /// Set the complex field components of chi to be gaussian random numbers
 /// with mean=0 and sigma=1 (useful for stochastic propagators).
@@ -59,3 +61,5 @@ void set_zero(generic_field<mdp_complex> &chi,
   }
   chi.update();
 }
+
+#endif /* FERMIQCD_SET_RANDOM_ */

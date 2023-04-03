@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_PARTITIONINGS_
+#define MDP_PARTITIONINGS_
 
 int default_partitioning0(int *x,
                           int ndim,
@@ -32,3 +34,5 @@ int default_partitioning(int *x,
     tpp2 += 1;
   return x[dim] / tpp2;
 }
+
+#endif /* MDP_PARTITIONINGS_ */

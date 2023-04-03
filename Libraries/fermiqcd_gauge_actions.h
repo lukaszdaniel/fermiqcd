@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_GAUGE_ACTIONS_
+#define FERMIQCD_GAUGE_ACTIONS_
 
 /*
 void mul_OUU(mdp_complex &A, mdp_complex &B, mdp_complex &C,
@@ -513,3 +515,5 @@ public:
     return stats;
   }
 };
+
+#endif /* FERMIQCD_GAUGE_ACTIONS_ */

@@ -1,3 +1,5 @@
+#ifndef FERMIQCD_ILDG_GAUGE_READER_
+#define FERMIQCD_ILDG_GAUGE_READER_
 
 void ildg_gauge_reader(gauge_field &U,
                        std::string filename,
@@ -32,3 +34,5 @@ void ildg_gauge_reader(gauge_field &U,
     }
   }
 }
+
+#endif /* FERMIQCD_ILDG_GAUGE_READER_ */

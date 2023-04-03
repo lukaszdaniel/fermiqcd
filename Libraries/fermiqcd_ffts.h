@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FFTS_
+#define FERMIQCD_FFTS_
 
 inline mdp_int i2pow(mdp_int n)
 {
@@ -34,22 +36,29 @@ void dft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
 
 /* NOT NOT UNCOMMENT THIS, WORK IN PROGRESS!!!
 void fft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
-   mdp_int offset=0, mdp_int coeff=1) {
-  mdp_int a,b,h,pow2b, N=i2pow(n);
+         mdp_int offset = 0, mdp_int coeff = 1)
+{
+  mdp_int a, b, h, pow2b, N = i2pow(n);
   mdp_complex alpha, omega, F[N];
-  if(sign!=0) for(h=0; h<N; h++) {
-    alpha=2.0*sign*Pi*I/N*h;
-    for(a=0; a<N; a++) F[a]=f[offset+coeff*a];
-    for(b=n-1; b>=0; b--) {
-      pow2b=i2pow(b);
-      omega=exp(alpha*pow2b);
-      for(a=0; a<pow2b; a++)
-  F[a]+=omega*F[a+pow2b];
-    };
-    fft_f[offset+coeff*h]=F[0]/sqrt(N);
-  } else {
-    for(a=0; a<N; a++)
-      fft_f[offset+coeff*a]=f[offset+coeff*a];
+  if (sign != 0)
+    for (h = 0; h < N; h++)
+    {
+      alpha = 2.0 * sign * Pi * I / N * h;
+      for (a = 0; a < N; a++)
+        F[a] = f[offset + coeff * a];
+      for (b = n - 1; b >= 0; b--)
+      {
+        pow2b = i2pow(b);
+        omega = exp(alpha * pow2b);
+        for (a = 0; a < pow2b; a++)
+          F[a] += omega * F[a + pow2b];
+      };
+      fft_f[offset + coeff * h] = F[0] / sqrt(N);
+    }
+  else
+  {
+    for (a = 0; a < N; a++)
+      fft_f[offset + coeff * a] = f[offset + coeff * a];
   }
 }
 
@@ -331,61 +340,66 @@ void mdp_complex_field_fft(mdp_field<mdp_complex> &psi_out,
 
 /* Uncomment this as an example
 
-int test1() {
-  mdp_int i,j,n=16;
+int test1()
+{
+  mdp_int i, j, n = 16;
 
-  double tmp=0;
+  double tmp = 0;
 
   mdp_complex in[n], out[n], chk[n];
-  for(i=0; i<n; i++)
-    in[i]=exp(I*2.0*sin(i));
+  for (i = 0; i < n; i++)
+    in[i] = exp(I * 2.0 * sin(i));
 
-  dft(out,in,n,+1);
+  dft(out, in, n, +1);
 
-  dft(chk,out,n,-1);
+  dft(chk, out, n, -1);
 
-  for(i=0; i<n; i++) {
-    if(tmp+=abs(chk[i]-in[i])>0.00001)
+  for (i = 0; i < n; i++)
+  {
+    if (tmp += abs(chk[i] - in[i]) > 0.00001)
       printf("(%f, %f) (%f, %f) (%f, %f)\n",
-       real(in[i]), imag(in[i]),
-       real(chk[i]), imag(chk[i]),
-       real(out[i]), imag(out[i]));
+             real(in[i]), imag(in[i]),
+             real(chk[i]), imag(chk[i]),
+             real(out[i]), imag(out[i]));
   };
-  printf("%f\n", tmp/n);
+  printf("%f\n", tmp / n);
   return 0;
 };
 
+int test2()
+{
 
-int test2() {
-
-  int box[]={1,20,20,20};
-  mdp_lattice lattice(4,box);
-  fermi_field psi(lattice,3);
-  fermi_field phi(lattice,3);
-  fermi_field chi(lattice,3);
+  int box[] = {1, 20, 20, 20};
+  mdp_lattice lattice(4, box);
+  fermi_field psi(lattice, 3);
+  fermi_field phi(lattice, 3);
+  fermi_field chi(lattice, 3);
 
   set_random(psi);
   mdp_site x(lattice);
 
   int t;
 
-  for(t=0; t<box[0]; t++) {
-    if(on_which_process(lattice,t)==ME) {
-      fermi_field_fft(t,phi,psi,1);
-      fermi_field_fft(t,chi,phi,-1);
+  for (t = 0; t < box[0]; t++)
+  {
+    if (on_which_process(lattice, t) == ME)
+    {
+      fermi_field_fft(t, phi, psi, 1);
+      fermi_field_fft(t, chi, phi, -1);
     }
   }
 
-  check_differences(psi,chi);
-
+  check_differences(psi, chi);
 }
 
-
-int main(int argc, char** argv) {
-  mdp.open_wormholes(argc,argv);
+int main(int argc, char **argv)
+{
+  mdp.open_wormholes(argc, argv);
   test1();
   test2();
   mdp.close_wormholes();
 }
 
 */
+
+#endif /* FERMIQCD_FFTS_ */

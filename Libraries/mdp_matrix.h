@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_MATRIX_
+#define MDP_MATRIX_
 
 /// @brief matrices of complex numbers
 ///
@@ -1000,3 +1002,5 @@ inline mdp_matrix conj(const mdp_matrix &a)
       tmp(r, c) = conj(a(r, c));
   return tmp;
 }
+
+#endif /* MDP_MATRIX_ */

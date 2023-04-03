@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_GLOBAL_VARS_
+#define MDP_GLOBAL_VARS_
 
 typedef unsigned int uint;
 
@@ -68,3 +70,5 @@ using mdp_uint = uint32_t;
 using mdp_suint = uint8_t;
 
 void _mpi_error_message(std::string, std::string, int);
+
+#endif /* MDP_GLOBAL_VARS_ */

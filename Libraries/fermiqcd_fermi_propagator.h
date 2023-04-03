@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMI_PROPAGATOR_
+#define FERMIQCD_FERMI_PROPAGATOR_
 
 /// @brief a Wilson/Clover quark propagator (all 12 components)
 ///
@@ -219,3 +221,5 @@ void smear_propagator(fermi_propagator &S, gauge_field &U, int smear_steps = 10,
       }
   }
 }
+
+#endif /* FERMIQCD_FERMI_PROPAGATOR_ */

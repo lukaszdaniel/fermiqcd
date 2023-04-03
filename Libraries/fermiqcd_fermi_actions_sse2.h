@@ -6,6 +6,8 @@
 /// Basic actions for Wilson Fermions optimized in assembler
 ///
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMI_ACTIONS_SSE2_
+#define FERMIQCD_FERMI_ACTIONS_SSE2_
 
 #ifdef SSE2
 
@@ -1357,3 +1359,5 @@ public:
 };
 
 #endif // if defined(SSE2)
+
+#endif /* FERMIQCD_FERMI_ACTIONS_SSE2_ */

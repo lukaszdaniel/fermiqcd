@@ -1,3 +1,5 @@
+#ifndef FERMIQCD_FERMI_ROTATION_
+#define FERMIQCD_FERMI_ROTATION_
 
 void rotate_field(fermi_field &psi, gauge_field &U, coefficients &coeff)
 {
@@ -11,3 +13,5 @@ void rotate_field(fermi_field &psi, gauge_field &U, coefficients &coeff)
   }
   psi.update();
 }
+
+#endif /* FERMIQCD_FERMI_ROTATION_ */

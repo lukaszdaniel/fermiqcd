@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_COMPLEX_FIELD_
+#define MDP_COMPLEX_FIELD_
 
 bool mdp_write_double_as_float(FILE *fp,
                                void *data,
@@ -491,3 +493,5 @@ public:
     return true;
   }
 };
+
+#endif /* MDP_COMPLEX_FIELD_ */

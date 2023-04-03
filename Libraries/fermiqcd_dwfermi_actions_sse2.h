@@ -1,11 +1,13 @@
 /////////////////////////////////////////////////////////////////
-/// @file fermiqcd_fermi_actions_sse2.h
+/// @file fermiqcd_dwfermi_actions_sse2.h
 /// @version 2009-12-21
 /// @author Martin Luescher and Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
 /// Basic actions for Wilson Fermions optimized in assembler
 ///
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_DWFERMI_ACTIONS_SSE2_
+#define FERMIQCD_DWFERMI_ACTIONS_SSE2_
 
 /// WARNING!!!! THIS WAS NOT TESTED !!!!
 
@@ -653,3 +655,5 @@ public:
 };
 
 #endif // if defined(SSE2)
+
+#endif /* FERMIQCD_DWFERMI_ACTIONS_SSE2_ */

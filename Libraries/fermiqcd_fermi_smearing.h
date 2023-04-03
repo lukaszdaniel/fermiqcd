@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMI_SMEARING_
+#define FERMIQCD_FERMI_SMEARING_
 
 /// @brief wupperthal smearing algotihm
 ///
@@ -82,3 +84,5 @@ void smearSink(fermi_propagator &S,
       }
     }
 }
+
+#endif /* FERMIQCD_FERMI_SMEARING_ */

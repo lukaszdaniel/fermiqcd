@@ -1,4 +1,7 @@
-#include "assert.h"
+#ifndef MDP_PRNG_SFMT_
+#define MDP_PRNG_SFMT_
+
+#include <cassert>
 
 #define MSK1 0xdfffffefU
 #define MSK2 0xddfecb7fU
@@ -160,3 +163,5 @@ public:
     return v * (1.0 / 4294967295.0);
   }
 };
+
+#endif /* MDP_PRNG_SFMT_ */

@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_DEFAULT_PARAMETERS_
+#define FERMIQCD_DEFAULT_PARAMETERS_
 
 #define TIME 0
 #define SPACE_X 1
@@ -30,3 +32,5 @@ bool BiCGStabRestart = false;
 #ifdef BLOCKSITE
 mdp_matrix OmegaTwist[BLOCKSITE];
 #endif
+
+#endif /* FERMIQCD_DEFAULT_PARAMETERS_ */

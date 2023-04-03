@@ -10,6 +10,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_BICGSTAB_INVERTER_VTK_
+#define FERMIQCD_BICGSTAB_INVERTER_VTK_
 
 /// @brief the stabilized biconjugate inverter
 ///
@@ -196,3 +198,5 @@ inversion_stats BiConjugateGradientStabilizedInverterVtk(fieldT &psi_out,
                                relative_precision,
                                max_steps);
 }
+
+#endif /* FERMIQCD_BICGSTAB_INVERTER_VTK_ */

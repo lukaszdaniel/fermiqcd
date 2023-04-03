@@ -11,6 +11,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_DYNALLOC_
+#define MDP_DYNALLOC_
 
 #if defined(SSE2) && !defined(OSX)
 #include "malloc.h"
@@ -36,3 +38,5 @@ void operator delete[](void *pointer)
   free(pointer);
 }
 #endif
+
+#endif /* MDP_DYNALLOC_ */

@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_GAUGE_FIELD_
+#define FERMIQCD_GAUGE_FIELD_
 
 /// @brief the chromo-electr-magnetic field for any SU(n)
 ///
@@ -420,3 +422,5 @@ public:
   }
 #endif
 };
+
+#endif /* FERMIQCD_GAUGE_FIELD_ */

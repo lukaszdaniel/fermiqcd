@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_STAGGERED_PROPAGATOR_
+#define FERMIQCD_STAGGERED_PROPAGATOR_
 
 /// @brief staggared quark propagator
 ///
@@ -111,3 +113,5 @@ public:
     }
   }
 };
+
+#endif /* FERMIQCD_STAGGERED_PROPAGATOR_ */

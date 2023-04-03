@@ -4,6 +4,9 @@
 /// @author Simon Catterall and Massimo Di Pierro
 ///
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SO_GENERATORS_
+#define FERMIQCD_SO_GENERATORS_
+
 // Example:
 // #include "fermiqcd.h"
 // int main() {
@@ -37,3 +40,5 @@ public:
       }
   }
 };
+
+#endif /* FERMIQCD_SO_GENERATORS_ */

@@ -1,3 +1,6 @@
+#ifndef MDP_SAVE_PARTITIONING_VTK_
+#define MDP_SAVE_PARTITIONING_VTK_
+
 void save_partitioning_vtk(mdp_lattice &lattice, std::string filename)
 {
   mdp_field<int> where(lattice);
@@ -8,3 +11,5 @@ void save_partitioning_vtk(mdp_lattice &lattice, std::string filename)
   }
   where.save_vtk(filename);
 }
+
+#endif /* MDP_SAVE_PARTITIONING_VTK_ */

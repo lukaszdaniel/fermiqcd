@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_DEPRECATEDIO_
+#define MDP_DEPRECATEDIO_
 
 template <class T>
 void mdp_field<T>::load(char filename[],
@@ -252,3 +254,5 @@ void mdp_field<T>::save(char filename[],
 		fflush(stdout);
 	}
 }
+
+#endif /* MDP_DEPRECATEDIO_ */

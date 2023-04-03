@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_VECTOR_
+#define MDP_VECTOR_
 
 /// @brief discerete vectors to navigate on a lattice
 ///
@@ -80,3 +82,5 @@ inline mdp_int vector2binary(mdp_vector v)
   return v.x[0] + 2 * v.x[1] + 4 * v.x[2] + 8 * v.x[3] + 16 * v.x[4] +
          32 * v.x[5] + 64 * v.x[6] + 128 * v.x[7] + 256 * v.x[8] + 512 * v.x[9];
 }
+
+#endif /* MDP_VECTOR_ */

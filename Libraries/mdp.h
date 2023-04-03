@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_
+#define MDP_
 
 // ///////////////////////////////////////////////////////////////////////////
 // include the usual libraries (works on gcc and VC)
@@ -259,3 +261,5 @@
 #include "mdp_nvector_field.h"
 #include "mdp_prng_sfmt.h"
 #include "mdp_swap.h"
+
+#endif /* MDP_ */

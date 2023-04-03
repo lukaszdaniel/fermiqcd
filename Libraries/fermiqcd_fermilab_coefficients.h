@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_FERMILAB_COEFFICIENTS_
+#define FERMIQCD_FERMILAB_COEFFICIENTS_
 
 // include clover + c1,c2,c3,c4,c5,c10
 
@@ -124,3 +126,5 @@ for (i = 1; i < 4; i++)
       for (b = 0; b < 4; b++)
         c_db[64 * a + 16 * b + 4 * i + j] = M(b, a);
   }
+
+#endif /* FERMIQCD_FERMILAB_COEFFICIENTS_ */

@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_NVECTOR_FIELD_
+#define MDP_NVECTOR_FIELD_
 
 /// @brief field of vectors of vectors (DEPRECATED)
 class mdp_nvector_field : public mdp_field<mdp_complex>
@@ -58,3 +60,5 @@ public:
     return address(x, n * imax2)[i];
   }
 };
+
+#endif /* MDP_NVECTOR_FIELD_ */

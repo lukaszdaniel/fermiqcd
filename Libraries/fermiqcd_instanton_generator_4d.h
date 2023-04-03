@@ -1,3 +1,6 @@
+#ifndef FERMIQCD_INSTANTON_GENERATOR_4D_
+#define FERMIQCD_INSTANTON_GENERATOR_4D_
+
 // based on code from James Hetrick
 /* EXAMPLE OF USAGE
 #include "fermiqcd.h"
@@ -132,3 +135,5 @@ public:
     }
   }
 };
+
+#endif /* FERMIQCD_INSTANTON_GENERATOR_4D_ */

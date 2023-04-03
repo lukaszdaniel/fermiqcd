@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_COMPLEX_
+#define MDP_COMPLEX_
 
 // #define DO_NOT_USE_MDP_COMPLEX
 
@@ -347,3 +349,5 @@ std::ostream &operator<<(std::ostream &os, const mdp_complex &a)
     os << a.real() << "+" << std::abs(a.imag()) << "I";
   return os;
 }
+
+#endif /* MDP_COMPLEX_ */

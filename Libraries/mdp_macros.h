@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_MACROS_
+#define MDP_MACROS_
 
 #define CHECK_ALL
 #define MDP_MPI
@@ -52,3 +54,5 @@
 #ifndef FALSE
 #define FALSE false
 #endif
+
+#endif /* MDP_MACROS_ */

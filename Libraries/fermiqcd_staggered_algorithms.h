@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_STAGGERED_ALGORITHMS_
+#define FERMIQCD_STAGGERED_ALGORITHMS_
 
 mdp_matrix Omega4x4(mdp_site x)
 {
@@ -355,3 +357,5 @@ void staggered_rephase(gauge_field &U, staggered_field &chi)
 
   end_function("staggered_rephase");
 }
+
+#endif /* FERMIQCD_STAGGERED_ALGORITHMS_ */

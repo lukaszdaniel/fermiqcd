@@ -15,6 +15,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_GAMMA_MATRICES_
+#define FERMIQCD_GAMMA_MATRICES_
 
 // modified 20 Nov 2009 to include MILC convention
 
@@ -385,3 +387,5 @@ mdp_matrix parse_gamma(std::string g)
     return Gamma[2] * Gamma[3];
   throw std::string("undefined gamma structure");
 }
+
+#endif /* FERMIQCD_GAMMA_MATRICES_ */

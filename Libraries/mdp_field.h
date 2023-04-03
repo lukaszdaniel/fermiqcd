@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_FIELD_
+#define MDP_FIELD_
 
 /// @brief header for field file IO
 ///
@@ -444,3 +446,5 @@ public:
             const char *mode = "w");
 #endif
 };
+
+#endif /* MDP_FIELD_ */

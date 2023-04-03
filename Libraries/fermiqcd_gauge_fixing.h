@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_GAUGE_FIXING_
+#define FERMIQCD_GAUGE_FIXING_
 
 /// Structure for gaugefixing stats
 class gaugefixing_stats
@@ -250,3 +252,5 @@ public:
     return stats;
   }
 };
+
+#endif /* FERMIQCD_GAUGE_FIXING_ */

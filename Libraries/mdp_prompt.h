@@ -10,6 +10,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_PROMPT_
+#define MDP_PROMPT_
 
 const char STD_INPUT[] = "";
 const char STD_INPUT_FILE[] = "<stdin>";
@@ -147,3 +149,5 @@ std::string prompt(std::string filename,
 	std::string s(response);
 	return s;
 }
+
+#endif /* MDP_PROMPT_ */

@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_SDWF_ACTIONS_
+#define FERMIQCD_SDWF_ACTIONS_
 
 /// @brief domain wall staggered (WORK IN PROGRESS)
 class SDWFActionSlow
@@ -161,16 +163,22 @@ public:
     }
 
     /* NORMALIZE NOW
-       double norm=0;
-       forallsites(x)
-       for(x5=0; x5<L5; x5++)
-       for(i=0; i<nc; i++)
-       norm+=pow(abs(chi_out(x,x5,i)),2);
-       norm=sqrt(norm);
-       forallsites(x)
-       for(x5=0; x5<L5; x5++)
-       for(i=0; i<nc; i++)
-       chi_out(x,x5,i)/=norm;
+    double norm = 0;
+    forallsites(x)
+    {
+      for (x5 = 0; x5 < L5; x5++)
+        for (i = 0; i < nc; i++)
+          norm += pow(abs(chi_out(x, x5, i)), 2);
+    }
+    norm = sqrt(norm);
+    forallsites(x)
+    {
+      for (x5 = 0; x5 < L5; x5++)
+        for (i = 0; i < nc; i++)
+          chi_out(x, x5, i) /= norm;
+    }
     */
   }
 };
+
+#endif /* FERMIQCD_SDWF_ACTIONS_ */

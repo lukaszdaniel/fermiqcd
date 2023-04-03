@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_PRNG_
+#define MDP_PRNG_
 
 /// @brief Marsaglia's random number generator (same as UKQCD)
 ///
@@ -203,3 +205,5 @@ public:
       this->plain();
   }
 } mdp_random; /// the global random number generator
+
+#endif /* MDP_PRNG_ */

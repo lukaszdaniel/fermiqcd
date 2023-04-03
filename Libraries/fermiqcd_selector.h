@@ -1,3 +1,6 @@
+#ifndef FERMIQCD_SELECTOR_
+#define FERMIQCD_SELECTOR_
+
 void select_action_and_inverter(std::string quark_action, std::string inverter)
 {
   if (quark_action == "clover_fast")
@@ -29,3 +32,5 @@ void select_action_and_inverter(std::string quark_action, std::string inverter)
   else
     mdp.error_message("quark inverter not supported");
 }
+
+#endif /* FERMIQCD_SELECTOR_ */

@@ -1,5 +1,5 @@
 /////////////////////////////////////////////////////////////////
-/// @file mdp_field_save.h
+/// @file mdp_field_save_vtk.h
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_FIELD_SAVE_VTK_
+#define MDP_FIELD_SAVE_VTK_
 
 /**
  * Best way to save a field to a VTK file.
@@ -257,3 +259,5 @@ void save_vtk(mdp_field<float> &field,
   }
 }
 */
+
+#endif /* MDP_FIELD_SAVE_VTK_ */

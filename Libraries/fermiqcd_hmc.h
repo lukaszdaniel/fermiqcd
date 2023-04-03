@@ -1,6 +1,8 @@
+#ifndef FERMIQCD_HMC_
+#define FERMIQCD_HMC_
+
 // Experimental, based on code developed by Simon Catterall
 //
-
 template <class GaugeClass, class FermiClass>
 class HMC
 {
@@ -548,3 +550,5 @@ public:
     return temp;
   }
 };
+
+#endif /* FERMIQCD_HMC_ */

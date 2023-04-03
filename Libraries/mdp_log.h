@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_LOG_
+#define MDP_LOG_
 
 /// @brief base class of class mdp_communicator (DO NOT INSTANTIATE)
 /// @see class mdp_communicator
@@ -85,3 +87,5 @@ public:
     return (*this);
   }
 };
+
+#endif /* MDP_LOG_ */

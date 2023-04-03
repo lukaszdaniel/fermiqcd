@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_SWAP_
+#define MDP_SWAP_
 
 template <class T>
 void swap(T &a, T &b)
@@ -31,3 +33,5 @@ void swap(T *a, T *b, int n)
     b[i] = c;
   }
 }
+
+#endif /* MDP_SWAP_ */

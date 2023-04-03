@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_FIELD_UPDATE_
+#define MDP_FIELD_UPDATE_
 
 /// The only communication function for a field object
 /// To be invoked every time field variables are assigned and
@@ -97,3 +99,5 @@ void mdp_field<T>::update(int np, int d, int ncomp)
   }
   mpi.comm_time += mpi.time();
 }
+
+#endif /* MDP_FIELD_UPDATE_ */

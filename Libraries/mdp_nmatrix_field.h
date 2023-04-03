@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_NMATRIX_FIELD_
+#define MDP_NMATRIX_FIELD_
 
 /// @brief field of vectors of matrices
 ///
@@ -78,3 +80,5 @@ public:
     return address(x, n * imax2)[i * columns + j];
   }
 };
+
+#endif /* MDP_NMATRIX_FIELD_ */

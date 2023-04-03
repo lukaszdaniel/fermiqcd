@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_MOD2SIGN_
+#define MDP_MOD2SIGN_
 
 /// Returns +1 is x%2==0 -1 otherwise
 int mdp_mod2sign(int x)
@@ -18,3 +20,5 @@ int mdp_mod2sign(int x)
   else
     return -1;
 }
+
+#endif /* MDP_MOD2SIGN_ */

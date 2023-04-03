@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_LATTICE_
+#define MDP_LATTICE_
 
 #define MDP_LATTICE
 
@@ -659,3 +661,5 @@ public:
     return stop[process][p];
   }
 };
+
+#endif /* MDP_LATTICE_ */

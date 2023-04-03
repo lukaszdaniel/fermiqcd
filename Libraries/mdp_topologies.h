@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_TOPOLOGIES_
+#define MDP_TOPOLOGIES_
 
 // //////////////////////////////////////////////////////
 // Basic topologies:
@@ -61,3 +63,5 @@ void moebious_topolgy(int mu,
 			x_up[1] = nx[1] - x[1] - 1;
 	}
 }
+
+#endif /* MDP_TOPOLOGIES_ */

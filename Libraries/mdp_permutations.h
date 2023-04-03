@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_PERMUTATIONS_
+#define MDP_PERMUTATIONS_
 
 // this is my favourite piece of code...
 
@@ -67,3 +69,5 @@ int mdp_permutation(int n, int k, int i)
   delete[] map;
   return -1;
 }
+
+#endif /* MDP_PERMUTATIONS_ */

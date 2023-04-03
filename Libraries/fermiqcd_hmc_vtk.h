@@ -1,3 +1,6 @@
+#ifndef FERMIQCD_HMC_VTK_
+#define FERMIQCD_HMC_VTK_
+
 // Experimental, based on code developed by Simon Catterall
 //
 
@@ -561,3 +564,5 @@ public:
     return temp;
   }
 };
+
+#endif /* FERMIQCD_HMC_VTK_ */

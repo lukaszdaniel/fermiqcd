@@ -9,6 +9,8 @@
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////
+#ifndef FERMIQCD_MILC_IO_
+#define FERMIQCD_MILC_IO_
 
 bool milc_read_as_float_noswitch(FILE *fp,
                                  void *data,
@@ -155,3 +157,5 @@ specifying the order of values */
     return U.load(filename, processIO, max_buffer_size, false, size,
                   milc_read_as_float_noswitch, false);
 }
+
+#endif /* FERMIQCD_MILC_IO_ */

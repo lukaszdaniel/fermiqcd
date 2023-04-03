@@ -3,12 +3,14 @@
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
-/// Contains mdp_field::update()
+/// Contains fitting functions
 ///
 /// Licensed under GPL2 license
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_FITTING_FUNCTIONS_
+#define MDP_FITTING_FUNCTIONS_
 
 /// Fits y[i], x[i] for i0<=i<in with y=a[0]*x+a[1]
 void linear_fit(float *x, Measure *y, mdp_int i0, mdp_int in, Measure *a)
@@ -352,3 +354,5 @@ int main()
 }
 
 */
+
+#endif /* MDP_FITTING_FUNCTIONS_ */

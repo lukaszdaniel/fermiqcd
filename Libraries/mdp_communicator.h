@@ -9,6 +9,8 @@
 /// Read attached license in file mdp_license.pdf
 /// This file cannot be distributed without file mdp_license.pdf
 //////////////////////////////////////////////////////////////////
+#ifndef MDP_COMMUNICATOR_
+#define MDP_COMMUNICATOR_
 
 #ifdef PARALLEL
 #include "mpi.h"
@@ -669,3 +671,5 @@ inline void end_function(std::string s)
 {
   mpi.end_function(s);
 }
+
+#endif /* MDP_COMMUNICATOR_ */
