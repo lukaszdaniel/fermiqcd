@@ -3,7 +3,7 @@
 
 int main()
 {
-   mdp_random_generator random;
+   mdp_prng random;
    int i, n, bin[10];
    float x;
    for (n = 0; n < 10; n++)

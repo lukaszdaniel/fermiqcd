@@ -17,9 +17,6 @@ using namespace std;
 #define Nspace nx[1] * nx[2] * nx[3]
 #define Ndim 4
 
-// #define TRUE  1;
-// #define FALSE 0;
-
 void error(const char s[])
 {
   printf("ERROR: %s\n", s);

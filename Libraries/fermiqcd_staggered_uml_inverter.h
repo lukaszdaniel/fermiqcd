@@ -68,7 +68,7 @@ private:
     staggered_field p(psi_in.lattice(), nc);
     staggered_field t(psi_in.lattice(), nc);
     staggered_field q(psi_in.lattice(), nc);
-    site x(psi_in.lattice());
+    mdp_site x(psi_in.lattice());
 
     double time = mpi.time();
 
@@ -178,7 +178,7 @@ public:
                                   int max_steps = 2000)
   {
 
-    site x(U.lattice());
+    mdp_site x(U.lattice());
     int i;
     staggered_field r(psi_in.lattice(), U.nc);
     mdp_real mass;

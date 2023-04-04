@@ -136,7 +136,7 @@ public:
     int i, j, k, iter, mu, parity;
     mdp_matrix M(U.nc, U.nc);
     mdp_complex a[4], tmpUik;
-    site x(U.lattice());
+    mdp_site x(U.lattice());
     double time = mpi.time();
 
     mdp << coeff;
@@ -207,15 +207,15 @@ public:
 class ImprovedGaugeAction : public WilsonGaugeAction
 {
 private:
-  static mdp_matrix rectangles_0i_H(gauge_field &U, site x, int mu)
+  static mdp_matrix rectangles_0i_H(gauge_field &U, mdp_site x, int mu)
   {
     mdp_matrix tmp(U.nc, U.nc);
     mdp_matrix b1(U.nc, U.nc);
     mdp_matrix b2(U.nc, U.nc);
     mdp_matrix b3(U.nc, U.nc);
-    site y0(U.lattice());
-    site y1(U.lattice());
-    site y2(U.lattice());
+    mdp_site y0(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
     int nu;
     tmp = 0;
     if (mu == 0)
@@ -255,15 +255,15 @@ private:
 
   // if min_nu==0 then rectangles_ij computes all 6 rectanges
 
-  static mdp_matrix rectangles_ij_H(gauge_field &U, site x, int mu, int min_nu = 1)
+  static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
   {
     mdp_matrix tmp(U.nc, U.nc);
     mdp_matrix b1(U.nc, U.nc);
     mdp_matrix b2(U.nc, U.nc);
     mdp_matrix b3(U.nc, U.nc);
-    site y0(U.lattice());
-    site y1(U.lattice());
-    site y2(U.lattice());
+    mdp_site y0(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
     int nu;
     for (nu = min_nu; nu < U.ndim; nu++)
       if (nu != mu)
@@ -304,7 +304,7 @@ private:
   // see: hep-lat/0712010
   // //////////////////////////////////////////////////////
 
-  static mdp_matrix chair_H(gauge_field &U, site x, int mu)
+  static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
   {
     int ndim = U.ndim;
     int nu, rho;
@@ -312,11 +312,11 @@ private:
     mdp_matrix b1(U.nc, U.nc);
     mdp_matrix b2(U.nc, U.nc);
     mdp_matrix b3(U.nc, U.nc);
-    site y1(U.lattice());
-    site y2(U.lattice());
-    site y3(U.lattice());
-    site y4(U.lattice());
-    site y5(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
+    mdp_site y3(U.lattice());
+    mdp_site y4(U.lattice());
+    mdp_site y5(U.lattice());
     tmp = 0;
     for (nu = 0; nu < ndim; nu++)
       if (nu != mu)
@@ -363,7 +363,7 @@ private:
     iGauge_min = 4
   };
 
-  static int strange_mapping(site &x)
+  static int strange_mapping(mdp_site &x)
   {
     int mu, type = 0;
     for (mu = 0; mu < x.lattice().ndim; mu++)
@@ -417,7 +417,7 @@ public:
     int ndim = U.ndim;
     int i, j, k, iter, mu, type;
     mdp_matrix M;
-    site x(U.lattice());
+    mdp_site x(U.lattice());
     double time = mpi.time();
     mdp_complex a[4], tmpUik;
     mdp_real alpha_s;

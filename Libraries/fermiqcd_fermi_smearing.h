@@ -39,7 +39,7 @@ public:
     int steps = coeff["steps"];
 
     fermi_field chi(psi.lattice(), psi.nc, psi.nspin);
-    site x(psi.lattice());
+    mdp_site x(psi.lattice());
     int a, mu, i;
     for (i = 0; i < steps; i++)
     {
@@ -64,7 +64,7 @@ void smearSink(fermi_propagator &S,
                coefficients &coeff)
 {
   fermi_field psi(S.lattice(), S.nc, S.nspin);
-  site x(psi.lattice());
+  mdp_site x(psi.lattice());
   int a, b, i, j;
   for (b = 0; b < S.nspin; b++)
     for (j = 0; j < U.nc; j++)

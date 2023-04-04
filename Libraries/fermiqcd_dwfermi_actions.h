@@ -64,7 +64,7 @@ public:
     mdp_real kappa5 = 0.5 / (m_5 - 6.0);
     mdp_real kappaf = -m_f * kappa5;
 
-    site x(psi_in.lattice());
+    mdp_site x(psi_in.lattice());
     int l, a, mu;
 
     mdp_matrix psi_up(nspin, nc);
@@ -158,7 +158,7 @@ public:
     mdp_real kappa5 = 0.5 / (m_5 - 6.0);
     mdp_real kappaf = -m_f * kappa5;
 
-    site x(psi_in.lattice());
+    mdp_site x(psi_in.lattice());
     int l, a, mu;
 
     mdp_matrix psi_up(nspin, nc);

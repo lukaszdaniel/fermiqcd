@@ -28,16 +28,10 @@ void switch_endianess_byte4(T &a)
 
 #define Complex std::complex<float>
 
-#define TRUE 1;
-#define FALSE 0;
-
-#ifndef _type32
-#define _type32
 #ifdef SHORT32
 typedef short type32;
 #else
 typedef int type32;
-#endif
 #endif
 
 /**********************************************************************/

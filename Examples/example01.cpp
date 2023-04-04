@@ -8,7 +8,7 @@ int main(int argc, char **argv)
   int mybox[] = {4, 4, 4};
   mdp_lattice mylattice(ndim, mybox);
   mdp_matrix_field F(mylattice, 5, 5);
-  site x(mylattice);
+  mdp_site x(mylattice);
 
   forallsites(x)
       F(x) = inv(exp(mylattice.random(x).SU(5)));

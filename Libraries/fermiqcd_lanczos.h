@@ -40,7 +40,7 @@ public:
     static fieldT q(psi);
     static fieldT r(psi);
     static double alpha, beta;
-    static site x(psi.lattice());
+    static mdp_site x(psi.lattice());
 
     if (init || force)
     {
@@ -84,7 +84,7 @@ public:
       static fieldT s(psi);
       double pp, qq;
       mdp_complex pq, qr, ps;
-      site x(psi.lattice());
+      mdp_site x(psi.lattice());
 
       pp = norm_square(p);
       qq = norm_square(q);

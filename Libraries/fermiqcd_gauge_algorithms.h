@@ -17,7 +17,7 @@ void set_cold(gauge_field &U)
 {
   begin_function("set_cold");
   mdp << "Creating a cold gauge configuration" << '\n';
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   int mu;
   forallsites(x) for (mu = 0; mu < U.ndim; mu++)
       U(x, mu) = mdp_identity(U.nc);
@@ -30,7 +30,7 @@ void set_hot(gauge_field &U)
 {
   begin_function("set_hot");
   mdp << "Creating a hot gauge configuration" << '\n';
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   int mu;
   forallsites(x) for (mu = 0; mu < U.ndim; mu++)
       U(x, mu) = U.lattice().random(x).SU(U.nc);
@@ -42,7 +42,7 @@ void set_hot(gauge_field &U)
 void check_unitarity(gauge_field &U, double precision = PRECISION)
 {
   begin_function("check_unitarity");
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   int mu;
   mdp_int how_many = 0;
   for (x.idx = 0; x.idx < U.lattice().nvol; x.idx++)
@@ -58,7 +58,7 @@ void check_unitarity(gauge_field &U, double precision = PRECISION)
 mdp_real average_plaquette(gauge_field &U, int mu, int nu)
 {
   double tmp = 0;
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   // U.update();
   forallsites(x)
   {
@@ -89,7 +89,7 @@ mdp_real average_plaquette(gauge_field &U)
 void compute_em_field(gauge_field &U)
 {
   int nc = U.nc;
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   // It is fine to use Nmdp_matrix even if there is twist .. how lucky!
   U.em.deallocate_memory();
   U.em.allocate_em_field(U.lattice(), U.nc);
@@ -138,7 +138,7 @@ void compute_long_links(gauge_field &U, gauge_field &V, int length = 2)
 
   U.long_links.deallocate_memory();
   U.long_links.allocate_mdp_nmatrix_field(V.lattice(), U.ndim, U.nc, U.nc);
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   int mu;
   if (length == 2)
     forallsites(x) for (mu = 0; mu < V.ndim; mu++)
@@ -166,7 +166,7 @@ void compute_long_links(gauge_field &U, gauge_field &V, int length = 2)
 void set_antiperiodic_phases(gauge_field &U, int mu = 0, int check = true)
 {
   begin_function("set_antiperiodic_phases");
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   int i, j;
   if (check)
     mdp << "Setting antiperiodic boundary conditions on mu=" << mu << '\n';
@@ -261,7 +261,7 @@ mdp_matrix project_SU(mdp_matrix M, int nstep = 1)
 
 /// Takes a field U and path d of length and compute the average of
 /// the path on the entire lattice. Assumes computation can be done
-/// locally for each site
+/// locally for each mdp_site
 ///
 /// Example:
 /// @verbatim
@@ -311,10 +311,10 @@ mdp_complex average_path(gauge_field &U, int length, int d[][2])
 ///   forallsites(x)
 ///      cout << "plaquette(x)=" << average_path(U,x,4,d) << endl;
 /// @endverbatim
-mdp_matrix build_path(gauge_field &U, site x, int length, int d[][2])
+mdp_matrix build_path(gauge_field &U, mdp_site x, int length, int d[][2])
 {
   int nc = U.nc;
-  site y(U.lattice());
+  mdp_site y(U.lattice());
   mdp_matrix tmp(nc, nc);
   tmp = U(x, d[0][0], d[0][1]);
   if (d[0][0] < 0)

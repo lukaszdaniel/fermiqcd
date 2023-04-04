@@ -1,7 +1,7 @@
 // Program: example03.cpp
 #include "mdp.h"
 
-mdp_matrix cube(Matrix X)
+mdp_matrix cube(mdp_matrix X)
 {
    mdp_matrix Y;
    Y = X * X * X;

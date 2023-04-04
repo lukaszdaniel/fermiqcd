@@ -96,7 +96,7 @@ public:
     else
       rsign = +1;
 
-    site x(psi_in.lattice());
+    mdp_site x(psi_in.lattice());
     int a, mu, nu;
 
     mdp_matrix psi_up(nspin, nc);
@@ -233,7 +233,7 @@ public:
     else
       rsign = +1;
 
-    site x(psi_in.lattice());
+    mdp_site x(psi_in.lattice());
     int i, j, a, mu, nu, inc, anc, bnc;
     mdp_real coeff_kappa = 0;
     mdp_real coeff_sum = 0;

@@ -184,8 +184,8 @@ void lepage_improved_links(gauge_field &V,
   int nc = U.nc;
   int ndim = U.ndim;
   int mu, nu, rho, idx, imn, im2, i, j;
-  site x(U.lattice());
-  site y(U.lattice());
+  mdp_site x(U.lattice());
+  mdp_site y(U.lattice());
   mdp_matrix b1(nc, nc), b2(nc, nc);
 
   mdp << "Allocating temporary vectors...";
@@ -211,19 +211,27 @@ void lepage_improved_links(gauge_field &V,
   // LINK
   mdp << "link...\n";
 
-  forallsites(x) for (mu = 0; mu < ndim; mu++)
+  forallsites(x)
+  {
+    for (mu = 0; mu < ndim; mu++)
       V(x, mu) = c[0] * U(x, mu);
+  }
 
   // 3 STAPLE
   mdp << "3staple...\n";
 
-  forallsites(x) for (mu = 0; mu < ndim; mu++) for (nu = 0; nu < ndim; nu++) if (nu != mu)
+  forallsites(x)
   {
-    imn = (nu < mu) ? nu : (nu - 1);
-    Delta1[imn](x, mu) = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
-    y = x - nu;
-    Delta1[imn](x, mu) += hermitian(U(y, nu)) * U(y, mu) * U(y + mu, nu);
-    V(x, mu) += c[1] * Delta1[imn](x, mu);
+    for (mu = 0; mu < ndim; mu++)
+      for (nu = 0; nu < ndim; nu++)
+        if (nu != mu)
+        {
+          imn = (nu < mu) ? nu : (nu - 1);
+          Delta1[imn](x, mu) = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
+          y = x - nu;
+          Delta1[imn](x, mu) += hermitian(U(y, nu)) * U(y, mu) * U(y + mu, nu);
+          V(x, mu) += c[1] * Delta1[imn](x, mu);
+        }
   }
 
   for (imn = 0; imn < (ndim - 1); imn++)
@@ -232,17 +240,20 @@ void lepage_improved_links(gauge_field &V,
   // 5 STAPLE
   mdp << "5staple...\n";
 
-  forallsites(x) for (idx = 0; idx < 24; idx++)
+  forallsites(x)
   {
-    mu = epsilon[idx][0];
-    nu = epsilon[idx][1];
-    rho = epsilon[idx][2];
-    im2 = epsilon[idx][4];
-    imn = (nu < mu) ? nu : (nu - 1);
-    Delta2[im2](x, mu) = U(x, rho) * Delta1[imn](x + rho, mu) * hermitian(U(x + mu, rho));
-    y = x - rho;
-    Delta2[im2](x, mu) += hermitian(U(y, rho)) * Delta1[imn](y, mu) * U(y + mu, rho);
-    V(x, mu) += c[2] * Delta2[im2](x, mu);
+    for (idx = 0; idx < 24; idx++)
+    {
+      mu = epsilon[idx][0];
+      nu = epsilon[idx][1];
+      rho = epsilon[idx][2];
+      im2 = epsilon[idx][4];
+      imn = (nu < mu) ? nu : (nu - 1);
+      Delta2[im2](x, mu) = U(x, rho) * Delta1[imn](x + rho, mu) * hermitian(U(x + mu, rho));
+      y = x - rho;
+      Delta2[im2](x, mu) += hermitian(U(y, rho)) * Delta1[imn](y, mu) * U(y + mu, rho);
+      V(x, mu) += c[2] * Delta2[im2](x, mu);
+    }
   }
   for (im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
     Delta2[im2].update();
@@ -251,15 +262,18 @@ void lepage_improved_links(gauge_field &V,
   mdp << "7staple...\n";
 
   if (c[3] != 0)
-    forallsites(x) for (idx = 0; idx < 24; idx++)
+    forallsites(x)
     {
-      mu = epsilon[idx][0];
-      rho = epsilon[idx][3];
-      im2 = epsilon[idx][4];
-      b2 = U(x, rho) * Delta2[im2](x + rho, mu) * hermitian(U(x + mu, rho));
-      y = x - rho;
-      b2 += hermitian(U(y, rho)) * Delta2[im2](y, mu) * U(y + mu, rho);
-      V(x, mu) += c[3] * b2;
+      for (idx = 0; idx < 24; idx++)
+      {
+        mu = epsilon[idx][0];
+        rho = epsilon[idx][3];
+        im2 = epsilon[idx][4];
+        b2 = U(x, rho) * Delta2[im2](x + rho, mu) * hermitian(U(x + mu, rho));
+        y = x - rho;
+        b2 += hermitian(U(y, rho)) * Delta2[im2](y, mu) * U(y + mu, rho);
+        V(x, mu) += c[3] * b2;
+      }
     }
 
   // LEPAGE TERM UP
@@ -267,37 +281,57 @@ void lepage_improved_links(gauge_field &V,
 
   if (c[4] != 0)
   {
-    forallsites(x) for (mu = 0; mu < ndim; mu++) for (nu = 0; nu < ndim; nu++) if (nu != mu)
+    forallsites(x)
     {
-      imn = (nu < mu) ? nu : (nu - 1);
-      Delta1[imn](x, mu) = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
+      for (mu = 0; mu < ndim; mu++)
+        for (nu = 0; nu < ndim; nu++)
+          if (nu != mu)
+          {
+            imn = (nu < mu) ? nu : (nu - 1);
+            Delta1[imn](x, mu) = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
+          }
     }
     for (imn = 0; imn < (ndim - 1); imn++)
       Delta1[imn].update();
 
-    forallsites(x) for (mu = 0; mu < ndim; mu++) for (nu = 0; nu < ndim; nu++) if (nu != mu)
+    forallsites(x)
     {
-      imn = (nu < mu) ? nu : (nu - 1);
-      b2 = U(x, nu) * Delta1[imn](x + nu, mu) * hermitian(U(x + mu, nu));
-      V(x, mu) += c[4] * b2;
+      for (mu = 0; mu < ndim; mu++)
+        for (nu = 0; nu < ndim; nu++)
+          if (nu != mu)
+          {
+            imn = (nu < mu) ? nu : (nu - 1);
+            b2 = U(x, nu) * Delta1[imn](x + nu, mu) * hermitian(U(x + mu, nu));
+            V(x, mu) += c[4] * b2;
+          }
     }
 
     // LEPAGE TERM DOWN
-    forallsites(x) for (mu = 0; mu < ndim; mu++) for (nu = 0; nu < ndim; nu++) if (nu != mu)
+    forallsites(x)
     {
-      imn = (nu < mu) ? nu : (nu - 1);
-      y = x - nu;
-      Delta1[imn](x, mu) = hermitian(U(y, nu)) * U(y, mu) * U(y + mu, nu);
+      for (mu = 0; mu < ndim; mu++)
+        for (nu = 0; nu < ndim; nu++)
+          if (nu != mu)
+          {
+            imn = (nu < mu) ? nu : (nu - 1);
+            y = x - nu;
+            Delta1[imn](x, mu) = hermitian(U(y, nu)) * U(y, mu) * U(y + mu, nu);
+          }
     }
     for (imn = 0; imn < (ndim - 1); imn++)
       Delta1[imn].update();
 
-    forallsites(x) for (mu = 0; mu < ndim; mu++) for (nu = 0; nu < ndim; nu++) if (nu != mu)
+    forallsites(x)
     {
-      imn = (nu < mu) ? nu : (nu - 1);
-      y = x - nu;
-      b2 = hermitian(U(y, nu)) * Delta1[imn](y, mu) * U(y + mu, nu);
-      V(x, mu) += c[4] * b2;
+      for (mu = 0; mu < ndim; mu++)
+        for (nu = 0; nu < ndim; nu++)
+          if (nu != mu)
+          {
+            imn = (nu < mu) ? nu : (nu - 1);
+            y = x - nu;
+            b2 = hermitian(U(y, nu)) * Delta1[imn](y, mu) * U(y + mu, nu);
+            V(x, mu) += c[4] * b2;
+          }
     }
   }
   if (project == true)
@@ -315,8 +349,13 @@ void lepage_improved_links(gauge_field &V,
     compute_long_links(V, U, 3);
     mdp << "normalizing naik...\n";
 
-    forallsitesandcopies(x) for (mu = 0; mu < U.ndim; mu++) for (i = 0; i < U.nc; i++) for (j = 0; j < U.nc; j++)
-        V.long_links(x, mu, i, j) *= c[5];
+    forallsitesandcopies(x)
+    {
+      for (mu = 0; mu < U.ndim; mu++)
+        for (i = 0; i < U.nc; i++)
+          for (j = 0; j < U.nc; j++)
+            V.long_links(x, mu, i, j) *= c[5];
+    }
   }
 
   std::cout << "Freeing temporary vectors...";
@@ -336,7 +375,7 @@ void staggered_rephase(gauge_field &U, staggered_field &chi)
 
   begin_function("staggered_rephase");
 
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   int mu, i, j;
   forallsites(x)
   {

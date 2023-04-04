@@ -43,12 +43,12 @@ public:
     int ndim = mylattice.ndim;
     allocate_field(mylattice, ndim * ndim * nc * nc);
   }
-  inline mdp_matrix operator()(site x, int a)
+  inline mdp_matrix operator()(mdp_site x, int a)
   {
     mdp_matrix tmp(address(x, a * nc * nc), nc, nc);
     return tmp;
   }
-  inline mdp_complex &operator()(site x, int a, int i, int j)
+  inline mdp_complex &operator()(mdp_site x, int a, int i, int j)
   {
     return *(address(x) + a * nc * nc + i * nc + j);
   }
@@ -62,7 +62,7 @@ public:
   {
     staggered_field psi(S.lattice(), S.nc);
     staggered_field chi(S.lattice(), S.nc);
-    site x(S.lattice());
+    mdp_site x(S.lattice());
     int ndim = S.lattice().ndim;
     int nc = S.nc;
     int i, j, mu, a;

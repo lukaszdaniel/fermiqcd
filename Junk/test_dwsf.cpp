@@ -5,7 +5,7 @@
 void test_gauge()
 {
   int box[] = {4, 4, 4, 4}, nc = 3;
-  generic_lattice lattice(4, box);
+  mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   coefficients coeff;
   coeff["beta"] = 6.0;
@@ -23,7 +23,7 @@ void test_gauge()
 void test_gauge_improved()
 {
   int box[] = {4, 4, 4, 4}, nc = 3;
-  generic_lattice lattice(4, box, default_partitioning<0>,
+  mdp_lattice lattice(4, box, default_partitioning<0>,
                           torus_topology, 0, 3);
   gauge_field U(lattice, nc);
   coefficients coeff;
@@ -42,7 +42,7 @@ void test_fermi()
 
   mpi << "\n\nTEST FERMI FIELDS\n\n";
 
-  generic_lattice lattice(4, box);
+  mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   fermi_field psi(lattice, nc);
   fermi_field chi1(lattice, nc);
@@ -95,7 +95,7 @@ void test_staggered()
 
   mpi << "\n\nTEST STAGGERED FIELDS\n\n";
 
-  generic_lattice lattice(4, box, default_partitioning<0>,
+  mdp_lattice lattice(4, box, default_partitioning<0>,
                           torus_topology, 0, 3);
   gauge_field U(lattice, nc);
   gauge_field V(lattice, nc);
@@ -149,7 +149,7 @@ void test_dwfermi()
 
   mpi << "\n\nTEST DWFIELDS FIELDS\n\n";
 
-  generic_lattice lattice(4, box);
+  mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   dwfermi_field psi(lattice, L5, nc);
   dwfermi_field chi1(lattice, L5, nc);
@@ -186,7 +186,7 @@ void test_sdwf()
   if (ME == 0)
     printf("\n\nTEST SDWF FIELDS\n\n");
 
-  generic_lattice lattice(4, box);
+  mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   sdwf_field psi(lattice, L5, nc);
   sdwf_field chi1(lattice, L5, nc);

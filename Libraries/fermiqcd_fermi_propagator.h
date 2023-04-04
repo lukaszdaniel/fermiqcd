@@ -54,12 +54,12 @@ public:
     nc = nc_;
     allocate_field(mylattice, nspin * nspin * nc * nc);
   };
-  inline mdp_matrix operator()(site x, int a, int b)
+  inline mdp_matrix operator()(mdp_site x, int a, int b)
   {
     mdp_matrix tmp(address(x, (a * nspin + b) * nc * nc), nc, nc);
     return tmp;
   };
-  inline mdp_complex &operator()(site x, int a, int b, int i, int j)
+  inline mdp_complex &operator()(mdp_site x, int a, int b, int i, int j)
   {
     return *(address(x, ((a * nspin + b) * nc + i) * nc + j));
   };
@@ -86,7 +86,7 @@ public:
   {
     fermi_field psi(S.lattice(), S.nc, S.nspin);
     fermi_field chi(S.lattice(), S.nc, S.nspin);
-    site x(S.lattice());
+    mdp_site x(S.lattice());
     int i, j, a, b;
     double time = mpi.time();
     inversion_stats stats;
@@ -139,7 +139,7 @@ void print_propagator(fermi_propagator &S)
 {
   begin_function("print_propagator");
   int x0, x1, x2, x3;
-  site x(S.lattice());
+  mdp_site x(S.lattice());
   int spin_source, spin_sink;
   int color_source, color_sink;
   mdp_complex tmp;

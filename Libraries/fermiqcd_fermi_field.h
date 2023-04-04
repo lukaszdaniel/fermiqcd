@@ -56,19 +56,19 @@ public:
     nspin = chi.nspin;
     mdp_complex_field::operator=(chi);
   }
-  inline mdp_matrix operator()(site x)
+  inline mdp_matrix operator()(mdp_site x)
   {
     return mdp_matrix(address(x), nspin, nc);
   }
-  inline mdp_matrix operator()(site x, int a)
+  inline mdp_matrix operator()(mdp_site x, int a)
   {
     return mdp_matrix(address(x, a * nc), nc, 1);
   }
-  inline mdp_complex &operator()(site x, int a, int i)
+  inline mdp_complex &operator()(mdp_site x, int a, int i)
   {
     return *(address(x, a * nc + i));
   }
-  inline const mdp_complex &operator()(site x, int a, int i) const
+  inline const mdp_complex &operator()(mdp_site x, int a, int i) const
   {
     return *(address(x, a * nc + i));
   }
@@ -89,7 +89,7 @@ void print_fermi_field(fermi_field &psi)
 {
   begin_function("print_fermi_field");
   int x0, x1, x2, x3;
-  site x(psi.lattice());
+  mdp_site x(psi.lattice());
   int do_exit = false;
   do
   {

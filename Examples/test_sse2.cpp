@@ -8,7 +8,7 @@ void test_fermi()
 
   mpi << "\n\nTEST FERMI FIELDS\n\n";
 
-  generic_lattice lattice(4, box);
+  mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   fermi_field psi(lattice, nc);
   fermi_field chi1(lattice, nc);

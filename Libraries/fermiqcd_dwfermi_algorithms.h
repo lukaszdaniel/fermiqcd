@@ -15,7 +15,7 @@
 /// Projects a domain wall fermion (chi) into a wilson fermion (psi)
 void project(fermi_field &psi, dwfermi_field &chi)
 {
-	site x(chi.lattice());
+	mdp_site x(chi.lattice());
 	forallsites(x)
 	{
 		psi(x) = Pleft * chi(x, 0) + Pright * chi(x, chi.L5 - 1);
@@ -25,7 +25,7 @@ void project(fermi_field &psi, dwfermi_field &chi)
 /// Projects a will fermion (psi) into a domain wall fermion (chi)
 void project(dwfermi_field &chi, fermi_field &psi)
 {
-	site x(chi.lattice());
+	mdp_site x(chi.lattice());
 	forallsites(x)
 	{
 		chi(x, 0) = Pleft * psi(x);

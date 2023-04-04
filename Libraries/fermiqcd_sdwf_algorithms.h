@@ -16,8 +16,8 @@ const double MDP_SDWF_SGN = 1.0;
 
 void project(staggered_field &psi, sdwf_field &chi, gauge_field &U)
 {
-  site x(chi.lattice());
-  site y(chi.lattice());
+  mdp_site x(chi.lattice());
+  mdp_site y(chi.lattice());
   int L5 = chi.L5;
   mdp_real phase;
   forallsites(x)
@@ -33,8 +33,8 @@ void project(staggered_field &psi, sdwf_field &chi, gauge_field &U)
 void project(staggered_field &psi, sdwf_field &chi, gauge_field &U,
              int sign, int L)
 {
-  site x(chi.lattice());
-  site y(chi.lattice());
+  mdp_site x(chi.lattice());
+  mdp_site y(chi.lattice());
   mdp_real phase;
   forallsites(x)
   {
@@ -47,8 +47,8 @@ void project(staggered_field &psi, sdwf_field &chi, gauge_field &U,
 
 void project(sdwf_field &chi, staggered_field &psi, gauge_field &U)
 {
-  site x(chi.lattice());
-  site y(chi.lattice());
+  mdp_site x(chi.lattice());
+  mdp_site y(chi.lattice());
   mdp_real phase;
   forallsites(x)
   {
@@ -107,7 +107,7 @@ void compute_swirls_field(gauge_field &U)
   int i, j, k, nc = U.nc;
   mdp_matrix A;
   U.swirls.allocate_mdp_matrix_field(U.lattice(), nc, nc);
-  site x(U.lattice()), y(U.lattice());
+  mdp_site x(U.lattice()), y(U.lattice());
   forallsites(x) if (x(0) % 2 == 0)
   {
     U.swirls(x) = 0;
@@ -135,15 +135,18 @@ void compute_swirls_field(gauge_field &U)
     }
     U.swirls(x) = U.swirls(x) / mdp_complex(1, 0); // care here with 1
   }
-  forallsites(x) if (x(0) % 2 == 1)
+  forallsites(x)
   {
-    y = x;
-    for (i = 0; i < U.ndim; i++)
-      if (y(i) % 2 == 0)
-        y = y + i;
-      else
-        y = y - i;
-    U.swirls(x) = inv(U.swirls(y));
+    if (x(0) % 2 == 1)
+    {
+      y = x;
+      for (i = 0; i < U.ndim; i++)
+        if (y(i) % 2 == 0)
+          y = y + i;
+        else
+          y = y - i;
+      U.swirls(x) = inv(U.swirls(y));
+    }
   }
 }
 

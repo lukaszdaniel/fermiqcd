@@ -66,9 +66,9 @@ private:
     bar[3] = -I * sigma[3];
   }
 
-  Matrix make_singular_instanton(float xl[4], int mu, SingleInstanton4D &instanton)
+  mdp_matrix make_singular_instanton(float xl[4], int mu, SingleInstanton4D &instanton)
   {
-    Matrix A;
+    mdp_matrix A;
     float x2, x[4], rho2;
     for (int i = 0; i < 4; i++)
       x[i] = std::min((float)xl[i] - instanton.x[i],
@@ -85,10 +85,10 @@ private:
     return A;
   }
 
-  Matrix make_su2_link(mdp_site xn, int mu, std::vector<SingleInstanton4D> &instantons)
+  mdp_matrix make_su2_link(mdp_site xn, int mu, std::vector<SingleInstanton4D> &instantons)
   {
-    Matrix A(2, 2);
-    Matrix P = sigma[0];
+    mdp_matrix A(2, 2);
+    mdp_matrix P = sigma[0];
     float x[4], a[3], norm_a;
     int steps = 5;
     float dx = 1.0 / steps;
@@ -119,7 +119,7 @@ public:
     init_tau_and_bar();
     lattice = &U.lattice();
     mdp_site x(U.lattice());
-    Matrix A;
+    mdp_matrix A;
     if (U.ndim != 4)
       throw std::string("instantons only in 4D");
     forallsites(x)

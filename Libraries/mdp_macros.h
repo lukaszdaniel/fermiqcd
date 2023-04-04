@@ -13,7 +13,6 @@
 #define MDP_MACROS_
 
 #define CHECK_ALL
-#define MDP_MPI
 #define INCLUDE_DEPRECATED_IO
 
 /// Loop on all local siltes of this process
@@ -47,12 +46,5 @@
 
 /// Reports a runtime error and the line that caused it
 #define error(a) _mpi_error_message(a, __FILE__, __LINE__);
-
-#ifndef TRUE
-#define TRUE true
-#endif
-#ifndef FALSE
-#define FALSE false
-#endif
 
 #endif /* MDP_MACROS_ */

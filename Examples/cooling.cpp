@@ -5,7 +5,7 @@
 void cool(int nt, int nx, char *filename)
 {
   int box[] = {nt, nx, nx, nx}, nc = 3;
-  generic_lattice lattice(4, box,
+  mdp_lattice lattice(4, box,
                           default_partitioning0,
                           torus_topology,
                           0, 1, false);

@@ -40,7 +40,7 @@ void dump(mdp_field<float> &s,
   int sfd = fileno(file);
   std::cout << "saving... " << filename << " as fd=" << sfd << std::endl;
   fwrite(header, sizeof(char), strlen(header), file);
-  site p(s.lattice());
+  mdp_site p(s.lattice());
 
   float fval = 0.0F;
   for (int i = 0; i < LX + 1; i++)

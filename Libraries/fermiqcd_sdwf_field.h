@@ -36,15 +36,15 @@ public:
     ndim = chi.lattice().ndim;
     allocate_field(chi.lattice(), L5 * nc);
   }
-  mdp_matrix operator()(site x, int x5)
+  mdp_matrix operator()(mdp_site x, int x5)
   {
     return mdp_matrix(address(x, x5 * nc), nc, 1);
   }
-  inline mdp_complex &operator()(site x, int x5, int i)
+  inline mdp_complex &operator()(mdp_site x, int x5, int i)
   {
     return *(address(x, x5 * nc + i));
   }
-  inline const mdp_complex &operator()(site x, int x5, int i) const
+  inline const mdp_complex &operator()(mdp_site x, int x5, int i) const
   {
     return *(address(x, x5 * nc + i));
   }
@@ -53,11 +53,11 @@ public:
     for (mdp_int i = 0; i < size; i++)
       m[i] = a;
   }
-  inline mdp_real component(site x, int mu)
+  inline mdp_real component(mdp_site x, int mu)
   {
     return x(mu) % 2;
   }
-  inline mdp_real eta(site x, int mu)
+  inline mdp_real eta(mdp_site x, int mu)
   {
     int tmp;
     int i;
@@ -68,11 +68,11 @@ public:
     return mdp_mod2sign(tmp);
   }
   /*
-  inline mdp_real zeta(site x, int mu) {
+  inline mdp_real zeta(mdp_site x, int mu) {
 
   }
   */
-  inline mdp_real eps(site x)
+  inline mdp_real eps(mdp_site x)
   {
     int tmp;
     int i;
@@ -81,7 +81,7 @@ public:
       tmp += x(i);
     return mdp_mod2sign(tmp);
   }
-  inline mdp_real type(site x)
+  inline mdp_real type(mdp_site x)
   {
     mdp_real tmp;
     int i;
@@ -90,7 +90,7 @@ public:
       tmp += (x(i) % 2) * pow(2.0, i);
     return tmp;
   }
-  inline site chiral_shift(site x)
+  inline mdp_site chiral_shift(mdp_site x)
   {
     int i;
     for (i = 0; i < ndim; i++)
@@ -100,7 +100,7 @@ public:
         x = x + i;
     return x;
   }
-  inline mdp_real chiral_phase(site x)
+  inline mdp_real chiral_phase(mdp_site x)
   { // (Gamma5 (x) 1)
     int tmp = ndim / 2;
     int i;
@@ -108,7 +108,7 @@ public:
       tmp += x(i);
     return (mdp_real)mdp_mod2sign(tmp);
   }
-  inline mdp_real chiral_phase2(site x)
+  inline mdp_real chiral_phase2(mdp_site x)
   { // (Gamma5 (x) Gamma5)
     int tmp = 0;
     int i;

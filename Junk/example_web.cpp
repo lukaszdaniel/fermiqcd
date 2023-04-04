@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 
   int nc = 4, Nconfig = 5;
   int mybox[] = {2, 2, 2, 2, 2};
-  generic_lattice mylattice(5, mybox);
+  mdp_lattice mylattice(5, mybox);
   gauge_field U(mylattice, nc);
   coefficients coeff;
   coeff["beta"] = 2.0;

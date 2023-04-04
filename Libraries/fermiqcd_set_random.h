@@ -15,15 +15,18 @@
 /// Set the complex field components of chi to be gaussian random numbers
 /// with mean=0 and sigma=1 (useful for stochastic propagators).
 /// can choose parity=EVEN, ODD or EVENODD
-void set_random(generic_field<mdp_complex> &chi,
+void set_random(mdp_field<mdp_complex> &chi,
                 int parity = EVENODD)
 {
   int i;
   int i_max = chi.size_per_site();
-  site x(chi.lattice());
-  forallsitesofparity(x, parity) for (i = 0; i < i_max; i++)
+  mdp_site x(chi.lattice());
+  forallsitesofparity(x, parity)
   {
-    *chi.address(x, i) = chi.lattice().random(x).gaussian();
+    for (i = 0; i < i_max; i++)
+    {
+      *chi.address(x, i) = chi.lattice().random(x).gaussian();
+    }
   }
   chi.update();
 }
@@ -33,31 +36,38 @@ void set_random(generic_field<mdp_complex> &chi,
 /// with mean=0 and sigma=1 (useful for stochastic propagators).
 /// can choose parity=EVEN, ODD or EVENODD
 /// attention! does not set to zero other timeslices!!!
-void set_wall_random(generic_field<mdp_complex> &chi,
+void set_wall_random(mdp_field<mdp_complex> &chi,
                      int t = 0,
                      int parity = EVENODD)
 {
   int i;
   int i_max = chi.size_per_site();
-  site x(chi.lattice());
-  forallsitesofparity(x, parity) if (x(0) == t) for (i = 0; i < i_max; i++)
+  mdp_site x(chi.lattice());
+  forallsitesofparity(x, parity)
   {
-    *chi.address(x, i) = chi.lattice().random(x).gaussian();
+    if (x(0) == t)
+      for (i = 0; i < i_max; i++)
+      {
+        *chi.address(x, i) = chi.lattice().random(x).gaussian();
+      }
   }
   chi.update();
 }
 
 /// Set the complex field components of chi tozero.
 /// can choose parity=EVEN, ODD or EVENODD
-void set_zero(generic_field<mdp_complex> &chi,
+void set_zero(mdp_field<mdp_complex> &chi,
               int parity = EVENODD)
 {
   int i;
   int i_max = chi.size_per_site();
-  site x(chi.lattice());
-  forallsitesofparity(x, parity) for (i = 0; i < i_max; i++)
+  mdp_site x(chi.lattice());
+  forallsitesofparity(x, parity)
   {
-    *chi.address(x, i) = mdp_complex(0, 0);
+    for (i = 0; i < i_max; i++)
+    {
+      *chi.address(x, i) = mdp_complex(0, 0);
+    }
   }
   chi.update();
 }

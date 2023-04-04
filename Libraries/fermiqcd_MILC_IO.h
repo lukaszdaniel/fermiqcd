@@ -21,7 +21,7 @@ bool milc_read_as_float_noswitch(FILE *fp,
 {
   std::cout << position << '\n';
   double *p = (double *)data;
-  site x(lattice);
+  mdp_site x(lattice);
   x.set_global(position);
 #ifdef USE_DOUBLE_PRECISION
   float *q = (float *)malloc(psize / 2);
@@ -62,7 +62,7 @@ bool milc_read_as_float_switch(FILE *fp,
 {
   std::cout << "switch" << position << '\n';
   double *p = (double *)data;
-  site x(lattice);
+  mdp_site x(lattice);
   x.set_global(position);
 #ifdef USE_DOUBLE_PRECISION
   float *q = (float *)malloc(psize / 2);

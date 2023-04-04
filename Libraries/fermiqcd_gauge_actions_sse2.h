@@ -46,15 +46,15 @@ class ImprovedGaugeActionSSE2 : public WilsonGaugeAction
 private:
 #if !defined(SSE2) || !defined(USE_DOUBLE_PRECISION)
 
-  static mdp_matrix rectangles_0i_H(gauge_field &U, site x, int mu)
+  static mdp_matrix rectangles_0i_H(gauge_field &U, mdp_site x, int mu)
   {
     mdp_matrix tmp(3, 3);
     mdp_matrix b1(3, 3);
     mdp_matrix b2(3, 3);
     mdp_matrix b3(3, 3);
-    site y0(U.lattice());
-    site y1(U.lattice());
-    site y2(U.lattice());
+    mdp_site y0(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
     int nu;
     tmp = 0;
     if (mu == 0)
@@ -94,15 +94,15 @@ private:
 
   // if min_nu==0 then rectangles_ij computes all 6 rectanges
 
-  static mdp_matrix rectangles_ij_H(gauge_field &U, site x, int mu, int min_nu = 1)
+  static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
   {
     mdp_matrix tmp(3, 3);
     mdp_matrix b1(3, 3);
     mdp_matrix b2(3, 3);
     mdp_matrix b3(3, 3);
-    site y0(U.lattice());
-    site y1(U.lattice());
-    site y2(U.lattice());
+    mdp_site y0(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
     int nu;
     for (nu = min_nu; nu < U.ndim; nu++)
       if (nu != mu)
@@ -142,7 +142,7 @@ private:
   // see: hep-lat/0712010
   // //////////////////////////////////////////////////////
 
-  static mdp_matrix chair_H(gauge_field &U, site x, int mu)
+  static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
   {
     int ndim = U.ndim;
     int nu, rho;
@@ -150,11 +150,11 @@ private:
     mdp_matrix b1(3, 3);
     mdp_matrix b2(3, 3);
     mdp_matrix b3(3, 3);
-    site y1(U.lattice());
-    site y2(U.lattice());
-    site y3(U.lattice());
-    site y4(U.lattice());
-    site y5(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
+    mdp_site y3(U.lattice());
+    mdp_site y4(U.lattice());
+    mdp_site y5(U.lattice());
     tmp = 0;
     for (nu = 0; nu < ndim; nu++)
       if (nu != mu)
@@ -193,16 +193,16 @@ private:
 
 #else
 
-  static mdp_matrix rectangles_0i_H(gauge_field &U, site x, int mu)
+  static mdp_matrix rectangles_0i_H(gauge_field &U, mdp_site x, int mu)
   {
     int nc = 3;
     mdp_matrix tmp(nc, nc);
     mdp_matrix b1(nc, nc);
     mdp_matrix b2(nc, nc);
     mdp_matrix b3(nc, nc);
-    site y0(U.lattice());
-    site y1(U.lattice());
-    site y2(U.lattice());
+    mdp_site y0(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
     int nu;
     tmp = 0;
     if (mu == 0)
@@ -259,16 +259,16 @@ private:
 
   // if min_nu==0 then rectangles_ij computes all 6 rectanges
 
-  static mdp_matrix rectangles_ij_H(gauge_field &U, site x, int mu, int min_nu = 1)
+  static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
   {
     int nc = 3;
     mdp_matrix tmp(nc, nc);
     mdp_matrix b1(nc, nc);
     mdp_matrix b2(nc, nc);
     mdp_matrix b3(nc, nc);
-    site y0(U.lattice());
-    site y1(U.lattice());
-    site y2(U.lattice());
+    mdp_site y0(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
     int nu;
     for (nu = min_nu; nu < U.ndim; nu++)
       if (nu != mu)
@@ -321,7 +321,7 @@ private:
   // see: hep-lat/0712010
   // //////////////////////////////////////////////////////
 
-  static mdp_matrix chair_H(gauge_field &U, site x, int mu)
+  static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
   {
     int nc = 3;
     int ndim = U.ndim;
@@ -330,11 +330,11 @@ private:
     mdp_matrix b1(nc, nc);
     mdp_matrix b2(nc, nc);
     mdp_matrix b3(nc, nc);
-    site y1(U.lattice());
-    site y2(U.lattice());
-    site y3(U.lattice());
-    site y4(U.lattice());
-    site y5(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
+    mdp_site y3(U.lattice());
+    mdp_site y4(U.lattice());
+    mdp_site y5(U.lattice());
     tmp = 0;
     for (nu = 0; nu < ndim; nu++)
       if (nu != mu)
@@ -381,15 +381,15 @@ private:
     return (tmp);
   }
 
-  static mdp_matrix twisted_rectangle_H(gauge_field &U, site x, int mu)
+  static mdp_matrix twisted_rectangle_H(gauge_field &U, mdp_site x, int mu)
   {
     int nu;
     int nc = 3;
-    site y1(U.lattice());
-    site y2(U.lattice());
-    site y3(U.lattice());
-    site y4(U.lattice());
-    site y5(U.lattice());
+    mdp_site y1(U.lattice());
+    mdp_site y2(U.lattice());
+    mdp_site y3(U.lattice());
+    mdp_site y4(U.lattice());
+    mdp_site y5(U.lattice());
     mdp_matrix tmp(nc, nc), b1(nc, nc), b2(nc, nc);
     tmp = 0;
     b1 = 0;
@@ -493,7 +493,7 @@ private:
     iGauge_min = 4
   };
 
-  static int strange_mapping(site &x)
+  static int strange_mapping(mdp_site &x)
   {
     int mu, type = 0;
     for (mu = 0; mu < x.lattice().ndim; mu++)
@@ -547,7 +547,7 @@ public:
     int ndim = U.ndim;
     int i, j, k, iter, mu, type;
     mdp_matrix M;
-    site x(U.lattice());
+    mdp_site x(U.lattice());
     double time = mpi.time();
     mdp_complex a[4], tmpUik;
     mdp_real alpha_s;

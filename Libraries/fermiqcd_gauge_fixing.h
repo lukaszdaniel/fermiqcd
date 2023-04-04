@@ -46,18 +46,18 @@ public:
                   mdp_real overrelaxation_boost = 1)
   {
 
-    // This also works for twisted boundary even if I use generic_field<> */
+    // This also works for twisted boundary even if I use mdp_field<> */
 
     static mdp_real a0, a1, a2, a3, b, c, d;
     static mdp_real a0_sq, ai_sq;
     static mdp_complex x0, x1;
     int k, nu, nc = U.nc;
     int opposite_parity = EVENODD;
-    generic_field<mdp_complex> W(U.lattice(), 4);
+    mdp_field<mdp_complex> W(U.lattice(), 4);
     mdp_matrix U_up(nc, nc), U_dw(nc, nc);
     mdp_matrix A;
-    site x(U.lattice());
-    site y(U.lattice());
+    mdp_site x(U.lattice());
+    mdp_site y(U.lattice());
     switch (parity)
     {
     case EVEN:
@@ -144,7 +144,7 @@ public:
   static void z3_fix(gauge_field &U, int mu)
   {
     int i = 0, t;
-    site x(U.lattice());
+    mdp_site x(U.lattice());
     mdp_matrix A;
     mdp_complex phase[3] = {mdp_complex(1, 0),
                             exp(2.0 * Pi * I / 3.0),
@@ -187,7 +187,7 @@ public:
 
     gaugefixing_stats stats;
     int step, nu, parity, i, j;
-    site x(U.lattice());
+    mdp_site x(U.lattice());
     double action = 0;
     double precision = 0;
     mdp_matrix M(U.nc, U.nc);

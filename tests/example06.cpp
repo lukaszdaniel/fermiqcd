@@ -8,7 +8,7 @@ float Q(float x, void *a)
 
 int main()
 {
-   mdp_random_generator random;
+   mdp_prng random;
    int i, N = 100;
    float a, b, average = 0, sigma = 0.3, a_bar = 1;
    for (i = 0; i < N; i++)

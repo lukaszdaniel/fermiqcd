@@ -41,13 +41,13 @@ int main(int argc, char **argv)
   int mybox[] = {nt, 4, 4, 4};
 
   // creating the fields
-  generic_lattice mylattice(4, mybox);
+  mdp_lattice mylattice(4, mybox);
   gauge_field U(mylattice, nc);
   fermi_field psi(mylattice, nc);
   fermi_field phi(mylattice, nc);
   fermi_field chi(mylattice, nc);
-  site x(mylattice);
-  mdp_array<Complex, 1> C2(nt);
+  mdp_site x(mylattice);
+  mdp_array<mdp_complex, 1> C2(nt);
 
   // creating one gauge configuration
 

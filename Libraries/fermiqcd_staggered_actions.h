@@ -48,8 +48,8 @@ public:
 			sign = 1;
 
 		int mu;
-		site x(chi_in.lattice());
-		site y(chi_in.lattice());
+		mdp_site x(chi_in.lattice());
+		mdp_site y(chi_in.lattice());
 		static mdp_matrix dslash;
 
 		if (two_mass != 0)
@@ -130,9 +130,9 @@ public:
 			sign = 1;
 
 		int i, j, mu;
-		site x(chi_in.lattice());
-		site x_up(chi_in.lattice());
-		site x_dw(chi_in.lattice());
+		mdp_site x(chi_in.lattice());
+		mdp_site x_up(chi_in.lattice());
+		mdp_site x_dw(chi_in.lattice());
 		mdp_complex phase;
 		mdp_complex *FU_up;
 		mdp_complex *FU_dw;

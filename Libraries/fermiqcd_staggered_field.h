@@ -48,15 +48,15 @@ public:
     nspin = chi.nspin;
     mdp_complex_field::operator=(chi);
   }
-  inline mdp_matrix operator()(site x)
+  inline mdp_matrix operator()(mdp_site x)
   {
     return mdp_matrix(address(x), nc, 1);
   }
-  inline mdp_complex &operator()(site x, int i)
+  inline mdp_complex &operator()(mdp_site x, int i)
   {
     return *(address(x, i));
   }
-  inline const mdp_complex &operator()(site x, int i) const
+  inline const mdp_complex &operator()(mdp_site x, int i) const
   {
     return *(address(x, i));
   }
@@ -66,11 +66,11 @@ public:
       m[i] = a;
   }
 
-  inline mdp_real component(site x, int mu)
+  inline mdp_real component(mdp_site x, int mu)
   {
     return x(mu) % 2;
   }
-  inline mdp_real eta(site x, int mu)
+  inline mdp_real eta(mdp_site x, int mu)
   {
 #ifdef USE_GOLTERMAN
     int i, tmp, i_max = (mu + ndim - 1) % ndim;
@@ -86,11 +86,11 @@ public:
     return mdp_mod2sign(tmp);
   }
   /*
-  inline mdp_real zeta(site x, int mu) {
+  inline mdp_real zeta(mdp_site x, int mu) {
 
   }
   */
-  inline mdp_real eps(site x)
+  inline mdp_real eps(mdp_site x)
   {
     int tmp;
     int i;
@@ -99,7 +99,7 @@ public:
       tmp += x(i);
     return mdp_mod2sign(tmp);
   }
-  inline mdp_real type(site x)
+  inline mdp_real type(mdp_site x)
   {
     mdp_real tmp;
     int i;

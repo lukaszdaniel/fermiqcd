@@ -6,9 +6,6 @@
 
 using namespace std;
 
-#define TRUE 1;
-#define FALSE 0;
-
 struct _generic_field_file_header
 {
   char file_id[60];

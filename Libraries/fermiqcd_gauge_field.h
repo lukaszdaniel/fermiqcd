@@ -84,7 +84,7 @@ public:
     return -1; // error in this case!
   };
 
-  inline mdp_matrix operator()(site x, int mu, int nu)
+  inline mdp_matrix operator()(mdp_site x, int mu, int nu)
   {
 #ifdef CHECK_ALL
     if (mu >= nu)
@@ -93,7 +93,7 @@ public:
     int k = ordered_index(mu, nu);
     return mdp_matrix(address(x, k * nc * nc), nc, nc);
   }
-  inline mdp_complex &operator()(site x, int mu, int nu, int i, int j)
+  inline mdp_complex &operator()(mdp_site x, int mu, int nu, int i, int j)
   {
 #ifdef CHECK_ALL
     if (mu >= nu)
@@ -102,7 +102,7 @@ public:
     int k = ordered_index(mu, nu);
     return *(address(x, (k * nc + i) * nc + j));
   }
-  inline const mdp_complex &operator()(site x, int mu, int nu,
+  inline const mdp_complex &operator()(mdp_site x, int mu, int nu,
                                        int i, int j) const
   {
 #ifdef CHECK_ALL
@@ -171,7 +171,7 @@ public:
     nc = nc_;
     allocate_field(a, a.ndim * nc * nc);
   }
-  inline mdp_matrix operator()(site x, int mu)
+  inline mdp_matrix operator()(mdp_site x, int mu)
   {
 #ifndef TWIST_BOUNDARY
     return mdp_matrix(address(x, mu * nc * nc), nc, nc);
@@ -192,7 +192,7 @@ public:
 #endif
   }
 
-  inline const mdp_matrix operator()(site x, int mu) const
+  inline const mdp_matrix operator()(mdp_site x, int mu) const
   {
 #ifndef TWISTED_BOUNDARY
     return mdp_matrix(address(x, mu * nc * nc), nc, nc);
@@ -213,25 +213,25 @@ public:
 #endif
   }
 
-  inline mdp_complex &operator()(site x, int mu, int i, int j)
+  inline mdp_complex &operator()(mdp_site x, int mu, int i, int j)
   {
 #ifdef TWISTED_BOUNDARY
     if (!in_block(x))
-      error("call to &operator=(site x) per x out of block");
+      error("call to &operator=(mdp_site x) per x out of block");
 #endif
     return *(address(x, (mu * nc + i) * nc + j));
   }
 
-  inline const mdp_complex &operator()(site x, int mu, int i, int j) const
+  inline const mdp_complex &operator()(mdp_site x, int mu, int i, int j) const
   {
 #ifdef TWISTED_BOUNDARY
     if (!in_block(x))
-      error("call to &operator=(site x) per x out of block");
+      error("call to &operator=(mdp_site x) per x out of block");
 #endif
     return *(address(x, (mu * nc + i) * nc + j));
   }
 
-  inline mdp_matrix operator()(site x, int sign, int mu)
+  inline mdp_matrix operator()(mdp_site x, int sign, int mu)
   {
     mdp_matrix tmp;
     if (sign == +1)
@@ -240,7 +240,7 @@ public:
       tmp = hermitian((*this)(x - mu, mu));
     return tmp;
   }
-  inline const mdp_matrix operator()(site x, int sign, int mu) const
+  inline const mdp_matrix operator()(mdp_site x, int sign, int mu) const
   {
     mdp_matrix tmp;
     if (sign == +1)
@@ -251,7 +251,7 @@ public:
   }
 
 #ifndef TWISTED_BOUNDARY
-  inline const mdp_complex operator()(site x, int sign, int mu,
+  inline const mdp_complex operator()(mdp_site x, int sign, int mu,
                                       int i, int j) const
   {
     if (sign == +1)
@@ -271,7 +271,7 @@ public:
     // /////////////////////////////////////////////////////
 
 #ifdef TWISTED_BOUNDARY
-  inline friend void twist_boundary(mdp_matrix &M, site &x)
+  inline friend void twist_boundary(mdp_matrix &M, mdp_site &x)
   {
     static int mu, block;
     static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
@@ -389,7 +389,7 @@ public:
     end_function("gauge_field__define_twist_matrices");
   }
 
-  inline friend void twist_eat_fields(mdp_matrix &M, site &x,
+  inline friend void twist_eat_fields(mdp_matrix &M, mdp_site &x,
                                       gauge_field &omega)
   {
     begin_function("gauge_field__twist_eat_matrices");

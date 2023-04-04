@@ -29,7 +29,7 @@ void dump(mdp_field<int> &s, std::string filename = "default.vtk")
     error("Error writing to file");
   }
 
-  site p(s.lattice());
+  mdp_site p(s.lattice());
   for (int i = 0; i < LX; i++)
     for (int j = 0; j < LY; j++)
       for (int k = 0; k < LZ; k++)

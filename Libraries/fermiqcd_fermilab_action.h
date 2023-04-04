@@ -144,7 +144,7 @@ public:
     else
       mac5 = 0;
 
-    site x(lattice);
+    mdp_site x(lattice);
 
     int i, j, a, b, k;
 

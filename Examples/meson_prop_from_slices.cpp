@@ -20,7 +20,7 @@ void meson_prop_from_slice(int nt, int nx, char *filename)
   mdp << "success in allocating vector\n";
   char filename2[128];
   S.load(filename);
-  Matrix A = Gamma5 * Gamma[1];
+  mdp_matrix A = Gamma5 * Gamma[1];
   mdp_complex w = 0;
   forallsites(x)
   {

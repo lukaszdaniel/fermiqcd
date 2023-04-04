@@ -27,7 +27,7 @@ public:
     int i, j, k, iter, mu, parity;
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
-    site x(U.lattice());
+    mdp_site x(U.lattice());
     double time = mpi.time();
 
     mdp << coeff;

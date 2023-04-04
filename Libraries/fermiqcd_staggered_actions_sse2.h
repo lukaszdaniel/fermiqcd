@@ -60,7 +60,7 @@ public:
     else
       sign = 1;
 
-    site x(psi_in.lattice());
+    mdp_site x(psi_in.lattice());
 
 #ifdef USE_DOUBLE_PRECISION
 

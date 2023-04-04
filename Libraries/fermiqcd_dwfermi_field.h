@@ -57,19 +57,19 @@ public:
     nspin = nspin_;
     allocate_field(a, L5 * nspin * nc);
   }
-  inline mdp_matrix operator()(site x, int L5_)
+  inline mdp_matrix operator()(mdp_site x, int L5_)
   {
     return mdp_matrix(address(x, L5_ * nc * nspin), nspin, nc);
   }
-  inline mdp_matrix operator()(site x, int L5_, int a)
+  inline mdp_matrix operator()(mdp_site x, int L5_, int a)
   {
     return mdp_matrix(address(x, (L5_ * nspin + a) * nc), nc, 1);
   }
-  inline mdp_complex &operator()(site x, int L5_, int a, int i)
+  inline mdp_complex &operator()(mdp_site x, int L5_, int a, int i)
   {
     return *(address(x, (L5_ * nspin + a) * nc + i));
   }
-  inline const mdp_complex &operator()(site x, int L5_, int a, int i) const
+  inline const mdp_complex &operator()(mdp_site x, int L5_, int a, int i) const
   {
     return *(address(x, (L5_ * nspin + a) * nc + i));
   }

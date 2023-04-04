@@ -270,7 +270,7 @@ public:
     mdp_int lms_tmp = 0;
     FILE *lms_file = tmpfile();
     if (lms_file == 0)
-      error("mdp_lattice::generic_lattice()\n"
+      error("mdp_lattice::mdp_lattice()\n"
             "Unable to create temporary lms file");
 #endif
     // ///////////////////////////////////////////////////////////////////
@@ -300,7 +300,7 @@ public:
 #else
         if (fseek(lms_file, nvol * sizeof(mdp_int), SEEK_SET) != 0 ||
             fwrite(&global_idx, sizeof(mdp_int), 1, lms_file) != 1)
-          error("generic_lattice::allocate_lattice()\n"
+          error("mdp_lattice::allocate_lattice()\n"
                 "Unable to write to temporary file");
 #endif
         nvol++;
@@ -365,7 +365,7 @@ public:
 #else
           if (fseek(lms_file, nvol * sizeof(mdp_int), SEEK_SET) != 0 ||
               fwrite(&global_idx, sizeof(mdp_int), 1, lms_file) != 1)
-            error("generic_lattice::allocate_lattice()\n"
+            error("mdp_lattice::allocate_lattice()\n"
                   "Unable to write to temporary file");
 #endif
           nvol++;
@@ -399,7 +399,7 @@ public:
 #else
     lg_file = tmpfile();
     if (lg_file == 0)
-      error("mdp_lattice::generic_lattice()\n"
+      error("mdp_lattice::mdp_lattice()\n"
             "Unable to create temporary lg file");
 #endif
     wh = new int[nvol];
@@ -409,7 +409,7 @@ public:
 #else
       if (fseek(lg_file, global_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
           fwrite(&NOWHERE, sizeof(mdp_int), 1, lg_file) != 1)
-        error("generic_lattice::allocate_lattice()\n"
+        error("mdp_lattice::allocate_lattice()\n"
               "Unable to write to temporary file");
 #endif
     parity = new int[nvol];
@@ -430,7 +430,7 @@ public:
 #else
           if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
               fread(&lms_tmp, sizeof(mdp_int), 1, lms_file) != 1)
-            error("generic_lattice::allocate_lattice()\n"
+            error("mdp_lattice::allocate_lattice()\n"
                   "Unable to read to temporary file");
           global_coordinate(lms_tmp, x);
 #endif
@@ -444,11 +444,11 @@ public:
 
             if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
                 fread(&lms_tmp, sizeof(mdp_int), 1, lms_file) != 1)
-              error("generic_lattice::allocate_lattice()\n"
+              error("mdp_lattice::allocate_lattice()\n"
                     "Unable to read to temporary file");
             if (fseek(lg_file, lms_tmp * sizeof(mdp_int), SEEK_SET) != 0 ||
                 fwrite(&new_idx, sizeof(mdp_int), 1, lg_file) != 1)
-              error("generic_lattice::allocate_lattice()\n"
+              error("mdp_lattice::allocate_lattice()\n"
                     "Unable to write to temporary file");
             gl[new_idx] = lms_tmp;
 #endif
@@ -635,7 +635,7 @@ public:
     mdp_int lg_tmp;
     if (fseek(lg_file, idx * sizeof(mdp_int), SEEK_SET) != 0 ||
         fread(&lg_tmp, sizeof(mdp_int), 1, lg_file) != 1)
-      error("generic_lattice::allocate_lattice()\n"
+      error("mdp_lattice::allocate_lattice()\n"
             "Unable to read to temporary file");
     return lg_tmp;
 #endif

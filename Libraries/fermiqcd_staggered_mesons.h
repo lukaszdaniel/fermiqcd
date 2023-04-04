@@ -25,7 +25,7 @@ public:
       error("fermiqcd_staggered_mesons/phase_field: ndim!=4");
     allocate_field(a, 16);
   };
-  int component(site x, site y)
+  int component(mdp_site x, mdp_site y)
   {
     int i = 0, mu;
     for (mu = 0; mu < KS_NDIM; mu++)
@@ -40,7 +40,7 @@ public:
   {
     int A[KS_NDIM], B[KS_NDIM];
     mdp_matrix G1, G2, ZETA_H;
-    site x(lattice());
+    mdp_site x(lattice());
     int i, mu, nu;
     ZETA_H = hermitian(ZETA);
     forallsites(x)
@@ -78,10 +78,10 @@ void operator_staggered_meson(staggered_field &out,
                               gauge_field &U)
 {
 
-  site x(U.lattice());
-  site x1(U.lattice());
-  site x2(U.lattice());
-  site y(U.lattice());
+  mdp_site x(U.lattice());
+  mdp_site x1(U.lattice());
+  mdp_site x2(U.lattice());
+  mdp_site y(U.lattice());
   int i, c, mu, A[KS_NDIM], B[KS_NDIM], P[4][2];
   int d, i0, i1, i2, i3;
   mdp_matrix paths, path;
@@ -190,7 +190,7 @@ mdp_matrix make_meson(gauge_field &U, gauge_field &V,
   int i, j, nt = U.lattice().size(0);
   int nc = U.nc;
   mdp_complex c;
-  site x(U.lattice());
+  mdp_site x(U.lattice());
   staggered_field tmp(U.lattice(), nc);
   staggered_field quark_source(U.lattice(), nc);
   staggered_field quark_prop(U.lattice(), nc);
@@ -254,7 +254,7 @@ mdp_matrix GoldstonBoson_5x5(gauge_field &U,         // input gauge field
                   = U.lattice().size(0); //
   mdp_matrix tmp(nt, U.nc);              // auxiliary var
   mdp_matrix prop(2, nt);                // output vector
-  site x(U.lattice());                   //
+  mdp_site x(U.lattice());                   //
   // ///////////////////////////////
 
   // // Local fields ////////////////////////////////
@@ -369,7 +369,7 @@ int main(int argc, char **argv)
   gauge_field U(space_time, Nc);
   gauge_field V(space_time, Nc);
   eta_field eta(space_time);
-  site x(space_time);
+  mdp_site x(space_time);
   mdp_matrix prop;
   float mass_a, mass_b;
 
@@ -381,7 +381,7 @@ int main(int argc, char **argv)
 
   u0 = 0.8629;
 
-  JackBoot c2(nconf, Nt);
+  mdp_jackboot c2(nconf, Nt);
 
   for (conf = 0; conf < nconf; conf++)
   {

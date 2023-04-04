@@ -55,9 +55,9 @@ public:
       error("fermiqcd_sdwf_algorithms/sdwf_mul_Q_TWO: no swirls?");
 
     int i, j, mu;
-    site x(chi_in.lattice());
-    site x_up(chi_in.lattice());
-    site x_dw(chi_in.lattice());
+    mdp_site x(chi_in.lattice());
+    mdp_site x_up(chi_in.lattice());
+    mdp_site x_dw(chi_in.lattice());
     mdp_complex phase;
     mdp_complex *FU_up;
     mdp_complex *FU_dw;

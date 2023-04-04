@@ -15,7 +15,7 @@
 /// r(x,alpha,i) = Gamma5(alpha,beta) * s(x,beta,i)
 void multiply_by_gamma5(fermi_field &r, fermi_field &s)
 {
-  site x(r.lattice());
+  mdp_site x(r.lattice());
 #if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
   if (r.nc == 3)
   {
@@ -128,7 +128,7 @@ mdp_real check_inversion(fermi_field &phi,
   begin_function("check_inversion");
   fermi_field psi(phi.lattice(), phi.nc, phi.nspin);
   fermi_field chi(phi.lattice(), phi.nc, phi.nspin);
-  site x(phi.lattice());
+  mdp_site x(phi.lattice());
   int a, i;
   mdp_real precision = 0;
   mul_Q(psi, phi, U, coeff);

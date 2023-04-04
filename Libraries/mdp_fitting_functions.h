@@ -13,7 +13,7 @@
 #define MDP_FITTING_FUNCTIONS_
 
 /// Fits y[i], x[i] for i0<=i<in with y=a[0]*x+a[1]
-void linear_fit(float *x, Measure *y, mdp_int i0, mdp_int in, Measure *a)
+void linear_fit(float *x, mdp_measure *y, mdp_int i0, mdp_int in, mdp_measure *a)
 {
   mdp_int i;
   double S = 0, Sx = 0, Sy = 0, Sxx = 0, Sxy = 0, det;
@@ -153,7 +153,7 @@ typedef float (*BLM_function)(float, float *, mdp_int, void *);
 /// This is used as a weight factor!
 /////////////////////////////////////////////////////////////////////
 
-float BLMaux(float *x, Measure *y,
+float BLMaux(float *x, mdp_measure *y,
              mdp_int i_min, mdp_int i_max,
              float *a, float *a0, mdp_matrix &sigma, int ma,
              mdp_matrix &alpha,
@@ -228,7 +228,7 @@ float BLMaux(float *x, Measure *y,
 ///  rerun it with same ftting values and nmax=1;
 /////////////////////////////////////////////////////////////////////
 
-float BaesyanLevenbergMarquardt(float *x, Measure *y,
+float BaesyanLevenbergMarquardt(float *x, mdp_measure *y,
                                 mdp_int i_min, mdp_int i_max,
                                 float *a, int ma,
                                 mdp_matrix &covar,
@@ -329,7 +329,7 @@ float f(float x, float *a, mdp_int ma, void *junk)
 int main()
 {
   float x[10] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
-  Measure y[10];
+  mdp_measure y[10];
   int i, ma = 3;
   float a[3] = {1000.0, 0.1, 0.1};
 
