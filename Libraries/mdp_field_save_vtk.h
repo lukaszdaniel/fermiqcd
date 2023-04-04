@@ -229,7 +229,7 @@ mdp_field<float> &cumulate_field(mdp_field<float> &field, std::string filename)
   return (*fields[filename]);
 }
 
-/*
+#if 0
 void save_vtk(mdp_field<float> &field,
               std::string filename,
               int t = -1,
@@ -244,13 +244,21 @@ void save_vtk(mdp_field<float> &field,
   if (counter.find(filename) == counter.end())
   {
     fields[filename] = new mdp_field<float>(field.lattice(), field.size_per_site());
-    forallsites(p) for (int i = 0; i < field.size_per_site(); i++) (*fields[filename])(p, i) = field(p, i);
+    forallsites(p)
+    {
+      for (int i = 0; i < field.size_per_site(); i++)
+        (*fields[filename])(p, i) = field(p, i);
+    }
     counter[filename] = 1;
   }
   else
   {
     k = counter[filename];
-    forallsites(p) for (int i = 0; i < field.size_per_site(); i++) (*fields[filename])(p, i) = (k * (*fields[filename])(p, i) + field(p, i)) / (k + 1);
+    forallsites(p)
+    {
+      for (int i = 0; i < field.size_per_site(); i++)
+        (*fields[filename])(p, i) = (k * (*fields[filename])(p, i) + field(p, i)) / (k + 1);
+    }
     counter[filename]++;
   }
   if (filename[filename.size() - 1] != '*')
@@ -266,6 +274,6 @@ void save_vtk(mdp_field<float> &field,
     fields[filename]->save_vtk(filename2 + "_average_" + std::to_string(k) + ".vtk", t, component, processIO, ASCII);
   }
 }
-*/
+#endif
 
 #endif /* MDP_FIELD_SAVE_VTK_ */

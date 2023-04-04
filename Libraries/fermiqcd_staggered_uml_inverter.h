@@ -92,8 +92,11 @@ private:
     mdp << "\tstep\tresidue\t\ttime (sec)\n";
     mdp << "\t====\t=======\t\t==========\n";
 
-    forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
+    forallsitesofparity(x, parity)
+    {
+      for (i = 0; i < nc; i++)
         p(x, i) = psi_out(x, i);
+    }
 
     p.update(parity);
     mul_Q(q, p, U, coeff, opposite_parity);
@@ -103,10 +106,13 @@ private:
     mul_Q(t, q, U, coeff, parity);
     dagger(coeff);
 
-    forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
+    forallsitesofparity(x, parity)
     {
-      t(x, i) += four_mass_sq * p(x, i);
-      r(x, i) = p(x, i) = psi_in(x, i) - t(x, i);
+      for (i = 0; i < nc; i++)
+      {
+        t(x, i) += four_mass_sq * p(x, i);
+        r(x, i) = p(x, i) = psi_in(x, i) - t(x, i);
+      }
     }
 
     residue = sqrt(real_scalar_product(r, r, parity));
@@ -125,17 +131,23 @@ private:
       dagger(coeff);
 
       if (four_mass_sq != 0)
-        forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
+        forallsitesofparity(x, parity)
+        {
+          for (i = 0; i < nc; i++)
             t(x, i) += four_mass_sq * p(x, i);
+        }
 
       pMMp = real_scalar_product(p, t, parity);
 
       alpha = pow(residue, 2) / pMMp;
 
-      forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
+      forallsitesofparity(x, parity)
       {
-        r(x, i) -= alpha * t(x, i);
-        psi_out(x, i) += alpha * p(x, i);
+        for (i = 0; i < nc; i++)
+        {
+          r(x, i) -= alpha * t(x, i);
+          psi_out(x, i) += alpha * p(x, i);
+        }
       }
 
       old_residue = residue;
@@ -147,8 +159,11 @@ private:
         break;
       beta = pow(residue / old_residue, 2);
 
-      forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
+      forallsitesofparity(x, parity)
+      {
+        for (i = 0; i < nc; i++)
           p(x, i) = r(x, i) + beta * p(x, i);
+      }
 
       mdp << step << "\t" << residue << "\t" << mpi.time() - time << '\n';
 
@@ -195,20 +210,29 @@ public:
 
     // It is important to initilize the output here
     // because staggered_BiCG_QQh uses it.
-    forallsites(x) for (i = 0; i < U.nc; i++)
+    forallsites(x)
+    {
+      for (i = 0; i < U.nc; i++)
         psi_out(x, i) = 0;
+    }
     psi_out.update();
 
     mul_Q(r, psi_in, U, coeff, EVEN);
 
-    forallsitesofparity(x, EVEN) for (i = 0; i < U.nc; i++)
+    forallsitesofparity(x, EVEN)
+    {
+      for (i = 0; i < U.nc; i++)
         r(x, i) = -r(x, i) + 2.0 * mass * psi_in(x, i);
+    }
 
     stats = staggered_BiCG_QQh(psi_out, r, U, coeff, mass, EVEN, absolute_precision, relative_precision, max_steps);
     psi_out.update();
     mul_Q(r, psi_out, U, coeff, ODD);
-    forallsitesofparity(x, ODD) for (i = 0; i < U.nc; i++)
+    forallsitesofparity(x, ODD)
+    {
+      for (i = 0; i < U.nc; i++)
         psi_out(x, i) = 1.0 / (2.0 * mass) * (psi_in(x, i) - r(x, i));
+    }
 
     // restore masses
     coeff["mass"] = mass;

@@ -33,30 +33,35 @@ public:
 	int getnum() { return num; }
 	float getmean() { return mean; }
 	float getmerr() { return error; }
+
 	mdp_measure()
 	{
 		num = 0;
 		mean = 0;
 		error = 0;
 	}
+
 	mdp_measure(float mean_, float error_, int num_ = 1)
 	{
 		num = num_;
 		mean = mean_;
 		error = error_;
 	}
+
 	void reset()
 	{
 		num = 0;
 		mean = 0;
 		error = 0;
 	}
+
 	void set(float x, float dx, int i = 1)
 	{
 		num = i;
 		mean = x;
 		error = dx;
 	}
+
 	void operator<<(float x)
 	{
 		float err2;
@@ -65,10 +70,12 @@ public:
 		mean = (mean * (num - 1) + x) / num;
 		error = sqrt(err2 / num - mean * mean);
 	}
+
 	void operator>>(float &x)
 	{
 		x = mean + error * Random.gaussian();
 	}
+
 	friend mdp_measure operator+(mdp_measure a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -77,6 +84,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator-(mdp_measure a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -85,6 +93,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator*(mdp_measure a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -93,6 +102,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator/(mdp_measure a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -102,6 +112,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator+(float a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -110,6 +121,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator-(float a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -118,6 +130,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator*(float a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -126,6 +139,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator/(float a, mdp_measure b)
 	{
 		mdp_measure tmp;
@@ -134,6 +148,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator+(mdp_measure a, float b)
 	{
 		mdp_measure tmp;
@@ -142,6 +157,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator-(mdp_measure a, float b)
 	{
 		mdp_measure tmp;
@@ -150,6 +166,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator*(mdp_measure a, float b)
 	{
 		mdp_measure tmp;
@@ -158,6 +175,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure operator/(mdp_measure a, float b)
 	{
 		mdp_measure tmp;
@@ -166,6 +184,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure exp(mdp_measure a)
 	{
 		mdp_measure tmp;
@@ -174,6 +193,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure log(mdp_measure a)
 	{
 		mdp_measure tmp;
@@ -182,6 +202,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure pow(mdp_measure a, float b)
 	{
 		mdp_measure tmp;
@@ -190,6 +211,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure sin(mdp_measure a)
 	{
 		mdp_measure tmp;
@@ -198,6 +220,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend mdp_measure cos(mdp_measure a)
 	{
 		mdp_measure tmp;
@@ -206,6 +229,7 @@ public:
 		tmp.num = 1;
 		return tmp;
 	}
+
 	friend void print(mdp_measure a)
 	{
 		printf("%f (%f)\n", a.mean, a.error);

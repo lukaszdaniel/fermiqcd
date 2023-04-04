@@ -66,65 +66,77 @@ private:
     mdp_int *dynamic_buffer;
     mdp_int length;
     int dp, process, np, idx;
-    // int process2;
+#if 0
+    int process2;
+#endif
     mdp_request request;
 
     // sending length ///////////////////////////
-    // if(Nproc%2==1 || where!=default_partitioning0) {
-    for (dp = 1; dp < Nproc; dp++)
+#if 0 // debugging code below
+    if (Nproc % 2 == 1 || where != default_partitioning0)
     {
-      process = (ME + dp) % Nproc;
-      for (np = 0; np < 2; np++)
-        buffer[np] = stop[process][np] - start[process][np];
-      mpi.put(buffer, 2, process, request);
-      process = (ME - dp + Nproc) % Nproc;
-      mpi.get(len_to_send[process], 2, process);
-      mpi.wait(request);
-      process = (ME + dp) % Nproc;
-      length = stop[process][1] - start[process][0];
-      dynamic_buffer = new mdp_int[length];
-      for (idx = 0; idx < length; idx++)
-        dynamic_buffer[idx] = gl[start[process][0] + idx];
-      mpi.put(dynamic_buffer, length, process, request);
-      process = (ME - dp + Nproc) % Nproc;
-      length = len_to_send[process][0] + len_to_send[process][1];
-      to_send[process] = new mdp_int[length];
-      mpi.get(to_send[process], length, process);
-      for (idx = 0; idx < length; idx++)
-        to_send[process][idx] = local(to_send[process][idx]);
-      mpi.wait(request);
-      delete[] dynamic_buffer;
+#endif
+      for (dp = 1; dp < Nproc; dp++)
+      {
+        process = (ME + dp) % Nproc;
+        for (np = 0; np < 2; np++)
+          buffer[np] = stop[process][np] - start[process][np];
+        mpi.put(buffer, 2, process, request);
+        process = (ME - dp + Nproc) % Nproc;
+        mpi.get(len_to_send[process], 2, process);
+        mpi.wait(request);
+        process = (ME + dp) % Nproc;
+        length = stop[process][1] - start[process][0];
+        dynamic_buffer = new mdp_int[length];
+        for (idx = 0; idx < length; idx++)
+          dynamic_buffer[idx] = gl[start[process][0] + idx];
+        mpi.put(dynamic_buffer, length, process, request);
+        process = (ME - dp + Nproc) % Nproc;
+        length = len_to_send[process][0] + len_to_send[process][1];
+        to_send[process] = new mdp_int[length];
+        mpi.get(to_send[process], length, process);
+        for (idx = 0; idx < length; idx++)
+          to_send[process][idx] = local(to_send[process][idx]);
+        mpi.wait(request);
+        delete[] dynamic_buffer;
+      }
+#if 0 // debugging code below
     }
-    /* debugging code below
-  } else {
-    for(dp=1; dp<Nproc; dp++) {
-for(int k=0; k<2; k++) {
+    else
+    {
+      for (dp = 1; dp < Nproc; dp++)
+      {
+        for (int k = 0; k < 2; k++)
+        {
 
-  process=(ME+dp) % Nproc;
-  process2=(ME-dp+Nproc) % Nproc;
+          process = (ME + dp) % Nproc;
+          process2 = (ME - dp + Nproc) % Nproc;
 
-  if((k+ME)%2==0) {
-    for(np=0; np<2; np++)
-      buffer[np]=stop[process][np]-start[process][np];
-    mpi.put(buffer, 2, process, request);
-    length=stop[process][1]-start[process][0];
-    dynamic_buffer= new mdp_int[length];
-    for(idx=0; idx<length; idx++)
-      dynamic_buffer[idx]=gl[start[process][0]+idx];
-    mpi.put(dynamic_buffer, length, process, request);
-  } else {
-    mpi.get(len_to_send[process2], 2, process2);
-    length=len_to_send[process2][0]+len_to_send[process2][1];
-    to_send[process2]=new mdp_int[length];
-    mpi.get(to_send[process2], length, process);
-    for(idx=0; idx<length; idx++)
-      to_send[process2][idx]=local(to_send[process2][idx]);
-  }
-}
-      delete[] dynamic_buffer;
+          if ((k + ME) % 2 == 0)
+          {
+            for (np = 0; np < 2; np++)
+              buffer[np] = stop[process][np] - start[process][np];
+            mpi.put(buffer, 2, process, request);
+            length = stop[process][1] - start[process][0];
+            dynamic_buffer = new mdp_int[length];
+            for (idx = 0; idx < length; idx++)
+              dynamic_buffer[idx] = gl[start[process][0] + idx];
+            mpi.put(dynamic_buffer, length, process, request);
+          }
+          else
+          {
+            mpi.get(len_to_send[process2], 2, process2);
+            length = len_to_send[process2][0] + len_to_send[process2][1];
+            to_send[process2] = new mdp_int[length];
+            mpi.get(to_send[process2], length, process);
+            for (idx = 0; idx < length; idx++)
+              to_send[process2][idx] = local(to_send[process2][idx]);
+          }
+        }
+        delete[] dynamic_buffer;
+      }
     }
-  }
-    */
+#endif
   }
 
 public:

@@ -12,8 +12,8 @@
 #ifndef FERMIQCD_TOPOLOGICAL_CHARGE_
 #define FERMIQCD_TOPOLOGICAL_CHARGE_
 
-/*
-Under development - DOES NOT WORK!!!!
+#if 0
+// Under development - DOES NOT WORK!!!!
 
 class HypSmearing
 {
@@ -38,40 +38,43 @@ public:
         mdp_matrix
         staples(U.nc, U.nc) for (int m = 0; m < U.ndim - 1; m++)
     {
-      forallsites(x) for (int mu = 0; mu < U.ndim; mu++)
+      forallsites(x)
       {
-        for (int i = 0; i < U.nc; i++)
-          for (int j = 0; j < U.nc; j++)
-            staples(i, j) = 0;
-        for (int nu = 0; nu < U.nc; nu++)
-          y = x + nu;
-        for (int i = 0; i < U.nc; i++)
-          for (int j = 0; j < U.nc; j++)
-          {
-            A(i, j) = 0;
-            for (int k = 0; k < U.nc; k +)
-              A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
-          }
-        for (int i = 0; i < U.nc; i++)
-          for (int j = 0; j < U.nc; j++)
-          {
-            for (int k = 0; k < U.nc; k +)
-              staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
-          }
-        y = x - nu;
-        for (int i = 0; i < U.nc; i++)
-          for (int j = 0; j < U.nc; j++)
-          {
-            A(i, j) = 0;
-            for (int k = 0; k < U.nc; k +)
-              A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
-          }
-        for (int i = 0; i < U.nc; i++)
-          for (int j = 0; j < U.nc; j++)
-          {
-            for (int k = 0; k < U.nc; k +)
-              staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
-          }
+        for (int mu = 0; mu < U.ndim; mu++)
+        {
+          for (int i = 0; i < U.nc; i++)
+            for (int j = 0; j < U.nc; j++)
+              staples(i, j) = 0;
+          for (int nu = 0; nu < U.nc; nu++)
+            y = x + nu;
+          for (int i = 0; i < U.nc; i++)
+            for (int j = 0; j < U.nc; j++)
+            {
+              A(i, j) = 0;
+              for (int k = 0; k < U.nc; k +)
+                A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
+            }
+          for (int i = 0; i < U.nc; i++)
+            for (int j = 0; j < U.nc; j++)
+            {
+              for (int k = 0; k < U.nc; k +)
+                staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
+            }
+          y = x - nu;
+          for (int i = 0; i < U.nc; i++)
+            for (int j = 0; j < U.nc; j++)
+            {
+              A(i, j) = 0;
+              for (int k = 0; k < U.nc; k +)
+                A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
+            }
+          for (int i = 0; i < U.nc; i++)
+            for (int j = 0; j < U.nc; j++)
+            {
+              for (int k = 0; k < U.nc; k +)
+                staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
+            }
+        }
       }
       for (int i = 0; i < U.nc; i++)
         for (int j = 0; j < U.nc; j++)
@@ -80,7 +83,7 @@ public:
     }
   }
 };
-*/
+#endif
 
 // from Bonnet et al. Phys Rev D 62, 094509
 
@@ -120,8 +123,12 @@ void compute_em_notrace_field(gauge_field &U)
 {
   compute_em_field(U);
   mdp_site x(U.lattice());
-  forallsitesandcopies(x) for (int mu = 0; mu < U.ndim - 1; mu++) for (int nu = mu + 1; nu < U.ndim; nu++)
-      U.em(x, mu, nu) -= 8.0 / 3.0 * I * trace(U.em(x, mu, nu));
+  forallsitesandcopies(x)
+  {
+    for (int mu = 0; mu < U.ndim - 1; mu++)
+      for (int nu = mu + 1; nu < U.ndim; nu++)
+        U.em(x, mu, nu) -= 8.0 / 3.0 * I * trace(U.em(x, mu, nu));
+  }
 }
 
 void topological_charge(mdp_field<float> &Q, gauge_field &U)
@@ -149,12 +156,15 @@ float topological_charge_vtk(gauge_field &U, std::string filename, int t = -1)
   cumulate_field(Q, filename).save_vtk(filename.replace(filename.rfind("."), 1, ".sum."), t);
   for (int t = U.lattice().size(3) - 1; t >= 0; t--)
   {
-    forallsites(x) if (x(0) == t)
+    forallsites(x)
     {
-      if (t == U.lattice().size(3) - 1)
-        P(x) = Q(x);
-      else
-        P(x) = P(x + 0) + Q(x);
+      if (x(0) == t)
+      {
+        if (t == U.lattice().size(3) - 1)
+          P(x) = Q(x);
+        else
+          P(x) = P(x + 0) + Q(x);
+      }
     }
     P.update();
   }

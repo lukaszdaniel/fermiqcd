@@ -142,11 +142,21 @@ public:
 		mdp_complex *Fchi_dw;
 
 		if (two_mass != 0)
-			forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
-				chi_out(x, i) = two_mass * chi_in(x, i);
+		{
+			forallsitesofparity(x, parity)
+			{
+				for (i = 0; i < nc; i++)
+					chi_out(x, i) = two_mass * chi_in(x, i);
+			}
+		}
 		else
-			forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
-				chi_out(x, i) = 0;
+		{
+			forallsitesofparity(x, parity)
+			{
+				for (i = 0; i < nc; i++)
+					chi_out(x, i) = 0;
+			}
+		}
 
 		if (nc == 3)
 		{

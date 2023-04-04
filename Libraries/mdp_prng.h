@@ -169,6 +169,7 @@ public:
     float alpha, sin_alpha;
     float a0, a1, a2, a3;
     float phi, cos_theta, sin_theta;
+
     if (n == 1)
     {
       tmp.dimension(1, 1);
@@ -176,7 +177,9 @@ public:
       tmp(0, 0) = mdp_complex(cos(alpha), sin(alpha));
       return tmp;
     }
+
     tmp = mdp_identity(n);
+
     for (i = 0; i < (n - 1); i++)
       for (j = i + 1; j < n; j++)
       {
@@ -198,6 +201,7 @@ public:
       }
     return tmp;
   }
+
   /// skip n numbers from the sequence
   void skip(int n)
   {

@@ -420,12 +420,14 @@ public:
     }
 #endif
   }
+
   void add(double &obj1, double &obj2)
   {
 #ifndef NO_POSIX
     obj2 = nodes->add(obj1);
 #endif
   }
+
   void add(double *obj1, double *obj2, mdp_int length)
   {
 #ifndef NO_POSIX
@@ -436,6 +438,7 @@ public:
 #endif
   }
   // end compatilibility functions
+
   // /////////////////////////////////
   void add(mdp_int &obj1)
   {
@@ -443,18 +446,21 @@ public:
     obj1 = nodes->add(obj1);
 #endif
   }
+
   void add(float &obj1)
   {
 #ifndef NO_POSIX
     obj1 = nodes->add(obj1);
 #endif
   }
+
   void add(double &obj1)
   {
 #ifndef NO_POSIX
     obj1 = nodes->add(obj1);
 #endif
   }
+
   void add(mdp_int *obj1, mdp_int length)
   {
 #ifndef NO_POSIX
@@ -464,10 +470,13 @@ public:
     }
 #endif
   }
+
   /*
-  void add(mdp_int *obj1, mdp_int length) {
+  void add(mdp_int *obj1, mdp_int length)
+  {
 #ifndef NO_POSIX
-    for(mdp_int i=0; i<length; i++) obj1[i]=nodes->add(obj1[i]);
+    for (mdp_int i = 0; i < length; i++)
+      obj1[i] = nodes->add(obj1[i]);
 #endif
   }
   */
@@ -478,6 +487,7 @@ public:
       obj1[i] = nodes->add(obj1[i]);
 #endif
   }
+
   void add(double *obj1, mdp_int length)
   {
 #ifndef NO_POSIX
@@ -485,12 +495,14 @@ public:
       obj1[i] = nodes->add(obj1[i]);
 #endif
   }
+
   void add(mdp_complex &obj1)
   {
 #ifndef NO_POSIX
     obj1 = nodes->add(obj1);
 #endif
   }
+
   void add(mdp_complex *obj1, mdp_int length)
   {
 #ifndef NO_POSIX
@@ -498,6 +510,7 @@ public:
       obj1[i] = nodes->add(obj1[i]);
 #endif
   }
+
   void add(mdp_matrix &a)
   {
 #ifndef NO_POSIX
@@ -505,6 +518,7 @@ public:
       a.address()[i] = nodes->add(a.address()[i]);
 #endif
   }
+
   void add(mdp_matrix *a, mdp_int length)
   {
 #ifndef NO_POSIX
@@ -513,11 +527,13 @@ public:
         a[j].address()[i] = nodes->add(a[j].address()[i]);
 #endif
   }
+
   template <class T>
   void add(std::vector<T> &a)
   {
     add(&a[0], a.size());
   }
+
   template <class T>
   void broadcast(T &obj, int p)
   {
@@ -525,6 +541,7 @@ public:
     nodes->broadcast(p, obj);
 #endif
   }
+
   template <class T>
   void broadcast(T *obj, mdp_int length, int p)
   {
@@ -532,31 +549,40 @@ public:
     nodes->broadcast(p, obj, length);
 #endif
   }
+
   void wait(mdp_request &r) {}
+
   void wait(mdp_request *r, int length) {}
+
   inline const int me()
   {
     return my_id;
   }
+
   inline const int nproc()
   {
     return my_nproc;
   }
+
   void barrier() {}
+
   int tag(int i, int j)
   {
     return i * nproc() + j;
   }
+
   void reset_time()
   {
     mytime = MPI_Wtime();
     comm_time = 0;
   }
+
   /// returns the time in seconds since call to mdp_communicator::open_wormholes
   double time()
   {
     return MPI_Wtime() - mytime;
   }
+
   /// starts communications
   /// parses command line argument for MPI or PSIM parameters
   void open_wormholes(int argc, char **argv)
@@ -591,6 +617,7 @@ public:
     wormholes_open = true;
     end_function("open_wormholes");
   }
+
   /// prints statistics about parallel processes
   void print_stats()
   {
@@ -620,6 +647,7 @@ public:
     delete[] c;
 #endif
   }
+
   /// closes parallel communications
   void close_wormholes()
   {
@@ -639,6 +667,7 @@ public:
       delete nodes;
 #endif
   }
+
   /// forces the process to exit(-1)
   void abort()
   {

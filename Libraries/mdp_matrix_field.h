@@ -27,11 +27,13 @@ class mdp_matrix_field : public mdp_field<mdp_complex>
 {
 public:
   int rows, columns, imax;
+
   mdp_matrix_field()
   {
     rows = columns = imax = 0;
     mdp_field<mdp_complex>::reset_field();
   }
+
   mdp_matrix_field(mdp_matrix_field &field)
   {
     mdp_field<mdp_complex>::reset_field();
@@ -40,6 +42,7 @@ public:
     imax = field.imax;
     allocate_field(field.lattice(), field.imax);
   }
+
   mdp_matrix_field(mdp_lattice &a, int i, int j)
   {
     mdp_field<mdp_complex>::reset_field();
@@ -48,6 +51,7 @@ public:
     imax = i * j;
     allocate_field(a, imax);
   }
+
   void allocate_mdp_matrix_field(mdp_lattice &a, int i, int j)
   {
     deallocate_field();
@@ -56,14 +60,17 @@ public:
     imax = i * j;
     allocate_field(a, imax);
   }
+
   mdp_matrix operator()(mdp_site x)
   {
     return mdp_matrix(address(x), rows, columns);
   }
+
   mdp_complex &operator()(mdp_site x, int i, int j)
   {
     return address(x)[i * columns + j];
   }
+
   const mdp_complex &operator()(mdp_site x, int i, int j) const
   {
     return address(x)[i * columns + j];

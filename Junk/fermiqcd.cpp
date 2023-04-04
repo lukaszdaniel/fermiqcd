@@ -41,12 +41,15 @@ void plaquette_vtk(gauge_field &U, std::string filename)
 {
   mdp_field<mdp_real> q(U.lattice());
   mdp_site x(U.lattice());
-  forallsites(x) if (x(TIME) == 0)
+  forallsites(x)
   {
-    q(x) = 0;
-    for (int mu = 0; mu < 4; mu++)
-      for (int nu = mu + 1; nu < 4; nu++)
-        q(x) += real(trace(plaquette(U, x, mu, nu)));
+    if (x(TIME) == 0)
+    {
+      q(x) = 0;
+      for (int mu = 0; mu < 4; mu++)
+        for (int nu = mu + 1; nu < 4; nu++)
+          q(x) += real(trace(plaquette(U, x, mu, nu)));
+    }
   }
   q.save_vtk(filename, -1);
 }
@@ -296,34 +299,43 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     for (int t = 0; t < U.lattice().size(TIME) / 2; t++)
       if (t == 0)
       {
-        forallsites(x) if (x(TIME) == (NT + t + t0) % NT) Sh(x) = 1; /// FIX PROBLEM WITH CENTER
+        forallsites(x)
+        {
+          if (x(TIME) == (NT + t + t0) % NT)
+            Sh(x) = 1; /// FIX PROBLEM WITH CENTER
+        }
       }
       else
       {
-        forallsites(x) if (x(TIME) == (NT + t + t0) % NT)
+        forallsites(x)
         {
-          z.set((NT + t0 - t) % NT, x(1), x(2), x(3));
-          Sh(x) = U(z, 0) * Sh(x - 0) * U(x - 0, 0);
+          if (x(TIME) == (NT + t + t0) % NT)
+          {
+            z.set((NT + t0 - t) % NT, x(1), x(2), x(3));
+            Sh(x) = U(z, 0) * Sh(x - 0) * U(x - 0, 0);
+          }
         }
       }
     forallsites(x) // FIX G1 !!!!!!!!
-        if (x(TIME) >= 0)
     {
-      z.set((NT + 2 * t0 - x(TIME)) % NT, x(1), x(2), x(3));
-      forspincolor(a, i, U.nc)
+      if (x(TIME) >= 0)
       {
-        forspincolor(b, j, U.nc)
+        z.set((NT + 2 * t0 - x(TIME)) % NT, x(1), x(2), x(3));
+        forspincolor(a, i, U.nc)
         {
-          s1 = s2 = 0;
-          for (int c = 0; c < 4; c++)
+          forspincolor(b, j, U.nc)
           {
-            s1 += conj(S(z, c, a, j, i)) * G3(c, b);
-            for (int k = 0; k < U.nc; k++)
-              s2 += S(x, b, c, j, k) * G4(c, a) * conj(Sh(x, i, k));
+            s1 = s2 = 0;
+            for (int c = 0; c < 4; c++)
+            {
+              s1 += conj(S(z, c, a, j, i)) * G3(c, b);
+              for (int k = 0; k < U.nc; k++)
+                s2 += S(x, b, c, j, k) * G4(c, a) * conj(Sh(x, i, k));
+            }
+            tmp = real(s1 * s2);
+            current[(x(TIME) - t0 + NT) % NT] += tmp;
+            Q(x) += tmp;
           }
-          tmp = real(s1 * s2);
-          current[(x(TIME) - t0 + NT) % NT] += tmp;
-          Q(x) += tmp;
         }
       }
     }
@@ -345,9 +357,12 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         for (int c = 0; c < 4; c++)
           for (int d = 0; d < 4; d++)
             if (G(c, d) != 0)
-              forallsites(x) for (int k = 0; k < U.nc; k++)
+              forallsites(x)
+              {
+                for (int k = 0; k < U.nc; k++)
                   open_prop[a][b][i][j][(x(TIME) - t0 + NT) % NT] +=
-                  S(x, a, c, i, k) * conj(S(x, b, d, j, k)) * G(c, d);
+                      S(x, a, c, i, k) * conj(S(x, b, d, j, k)) * G(c, d);
+              }
         mpi.add((mdp_complex *)&open_prop[0], NT * 4 * 4 * 3 * 3);
       }
     }
@@ -412,8 +427,14 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     int smear_steps = arguments.get("-wave_static", "smear_steps", 10);
     G1 = parse_gamma(source_gamma) * (1 + Gamma[0]) / 2;
     Q = 0;
-    forallsites(x) for (int a = 0; a < 4; a++) for (int b = 0; b < 4; b++) if (G1(a, b) != 0) for (int i = 0; i < U.nc; i++)
-        Q(x) += pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
+    forallsites(x)
+    {
+      for (int a = 0; a < 4; a++)
+        for (int b = 0; b < 4; b++)
+          if (G1(a, b) != 0)
+            for (int i = 0; i < U.nc; i++)
+              Q(x) += pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
+    }
     // smear_propagator(S,U,smear_steps);
     Q.save_vtk(prefix + std::string(".") + source_gamma + ".wave.vtk");
   }
@@ -476,7 +497,7 @@ int main(int argc, char **argv)
   gauge["u_s"] = arguments.get("-gauge", "u_s", 1.0);
   std::string prefix = arguments.get("-gauge", "prefix", "");
   std::string gauge_action = arguments.get("-gauge", "action",
-                                      "wilson|wilson_improved|wilson_sse2");
+                                           "wilson|wilson_improved|wilson_sse2");
   quark["kappa"] = arguments.get("-quark", "kappa", 0.12);
   quark["kappa_t"] = arguments.get("-quark", "kappa_t", quark["kappa"]);
   quark["kappa_s"] = arguments.get("-quark", "kappa_s", quark["kappa"]);

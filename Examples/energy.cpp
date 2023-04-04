@@ -15,12 +15,15 @@ void compute_energy(int nt, int nx, std::string filename)
 
   U.load(filename);
   compute_em_field(U);
-  forallsites(x) if (x(0) == 0)
+  forallsites(x)
   {
-    q(x) = 0;
-    for (int mu = 0; mu < 4; mu++)
-      for (int nu = mu + 1; nu < 4; nu++)
-        q(x) += pow(abs(trace(U.em(x, mu, nu))), 2);
+    if (x(0) == 0)
+    {
+      q(x) = 0;
+      for (int mu = 0; mu < 4; mu++)
+        for (int nu = mu + 1; nu < 4; nu++)
+          q(x) += pow(abs(trace(U.em(x, mu, nu))), 2);
+    }
   }
 
   /// FIX FILE NAMES depends on T, beta, and K

@@ -110,32 +110,35 @@ void compute_swirls_field(gauge_field &U)
   mdp_matrix A;
   U.swirls.allocate_mdp_matrix_field(U.lattice(), nc, nc);
   mdp_site x(U.lattice()), y(U.lattice());
-  forallsites(x) if (x(0) % 2 == 0)
+  forallsites(x)
   {
-    U.swirls(x) = 0;
-    // for(k=0; k<mdp_permutations(4); k++) { this gave some problems
-    y = x;
-    A = mdp_identity(nc);
-    for (k = 0; k < 1; k++)
+    if (x(0) % 2 == 0)
     {
-      //  k=(int) ((float) mdp_permutations(4)*Random.plain());
-      for (i = 0; i < U.ndim; i++)
+      U.swirls(x) = 0;
+      // for(k=0; k<mdp_permutations(4); k++) { this gave some problems
+      y = x;
+      A = mdp_identity(nc);
+      for (k = 0; k < 1; k++)
       {
-        j = mdp_permutation(4, k, i);
-        if (y(j) % 2 == 0)
+        //  k=(int) ((float) mdp_permutations(4)*Random.plain());
+        for (i = 0; i < U.ndim; i++)
         {
-          A = A * U(y, +1, j);
-          y = y + j;
+          j = mdp_permutation(4, k, i);
+          if (y(j) % 2 == 0)
+          {
+            A = A * U(y, +1, j);
+            y = y + j;
+          }
+          else
+          {
+            A = A * U(y, -1, j);
+            y = y - j;
+          }
         }
-        else
-        {
-          A = A * U(y, -1, j);
-          y = y - j;
-        }
+        U.swirls(x) += A;
       }
-      U.swirls(x) += A;
+      U.swirls(x) = U.swirls(x) / mdp_complex(1, 0); // care here with 1
     }
-    U.swirls(x) = U.swirls(x) / mdp_complex(1, 0); // care here with 1
   }
   forallsites(x)
   {

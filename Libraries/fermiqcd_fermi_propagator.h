@@ -101,12 +101,16 @@ public:
 
         mdp << "Source: spin=" << b << ", color=" << j << '\n';
 
-        forallsitesandcopies(x) for (a = 0; a < psi.nspin; a++) for (i = 0; i < psi.nc; i++)
+        forallsitesandcopies(x)
         {
-          if ((x.is_equal(0)) && (a == b) && (i == j))
-            psi(x, a, i) = 1;
-          else
-            psi(x, a, i) = 0;
+          for (a = 0; a < psi.nspin; a++)
+            for (i = 0; i < psi.nc; i++)
+            {
+              if ((x.is_equal(0)) && (a == b) && (i == j))
+                psi(x, a, i) = 1;
+              else
+                psi(x, a, i) = 0;
+            }
         }
         /*
           If a smearing function is passed (smf)
@@ -118,13 +122,17 @@ public:
         stats = mul_invQ(chi, psi, U, coeff,
                          absolute_precision, relative_precision, max_steps);
 
-        forallsites(x) for (a = 0; a < psi.nspin; a++) for (i = 0; i < psi.nc; i++)
+        forallsites(x)
         {
-          S(x, a, b, i, j) = chi(x, a, i);
+          for (a = 0; a < psi.nspin; a++)
+            for (i = 0; i < psi.nc; i++)
+            {
+              S(x, a, b, i, j) = chi(x, a, i);
+            }
         }
         std::cout << "Statistics: residue=" << stats.residue
-             << ", steps=" << stats.steps
-             << ", time=" << stats.time << '\n';
+                  << ", steps=" << stats.steps
+                  << ", time=" << stats.time << '\n';
       }
     mdp << "END Generating ordinary propagator. ";
     mdp << "time=" << mpi.time() - time << '\n';

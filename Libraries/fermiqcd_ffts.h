@@ -87,8 +87,11 @@ void fermi_field_fft(int t,
 
   mdp_site x(psi_in.lattice());
 
-  forallsites(x) if (x(0) == t)
+  forallsites(x)
+  {
+    if (x(0) == t)
       psi_out(x) = psi_in(x);
+  }
 
   for (spin = 0; spin < psi_out.nspin; spin++)
     for (color = 0; color < psi_out.nc; color++)
@@ -225,8 +228,12 @@ void mdp_complex_field_fft(int t,
 
   mdp_site x(psi_in.lattice());
 
-  forallsites(x) if (x(0) == t) for (int k = 0; k < psi_in.size_per_site(); k++)
-      psi_out(x, k) = psi_in(x, k);
+  forallsites(x)
+  {
+    if (x(0) == t)
+      for (int k = 0; k < psi_in.size_per_site(); k++)
+        psi_out(x, k) = psi_in(x, k);
+  }
 
   for (int k = 0; k < psi_in.size_per_site(); k++)
   {
@@ -301,8 +308,11 @@ void mdp_complex_field_fft_t(mdp_field<mdp_complex> &psi_out,
 
   mdp_site x(psi_in.lattice());
 
-  forallsites(x) for (k = 0; k < psi_in.size_per_site(); k++)
+  forallsites(x)
+  {
+    for (k = 0; k < psi_in.size_per_site(); k++)
       psi_out(x, k) = psi_in(x, k);
+  }
 
   for (k = 0; k < psi_in.size_per_site(); k++)
   {

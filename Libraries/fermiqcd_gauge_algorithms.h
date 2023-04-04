@@ -21,8 +21,11 @@ void set_cold(gauge_field &U)
   mdp << "Creating a cold gauge configuration" << '\n';
   mdp_site x(U.lattice());
   int mu;
-  forallsites(x) for (mu = 0; mu < U.ndim; mu++)
+  forallsites(x)
+  {
+    for (mu = 0; mu < U.ndim; mu++)
       U(x, mu) = mdp_identity(U.nc);
+  }
   U.update();
   end_function("set_cold");
 }
@@ -34,8 +37,11 @@ void set_hot(gauge_field &U)
   mdp << "Creating a hot gauge configuration" << '\n';
   mdp_site x(U.lattice());
   int mu;
-  forallsites(x) for (mu = 0; mu < U.ndim; mu++)
+  forallsites(x)
+  {
+    for (mu = 0; mu < U.ndim; mu++)
       U(x, mu) = U.lattice().random(x).SU(U.nc);
+  }
   U.update();
   end_function("set_hot");
 }
@@ -102,17 +108,21 @@ void compute_em_field(gauge_field &U)
      A are the four clover leafs
   */
   int mu, nu;
-  forallsites(x) for (mu = 0; mu < U.ndim - 1; mu++) for (nu = mu + 1; nu < U.ndim; nu++)
+  forallsites(x)
   {
+    for (mu = 0; mu < U.ndim - 1; mu++)
+      for (nu = mu + 1; nu < U.ndim; nu++)
+      {
 
-    A =
-        U(x, mu) * U(x + mu, nu) * hermitian(U(x, nu) * U(x + nu, mu)) +
-        hermitian(U(x - nu, nu)) * U(x - nu, mu) *
-            U((x - nu) + mu, nu) * hermitian(U(x, mu)) +
-        hermitian(U((x - mu) - nu, nu) * U(x - mu, mu)) * U((x - mu) - nu, mu) * U(x - nu, nu) +
-        U(x, nu) * hermitian(U(x - mu, nu) * U((x + nu) - mu, mu)) * U(x - mu, mu);
+        A =
+            U(x, mu) * U(x + mu, nu) * hermitian(U(x, nu) * U(x + nu, mu)) +
+            hermitian(U(x - nu, nu)) * U(x - nu, mu) *
+                U((x - nu) + mu, nu) * hermitian(U(x, mu)) +
+            hermitian(U((x - mu) - nu, nu) * U(x - mu, mu)) * U((x - mu) - nu, mu) * U(x - nu, nu) +
+            U(x, nu) * hermitian(U(x - mu, nu) * U((x + nu) - mu, mu)) * U(x - mu, mu);
 
-    U.em(x, mu, nu) = ((mdp_real)0.125) * (A - hermitian(A));
+        U.em(x, mu, nu) = ((mdp_real)0.125) * (A - hermitian(A));
+      }
   }
   U.em.update();
 }
@@ -143,11 +153,17 @@ void compute_long_links(gauge_field &U, gauge_field &V, int length = 2)
   mdp_site x(U.lattice());
   int mu;
   if (length == 2)
-    forallsites(x) for (mu = 0; mu < V.ndim; mu++)
+    forallsites(x)
+    {
+      for (mu = 0; mu < V.ndim; mu++)
         U.long_links(x, mu) = V(x, mu) * V(x + mu, mu);
+    }
   if (length == 3)
-    forallsites(x) for (mu = 0; mu < V.ndim; mu++)
+    forallsites(x)
+    {
+      for (mu = 0; mu < V.ndim; mu++)
         U.long_links(x, mu) = V(x, mu) * V(x + mu, mu) * V((x + mu) + mu, mu);
+    }
   U.long_links.update();
 }
 
@@ -174,11 +190,14 @@ void set_antiperiodic_phases(gauge_field &U, int mu = 0, int check = true)
     mdp << "Setting antiperiodic boundary conditions on mu=" << mu << '\n';
   else
     mdp << "Removing antiperiodic boundary conditions on mu=" << mu << '\n';
-  forallsites(x) if (x(mu) == U.lattice().size(mu) - 1)
+  forallsites(x)
   {
-    for (i = 0; i < U.nc; i++)
-      for (j = 0; j < U.nc; j++)
-        U(x, mu, i, j) *= -1;
+    if (x(mu) == U.lattice().size(mu) - 1)
+    {
+      for (i = 0; i < U.nc; i++)
+        for (j = 0; j < U.nc; j++)
+          U(x, mu, i, j) *= -1;
+    }
   }
   end_function("set_antiperiodic_phases");
 }

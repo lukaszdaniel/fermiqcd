@@ -211,16 +211,23 @@ mdp_matrix make_meson(gauge_field &U, gauge_field &V,
   {
     for (i = 0; i < U.nc; i++)
     {
-      forallsites(x) for (j = 0; j < U.nc; j++) if (i == j &&
-                                                    (x(0) == t_source || x(0) == (t_source + 1)) &&
-                                                    source1_type == wall_source)
-          quark_source(x, j) = mdp_complex(1, 0);
-      else if (i == j &&
-               (x(0) == t_source || x(0) == (t_source + 1)) &&
-               (x(1) / 2 == 0) && (x(2) / 2 == 0) && (x(3) / 2 == 0) &&
-               source1_type == local_source)
-          quark_source(x, j) = mdp_complex(1, 0);
-      else quark_source(x, j) = mdp_complex(0, 0);
+      forallsites(x)
+      {
+        for (j = 0; j < U.nc; j++)
+        {
+          if (i == j &&
+              (x(0) == t_source || x(0) == (t_source + 1)) &&
+              source1_type == wall_source)
+            quark_source(x, j) = mdp_complex(1, 0);
+          else if (i == j &&
+                   (x(0) == t_source || x(0) == (t_source + 1)) &&
+                   (x(1) / 2 == 0) && (x(2) / 2 == 0) && (x(3) / 2 == 0) &&
+                   source1_type == local_source)
+            quark_source(x, j) = mdp_complex(1, 0);
+          else
+            quark_source(x, j) = mdp_complex(0, 0);
+        }
+      }
 
       quark_source.update();
       mul_invQ(quark_prop, quark_source, V, coeff1, precision);
@@ -256,7 +263,7 @@ mdp_matrix GoldstonBoson_5x5(gauge_field &U,         // input gauge field
                   = U.lattice().size(0); //
   mdp_matrix tmp(nt, U.nc);              // auxiliary var
   mdp_matrix prop(2, nt);                // output vector
-  mdp_site x(U.lattice());                   //
+  mdp_site x(U.lattice());               //
   // ///////////////////////////////
 
   // // Local fields ////////////////////////////////
@@ -272,13 +279,17 @@ mdp_matrix GoldstonBoson_5x5(gauge_field &U,         // input gauge field
   for (i = 0; i < U.nc; i++)
   {
     // // Make wall source /////////////////////////////
-    forallsites(x)                              //
-        for (j = 0; j < U.nc; j++)              //
-        if (i == j && x(0) - t_source == 0)     //
-        quark_source(x, j) = mdp_complex(1, 0); //
-    else                                        //
-        quark_source(x, j) = mdp_complex(0, 0); //
-    quark_source.update();                      //
+    forallsites(x) //
+    {
+      for (j = 0; j < U.nc; j++) //
+      {
+        if (i == j && x(0) - t_source == 0)       //
+          quark_source(x, j) = mdp_complex(1, 0); //
+        else                                      //
+          quark_source(x, j) = mdp_complex(0, 0); //
+      }
+    }
+    quark_source.update(); //
     ////////////////////////////////////////////////////
 
     // // Make propagator - antipropagator - sink //////
@@ -311,7 +322,7 @@ mdp_matrix GoldstonBoson_5x5(gauge_field &U,         // input gauge field
     for (t = 0; t < nt; t++)                       //
       for (j = 0; j < U.nc; j++)                   //
         prop(1, t) += conj(tmp(t, j)) * tmp(t, j); //
-                                                   // /////////////////////////////////////////////////
+                                                   //
   }
   // // Normalize output and retrun //////////////////
   int volume = U.lattice().size(1) *

@@ -288,8 +288,11 @@ public:
   {
     mdp_complex tmp = 0;
     mdp_site x(p_U.lattice());
-    forallsites(x) for (int mu = 0; mu < p_U.ndim; mu++)
+    forallsites(x)
+    {
+      for (int mu = 0; mu < p_U.ndim; mu++)
         tmp -= 0.5 * trace(p_U(x, mu) * p_U(x, mu));
+    }
     mdp.add(tmp);
     tmp += p_F * p_F; // CHECK THE U.nc
     return tmp.real();
@@ -368,8 +371,11 @@ public:
     mdp_add_scaled_field(F, dt, F_temp);
     F.update();
 
-    forallsites(x) for (int mu = 0; mu < U.ndim; mu++)
+    forallsites(x)
+    {
+      for (int mu = 0; mu < U.ndim; mu++)
         U(x, mu) = exp(dt * p_U(x, mu) + 0.5 * dt * dt * f_U(x, mu)) * U(x, mu);
+    }
     U.update();
 
     compute_force(U, nf_U, F, nf_F);
@@ -384,8 +390,11 @@ public:
     mdp_add_scaled_field(p_F, 1, F_temp);
     p_F.update();
 
-    forallsites(x) for (int mu = 0; mu < U_temp.ndim; mu++)
+    forallsites(x)
+    {
+      for (int mu = 0; mu < U_temp.ndim; mu++)
         U_temp(x, mu) = 0;
+    }
     // U_temp.update();
     mdp_add_scaled_field(U_temp, 0.5 * dt, nf_U);
     // U_temp.update();
@@ -415,8 +424,11 @@ public:
     FermiClass psol(F.lattice(), F.nc, F.nspin);
     GaugeClass &V = *to_V;
 
-    forallsitesandcopies(x) for (int mu = 0; mu < U.ndim; mu++)
+    forallsitesandcopies(x)
+    {
+      for (int mu = 0; mu < U.ndim; mu++)
         Udag(x, mu) = hermitian(U(x, mu));
+    }
 
     forallsites(x)
     {
@@ -450,8 +462,11 @@ public:
       f_F.update();
       mdp_add_scaled_field(f_F, -1, sol);
       f_F.update();
-      forallsites(x) for (int mu = 0; mu < U.ndim; mu++)
+      forallsites(x)
+      {
+        for (int mu = 0; mu < U.ndim; mu++)
           f_U(x, mu) -= utmp(x, mu);
+      }
       f_U.update();
     }
   }

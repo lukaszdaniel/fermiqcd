@@ -136,8 +136,12 @@ mdp_real check_inversion(fermi_field &phi,
   mul_Q(psi, phi, U, coeff);
   psi.update();
   mul_invQ(chi, psi, U, coeff);
-  forallsites(x) for (a = 0; a < phi.nspin; a++) for (i = 0; i < phi.nc; i++)
-      precision += real(pow(phi(x, a, i) - chi(x, a, i), 2));
+  forallsites(x)
+  {
+    for (a = 0; a < phi.nspin; a++)
+      for (i = 0; i < phi.nc; i++)
+        precision += real(pow(phi(x, a, i) - chi(x, a, i), 2));
+  }
   mpi.add(precision);
   precision /= phi.lattice().global_volume() * phi.nc * phi.nspin;
   mdp << "Inversion precision=" << precision << '\n';

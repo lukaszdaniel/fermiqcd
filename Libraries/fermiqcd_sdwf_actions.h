@@ -69,11 +69,17 @@ public:
     for (x5 = 0; x5 < L5; x5++)
     {
       if (two_mass != 0)
-        forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
+        forallsitesofparity(x, parity)
+        {
+          for (i = 0; i < nc; i++)
             chi_out(x, x5, i) = two_mass * chi_in(x, x5, i);
+        }
       else
-        forallsitesofparity(x, parity) for (i = 0; i < nc; i++)
+        forallsitesofparity(x, parity)
+        {
+          for (i = 0; i < nc; i++)
             chi_out(x, x5, i) = 0;
+        }
 
       // version non-optimized for su3
       forallsitesofparity(x, parity)

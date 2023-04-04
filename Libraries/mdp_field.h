@@ -247,14 +247,20 @@ public:
       update();
       if (i == +1)
       {
-        forallsites(x) for (int k = 0; k < field_components; k++)
+        forallsites(x)
+        {
+          for (int k = 0; k < field_components; k++)
             tmp(x, k) = (*this)(x - mu, k); // mind here
+        }
         i--;
       }
       else if (i == -1)
       {
-        forallsites(x) for (int k = 0; k < field_components; k++)
+        forallsites(x)
+        {
+          for (int k = 0; k < field_components; k++)
             tmp(x, k) = (*this)(x + mu, k); // mind here
+        }
         i++;
       }
       (*this) = tmp;

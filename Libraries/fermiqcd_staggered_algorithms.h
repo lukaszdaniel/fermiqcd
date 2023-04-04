@@ -340,8 +340,11 @@ void lepage_improved_links(gauge_field &V,
   {
     mdp << "projecting to SU(n)...\n";
 
-    forallsites(x) for (mu = 0; mu < 4; mu++)
+    forallsites(x)
+    {
+      for (mu = 0; mu < 4; mu++)
         V(x, mu) = project_SU(V(x, mu));
+    }
   }
   V.update();
 

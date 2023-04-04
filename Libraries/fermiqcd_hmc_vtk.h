@@ -400,8 +400,11 @@ public:
     mdp_add_scaled_field(p_F, 1, F_temp);
     p_F.update();
 
-    forallsites(x) for (int mu = 0; mu < U_temp.ndim; mu++)
+    forallsites(x)
+    {
+      for (int mu = 0; mu < U_temp.ndim; mu++)
         U_temp(x, mu) = 0;
+    }
     // U_temp.update();
     mdp_add_scaled_field(U_temp, 0.5 * dt, nf_U);
     // U_temp.update();

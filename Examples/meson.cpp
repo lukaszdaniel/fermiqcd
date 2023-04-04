@@ -11,8 +11,16 @@ void accumulate_c2(mdp_array<mdp_complex, 1> &c2,
   int a, b, c, d, i, j;
   G1 = Gamma5 * G1;
   G2 = hermitian(Gamma5 * G2);
-  forallsites(x) for (a = 0; a < 4; a++) for (b = 0; b < 4; b++) for (c = 0; c < 4; c++) for (d = 0; d < 4; d++) for (i = 0; i < Sl.nc; i++) for (j = 0; j < Sl.nc; j++)
-      c2(x(0)) += real(Sl(x, a, b, i, j) * G1(b, c) * conj(Sh(x, d, c, i, j)) * G2(d, a));
+  forallsites(x)
+  {
+    for (a = 0; a < 4; a++)
+      for (b = 0; b < 4; b++)
+        for (c = 0; c < 4; c++)
+          for (d = 0; d < 4; d++)
+            for (i = 0; i < Sl.nc; i++)
+              for (j = 0; j < Sl.nc; j++)
+                c2(x(0)) += real(Sl(x, a, b, i, j) * G1(b, c) * conj(Sh(x, d, c, i, j)) * G2(d, a));
+  }
   mpi.add(c2.address(), c2.size());
 };
 

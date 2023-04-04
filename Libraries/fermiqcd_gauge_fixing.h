@@ -101,26 +101,23 @@ public:
       W(x, 3) = mdp_complex(a0, -a3);
     }
     W.update();
-    forallsitesofparity(x, parity) for (nu = 0; nu < U.ndim; nu++) for (k = 0; k < U.nc; k++)
+    forallsitesofparity(x, parity)
     {
-      x0 = U(x, nu, i, k);
-      x1 = U(x, nu, j, k);
-      U(x, nu, i, k) = W(x, 0) * x0 + W(x, 1) * x1;
-      U(x, nu, j, k) = W(x, 2) * x0 + W(x, 3) * x1;
+      for (nu = 0; nu < U.ndim; nu++)
+        for (k = 0; k < U.nc; k++)
+        {
+          x0 = U(x, nu, i, k);
+          x1 = U(x, nu, j, k);
+          U(x, nu, i, k) = W(x, 0) * x0 + W(x, 1) * x1;
+          U(x, nu, j, k) = W(x, 2) * x0 + W(x, 3) * x1;
+        }
     }
-    forallsitesofparity(x, opposite_parity) for (nu = 0; nu < U.ndim; nu++)
+    forallsitesofparity(x, opposite_parity)
     {
-      y = x + nu;
-#ifndef TWISTED_BOUNDARY
-      for (k = 0; k < U.nc; k++)
+      for (nu = 0; nu < U.ndim; nu++)
       {
-        x0 = U(x, nu, k, i);
-        x1 = U(x, nu, k, j);
-        U(x, nu, k, i) = conj(W(y, 0)) * x0 + conj(W(y, 1)) * x1;
-        U(x, nu, k, j) = conj(W(y, 2)) * x0 + conj(W(y, 3)) * x1;
-      }
-#else
-      if (in_block(y))
+        y = x + nu;
+#ifndef TWISTED_BOUNDARY
         for (k = 0; k < U.nc; k++)
         {
           x0 = U(x, nu, k, i);
@@ -128,17 +125,27 @@ public:
           U(x, nu, k, i) = conj(W(y, 0)) * x0 + conj(W(y, 1)) * x1;
           U(x, nu, k, j) = conj(W(y, 2)) * x0 + conj(W(y, 3)) * x1;
         }
-      else
-      {
-        A = identity(nc);
-        A(i, i) = W(y, 0);
-        A(i, j) = W(y, 1);
-        A(j, i) = W(y, 2);
-        A(j, j) = W(y, 3);
-        twist_boundary(A, y);
-        U(x, nu) = U(x, nu) * hermitian(A);
-      }
+#else
+        if (in_block(y))
+          for (k = 0; k < U.nc; k++)
+          {
+            x0 = U(x, nu, k, i);
+            x1 = U(x, nu, k, j);
+            U(x, nu, k, i) = conj(W(y, 0)) * x0 + conj(W(y, 1)) * x1;
+            U(x, nu, k, j) = conj(W(y, 2)) * x0 + conj(W(y, 3)) * x1;
+          }
+        else
+        {
+          A = identity(nc);
+          A(i, i) = W(y, 0);
+          A(i, j) = W(y, 1);
+          A(j, i) = W(y, 2);
+          A(j, j) = W(y, 3);
+          twist_boundary(A, y);
+          U(x, nu) = U(x, nu) * hermitian(A);
+        }
 #endif
+      }
     }
     U.update();
   }
@@ -155,7 +162,11 @@ public:
     for (t = 0; t < U.lattice().size(mu) - 1; t++)
     {
       A = mdp_zero(U.nc);
-      forallsites(x) if (x(mu) == t) A += U(x, mu);
+      forallsites(x)
+      {
+        if (x(mu) == t)
+          A += U(x, mu);
+      }
       mpi.add(A);
       alpha[0] = real(trace(A * conj(phase[0])));
       alpha[1] = real(trace(A * conj(phase[1])));
@@ -166,8 +177,13 @@ public:
         i = 1;
       if (alpha[2] > alpha[0] && alpha[2] >= alpha[1])
         i = 2;
-      forallsites(x) if (x(mu) == t) U(x, mu) *= conj(phase[i]);
-      else if (x(mu) == t + 1) U(x, mu) *= phase[i];
+      forallsites(x)
+      {
+        if (x(mu) == t)
+          U(x, mu) *= conj(phase[i]);
+        else if (x(mu) == t + 1)
+          U(x, mu) *= phase[i];
+      }
       U.update();
     }
   }

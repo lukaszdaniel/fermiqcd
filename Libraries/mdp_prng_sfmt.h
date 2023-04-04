@@ -36,13 +36,16 @@ private:
   static const unsigned int SR1 = 11;
   static const unsigned int SR2 = 1;
   unsigned int idx;
+
   struct W128_T
   {
     unsigned int u[4];
   };
+
   typedef struct W128_T w128_t;
   w128_t sfmt[N];
   unsigned int *psfmt32;
+
   void period_certification(void)
   {
     static unsigned int parity[4] = {PARITY1, PARITY2, PARITY3, PARITY4};
@@ -75,6 +78,7 @@ private:
       }
     }
   }
+
   void rshift128(w128_t *out, w128_t const *in, int shift)
   {
     size_t th, tl, oh, ol;
@@ -90,6 +94,7 @@ private:
     out->u[3] = (unsigned int)(oh >> 32);
     out->u[2] = (unsigned int)oh;
   }
+
   void lshift128(w128_t *out, w128_t const *in, int shift)
   {
     size_t th, tl, oh, ol;
@@ -140,6 +145,7 @@ private:
     r->u[2] = a->u[2] ^ x.u[2] ^ ((b->u[2] >> SR1) & MSK3) ^ y.u[2] ^ (d->u[2] << SL1);
     r->u[3] = a->u[3] ^ x.u[3] ^ ((b->u[3] >> SR1) & MSK4) ^ y.u[3] ^ (d->u[3] << SL1);
   }
+
   unsigned int gen_rand32()
   {
     unsigned int r;

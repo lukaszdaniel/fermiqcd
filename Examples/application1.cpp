@@ -14,6 +14,7 @@ int main(int argc, char **argv)
   mdp_site A(vacuum);
   mdp_site B(vacuum);
   float precision, old_u;
+
   forallsitesandcopies(x)
   {
     u(x) = 0;
@@ -24,6 +25,7 @@ int main(int argc, char **argv)
     else
       q(x) = 0;
   }
+
   do
   {
     precision = 0;
@@ -41,6 +43,9 @@ int main(int argc, char **argv)
     u.update();
     mdp.add(precision);
   } while (sqrt(precision) > 0.0001);
+
   u.save("potential.dat");
   mdp.close_wormholes();
+
+  return 0;
 }

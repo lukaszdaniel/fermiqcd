@@ -80,8 +80,11 @@ public:
     for (a = 0; a < (0x1 << ndim); a++)
       for (j = 0; j < nc; j++)
       {
-        forallsitesandcopies(x) for (i = 0; i < nc; i++)
+        forallsitesandcopies(x)
+        {
+          for (i = 0; i < nc; i++)
             psi(x, i) = 0;
+        }
 
         x = binary2versor(a);
         if (ME == 0 && shutup == false)
@@ -104,8 +107,11 @@ public:
           (*smf)(psi, U);
         mul_invQ(chi, psi, U, coeff, absolute_precision, relative_precision, max_steps);
 
-        forallsites(x) for (i = 0; i < nc; i++)
+        forallsites(x)
+        {
+          for (i = 0; i < nc; i++)
             S(x, a, i, j) = chi(x, i);
+        }
       }
     if (ME == 0 && shutup == false)
     {

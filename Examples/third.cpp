@@ -9,8 +9,11 @@ int main(int argc, char **argv)
   gauge_field U(lattice, 3);
   mdp_site x(lattice);
 
-  forallsites(x) for (int mu = 0; mu < 4; mu++)
+  forallsites(x)
+  {
+    for (int mu = 0; mu < 4; mu++)
       U(x, mu) = lattice.random(x).SU(3);
+  }
 
   U.update();
   for (mdp_uint k = 0; k < 1000; k++)
