@@ -31,7 +31,7 @@ void cool_vtk(gauge_field &U, mdp_args &arguments, std::string filename)
                          arguments.get("-cool_vtk", "alpha", 0.7),
                          arguments.get("-cool_vtk", "steps", 1),
                          arguments.get("-cool_vtk", "cooling", 10));
-      topological_charge_vtk(U, filename + ".cool" + std::to_string(k, 2) + ".vtk", 0);
+      topological_charge_vtk(U, filename + ".cool" + std::to_string(k) + ".vtk", 0);
     }
   else
     mdp.error_message("cooling algorithm not supported");
@@ -69,8 +69,8 @@ void polyakov_vtk(gauge_field &U, std::string filename)
   mdp_site x(U.lattice());
   mdp_site y(space);
 
-  int k, mu = 0, nu = 1;
-  mdp_complex s = 0;
+  // int k, mu = 0, nu = 1;
+  // mdp_complex s = 0;
 
   forallsites(y)
       V(y) = 1;
@@ -95,7 +95,7 @@ void pretty_print(std::string prefix, std::vector<mdp_real> data)
 {
   if (ME == 0)
   {
-    for (int t = 0; t < data.size(); t++)
+    for (size_t t = 0; t < data.size(); t++)
     {
       std::cout << prefix << "[" << t << "] = " << data[t] << std::endl;
     }
@@ -192,7 +192,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       if (t0 * t0 + x0 * x0 + y0 * y0 + z0 * z0 > 0)
         prefix = prefix + ".at" + std::to_string(t0) + "." + std::to_string(x0) +
                  "." + std::to_string(y0) + "." + std::to_string(z0);
-      inversion_vtk_prefix = prefix + ".s" + std::to_string(a, 1) + ".c" + std::to_string(i, 1);
+      inversion_vtk_prefix = prefix + ".s" + std::to_string(a) + ".c" + std::to_string(i);
       quarkfilename = inversion_vtk_prefix + ".quark";
       if (arguments.get("-quark", "load", "false|true") == "true")
       {
@@ -209,7 +209,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         forspincolor(b, j, nc)
         {
           forallsites(x) Q(x) = abs(phi(x, b, j));
-          Q.save_vtk(inversion_vtk_prefix + ".quark" + std::to_string(b, 1) + std::to_string(j, 1) + ".vtk", -1);
+          Q.save_vtk(inversion_vtk_prefix + ".quark" + std::to_string(b) + std::to_string(j) + ".vtk", -1);
         }
       }
       if (arguments.have("-pion"))
@@ -389,6 +389,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                 mdp_complex g1 = G1(b, a);
                 mdp_complex g2 = G2(d, c);
                 if (g1 != 0 && g2 != 0)
+                {
                   for (int i = 0; i < U.nc; i++)
                     for (int j = 0; j < U.nc; j++)
                       if (!rotate)
@@ -414,6 +415,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                                           Lambda[z](k2, j)) /
                                      4;
                             }
+                }
               }
         mdp << "C3a[" << t1 << "][" << t2 << "] = " << c3a << "\n";
         mdp << "C3b[" << t1 << "][" << t2 << "] = " << c3b << "\n";
@@ -424,7 +426,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     throw std::string("NotImplemented");
     // WORK IN PROGRESS - only works on cold - no paths
     std::string source_gamma = arguments.get("-wave_static", "source_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I");
-    int smear_steps = arguments.get("-wave_static", "smear_steps", 10);
+    // int smear_steps = arguments.get("-wave_static", "smear_steps", 10);
     G1 = parse_gamma(source_gamma) * (1 + Gamma[0]) / 2;
     Q = 0;
     forallsites(x)
@@ -512,7 +514,7 @@ int main(int argc, char **argv)
                       torus_topology,
                       0, 1, (gauge_start != "load" || nconfigs > 0));
   gauge_field U(lattice, nc);
-  for (int f = 0; f < filenames.size(); f++)
+  for (size_t f = 0; f < filenames.size(); f++)
   {
     filename = filenames[f];
     if (gauge_start == "cold")
