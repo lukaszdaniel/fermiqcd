@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     spin(point) = (point(0) > L[0] / 4 && point(0) <= 3 * L[0] / 4) ? (+1) : (-1);
   }
 
-  while (true)
+  for (int i = 0; i < 100; i++)
   {
     dH = 0;
     for (int parity = 0; parity < 2; parity++)
@@ -34,12 +34,12 @@ int main(int argc, char **argv)
         }
       }
       spin.update();
-      dump(spin);
     }
     mpi.add(dH);
     H = H + dH;
     mdp << "magnetization=" << H << "\n";
   }
+  dump(spin);
   mdp.close_wormholes();
   return 0;
 }
