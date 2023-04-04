@@ -1,3 +1,14 @@
+/////////////////////////////////////////////////////////////////
+/// @file mdp_save_partitioning_vtk.h
+/// @version 2009-12-21
+/// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
+///
+/// Contains a method to save partitioning to a VTK file
+///
+/// Distributed under GPL2 License
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
+//////////////////////////////////////////////////////////////////
 #ifndef MDP_SAVE_PARTITIONING_VTK_
 #define MDP_SAVE_PARTITIONING_VTK_
 

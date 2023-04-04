@@ -1,3 +1,14 @@
+/////////////////////////////////////////////////////////////////
+/// @file fermiqcd_selector.h
+/// @version 2009-12-21
+/// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
+///
+/// Contains a method to set field action and associated field inverter
+///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
+//////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_SELECTOR_
 #define FERMIQCD_SELECTOR_
 

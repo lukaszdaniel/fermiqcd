@@ -1,8 +1,13 @@
 /////////////////////////////////////////////////////////////////
-/// @file fermiqcd_su_generators.h
-/// @version 11-3-2009
+/// @file fermiqcd_so_generators.h
+/// @version 2009-03-11
 /// @author Simon Catterall and Massimo Di Pierro
 ///
+/// Contains an SO generator class
+///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
 //////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_SO_GENERATORS_
 #define FERMIQCD_SO_GENERATORS_

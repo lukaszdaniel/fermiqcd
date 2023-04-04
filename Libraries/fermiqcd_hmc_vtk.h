@@ -1,3 +1,14 @@
+/////////////////////////////////////////////////////////////////
+/// @file fermiqcd_hmc_vtk.h
+/// @version 2009-12-21
+/// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
+///
+/// Contains ... stuff
+///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
+//////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_HMC_VTK_
 #define FERMIQCD_HMC_VTK_
 
@@ -279,8 +290,11 @@ public:
   {
     mdp_complex tmp = 0;
     mdp_site x(p_U.lattice());
-    forallsites(x) for (int mu = 0; mu < p_U.ndim; mu++)
+    forallsites(x)
+    {
+      for (int mu = 0; mu < p_U.ndim; mu++)
         tmp -= 0.5 * trace(p_U(x, mu) * p_U(x, mu));
+    }
     mdp.add(tmp);
     tmp += p_F * p_F; // CHECK THE U.nc
     return tmp.real();
@@ -417,8 +431,11 @@ public:
     FermiClass psol(F.lattice(), F.nc, F.nspin);
     GaugeClass &V = *to_V;
 
-    forallsitesandcopies(x) for (int mu = 0; mu < U.ndim; mu++)
+    forallsitesandcopies(x)
+    {
+      for (int mu = 0; mu < U.ndim; mu++)
         Udag(x, mu) = hermitian(U(x, mu));
+    }
 
     forallsites(x)
     {
@@ -453,8 +470,11 @@ public:
       f_F.update();
       mdp_add_scaled_field(f_F, -1, sol);
       f_F.update();
-      forallsites(x) for (int mu = 0; mu < U.ndim; mu++)
+      forallsites(x)
+      {
+        for (int mu = 0; mu < U.ndim; mu++)
           f_U(x, mu) -= utmp(x, mu);
+      }
       f_U.update();
     }
   }

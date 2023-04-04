@@ -1,3 +1,14 @@
+/////////////////////////////////////////////////////////////////
+/// @file mdp_prng_sfmt.h
+/// @version 2009-12-21
+/// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
+///
+/// Contains ... stuff
+///
+/// Distributed under GPL2 License
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
+//////////////////////////////////////////////////////////////////
 #ifndef MDP_PRNG_SFMT_
 #define MDP_PRNG_SFMT_
 

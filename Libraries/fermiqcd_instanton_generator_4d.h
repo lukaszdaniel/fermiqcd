@@ -1,3 +1,14 @@
+/////////////////////////////////////////////////////////////////
+/// @file fermiqcd_instanton_generator_4d.h
+/// @version 2009-12-21
+/// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
+///
+/// Contains an instanton class
+///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
+//////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_INSTANTON_GENERATOR_4D_
 #define FERMIQCD_INSTANTON_GENERATOR_4D_
 

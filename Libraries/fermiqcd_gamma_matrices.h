@@ -12,6 +12,8 @@
 /// - Lambda[i] = \f$ \lambda^{i} \f$ (generators SU(3))
 ///
 /// Distributed under GPL2 License
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////

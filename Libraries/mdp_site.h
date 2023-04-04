@@ -5,9 +5,9 @@
 ///
 /// Contains delcaration of class mdp_site for complex numbers
 ///
-/// Licensed under GPL2 license
-/// Read attached license in file mdp_license.pdf
-/// This file cannot be distributed without file mdp_license.pdf
+/// Distributed under GPL2 License
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
 //////////////////////////////////////////////////////////////////
 #ifndef MDP_SITE_
 #define MDP_SITE_

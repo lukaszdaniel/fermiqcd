@@ -6,6 +6,8 @@
 /// Fermilab action with all dimension 5 and 6 terms (requires SSE)
 ///
 /// Distributed under GPL2 License
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
 ///
 /// Created with support from the US Department of Energy
 //////////////////////////////////////////////////////////////////

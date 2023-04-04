@@ -5,9 +5,9 @@
 ///
 /// Class mdp_prng (the random number generator of MDP)
 ///
-/// Licensed under GPL2 license
-/// Read attached license in file mdp_license.pdf
-/// This file cannot be distributed without file mdp_license.pdf
+/// Distributed under GPL2 License
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
 //////////////////////////////////////////////////////////////////
 #ifndef MDP_PRNG_
 #define MDP_PRNG_

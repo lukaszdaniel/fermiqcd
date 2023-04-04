@@ -1,8 +1,13 @@
 /////////////////////////////////////////////////////////////////
 /// @file fermiqcd_cg_inverter.h
-/// @version 5-8-2007
+/// @version 2007-05-08
 /// @author Joseph Schneible <>
 ///
+/// Contains conjugate gradient inverter
+///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
 //////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_CG_INVERTER_
 #define FERMIQCD_CG_INVERTER_

@@ -1,3 +1,14 @@
+/////////////////////////////////////////////////////////////////
+/// @file fermiqcd_hmc.h
+/// @version 2009-12-21
+/// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
+///
+/// Contains ... stuff
+///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
+//////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_HMC_
 #define FERMIQCD_HMC_
 

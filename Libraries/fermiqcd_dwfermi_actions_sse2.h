@@ -5,6 +5,9 @@
 ///
 /// Basic actions for Wilson Fermions optimized in assembler
 ///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
 //////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_DWFERMI_ACTIONS_SSE2_
 #define FERMIQCD_DWFERMI_ACTIONS_SSE2_

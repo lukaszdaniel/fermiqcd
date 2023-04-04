@@ -1,3 +1,14 @@
+/////////////////////////////////////////////////////////////////
+/// @file fermiqcd_ildg_gauge_reader.h
+/// @version 2009-12-21
+/// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
+///
+/// Contains a method to read ildg gauge files
+///
+/// Distributed under GPL2 license
+/// Read attached license in file mdp_license.txt
+/// This file cannot be distributed without file mdp_license.txt
+//////////////////////////////////////////////////////////////////
 #ifndef FERMIQCD_ILDG_GAUGE_READER_
 #define FERMIQCD_ILDG_GAUGE_READER_
 
