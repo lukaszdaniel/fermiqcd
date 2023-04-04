@@ -19,7 +19,7 @@
 ///    mdp_array<float,3> a(5,5,5);
 ///    a(0,0,0)=3.15;
 /// @endverbatim
-template <class T, uint nc_>
+template <class T, mdp_uint nc_>
 class mdp_array
 {
 private:
@@ -33,8 +33,8 @@ private:
     IMAX = 5
   };
   T *m; // data
-  uint nc, c[IMAX];
-  uint imax; // total n. of elements
+  mdp_uint nc, c[IMAX];
+  mdp_uint imax; // total n. of elements
 public:
   inline const int ndim() const
   {
@@ -46,12 +46,12 @@ public:
     return m;
   }
 
-  inline uint *size_address()
+  inline mdp_uint *size_address()
   {
     return c;
   }
 
-  inline T &operator[](const uint i)
+  inline T &operator[](const mdp_uint i)
   {
 #ifdef CHECK_ALL
     if (i >= size())
@@ -60,7 +60,7 @@ public:
     return m[i];
   }
 
-  inline const T &operator[](const uint i) const
+  inline const T &operator[](const mdp_uint i) const
   {
 #ifdef CHECK_ALL
     if (i >= size())
@@ -69,17 +69,17 @@ public:
     return m[i];
   }
 
-  inline uint length(const uint i) const
+  inline mdp_uint length(const mdp_uint i) const
   {
     return size(i);
   }
 
-  inline uint length() const
+  inline mdp_uint length() const
   {
     return imax;
   }
 
-  inline uint size(uint i) const
+  inline mdp_uint size(mdp_uint i) const
   {
 #ifdef CHECK_ALL
     if (i >= size())
@@ -88,16 +88,16 @@ public:
     return c[i];
   }
 
-  inline uint size() const
+  inline mdp_uint size() const
   {
     return imax;
   }
 
-  inline void dimension(const uint *p)
+  inline void dimension(const mdp_uint *p)
   {
     if (flag != FREE)
       error("mdp_array::dimension(...)\nCannot redimension a HARD object");
-    uint i;
+    mdp_uint i;
     for (imax = 1, i = 0; i < nc; i++)
       imax *= (c[i] = p[i]);
     for (i = nc; i < IMAX; i++)
@@ -107,7 +107,7 @@ public:
     m = new T[imax];
   }
 
-  inline void dimension(const uint c0_ = 1, const uint c1_ = 1, const uint c2_ = 1, const uint c3_ = 1, const uint c4_ = 1)
+  inline void dimension(const mdp_uint c0_ = 1, const mdp_uint c1_ = 1, const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
   {
     if (m != 0)
       delete[] m;
@@ -124,7 +124,7 @@ public:
     m = new T[imax];
   }
 
-  inline mdp_array(const uint c0_ = 1, const uint c1_ = 1, const uint c2_ = 1, const uint c3_ = 1, const uint c4_ = 1)
+  inline mdp_array(const mdp_uint c0_ = 1, const mdp_uint c1_ = 1, const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
   {
     flag = FREE;
     nc = nc_;
@@ -132,7 +132,7 @@ public:
     dimension(c0_, c1_, c2_, c3_, c4_);
   }
 
-  inline mdp_array(const uint *p)
+  inline mdp_array(const mdp_uint *p)
   {
     flag = FREE;
     nc = nc_;
@@ -141,11 +141,11 @@ public:
   }
 
   inline mdp_array(const T *m0,
-                   const uint c0_ = 1,
-                   const uint c1_ = 1,
-                   const uint c2_ = 1,
-                   const uint c3_ = 1,
-                   const uint c4_ = 1)
+                   const mdp_uint c0_ = 1,
+                   const mdp_uint c1_ = 1,
+                   const mdp_uint c2_ = 1,
+                   const mdp_uint c3_ = 1,
+                   const mdp_uint c4_ = 1)
   {
     flag = HARD;
     nc = nc_;
@@ -154,13 +154,13 @@ public:
   }
 
   inline mdp_array(const T *m0,
-                   const uint *p)
+                   const mdp_uint *p)
   {
     flag = HARD;
     nc = nc_;
     m = m0;
     imax = c[0] = p[0];
-    uint i;
+    mdp_uint i;
     for (i = 1; i < nc; i++)
       imax *= (c[i] = p[i]);
     for (i = nc; i < IMAX; i++)
@@ -170,7 +170,7 @@ public:
   inline mdp_array(const mdp_array &a)
   {
     flag = FREE;
-    uint i;
+    mdp_uint i;
     m = 0;
     nc = nc_;
     if (nc != a.nc)
@@ -192,7 +192,7 @@ public:
 
   inline void operator=(const mdp_array &a)
   {
-    uint i;
+    mdp_uint i;
     nc = a.nc;
     if (nc != a.nc)
       error("mdp_array::operator=(...)\nIncompatible size()");
@@ -212,7 +212,7 @@ public:
   inline friend mdp_array operator+(const mdp_array &a, const mdp_array &b)
   {
     mdp_array tmp(a.c);
-    for (uint i = 0; i < a.imax; i++)
+    for (mdp_uint i = 0; i < a.imax; i++)
       tmp[i] = a[i] + b[i];
     return tmp;
   }
@@ -220,7 +220,7 @@ public:
   inline friend mdp_array operator-(const mdp_array &a, const mdp_array &b)
   {
     mdp_array tmp(a.c);
-    for (uint i = 0; i < a.imax; i++)
+    for (mdp_uint i = 0; i < a.imax; i++)
       tmp[i] = a[i] - b[i];
     return tmp;
   }
@@ -229,7 +229,7 @@ public:
   inline friend mdp_array operator*(T2 x, const mdp_array &a)
   {
     mdp_array tmp(a.c);
-    for (uint i = 0; i < a.imax; i++)
+    for (mdp_uint i = 0; i < a.imax; i++)
       tmp[i] = a[i] * x;
     return tmp;
   }
@@ -239,7 +239,7 @@ public:
                                      T (*fptr)(T, void *), void *x = 0)
   {
     mdp_array tmp(a.c);
-    for (uint i = 0; i < a.imax; i++)
+    for (mdp_uint i = 0; i < a.imax; i++)
       tmp[i] = (*fptr)(a[i], x);
     return tmp;
   }
@@ -249,16 +249,16 @@ public:
                                      T (*fptr)(T, T, void *), void *x = 0)
   {
     mdp_array tmp(a.c);
-    for (uint i = 0; i < a.imax; i++)
+    for (mdp_uint i = 0; i < a.imax; i++)
       tmp[i] = (*fptr)(a[i], b[i], x);
     return tmp;
   }
 
-  inline T &operator()(const uint i0,
-                       const uint i1 = 0,
-                       const uint i2 = 0,
-                       const uint i3 = 0,
-                       const uint i4 = 0)
+  inline T &operator()(const mdp_uint i0,
+                       const mdp_uint i1 = 0,
+                       const mdp_uint i2 = 0,
+                       const mdp_uint i3 = 0,
+                       const mdp_uint i4 = 0)
   {
 #ifdef CHECK_ALL
     if ((i1 != 0 && nc < 2) ||
@@ -280,11 +280,11 @@ public:
     return m[(((i0 * c[1] + i1) * c[2] + i2) * c[3] + i3) * c[4] + i4];
   }
 
-  inline const T &operator()(const uint i0,
-                             const uint i1 = 0,
-                             const uint i2 = 0,
-                             const uint i3 = 0,
-                             const uint i4 = 0) const
+  inline const T &operator()(const mdp_uint i0,
+                             const mdp_uint i1 = 0,
+                             const mdp_uint i2 = 0,
+                             const mdp_uint i3 = 0,
+                             const mdp_uint i4 = 0) const
   {
 #ifdef CHECK_ALL
     if ((i1 != 0 && nc < 2) ||
@@ -308,7 +308,7 @@ public:
 
   friend std::ostream &operator<<(std::ostream &os, const mdp_array &a)
   {
-    uint i;
+    mdp_uint i;
     os << "{";
 
     switch (a.ndim())

@@ -323,7 +323,7 @@ public:
 };
 
 #else
-#include "time.h"
+#include <ctime>
 typedef int mdp_request;
 
 /// @brief DO NOT INSTANTIATE use object mdp instead

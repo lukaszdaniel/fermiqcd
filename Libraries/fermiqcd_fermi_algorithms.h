@@ -48,7 +48,6 @@ void multiply_by_gamma5(fermi_field &r, fermi_field &s)
     return;
   }
 #endif
-  uint i;
   mdp_complex tmp[4];
   mdp_complex c0 = Gamma5_val[0];
   mdp_complex c1 = Gamma5_val[1];
@@ -60,7 +59,7 @@ void multiply_by_gamma5(fermi_field &r, fermi_field &s)
   int i3 = Gamma5_idx[3];
   forallsites(x)
   {
-    for (i = 0; i < 3; i++)
+    for (mdp_uint i = 0; i < 3; i++)
     {
       tmp[i0] = c0 * s(x, 0, i);
       tmp[i1] = c1 * s(x, 1, i);

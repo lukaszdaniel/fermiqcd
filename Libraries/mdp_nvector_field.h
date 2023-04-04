@@ -16,7 +16,7 @@
 class mdp_nvector_field : public mdp_field<mdp_complex>
 {
 public:
-  uint rows, columns, imax, imax2;
+  mdp_uint rows, columns, imax, imax2;
   mdp_nvector_field()
   {
     rows = columns = imax = imax2 = 0;

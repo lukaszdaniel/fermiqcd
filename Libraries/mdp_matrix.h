@@ -33,39 +33,39 @@ private:
     FREE,
     HARD
   } flag;
-  uint irows, icols, imax;
+  mdp_uint irows, icols, imax;
   mdp_complex *m;
 
-  uint &rows();
-  uint &cols();
+  mdp_uint &rows();
+  mdp_uint &cols();
 
 public:
   void allocate();
   void reallocate();
   void deallocate();
-  void dimension(const uint, const uint);
+  void dimension(const mdp_uint, const mdp_uint);
   mdp_matrix();
   mdp_matrix(const mdp_matrix &a);
-  mdp_matrix(const uint r, const uint c);
-  mdp_matrix(mdp_complex *z, const uint r, const uint c);
+  mdp_matrix(const mdp_uint r, const mdp_uint c);
+  mdp_matrix(mdp_complex *z, const mdp_uint r, const mdp_uint c);
   virtual ~mdp_matrix();
 
   const mdp_matrix &operator=(const mdp_matrix &a);
-  mdp_complex &operator[](const uint i);
-  const mdp_complex &operator[](const uint i) const;
+  mdp_complex &operator[](const mdp_uint i);
+  const mdp_complex &operator[](const mdp_uint i) const;
 
-  mdp_complex &operator()(const uint i, const uint j);
-  const mdp_complex &operator()(const uint i, const uint j) const;
-  mdp_matrix operator()(const uint i);
+  mdp_complex &operator()(const mdp_uint i, const mdp_uint j);
+  const mdp_complex &operator()(const mdp_uint i, const mdp_uint j) const;
+  mdp_matrix operator()(const mdp_uint i);
 
   friend void prepare(mdp_matrix &); // does nothing, here for compatibility
 
   mdp_complex *address();
-  const uint rows() const;
-  const uint cols() const;
-  const uint size() const;
-  uint rowmax() const; // compatibility function
-  uint colmax() const; // compatibility function
+  const mdp_uint rows() const;
+  const mdp_uint cols() const;
+  const mdp_uint size() const;
+  mdp_uint rowmax() const; // compatibility function
+  mdp_uint colmax() const; // compatibility function
 
   friend mdp_matrix operator+(const mdp_matrix &a);
   friend mdp_matrix operator-(const mdp_matrix &a);
@@ -114,7 +114,7 @@ public:
   void operator=(mdp_real a);
 
   friend mdp_matrix inv(const mdp_matrix &a);
-  friend mdp_matrix pow(const mdp_matrix &a, uint b);
+  friend mdp_matrix pow(const mdp_matrix &a, mdp_uint b);
   friend mdp_matrix exp(const mdp_matrix &a);
   friend mdp_matrix log(const mdp_matrix &a);
   friend mdp_matrix sin(const mdp_matrix &a);
@@ -124,7 +124,7 @@ public:
   friend mdp_matrix mdp_zero();
 
   friend mdp_real max(const mdp_matrix &a);
-  friend mdp_matrix submatrix(const mdp_matrix &a, uint i, uint j);
+  friend mdp_matrix submatrix(const mdp_matrix &a, mdp_uint i, mdp_uint j);
   friend mdp_complex det(const mdp_matrix &a);
   friend mdp_complex trace(const mdp_matrix &a);
   friend mdp_matrix hermitian(const mdp_matrix &a);
@@ -134,7 +134,7 @@ public:
 
 std::ostream &operator<<(std::ostream &os, const mdp_matrix &a)
 {
-  uint i, j; // AW - unsigned added
+  mdp_uint i, j; // AW - unsigned added
   for (i = 0; i < a.rows(); i++)
   {
     if (i == 0)
@@ -160,7 +160,7 @@ void print(const mdp_matrix &a)
   std::cout << a;
 }
 
-void mdp_matrix::dimension(const uint a, const uint b)
+void mdp_matrix::dimension(const mdp_uint a, const mdp_uint b)
 {
   flag = FREE;
   rows() = a;
@@ -185,11 +185,11 @@ mdp_matrix::mdp_matrix(const mdp_matrix &a)
   cols() = a.cols();
   imax = a.imax;
   allocate();
-  for (uint i = 0; i < imax; i++)
+  for (mdp_uint i = 0; i < imax; i++)
     m[i] = a[i];
 }
 
-mdp_matrix::mdp_matrix(const uint a, const uint b)
+mdp_matrix::mdp_matrix(const mdp_uint a, const mdp_uint b)
 {
   flag = FREE;
   rows() = a;
@@ -198,7 +198,7 @@ mdp_matrix::mdp_matrix(const uint a, const uint b)
   allocate();
 }
 
-mdp_matrix::mdp_matrix(mdp_complex *z, const uint a, const uint b)
+mdp_matrix::mdp_matrix(mdp_complex *z, const mdp_uint a, const mdp_uint b)
 {
   flag = HARD;
   rows() = a;
@@ -257,7 +257,7 @@ inline void mdp_matrix::reallocate()
 
 inline const mdp_matrix &mdp_matrix::operator=(const mdp_matrix &x)
 {
-  uint i = 0;
+  mdp_uint i = 0;
   if (rows() != x.rows() || cols() != x.cols())
   {
     rows() = x.rows();
@@ -270,27 +270,27 @@ inline const mdp_matrix &mdp_matrix::operator=(const mdp_matrix &x)
   return *this;
 }
 
-inline mdp_complex &mdp_matrix::operator[](uint i)
+inline mdp_complex &mdp_matrix::operator[](mdp_uint i)
 {
   return m[i];
 }
 
-inline const mdp_complex &mdp_matrix::operator[](uint i) const
+inline const mdp_complex &mdp_matrix::operator[](mdp_uint i) const
 {
   return m[i];
 }
 
-inline mdp_complex &mdp_matrix::operator()(uint i, uint j)
+inline mdp_complex &mdp_matrix::operator()(mdp_uint i, mdp_uint j)
 {
   return m[i * cols() + j];
 }
 
-inline const mdp_complex &mdp_matrix::operator()(uint i, uint j) const
+inline const mdp_complex &mdp_matrix::operator()(mdp_uint i, mdp_uint j) const
 {
   return m[i * cols() + j];
 }
 
-inline mdp_matrix mdp_matrix::operator()(const uint i)
+inline mdp_matrix mdp_matrix::operator()(const mdp_uint i)
 {
   return mdp_matrix(m + i * cols(), cols(), 1);
 }
@@ -304,37 +304,37 @@ inline mdp_complex *mdp_matrix::address()
   return m;
 }
 
-inline uint &mdp_matrix::rows()
+inline mdp_uint &mdp_matrix::rows()
 {
   return irows;
 }
 
-inline uint &mdp_matrix::cols()
+inline mdp_uint &mdp_matrix::cols()
 {
   return icols;
 }
 
-inline const uint mdp_matrix::rows() const
+inline const mdp_uint mdp_matrix::rows() const
 {
   return irows;
 }
 
-inline const uint mdp_matrix::cols() const
+inline const mdp_uint mdp_matrix::cols() const
 {
   return icols;
 }
 
-inline const uint mdp_matrix::size() const
+inline const mdp_uint mdp_matrix::size() const
 {
   return imax;
 }
 
-inline uint mdp_matrix::rowmax() const
+inline mdp_uint mdp_matrix::rowmax() const
 {
   return irows;
 }
 
-inline uint mdp_matrix::colmax() const
+inline mdp_uint mdp_matrix::colmax() const
 {
   return icols;
 }
@@ -347,7 +347,7 @@ inline mdp_matrix operator+(const mdp_matrix &a)
 inline mdp_matrix operator-(const mdp_matrix &a)
 {
   mdp_matrix tmp(a.rows(), a.cols());
-  uint i, j;
+  mdp_uint i, j;
   for (i = 0; i < a.rows(); i++)
     for (j = 0; j < a.cols(); j++)
       tmp(i, j) = -a(i, j);
@@ -362,7 +362,7 @@ inline mdp_matrix operator+(const mdp_matrix &x,
   if (x.rows() != y.rows() || x.cols() != y.cols())
     error("mdp_matrix::operator+()\nWrong argument size");
 #endif
-  for (uint i = 0; i < z.imax; i++)
+  for (mdp_uint i = 0; i < z.imax; i++)
     z[i] = x[i] + y[i];
   return z;
 }
@@ -372,14 +372,14 @@ inline mdp_matrix operator-(const mdp_matrix &x, const mdp_matrix &y)
   if (x.rows() != y.rows() || x.cols() != y.cols())
     error("mdp_matrix::operator-()\nwrong argument size");
   mdp_matrix z(x.rows(), x.cols());
-  for (uint i = 0; i < z.imax; i++)
+  for (mdp_uint i = 0; i < z.imax; i++)
     z[i] = x[i] - y[i];
   return z;
 }
 
 inline mdp_matrix operator*(const mdp_matrix &x, const mdp_matrix &y)
 {
-  uint i, j, k;
+  mdp_uint i, j, k;
   if (x.cols() != y.rows())
     error("mdp_matrix::operator*()\nwrong argument size");
   mdp_matrix z(x.rows(), y.cols());
@@ -431,7 +431,7 @@ inline mdp_matrix operator+(const mdp_matrix &a, mdp_complex b)
   if (a.cols() != a.rows())
     error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
   mdp_matrix tmp;
-  uint i;
+  mdp_uint i;
   tmp = a;
   for (i = 0; i < a.cols(); i++)
     tmp(i, i) += b;
@@ -443,7 +443,7 @@ inline mdp_matrix operator-(const mdp_matrix &a, mdp_complex b)
   if (a.cols() != a.rows())
     error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
   mdp_matrix tmp;
-  uint i;
+  mdp_uint i;
   tmp = a;
   for (i = 0; i < a.cols(); i++)
     tmp(i, i) -= b;
@@ -452,7 +452,7 @@ inline mdp_matrix operator-(const mdp_matrix &a, mdp_complex b)
 
 inline mdp_matrix operator*(const mdp_matrix &y, mdp_complex x)
 {
-  uint i;
+  mdp_uint i;
   mdp_matrix z(y.rows(), y.cols());
 #ifdef MATRIX_SSE2
   if (y.rows() == 3)
@@ -510,7 +510,7 @@ inline mdp_matrix operator-(mdp_complex b, const mdp_matrix &a)
   if (a.cols() != a.rows())
     error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
   mdp_matrix tmp(a.rows(), a.cols());
-  uint i, j;
+  mdp_uint i, j;
   for (i = 0; i < a.rows(); i++)
   {
     for (j = 0; j < a.cols(); j++)
@@ -535,7 +535,7 @@ inline mdp_matrix operator+(const mdp_matrix &a, mdp_real b)
   if (a.cols() != a.rows())
     error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
   mdp_matrix tmp;
-  uint i;
+  mdp_uint i;
   tmp = a;
   for (i = 0; i < a.cols(); i++)
     tmp(i, i) += b;
@@ -547,7 +547,7 @@ inline mdp_matrix operator-(const mdp_matrix &a, mdp_real b)
   if (a.cols() != a.rows())
     error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
   mdp_matrix tmp;
-  uint i;
+  mdp_uint i;
   tmp = a;
   for (i = 0; i < a.cols(); i++)
     tmp(i, i) -= b;
@@ -556,7 +556,7 @@ inline mdp_matrix operator-(const mdp_matrix &a, mdp_real b)
 
 inline mdp_matrix operator*(const mdp_matrix &y, mdp_real x)
 {
-  uint i;
+  mdp_uint i;
   mdp_matrix z(y.rows(), y.cols());
 #ifdef MATRIX_SSE2
   if (y.rows() == 3)
@@ -612,7 +612,7 @@ inline mdp_matrix operator-(mdp_real b, const mdp_matrix &a)
   if (a.cols() != a.rows())
     error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
   mdp_matrix tmp(a.rows(), a.cols());
-  uint i, j;
+  mdp_uint i, j;
   for (i = 0; i < a.rows(); i++)
   {
     for (j = 0; j < a.cols(); j++)
@@ -627,20 +627,20 @@ inline mdp_matrix operator*(mdp_real a, const mdp_matrix &b)
   return b * a;
 }
 
-inline mdp_matrix mdp_identity(uint i)
+inline mdp_matrix mdp_identity(mdp_uint i)
 {
   mdp_matrix tmp(i, i);
-  uint r, c;
+  mdp_uint r, c;
   for (r = 0; r < i; r++)
     for (c = 0; c < i; c++)
       tmp(r, c) = (r == c) ? mdp_complex(1, 0) : mdp_complex(0, 0);
   return tmp;
 }
 
-inline mdp_matrix mdp_zero(uint i)
+inline mdp_matrix mdp_zero(mdp_uint i)
 {
   mdp_matrix tmp(i, i);
-  uint r, c;
+  mdp_uint r, c;
   for (r = 0; r < i; r++)
     for (c = 0; c < i; c++)
       tmp(r, c) = (mdp_complex)0;
@@ -649,7 +649,7 @@ inline mdp_matrix mdp_zero(uint i)
 
 inline mdp_real max(const mdp_matrix &a)
 {
-  uint i;
+  mdp_uint i;
   double x = 0, y = 0;
   for (i = 0; i < a.imax; i++)
     if ((y = abs(a[i])) > x)
@@ -657,7 +657,7 @@ inline mdp_real max(const mdp_matrix &a)
   return x;
 }
 
-inline mdp_matrix submatrix(const mdp_matrix &a, uint i, uint j)
+inline mdp_matrix submatrix(const mdp_matrix &a, mdp_uint i, mdp_uint j)
 {
 #ifdef CHECK_ALL
   if (((a.rows() < 2) || (a.cols() < 2)) ||
@@ -665,7 +665,7 @@ inline mdp_matrix submatrix(const mdp_matrix &a, uint i, uint j)
     error("submatrix(...)\nWrong dimensions in submatrix");
 #endif
   mdp_matrix tmp(a.rows() - 1, a.cols() - 1);
-  uint r, c;
+  mdp_uint r, c;
   for (r = 0; r < i; r++)
     for (c = 0; c < j; c++)
       tmp(r, c) = a(r, c);
@@ -691,7 +691,7 @@ inline mdp_complex det(const mdp_matrix &a)
     return 0;
   if (a.rows() == 1)
     return a(0, 0);
-  uint i, j, k, l;
+  mdp_uint i, j, k, l;
   mdp_matrix A;
   A = a;
   mdp_complex tmp, pivot, x = mdp_complex(1, 0);
@@ -731,7 +731,7 @@ inline mdp_matrix inv(const mdp_matrix &a)
 #endif
   mdp_matrix tma, tmp;
   mdp_complex x, pivot;
-  uint r, c, i, rmax;
+  mdp_uint r, c, i, rmax;
   tma = a;
   tmp = mdp_identity(a.rows());
   for (c = 0; c < a.cols(); c++)
@@ -775,7 +775,7 @@ inline mdp_matrix pow(const mdp_matrix &a, int i)
 #endif
   mdp_matrix tmp;
   tmp = mdp_identity(a.cols());
-  uint j = (i < 0) ? -i : i;
+  mdp_uint j = (i < 0) ? -i : i;
   for (; j > 0; j--)
     tmp = tmp * a;
   if (i < 0)
@@ -791,7 +791,7 @@ inline mdp_matrix exp(const mdp_matrix &a)
 #endif
   mdp_matrix tmp;
   mdp_matrix term;
-  uint i = 1;
+  mdp_uint i = 1;
   term = a;
   tmp = mdp_identity(a.rows());
   tmp += a;
@@ -877,7 +877,7 @@ inline mdp_matrix mdp_matrix::operator/=(mdp_real a)
 
 inline void mdp_matrix::operator=(mdp_complex a)
 {
-  uint i, j;
+  mdp_uint i, j;
   for (i = 0; i < rows(); i++)
     for (j = 0; j < cols(); j++)
       (*this)(i, j) = (i == j) ? a : 0;
@@ -885,7 +885,7 @@ inline void mdp_matrix::operator=(mdp_complex a)
 
 inline void mdp_matrix::operator=(mdp_real a)
 {
-  uint i, j;
+  mdp_uint i, j;
   for (i = 0; i < rows(); i++)
     for (j = 0; j < cols(); j++)
       (*this)(i, j) = (i == j) ? mdp_complex(a, 0) : 0;
@@ -898,7 +898,7 @@ mdp_matrix log(const mdp_matrix &a)
     error("log(...)\nmdp_matrix is not squared");
 #endif
   mdp_matrix tmp, b, c, t1;
-  uint i = 1, j = 1;
+  mdp_uint i = 1, j = 1;
   b = mdp_identity(a.cols());
   b = a - b;
   c = b;
@@ -919,7 +919,7 @@ mdp_matrix sin(const mdp_matrix &a)
     error("sin(...)\nmdp_matrix is not squared");
 #endif
   mdp_matrix tmp, t1;
-  uint i = 1;
+  mdp_uint i = 1;
   t1 = a;
   tmp = t1;
   // pruintf("\n");
@@ -939,7 +939,7 @@ mdp_matrix cos(const mdp_matrix &a)
     error("cos(...)\nmdp_matrix is not squared");
 #endif
   mdp_matrix tmp, t1;
-  uint i = 0;
+  mdp_uint i = 0;
   t1 = mdp_identity(a.rows());
   tmp = t1;
   do
@@ -957,7 +957,7 @@ inline mdp_complex trace(const mdp_matrix &a)
   if (a.rows() != a.cols())
     error("trace(...)\nmdp_matrix is not squared");
 #endif
-  uint c;
+  mdp_uint c;
   mdp_complex x;
   for (c = 0; c < a.cols(); c++)
     x += a(c, c);
@@ -967,7 +967,7 @@ inline mdp_complex trace(const mdp_matrix &a)
 inline mdp_matrix transpose(const mdp_matrix &a)
 {
   mdp_matrix tmp(a.cols(), a.rows());
-  uint r, c;
+  mdp_uint r, c;
   for (r = 0; r < a.rows(); r++)
     for (c = 0; c < a.cols(); c++)
       tmp(c, r) = a(r, c);
@@ -986,7 +986,7 @@ inline mdp_matrix hermitian(const mdp_matrix &a)
     return tmp;
   }
 #endif
-  uint r, c;
+  mdp_uint r, c;
   for (r = 0; r < a.rows(); r++)
     for (c = 0; c < a.cols(); c++)
       tmp(c, r) = conj(a(r, c));
@@ -996,7 +996,7 @@ inline mdp_matrix hermitian(const mdp_matrix &a)
 inline mdp_matrix conj(const mdp_matrix &a)
 {
   mdp_matrix tmp(a.rows(), a.cols());
-  uint r, c;
+  mdp_uint r, c;
   for (r = 0; r < a.rows(); r++)
     for (c = 0; c < a.cols(); c++)
       tmp(r, c) = conj(a(r, c));

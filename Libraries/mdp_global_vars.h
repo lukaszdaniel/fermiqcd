@@ -12,8 +12,6 @@
 #ifndef MDP_GLOBAL_VARS_
 #define MDP_GLOBAL_VARS_
 
-typedef unsigned int uint;
-
 const int EVEN = 0;
 const int ODD = 1;
 const int EVENODD = 2;

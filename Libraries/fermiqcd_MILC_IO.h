@@ -31,7 +31,7 @@ bool milc_read_as_float_noswitch(FILE *fp,
   {
     return false;
   }
-  for (uint i = 0; i < psize / sizeof(double); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(double); i++)
   {
     p[i] = q[i];
   }
@@ -44,7 +44,7 @@ bool milc_read_as_float_noswitch(FILE *fp,
   {
     return false;
   }
-  for (uint i = 0; i < psize / sizeof(float); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(float); i++)
   {
     p[i] = q[i];
   }
@@ -70,7 +70,7 @@ bool milc_read_as_float_switch(FILE *fp,
   if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
       fread(q, psize / 2, 1, fp) != 1)
     return false;
-  for (uint i = 0; i < psize / sizeof(double); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(double); i++)
   {
     switch_endianess_byte4(q[i]);
     p[i] = q[i];
@@ -85,7 +85,7 @@ bool milc_read_as_float_switch(FILE *fp,
   {
     return false;
   }
-  for (uint i = 0; i < psize / sizeof(float); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(float); i++)
   {
     switch_endianess_byte4(q[i]);
     p[i] = q[i];

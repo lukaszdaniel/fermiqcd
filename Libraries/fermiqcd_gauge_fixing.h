@@ -16,9 +16,9 @@
 class gaugefixing_stats
 {
 public:
-  uint max_steps;
+  mdp_uint max_steps;
   mdp_real target_precision;
-  uint steps;
+  mdp_uint steps;
   mdp_real precision;
   mdp_real action;
 };

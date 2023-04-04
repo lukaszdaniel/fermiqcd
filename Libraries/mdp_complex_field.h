@@ -21,7 +21,7 @@ bool mdp_write_double_as_float(FILE *fp,
 {
   double *p = (double *)data;
   float *q = (float *)malloc(psize / 2);
-  for (uint i = 0; i < psize / sizeof(double); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(double); i++)
     q[i] = p[i];
   if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
       fwrite(q, psize / 2, 1, fp) != 1)
@@ -42,7 +42,7 @@ bool mdp_read_double_as_float(FILE *fp,
   if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
       fread(q, psize / 2, 1, fp) != 1)
     return false;
-  for (uint i = 0; i < psize / sizeof(double); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(double); i++)
     p[i] = q[i];
   free(q);
   return true;
@@ -57,7 +57,7 @@ bool mdp_write_float_as_double(FILE *fp,
 {
   float *p = (float *)data;
   double *q = (double *)malloc(psize * 2);
-  for (uint i = 0; i < psize / sizeof(float); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(float); i++)
     q[i] = p[i];
   if (fseek(fp, position * psize * 2 + header_size, SEEK_SET) ||
       fwrite(q, psize * 2, 1, fp) != 1)
@@ -78,7 +78,7 @@ bool mdp_read_float_as_double(FILE *fp,
   if (fseek(fp, position * psize * 2 + header_size, SEEK_SET) ||
       fread(q, psize * 2, 1, fp) != 1)
     return false;
-  for (uint i = 0; i < psize / sizeof(float); i++)
+  for (mdp_uint i = 0; i < psize / sizeof(float); i++)
     p[i] = q[i];
   free(q);
   return true;

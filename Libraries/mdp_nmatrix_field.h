@@ -27,7 +27,7 @@
 class mdp_nmatrix_field : public mdp_field<mdp_complex>
 {
 public:
-  uint rows, columns, matrices, imax, imax2;
+  mdp_uint rows, columns, matrices, imax, imax2;
   mdp_nmatrix_field()
   {
     rows = columns = matrices = imax = imax2 = 0;

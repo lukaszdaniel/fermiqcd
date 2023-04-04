@@ -11,7 +11,7 @@ void test_gauge()
   coeff["beta"] = 6.0;
   set_cold(U);
   set_hot(U);
-  for (uint i = 0; i < 10; i++)
+  for (mdp_uint i = 0; i < 10; i++)
   {
     WilsonGaugeAction::heatbath(U, coeff);
     mpi << "plaquette = " << average_plaquette(U) << '\n';
@@ -29,7 +29,7 @@ void test_gauge_improved()
   coefficients coeff;
   coeff["beta"] = 6.0;
   set_hot(U);
-  for (uint i = 0; i < 10; i++)
+  for (mdp_uint i = 0; i < 10; i++)
   {
     ImprovedGaugeAction::heatbath(U, coeff, 1, "MILC");
     mpi << "plaquette = " << average_plaquette(U) << '\n';
