@@ -1,6 +1,7 @@
+#include <iomanip>
+#include <cmath>
+#include <cstdlib>
 #include "fermiqcd.h"
-#include <math.h>
-#include <stdlib.h>
 
 class parameters
 {
@@ -109,14 +110,14 @@ int main(int argc, char **argv)
 #endif
 
   set_hot(U);
-  std::cout << "average_plaquette = " << average_plaquette(U) << std::endl;
+  std::cout << "average_plaquette = " << std::fixed << std::setprecision(8) << average_plaquette(U) << std::endl;
   set_random(psi);
 
   HMC<gauge_field, fermi_field> hmc(U, psi, coeff);
-  for (int i = 0; i < 100; i++)
+  for (int i = 0; i < 10; i++)
   {
     hmc.step();
-    mdp << "acceptance=" << (float)hmc.acceptance_rate() << "\n";
+    mdp << "acceptance=" << hmc.acceptance_rate() << "\n";
   }
 
   mdp.close_wormholes();

@@ -13,7 +13,6 @@ int main()
    mdp_matrix A, B;
    A = Random.SU(3);
    B = cube(A) * exp(A) + inv(A);
-   std::cout << A << '\n';
-   std::cout << B << '\n';
+   std::cout << det(B) << "\n";
    return 0;
 }

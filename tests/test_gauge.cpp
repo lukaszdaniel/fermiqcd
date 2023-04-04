@@ -1,5 +1,3 @@
-// #define BLOCKSITE 4
-// #define TWISTED_BOUNDARY
 #include "fermiqcd.h"
 
 void test_gauge()
@@ -10,7 +8,7 @@ void test_gauge()
   set_hot(U);
   std::cout << average_plaquette(U, 0, 1) << std::endl;
   int path[][2] = {{+1, 0}, {+1, 1}, {-1, 0}, {-1, 1}};
-  std::cout << average_path(U, 4, path) << std::endl;
+  std::cout << real(average_path(U, 4, path)) << std::endl;
 }
 
 int main(int argc, char **argv)

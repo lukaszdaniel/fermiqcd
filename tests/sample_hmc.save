@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=24720
+PSIM LOG: process 0 of 1 created with pid=20554
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -23,317 +23,47 @@ Lattice created.
 <set_hot>
 Creating a hot gauge configuration
 </set_hot>
-average_plaquette = 0.000744797
+average_plaquette = 0.00074480
 4
-h_new 18282.1
-DH: 1.83237e-08
-acceptance=1
-h_new 18293.9
-DH: 2.03688e-08
-acceptance=1
-h_new 18126.3
-DH: 3.56417e-08
-acceptance=1
-h_new 18082.3
-DH: 1.20691e-08
-acceptance=1
-h_new 17845.7
-DH: 3.431e-08
-acceptance=1
-h_new 17990.1
-DH: 2.36887e-08
-acceptance=1
-h_new 18020.9
-DH: 2.39553e-09
-acceptance=1
-h_new 17923.1
-DH: 1.7328e-08
-acceptance=1
-h_new 18102.1
-DH: 1.56677e-08
-acceptance=1
-h_new 18071.7
-DH: 3.21446e-09
-acceptance=1
-h_new 18209.5
-DH: 2.04149e-08
-acceptance=1
-h_new 18338.9
-DH: 1.42667e-08
-acceptance=1
-h_new 17846.2
-DH: 5.09094e-09
-acceptance=1
-h_new 18101.9
-DH: 4.74253e-09
-acceptance=1
-h_new 17966.9
-DH: 9.2407e-09
-acceptance=1
-h_new 18039.4
-DH: 1.29048e-08
-acceptance=1
-h_new 18107.1
-DH: 2.29194e-08
-acceptance=1
-h_new 18086.3
-DH: 5.55667e-09
-acceptance=1
-h_new 18360.8
-DH: 4.81322e-09
-acceptance=1
-h_new 18325.7
-DH: 1.67875e-08
-acceptance=1
-h_new 18100.2
-DH: 3.4055e-09
-acceptance=1
-h_new 18187.2
-DH: 2.46985e-09
-acceptance=1
-h_new 18042
-DH: 1.65684e-08
-acceptance=1
-h_new 17885.6
-DH: 4.05006e-09
-acceptance=1
-h_new 18353
-DH: 5.32031e-08
-acceptance=1
-h_new 18078.9
-DH: 2.01528e-08
-acceptance=1
-h_new 18078.9
-DH: 5.70629e-09
-acceptance=1
-h_new 18058.2
-DH: 2.9603e-08
-acceptance=1
-h_new 18467.6
-DH: 1.89187e-08
-acceptance=1
-h_new 18247.3
-DH: 2.3585e-10
-acceptance=1
-h_new 17957.3
-DH: 2.19733e-08
-acceptance=1
-h_new 18250.3
-DH: 5.91333e-09
-acceptance=1
-h_new 18075
-DH: 1.71355e-08
-acceptance=1
-h_new 18060.4
-DH: 2.21049e-08
-acceptance=1
-h_new 18249.9
-DH: 3.99459e-09
-acceptance=1
-h_new 18268
-DH: 7.14111e-09
-acceptance=1
-h_new 17996.3
-DH: 1.42513e-08
-acceptance=1
-h_new 18058.7
-DH: 9.66875e-09
-acceptance=1
-h_new 18158.1
-DH: 2.57521e-08
-acceptance=1
-h_new 17844.7
-DH: 2.32236e-10
-acceptance=1
-h_new 18066.9
-DH: 7.34554e-09
-acceptance=1
-h_new 18168.1
-DH: 2.05085e-08
-acceptance=1
-h_new 18023.8
-DH: 1.38987e-08
-acceptance=1
-h_new 18022.2
-DH: 3.78639e-09
-acceptance=1
-h_new 17920.2
-DH: 1.7202e-09
-acceptance=1
-h_new 17882.3
-DH: 3.23753e-08
-acceptance=1
-h_new 18110.7
-DH: 1.51403e-08
-acceptance=1
-h_new 18093.4
-DH: 1.29187e-09
-acceptance=1
-h_new 18269.3
-DH: 7.14255e-09
-acceptance=1
-h_new 17992.9
-DH: 3.03475e-09
-acceptance=1
-h_new 18255
-DH: 2.65586e-08
-acceptance=1
-h_new 18208.8
-DH: 6.27274e-09
-acceptance=1
-h_new 17976.5
-DH: 2.41289e-08
-acceptance=1
-h_new 18229.2
-DH: 3.28393e-08
-acceptance=1
-h_new 18062.1
-DH: 3.89535e-08
-acceptance=1
-h_new 18037.6
-DH: 2.90682e-10
-acceptance=1
-h_new 18031.7
-DH: 3.62816e-08
-acceptance=1
-h_new 17997.2
-DH: 1.46526e-08
-acceptance=1
-h_new 18023.8
-DH: 9.5861e-10
-acceptance=1
-h_new 18098.7
-DH: 2.59318e-08
-acceptance=1
-h_new 17946.7
-DH: 1.97194e-08
-acceptance=1
-h_new 17989.4
-DH: 1.97894e-08
-acceptance=1
-h_new 17953.6
-DH: 3.88322e-09
-acceptance=1
-h_new 18059.1
-DH: 3.31305e-09
-acceptance=1
-h_new 18154.9
-DH: 1.50534e-08
-acceptance=1
-h_new 18276.4
-DH: 3.24883e-09
-acceptance=1
-h_new 18309.2
-DH: 3.63148e-09
-acceptance=1
-h_new 18062.9
-DH: 1.71908e-08
-acceptance=1
-h_new 18169.3
-DH: 2.36925e-08
-acceptance=1
-h_new 18268.4
-DH: 9.20791e-09
-acceptance=1
-h_new 18240.3
-DH: 6.86104e-09
-acceptance=1
-h_new 18140.2
-DH: 1.63343e-08
-acceptance=1
-h_new 17921.8
-DH: 2.28853e-08
-acceptance=1
-h_new 17722.7
-DH: 1.77737e-08
-acceptance=1
-h_new 18297.9
-DH: 5.01805e-09
-acceptance=1
-h_new 17935.2
-DH: 2.3042e-08
-acceptance=1
-h_new 17986.9
-DH: 6.47176e-09
-acceptance=1
-h_new 18049.6
-DH: 3.4572e-09
-acceptance=1
-h_new 18128.5
-DH: 1.67527e-08
-acceptance=1
-h_new 17907.5
-DH: 3.52821e-09
-acceptance=1
-h_new 18219.4
-DH: 2.37368e-08
-acceptance=1
-h_new 17987.1
-DH: 3.67202e-08
-acceptance=1
-h_new 17897.1
-DH: 2.32902e-08
-acceptance=1
-h_new 18134.3
-DH: 1.104e-08
-acceptance=1
-h_new 18164
-DH: 1.25757e-08
-acceptance=1
-h_new 18080.7
-DH: 3.81202e-08
-acceptance=1
-h_new 17766.4
-DH: 2.40904e-08
-acceptance=1
-h_new 18048.1
-DH: 1.29668e-08
-acceptance=1
-h_new 18121.2
-DH: 1.79904e-08
-acceptance=1
-h_new 18019.1
-DH: 2.35601e-08
-acceptance=1
-h_new 18260.1
-DH: 4.71705e-09
-acceptance=1
-h_new 18219.4
-DH: 5.19587e-09
-acceptance=1
-h_new 18133.8
-DH: 1.19435e-08
-acceptance=1
-h_new 17975.1
-DH: 1.47228e-08
-acceptance=1
-h_new 17979.7
-DH: 1.31674e-09
-acceptance=1
-h_new 18058
-DH: 1.76423e-08
-acceptance=1
-h_new 18000.7
-DH: 8.56334e-10
-acceptance=1
-h_new 18121.2
-DH: 3.79398e-09
-acceptance=1
-h_new 17911.3
-DH: 5.8277e-10
-acceptance=1
-h_new 17972.4
-DH: 2.9238e-09
-acceptance=1
+h_new 18282.14402848
+DH: 0.00000002
+acceptance=1.00000000
+h_new 18293.88080231
+DH: 0.00000002
+acceptance=1.00000000
+h_new 18126.25311583
+DH: 0.00000004
+acceptance=1.00000000
+h_new 18082.25331982
+DH: 0.00000001
+acceptance=1.00000000
+h_new 17845.65714904
+DH: 0.00000003
+acceptance=1.00000000
+h_new 17990.10805886
+DH: 0.00000002
+acceptance=1.00000000
+h_new 18020.92924226
+DH: 0.00000000
+acceptance=1.00000000
+h_new 17923.12955051
+DH: 0.00000002
+acceptance=1.00000000
+h_new 18102.06699691
+DH: 0.00000002
+acceptance=1.00000000
+h_new 18071.71875011
+DH: 0.00000000
+acceptance=1.00000000
 <close_wormholes>
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=12.71% PROCESS=13.53% COMM=0.00%
+* Process 0 stats: CPU=13.89% PROCESS=15.28% COMM=0.00%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 1.68534 sec.
+PROCESS 0 ENDING AFTER 0.27018500 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating

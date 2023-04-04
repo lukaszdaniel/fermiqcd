@@ -19,7 +19,7 @@ int main(int argc, char **argv)
   {
     F(x) = 1.0 / 7.0 * (F(x) + F(x + 0) + F(x - 0) + F(x + 1) + F(x - 1) + F(x + 2) + F(x - 2));
     std::cout << "F(x) for x=(" << x(0) << "," << x(1) << ")\n";
-    std::cout << F(x) << "\n";
+    std::cout << "F(x, 0, 0) = " << F(x, 0, 0) << " and det(F(x)) = " << det(F(x)) << "\n";
   }
   mdp.close_wormholes();
   return 0;
