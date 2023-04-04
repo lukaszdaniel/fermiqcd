@@ -2,6 +2,10 @@
 #include "../mdp_all.h"
 #include "../dump.h"
 
+#define X 0
+#define Y 1
+#define Z 2
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);

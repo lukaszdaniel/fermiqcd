@@ -1,10 +1,6 @@
 #ifndef DUMP_
 #define DUMP_
 
-#define X 0
-#define Y 1
-#define Z 2
-
 void dump(mdp_field<float> &s,
           int site_idx = 0,
           std::string filename = "default.vtk",
@@ -46,6 +42,7 @@ void dump(mdp_field<float> &s,
       for (int i = 0; i < LX + 1; i++)
       {
         p.set(i % LX, j % LY, k % LZ);
+
         fval = (float)s(p, site_idx);
         if (bASCII)
         {

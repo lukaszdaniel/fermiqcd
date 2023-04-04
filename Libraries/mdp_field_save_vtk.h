@@ -57,8 +57,8 @@ bool mdp_field<T>::save_vtk(std::string filename,
     for (process = 0; process < Nproc; process++)
       buffer_ptr[process] = 0;
     std::cout << "Saving file " << filename
-         << " from process " << processIO
-         << " (buffer = " << max_buffer_size << " sites)" << '\n';
+              << " from process " << processIO
+              << " (buffer = " << max_buffer_size << " sites)" << '\n';
     fflush(stdout);
     FILE *fp = 0;
 
@@ -143,7 +143,7 @@ bool mdp_field<T>::save_vtk(std::string filename,
               }
               else
               {
-                snprintf(tmp, 1024, "%e ", fval);
+                snprintf(tmp, 1024, "%e\n", fval);
                 if (fwrite(tmp, strlen(tmp), 1, fp) != 1)
                   error("probably out of disk space");
               }
@@ -209,13 +209,21 @@ mdp_field<float> &cumulate_field(mdp_field<float> &field, std::string filename)
   if (counter.find(filename) == counter.end())
   {
     fields[filename] = new mdp_field<float>(field.lattice(), field.size_per_site());
-    forallsites(p) for (int i = 0; i < field.size_per_site(); i++) (*fields[filename])(p, i) = field(p, i);
+    forallsites(p)
+    {
+      for (int i = 0; i < field.size_per_site(); i++)
+        (*fields[filename])(p, i) = field(p, i);
+    }
     counter[filename] = 1;
   }
   else
   {
     k = counter[filename];
-    forallsites(p) for (int i = 0; i < field.size_per_site(); i++) (*fields[filename])(p, i) = (k * (*fields[filename])(p, i) + field(p, i)) / (k + 1);
+    forallsites(p)
+    {
+      for (int i = 0; i < field.size_per_site(); i++)
+        (*fields[filename])(p, i) = (k * (*fields[filename])(p, i) + field(p, i)) / (k + 1);
+    }
     counter[filename]++;
   }
   return (*fields[filename]);
