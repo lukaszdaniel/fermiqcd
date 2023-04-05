@@ -1,6 +1,8 @@
 // Program: example12.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mpi.open_wormholes(argc, argv);
@@ -9,8 +11,7 @@ int main(int argc, char **argv)
   mdp_site x(mylattice);
   forallsites(x)
   {
-    std::cout << "Site=(" << x(0) << "," << x(1)
-         << ") is stored by " << ME << "\n";
+    std::cout << "Site=(" << x(0) << "," << x(1) << ") is stored by " << ME << "\n";
   }
   mpi.close_wormholes();
 }

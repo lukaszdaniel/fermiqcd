@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 void test_gauge()
 {
   int box[] = {4, 4, 4, 4}, nc = 3;

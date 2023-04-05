@@ -13,7 +13,9 @@ int main(int argc, char **argv)
   mdp_site x(mylattice);
 
   forallsites(x)
-      F(x) = inv(exp(mylattice.random(x).SU(5)));
+  {
+    F(x) = inv(exp(mylattice.random(x).SU(5)));
+  }
   F.update();
   forallsites(x)
   {

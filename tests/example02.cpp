@@ -1,6 +1,8 @@
 // Program: example02.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 int main()
 {
    mdp_matrix a(2, 2);

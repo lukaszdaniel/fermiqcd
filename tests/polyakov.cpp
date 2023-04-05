@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 void polyakov(int nt, int nx, std::string filename)
 {
   int L[] = {nt, nx, nx, nx};

@@ -65,7 +65,7 @@ namespace MDP
       e1 = imag(a[1]) + imag(a[2]);
       e2 = real(a[1]) - real(a[2]);
       e3 = imag(a[0]) - imag(a[3]);
-      dk = sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
+      dk = std::sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
       p0 = (dk * beta_eff);
       u0 = mdp_complex(e0 / dk, -e3 / dk);
       u1 = mdp_complex(-e2 / dk, -e1 / dk);
@@ -92,8 +92,8 @@ namespace MDP
       } while (r4 * r4 > (1.0 - 0.5 * delta));
       a0 = 1.0 - delta;
       cos_theta = 2.0 * random.plain() - 1.0;
-      sin_theta = sqrt(1.0 - cos_theta * cos_theta);
-      sin_alpha = sqrt(1 - a0 * a0);
+      sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
+      sin_alpha = std::sqrt(1 - a0 * a0);
       phi = 2.0 * Pi * random.plain();
       a1 = sin_alpha * sin_theta * std::cos(phi);
       a2 = sin_alpha * sin_theta * std::sin(phi);
@@ -124,7 +124,6 @@ namespace MDP
         }
     }
     */
-
     static gauge_stats heatbath(gauge_field &U,
                                 coefficients &coeff,
                                 int n_iter = 1)
@@ -133,7 +132,7 @@ namespace MDP
       if (U.nc == 1)
         error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
       gauge_stats stats;
-      mdp_real beta, zeta;
+      mdp_real beta = 0.0, zeta = 0.0;
       if (coeff.has_key("beta"))
         beta = coeff["beta"];
       else
@@ -263,7 +262,7 @@ namespace MDP
       return tmp;
     }
 
-    // if min_nu==0 then rectangles_ij computes all 6 rectanges
+    // if min_nu==0 then rectangles_ij computes all 6 rectangles
 
     static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
     {
@@ -310,7 +309,7 @@ namespace MDP
     }
 
     // //////////////////////////////////////////////////////
-    // this is slow but should make the chair correcly ...
+    // this is slow but should make the chair correctly ...
     // see: hep-lat/0712010
     // //////////////////////////////////////////////////////
 
@@ -391,7 +390,7 @@ namespace MDP
       begin_function("ImprovedGaugeAction__heatbath");
 
       gauge_stats stats;
-      mdp_real beta, zeta, u_s, u_t;
+      mdp_real beta = 1.0, zeta, u_s, u_t;
 
       if (coeff.has_key("beta"))
         beta = coeff["beta"];
@@ -455,9 +454,7 @@ namespace MDP
         alpha_s = -4.0 * std::log(u_s) / 3.0684;
         c_p = 1.0;
         c_r = -0.05 * std::pow((double)u_s, (double)-2.0) * (1.0 + 0.4805 * alpha_s);
-        ;
         c_c = -1.00 * std::pow((double)u_s, (double)-2.0) * (0.03325 * alpha_s);
-        ;
       }
       else
       {

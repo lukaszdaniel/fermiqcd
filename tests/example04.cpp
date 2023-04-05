@@ -1,6 +1,8 @@
 // Program: example04.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 mdp_array<mdp_matrix, 3> initialize()
 {
   mdp_array<mdp_matrix, 3> d(20, 20, 20);

@@ -16,7 +16,7 @@
 
 namespace MDP
 {
-  /// @brief the chromo-electr-magnetic field for any SU(n)
+  /// @brief the chromo-electro-magnetic field for any SU(n)
   ///
   /// Example:
   /// @verbatim

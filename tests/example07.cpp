@@ -1,6 +1,8 @@
 // Program: example07.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 const int n = 100;
 
 float f1(float *x, void *a) { return x[0] / x[1]; }
@@ -22,9 +24,11 @@ int main()
    std::cout << "Result x[0]/x[1] = " << jb.mean() << "\n";
    std::cout << "Jackknife error  = " << jb.j_err() << "\n";
    std::cout << "Bootstrap error  = " << jb.b_err(100) << "\n";
+
    jb.f = f2;
    std::cout << "Result x[0]*x[1] = " << jb.mean() << "\n";
    std::cout << "Jackknife error  = " << jb.j_err() << "\n";
    std::cout << "Bootstrap error  = " << jb.b_err(100) << "\n";
+
    return 0;
 }

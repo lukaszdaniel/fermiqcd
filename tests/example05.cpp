@@ -1,6 +1,8 @@
 // Program: example05.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 int main()
 {
    mdp_prng random;

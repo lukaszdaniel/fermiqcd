@@ -8,11 +8,13 @@ class scalar_field : public mdp_field<float>
 {
 public:
   int ndim, nc;
+
   scalar_field(mdp_lattice &a)
   {
     allocate_field(a, 1);
     ndim = a.ndim;
   }
+
   float &operator()(mdp_site x)
   {
     return *(address(x));
@@ -25,15 +27,18 @@ class ising_field : public mdp_field<int>
 public:
   int ndim, nc;
   float beta, kappa, magnetic_field;
+
   ising_field(mdp_lattice &a)
   {
     allocate_field(a, 1);
     ndim = a.ndim;
   }
+
   int &operator()(mdp_site x)
   {
     return *(address(x));
   }
+
   friend void set_cold(ising_field &S)
   {
     mdp_site x(S.lattice());

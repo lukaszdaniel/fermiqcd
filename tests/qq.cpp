@@ -1,5 +1,7 @@
 #include "fermiqcd.h" // include FermiQCD libraries
 
+using namespace MDP;
+
 // computes average 2x4 loop looping over all space directions
 
 int main(int argc, char **argv)

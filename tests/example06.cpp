@@ -1,6 +1,8 @@
 // Program: example06.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 float Q(float x, void *a)
 {
    return sin(Pi * x);

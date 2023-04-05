@@ -3,6 +3,8 @@
 #include <cstdlib>
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 class parameters
 {
 public:

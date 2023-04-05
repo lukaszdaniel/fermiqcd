@@ -1,6 +1,8 @@
 // Program: example03.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 mdp_matrix cube(mdp_matrix X)
 {
    mdp_matrix Y;
