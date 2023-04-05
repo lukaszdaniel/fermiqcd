@@ -62,6 +62,7 @@ CXXFLAGS := -g -DUSE_DOUBLE_PRECISION -O3 -std=c++17 $(CXXFLAGS_INC)
 #
 ## ==================- NOTHING TO CHANGE BELOW THIS LINE ===================
 ##
+SUBDIRS := ising meson meson_wave qqbar2 run1 run2 run3 run4 staggered_quark wilson_quark #$(wildcard */.)
 SRCS := $(wildcard *.cpp)
 PRGS := $(patsubst %.cpp,%,$(SRCS))
 PRG_SUFFIX=.exe
@@ -69,7 +70,12 @@ BINS := $(patsubst %,%$(PRG_SUFFIX),$(PRGS))
 ## OBJS are automagically compiled by make.
 OBJS := $(patsubst %,%.o,$(PRGS))
 ##
-all : $(BINS)
+all : $(BINS) $(SUBDIRS) 
+
+.PHONY: $(SUBDIRS)
+
+$(SUBDIRS):
+	$(MAKE) -C $@
 ##
 ## For clarity sake we make use of:
 .SECONDEXPANSION:
