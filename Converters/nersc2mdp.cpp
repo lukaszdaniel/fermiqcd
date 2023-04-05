@@ -84,15 +84,18 @@ public:
   Complex *m;
   long size;
   int dim[7];
+
   short_field()
   {
     m = 0;
-  };
+  }
+
   ~short_field()
   {
     if (m != 0)
       delete[] m;
-  };
+  }
+
   void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1, int d = 1)
   {
     size = x1 * x2 * x3 * a * b * c * d;
@@ -106,7 +109,8 @@ public:
     if (m != 0)
       delete[] m;
     m = new Complex[size];
-  };
+  }
+
   Complex &operator()(int x1, int x2, int x3,
                       int a = 0, int b = 0, int c = 0, int d = 0)
   {
@@ -117,7 +121,7 @@ public:
               c) *
                  dim[6] +
              d];
-  };
+  }
 };
 
 // read a single time slice of a gauge field
@@ -366,10 +370,11 @@ public:
   int box_size[10];
   long bytes_per_site;
   long sites;
+
   _generic_field_file_header()
   {
     strcpy(file_id, "File Type: MDP FIELD\n");
-  };
+  }
 };
 
 // this does not seem to be used
@@ -392,7 +397,7 @@ int main(int argc, char **argv)
     printf("nersc2mdp -skip -gauge 16x8x8x8FN input_prefix output\n");
     printf("F=float, D=double, Y=swap, N=no swap\n\n");
     exit(0);
-  };
+  }
 
   int skip_bytes, rows;
   if (strcmp(argv[1], "-skip") != 0)
@@ -445,8 +450,8 @@ int main(int argc, char **argv)
       read_t_gauge(U, file, precision, swap, rows);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
       fwrite(U.m, sizeof(Complex), U.size, MDP_fp);
-    };
-  };
+    }
+  }
   /*
   if (strcmp(argv[1], "-fermi") == 0)
   {
@@ -456,8 +461,8 @@ int main(int argc, char **argv)
       read_t_prop(U, argv[3], PRECISION, SWAP, x0);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
       fwrite(U.m, sizeof(Complex), U.size, MDP_fp);
-    };
-  };
+    }
+  }
   */
 
   fclose(MDP_fp);
@@ -471,4 +476,4 @@ int main(int argc, char **argv)
   printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
 
   return 0; // success
-};
+}

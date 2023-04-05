@@ -16,16 +16,17 @@ struct _generic_field_file_header
   int box_size[10];
   long bytes_per_site;
   long sites;
+
   _generic_field_file_header()
   {
     strcpy(file_id, "File Type: MDP FIELD\n");
-  };
+  }
 };
 
 int number(char *x)
 {
   return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-};
+}
 
 void error(const char s[])
 {
@@ -49,7 +50,7 @@ int main(int argc, char **argv)
     printf("duncan2mdp -gauge 16x08x08x08 input output\n\n");
     printf("duncan2mdp -quark 16x08x08x08 input output\n\n");
     exit(0);
-  };
+  }
 
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
 
@@ -59,7 +60,6 @@ int main(int argc, char **argv)
 
   if (strcmp(argv[1], "-gauge") == 0)
   {
-
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
     printf("opening the Tony Duncan file: %s (read)\n", argv[3]);
     FILE *TONY_fp = fopen(argv[3], "r");
@@ -100,12 +100,12 @@ int main(int argc, char **argv)
                   }
                   // printf("%e %e\n", buffer[6*j+2*i], buffer[6*j+2*i+1]);
                   buffer[6 * j + 2 * i + 1] *= -1;
-                };
+                }
               // this map to the MDP ordering
               position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + ((mu + 1) % Ndim);
               fseek(MDP_fp, 144 * position + offset, SEEK_SET);
               fwrite(buffer, 144, 1, MDP_fp);
-            };
+            }
     fclose(TONY_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
@@ -113,7 +113,6 @@ int main(int argc, char **argv)
   }
   else if (strcmp(argv[1], "-quark") == 0)
   {
-
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
     printf("opening the Tony Duncan file: %s (read)\n", argv[3]);
     FILE *TONY_fp = fopen(argv[3], "r");
@@ -154,7 +153,7 @@ int main(int argc, char **argv)
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
             fseek(MDP_fp, 96 * position + offset, SEEK_SET);
             fwrite(buffer, 96, 1, MDP_fp);
-          };
+          }
 
     fclose(TONY_fp);
     fclose(MDP_fp);
@@ -163,7 +162,6 @@ int main(int argc, char **argv)
   }
   else if (strcmp(argv[1], "-gauge:d") == 0)
   {
-
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
     printf("opening the Tony Duncan file: %s (read)\n", argv[3]);
     FILE *TONY_fp = fopen(argv[3], "r");
@@ -203,12 +201,12 @@ int main(int argc, char **argv)
                     error("Error while reading from file");
                   }
                   buffer[6 * j + 2 * i + 1] *= -1;
-                };
+                }
               // this map to the MDP ordering
               position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + ((mu + 1) % Ndim);
               fseek(MDP_fp, 144 * position + offset, SEEK_SET);
               fwrite(buffer, 144, 1, MDP_fp);
-            };
+            }
     fclose(TONY_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
@@ -216,7 +214,6 @@ int main(int argc, char **argv)
   }
   else if (strcmp(argv[1], "-quark:d") == 0)
   {
-
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
     printf("opening the Tony Duncan file: %s (read)\n", argv[3]);
     FILE *TONY_fp = fopen(argv[3], "r");
@@ -258,11 +255,11 @@ int main(int argc, char **argv)
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
             fseek(MDP_fp, 192 * position + offset, SEEK_SET);
             fwrite(buffer, 192, 1, MDP_fp);
-          };
+          }
 
     fclose(TONY_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
     printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
-  };
-};
+  }
+}
