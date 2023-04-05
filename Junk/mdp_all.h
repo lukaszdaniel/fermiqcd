@@ -1,5 +1,5 @@
 #ifndef MDP_ALL_
-#define MDP_APP_
+#define MDP_ALL_
 
 // BEGIN FILE: mdp_all.h
 // C headers

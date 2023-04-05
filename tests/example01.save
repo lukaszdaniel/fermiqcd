@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=19319
+PSIM LOG: process 0 of 1 created with pid=7841
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -19,142 +19,142 @@ Using a local random generator
 Lattice created.
 </allocate_lattice>
 F(x) for x=(0,0)
-F(x, 0, 0) = 0.851911+0.269593I and det(F(x)) = 0.88224+0.577863I
+real(F(x, 0, 0)) = 0.851911 and real(det(F(x))) = 0.88224
 F(x) for x=(2,0)
-F(x, 0, 0) = 1.03089+0.204441I and det(F(x)) = 0.58762+0.175486I
+real(F(x, 0, 0)) = 1.03089 and real(det(F(x))) = 0.58762
 F(x) for x=(1,1)
-F(x, 0, 0) = 0.973875+0.130974I and det(F(x)) = 0.527572+0.512283I
+real(F(x, 0, 0)) = 0.973875 and real(det(F(x))) = 0.527572
 F(x) for x=(3,1)
-F(x, 0, 0) = 1.08095+0.125239I and det(F(x)) = 0.930889+0.0198955I
+real(F(x, 0, 0)) = 1.08095 and real(det(F(x))) = 0.930889
 F(x) for x=(0,2)
-F(x, 0, 0) = 1.13131-0.0203778I and det(F(x)) = 1.48563+0.231891I
+real(F(x, 0, 0)) = 1.13131 and real(det(F(x))) = 1.48563
 F(x) for x=(2,2)
-F(x, 0, 0) = 1.03136+0.22811I and det(F(x)) = 0.761388-0.0990323I
+real(F(x, 0, 0)) = 1.03136 and real(det(F(x))) = 0.761388
 F(x) for x=(1,3)
-F(x, 0, 0) = 0.909077+0.091842I and det(F(x)) = 1.0741+0.239564I
+real(F(x, 0, 0)) = 0.909077 and real(det(F(x))) = 1.0741
 F(x) for x=(3,3)
-F(x, 0, 0) = 1.05711+0.338268I and det(F(x)) = 0.830695+0.274795I
+real(F(x, 0, 0)) = 1.05711 and real(det(F(x))) = 0.830695
 F(x) for x=(1,0)
-F(x, 0, 0) = 0.932031-0.0855728I and det(F(x)) = 0.859907+0.131225I
+real(F(x, 0, 0)) = 0.932031 and real(det(F(x))) = 0.859907
 F(x) for x=(3,0)
-F(x, 0, 0) = 0.876365+0.341677I and det(F(x)) = 0.457479+0.394864I
+real(F(x, 0, 0)) = 0.876365 and real(det(F(x))) = 0.457479
 F(x) for x=(0,1)
-F(x, 0, 0) = 1.06831+0.0260049I and det(F(x)) = 1.55777+0.545139I
+real(F(x, 0, 0)) = 1.06831 and real(det(F(x))) = 1.55777
 F(x) for x=(2,1)
-F(x, 0, 0) = 1.00192-0.0295202I and det(F(x)) = 0.722922-0.102461I
+real(F(x, 0, 0)) = 1.00192 and real(det(F(x))) = 0.722922
 F(x) for x=(1,2)
-F(x, 0, 0) = 0.919223-0.0476885I and det(F(x)) = 1.26144-0.093519I
+real(F(x, 0, 0)) = 0.919223 and real(det(F(x))) = 1.26144
 F(x) for x=(3,2)
-F(x, 0, 0) = 1.07006+0.150615I and det(F(x)) = 1.0601+0.483355I
+real(F(x, 0, 0)) = 1.07006 and real(det(F(x))) = 1.0601
 F(x) for x=(0,3)
-F(x, 0, 0) = 0.92103-0.0295357I and det(F(x)) = 1.04271-0.0559633I
+real(F(x, 0, 0)) = 0.92103 and real(det(F(x))) = 1.04271
 F(x) for x=(2,3)
-F(x, 0, 0) = 0.967954+0.135884I and det(F(x)) = 0.651057+0.139257I
+real(F(x, 0, 0)) = 0.967954 and real(det(F(x))) = 0.651057
 F(x) for x=(0,0)
-F(x, 0, 0) = 0.938716+0.244745I and det(F(x)) = 1.2553+0.31037I
+real(F(x, 0, 0)) = 0.938716 and real(det(F(x))) = 1.2553
 F(x) for x=(2,0)
-F(x, 0, 0) = 0.895303+0.0193833I and det(F(x)) = 0.557057+0.467223I
+real(F(x, 0, 0)) = 0.895303 and real(det(F(x))) = 0.557057
 F(x) for x=(1,1)
-F(x, 0, 0) = 0.891615-0.18275I and det(F(x)) = 0.741835-0.239207I
+real(F(x, 0, 0)) = 0.891615 and real(det(F(x))) = 0.741835
 F(x) for x=(3,1)
-F(x, 0, 0) = 1.02625-0.0254663I and det(F(x)) = 1.06552+0.306522I
+real(F(x, 0, 0)) = 1.02625 and real(det(F(x))) = 1.06552
 F(x) for x=(0,2)
-F(x, 0, 0) = 1.07667-0.0465083I and det(F(x)) = 1.69534-0.0156716I
+real(F(x, 0, 0)) = 1.07667 and real(det(F(x))) = 1.69534
 F(x) for x=(2,2)
-F(x, 0, 0) = 0.905587-0.0994732I and det(F(x)) = 0.901669+0.117223I
+real(F(x, 0, 0)) = 0.905587 and real(det(F(x))) = 0.901669
 F(x) for x=(1,3)
-F(x, 0, 0) = 0.952776-0.0549097I and det(F(x)) = 1.11598+0.412702I
+real(F(x, 0, 0)) = 0.952776 and real(det(F(x))) = 1.11598
 F(x) for x=(3,3)
-F(x, 0, 0) = 0.992808+0.201831I and det(F(x)) = 0.59801+0.468641I
+real(F(x, 0, 0)) = 0.992808 and real(det(F(x))) = 0.59801
 F(x) for x=(1,0)
-F(x, 0, 0) = 0.997216+0.00594107I and det(F(x)) = 0.688554+0.58925I
+real(F(x, 0, 0)) = 0.997216 and real(det(F(x))) = 0.688554
 F(x) for x=(3,0)
-F(x, 0, 0) = 0.948501+0.187437I and det(F(x)) = 0.819021+0.462187I
+real(F(x, 0, 0)) = 0.948501 and real(det(F(x))) = 0.819021
 F(x) for x=(0,1)
-F(x, 0, 0) = 0.999461-0.0294669I and det(F(x)) = 1.33661+0.02706I
+real(F(x, 0, 0)) = 0.999461 and real(det(F(x))) = 1.33661
 F(x) for x=(2,1)
-F(x, 0, 0) = 0.955352-0.0442926I and det(F(x)) = 0.574302-0.0515511I
+real(F(x, 0, 0)) = 0.955352 and real(det(F(x))) = 0.574302
 F(x) for x=(1,2)
-F(x, 0, 0) = 0.914578-0.163903I and det(F(x)) = 0.906054+0.0360763I
+real(F(x, 0, 0)) = 0.914578 and real(det(F(x))) = 0.906054
 F(x) for x=(3,2)
-F(x, 0, 0) = 1.12367-0.0252159I and det(F(x)) = 1.20269+0.277097I
+real(F(x, 0, 0)) = 1.12367 and real(det(F(x))) = 1.20269
 F(x) for x=(0,3)
-F(x, 0, 0) = 1.0492+0.149511I and det(F(x)) = 1.25252+0.483331I
+real(F(x, 0, 0)) = 1.0492 and real(det(F(x))) = 1.25252
 F(x) for x=(2,3)
-F(x, 0, 0) = 1.09289+0.0816788I and det(F(x)) = 0.890341+0.829429I
+real(F(x, 0, 0)) = 1.09289 and real(det(F(x))) = 0.890341
 F(x) for x=(1,0)
-F(x, 0, 0) = 1.00791+0.129607I and det(F(x)) = 0.748314+0.499737I
+real(F(x, 0, 0)) = 1.00791 and real(det(F(x))) = 0.748314
 F(x) for x=(3,0)
-F(x, 0, 0) = 0.90844+0.268889I and det(F(x)) = 0.720857+0.370386I
+real(F(x, 0, 0)) = 0.90844 and real(det(F(x))) = 0.720857
 F(x) for x=(0,1)
-F(x, 0, 0) = 1.07745+0.0755181I and det(F(x)) = 1.01989+0.486215I
+real(F(x, 0, 0)) = 1.07745 and real(det(F(x))) = 1.01989
 F(x) for x=(2,1)
-F(x, 0, 0) = 1.04198+0.178264I and det(F(x)) = 0.600691+0.0241907I
+real(F(x, 0, 0)) = 1.04198 and real(det(F(x))) = 0.600691
 F(x) for x=(1,2)
-F(x, 0, 0) = 0.916872+0.0478431I and det(F(x)) = 0.963315+0.157994I
+real(F(x, 0, 0)) = 0.916872 and real(det(F(x))) = 0.963315
 F(x) for x=(3,2)
-F(x, 0, 0) = 1.13198+0.219017I and det(F(x)) = 0.997302+0.287154I
+real(F(x, 0, 0)) = 1.13198 and real(det(F(x))) = 0.997302
 F(x) for x=(0,3)
-F(x, 0, 0) = 0.908053+0.114729I and det(F(x)) = 1.14809+0.21713I
+real(F(x, 0, 0)) = 0.908053 and real(det(F(x))) = 1.14809
 F(x) for x=(2,3)
-F(x, 0, 0) = 1.03439+0.237715I and det(F(x)) = 0.789403+0.107941I
+real(F(x, 0, 0)) = 1.03439 and real(det(F(x))) = 0.789403
 F(x) for x=(0,0)
-F(x, 0, 0) = 0.903866+0.10639I and det(F(x)) = 0.946939+0.167855I
+real(F(x, 0, 0)) = 0.903866 and real(det(F(x))) = 0.946939
 F(x) for x=(2,0)
-F(x, 0, 0) = 0.883945+0.049533I and det(F(x)) = 0.584816+0.181816I
+real(F(x, 0, 0)) = 0.883945 and real(det(F(x))) = 0.584816
 F(x) for x=(1,1)
-F(x, 0, 0) = 0.952693-0.0398416I and det(F(x)) = 0.933764+0.0300211I
+real(F(x, 0, 0)) = 0.952693 and real(det(F(x))) = 0.933764
 F(x) for x=(3,1)
-F(x, 0, 0) = 1.02359+0.114637I and det(F(x)) = 0.986293+0.351644I
+real(F(x, 0, 0)) = 1.02359 and real(det(F(x))) = 0.986293
 F(x) for x=(0,2)
-F(x, 0, 0) = 1.04122+0.0409701I and det(F(x)) = 1.41774+0.263913I
+real(F(x, 0, 0)) = 1.04122 and real(det(F(x))) = 1.41774
 F(x) for x=(2,2)
-F(x, 0, 0) = 0.975708+0.0456613I and det(F(x)) = 0.958273+0.121872I
+real(F(x, 0, 0)) = 0.975708 and real(det(F(x))) = 0.958273
 F(x) for x=(1,3)
-F(x, 0, 0) = 0.948222-0.0472444I and det(F(x)) = 0.964539+0.143141I
+real(F(x, 0, 0)) = 0.948222 and real(det(F(x))) = 0.964539
 F(x) for x=(3,3)
-F(x, 0, 0) = 0.987348+0.228841I and det(F(x)) = 0.748543+0.222396I
+real(F(x, 0, 0)) = 0.987348 and real(det(F(x))) = 0.748543
 F(x) for x=(1,0)
-F(x, 0, 0) = 0.947308-0.0285685I and det(F(x)) = 0.861466+0.287406I
+real(F(x, 0, 0)) = 0.947308 and real(det(F(x))) = 0.861466
 F(x) for x=(3,0)
-F(x, 0, 0) = 0.965641+0.209685I and det(F(x)) = 0.632701+0.511295I
+real(F(x, 0, 0)) = 0.965641 and real(det(F(x))) = 0.632701
 F(x) for x=(0,1)
-F(x, 0, 0) = 1.02434-0.0257818I and det(F(x)) = 1.65043+0.144971I
+real(F(x, 0, 0)) = 1.02434 and real(det(F(x))) = 1.65043
 F(x) for x=(2,1)
-F(x, 0, 0) = 0.957194-0.0453568I and det(F(x)) = 0.723558-0.00937788I
+real(F(x, 0, 0)) = 0.957194 and real(det(F(x))) = 0.723558
 F(x) for x=(1,2)
-F(x, 0, 0) = 0.946793-0.107827I and det(F(x)) = 1.1135-0.142271I
+real(F(x, 0, 0)) = 0.946793 and real(det(F(x))) = 1.1135
 F(x) for x=(3,2)
-F(x, 0, 0) = 1.02543-0.0691797I and det(F(x)) = 0.926733+0.202375I
+real(F(x, 0, 0)) = 1.02543 and real(det(F(x))) = 0.926733
 F(x) for x=(0,3)
-F(x, 0, 0) = 0.944039+0.106558I and det(F(x)) = 1.08708+0.294425I
+real(F(x, 0, 0)) = 0.944039 and real(det(F(x))) = 1.08708
 F(x) for x=(2,3)
-F(x, 0, 0) = 0.921323+0.10245I and det(F(x)) = 0.728172+0.598897I
+real(F(x, 0, 0)) = 0.921323 and real(det(F(x))) = 0.728172
 F(x) for x=(0,0)
-F(x, 0, 0) = 0.935805+0.244807I and det(F(x)) = 1.0953+0.470466I
+real(F(x, 0, 0)) = 0.935805 and real(det(F(x))) = 1.0953
 F(x) for x=(2,0)
-F(x, 0, 0) = 1.03102+0.0336497I and det(F(x)) = 0.728792+0.442233I
+real(F(x, 0, 0)) = 1.03102 and real(det(F(x))) = 0.728792
 F(x) for x=(1,1)
-F(x, 0, 0) = 0.911713-0.0992509I and det(F(x)) = 0.661762+0.12155I
+real(F(x, 0, 0)) = 0.911713 and real(det(F(x))) = 0.661762
 F(x) for x=(3,1)
-F(x, 0, 0) = 0.980962+0.0207678I and det(F(x)) = 1.01311-0.0805999I
+real(F(x, 0, 0)) = 0.980962 and real(det(F(x))) = 1.01311
 F(x) for x=(0,2)
-F(x, 0, 0) = 1.15739-0.0600729I and det(F(x)) = 1.52136+0.176214I
+real(F(x, 0, 0)) = 1.15739 and real(det(F(x))) = 1.52136
 F(x) for x=(2,2)
-F(x, 0, 0) = 0.957732-0.0339409I and det(F(x)) = 0.823181+0.171328I
+real(F(x, 0, 0)) = 0.957732 and real(det(F(x))) = 0.823181
 F(x) for x=(1,3)
-F(x, 0, 0) = 0.995853-0.0227284I and det(F(x)) = 1.00386+0.578262I
+real(F(x, 0, 0)) = 0.995853 and real(det(F(x))) = 1.00386
 F(x) for x=(3,3)
-F(x, 0, 0) = 1.11977+0.149853I and det(F(x)) = 0.990126+0.600452I
+real(F(x, 0, 0)) = 1.11977 and real(det(F(x))) = 0.990126
 <close_wormholes>
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=25.00% PROCESS=25.00% COMM=0.07%
+* Process 0 stats: CPU=0.00% PROCESS=0.00% COMM=0.00%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 0.004165 sec.
+PROCESS 0 ENDING AFTER 0.004016 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating

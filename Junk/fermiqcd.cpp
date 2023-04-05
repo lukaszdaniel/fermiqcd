@@ -543,9 +543,9 @@ int main(int argc, char **argv)
       float r1 = arguments.get("-gauge", "r1", 0.0);
       InstantonGenerator4D generator;
       std::vector<SingleInstanton4D> instantons;
-      instantons.push_back(SingleInstanton4D(t0, x0, y0, z0, abs(r0), (r0 > 0) ? +1 : -1));
+      instantons.push_back(SingleInstanton4D(t0, x0, y0, z0, std::abs(r0), (r0 > 0) ? +1 : -1));
       if (r1 != 0)
-        instantons.push_back(SingleInstanton4D(t1, x1, y1, z1, abs(r1), (r1 > 0) ? +1 : -1));
+        instantons.push_back(SingleInstanton4D(t1, x1, y1, z1, std::abs(r1), (r1 > 0) ? +1 : -1));
       generator.generate(U, instantons);
     }
     else if (gauge_start == "load")
