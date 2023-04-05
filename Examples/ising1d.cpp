@@ -1,5 +1,7 @@
 #include "mdp.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
@@ -9,7 +11,11 @@ int main(int argc, char **argv)
   mdp_site x(line);
   int dE = 0, H = L[0], dH = 0;
   float kappa = 2.0;
-  forallsites(x) spin(x) = +1;
+  forallsites(x)
+  {
+    spin(x) = +1;
+  }
+
   while (1)
   {
     dH = 0;

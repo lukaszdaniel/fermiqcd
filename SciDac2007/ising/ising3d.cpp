@@ -6,6 +6,8 @@
 #define Y 1
 #define Z 2
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);

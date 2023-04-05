@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // open communications
@@ -97,15 +99,15 @@ int main(int argc, char **argv)
   // Output parameters
   // //////////////////////////////
   mdp << "=============================================\n";
-  mdp << "Reading gauge configuration = " << input << '\n';
-  mdp << "Number of colors = " << nc << '\n';
-  mdp << "Lattice size = " << L[0] << "x" << L[1] << "x" << L[2] << "x" << L[3] << '\n';
+  mdp << "Reading gauge configuration = " << input << "\n";
+  mdp << "Number of colors = " << nc << "\n";
+  mdp << "Lattice size = " << L[0] << "x" << L[1] << "x" << L[2] << "x" << L[3] << "\n";
   if (u0 < 0)
     mdp << "Creating a meson " << meson << " using ks fermions\n";
   else
     mdp << "Creating a meson " << meson << " using asqtad ks fermions (u0=" << u0 << ")\n";
-  mdp << "light staggered quark mass = " << lmass << '\n';
-  mdp << "heavy staggered quark mass = " << hmass << '\n';
+  mdp << "light staggered quark mass = " << lmass << "\n";
+  mdp << "heavy staggered quark mass = " << hmass << "\n";
   switch (inverter)
   {
   case bicguml:
@@ -118,7 +120,7 @@ int main(int argc, char **argv)
     mdp << "Using bicg stabilized inverter\n";
     break;
   }
-  mdp << "Required absolute precision = " << ap << '\n';
+  mdp << "Required absolute precision = " << ap << "\n";
   mdp << "=============================================\n";
 
   // //////////////////////////////
@@ -142,7 +144,7 @@ int main(int argc, char **argv)
 
   // load gauge field
   U.load(input);
-  mdp << "average plaquette = " << average_plaquette(U) << '\n';
+  mdp << "average plaquette = " << average_plaquette(U) << "\n";
   if (u0 > 0)
     lepage_improved_links(V, U, lepage_coefficients(pow(u0, 4), "Full"));
   else
@@ -216,7 +218,7 @@ int main(int argc, char **argv)
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
   for (t = 0; t < lattice.size(0); t += 2)
   {
-    mdp << t << ", " << real(prop(0, t)) << ", " << imag(prop(0, t)) << '\n';
+    mdp << t << ", " << real(prop(0, t)) << ", " << imag(prop(0, t)) << "\n";
   }
 
   mdp.close_wormholes();

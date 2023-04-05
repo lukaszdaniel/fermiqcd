@@ -1,4 +1,7 @@
 #include "fermiqcd.h" // include FermiQCD libraries
+
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // START

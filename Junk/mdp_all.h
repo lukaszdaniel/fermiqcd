@@ -40,13 +40,16 @@
 #define inet_pton(a, b, c) inet_aton(b, c)
 #endif
 
-void exit_message(int en, std::string message)
+namespace MDP
 {
-  std::cerr << "FROM PROCESS PID: " << getpid() << std::endl;
-  std::cerr << "CHILD OF PROCESS PID: " << getppid() << std::endl;
-  std::cerr << "FATAL ERROR: " << message << std::endl;
-  std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
-  exit(en);
-}
+  void exit_message(int en, std::string message)
+  {
+    std::cerr << "FROM PROCESS PID: " << getpid() << std::endl;
+    std::cerr << "CHILD OF PROCESS PID: " << getppid() << std::endl;
+    std::cerr << "FATAL ERROR: " << message << std::endl;
+    std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
+    exit(en);
+  }
+} // namespace MDP
 
 #endif /* MDP_ALL_ */

@@ -1,6 +1,8 @@
 // Program: example04.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 mdp_array<mdp_matrix, 3> initialize()
 {
   mdp_array<mdp_matrix, 3> d(20, 20, 20);
@@ -35,7 +37,7 @@ int main()
   b = f(a);
 
   int i = 1, j = 2, k = 3;
-  std::cout << a(i, j, k) << '\n';
-  std::cout << b(i, j, k) << '\n';
+  std::cout << a(i, j, k) << "\n";
+  std::cout << b(i, j, k) << "\n";
   return 0;
 }

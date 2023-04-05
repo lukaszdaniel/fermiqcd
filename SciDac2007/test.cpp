@@ -11,6 +11,8 @@
 */
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
    mdp.open_wormholes(argc, argv);

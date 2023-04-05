@@ -13,6 +13,8 @@
 #include <cassert>
 #include "mdp.h"
 
+using namespace MDP;
+
 /// For debugging only
 bool mdp_matrix_test()
 {

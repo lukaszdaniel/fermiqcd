@@ -2,6 +2,7 @@
 #include "mdp.h"
 
 using namespace std;
+using namespace MDP;
 
 void open_cylinder(int mu, int *x_dw, int *x, int *x_up,
                    int ndim, int *nx)

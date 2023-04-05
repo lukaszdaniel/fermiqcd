@@ -1,5 +1,7 @@
 #include "mdp.h"
 
+using namespace MDP;
+
 /** @brief Test lattice volumes
  *
  * Sum of local volumes should add up to global volume.

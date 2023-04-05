@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
@@ -36,7 +38,9 @@ int main(int argc, char **argv)
         for (int j = 0; j < nc; j++)
         {
           forallsites(x)
-              c2(x(TIME)) += real(pow(sink(x, beta, j), 2));
+          {
+            c2(x(TIME)) += real(pow(sink(x, beta, j), 2));
+          }
         }
     }
   mdp.add(c2);

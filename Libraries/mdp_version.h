@@ -12,6 +12,9 @@
 #ifndef MDP_VERSION_
 #define MDP_VERSION_
 
-const char mdp_version[] = "MDP version 4.0";
+namespace MDP
+{
+    const char mdp_version[] = "MDP version 4.0";
+} // namespace MDP
 
 #endif /* MDP_VERSION_ */

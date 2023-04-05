@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 int main()
 {
     SO_Generators g(3);

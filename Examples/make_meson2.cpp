@@ -26,6 +26,8 @@
 // ////////////////////////////////////////////////////////
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 // ////////////////////////////////////////////////////////
 // useful macros
 // ////////////////////////////////////////////////////////
@@ -141,7 +143,7 @@ int main(int argc, char **argv)
   for (i = 0; i < 100; i++)
   {
     WilsonGaugeAction::heatbath(U, gauge_coeff);
-    mpi << "average_plaquette=" << average_plaquette(U) << '\n';
+    mpi << "average_plaquette=" << average_plaquette(U) << "\n";
   }
 
   // //////////////////////////////////////////////////////
@@ -155,7 +157,7 @@ int main(int argc, char **argv)
     for (i = 0; i < 10; i++)
     {
       WilsonGaugeAction::heatbath(U, gauge_coeff);
-      mpi << "average_plaquette=" << average_plaquette(U) << '\n';
+      mpi << "average_plaquette=" << average_plaquette(U) << "\n";
     }
 
     // compute electromagnetic-field
@@ -200,7 +202,7 @@ int main(int argc, char **argv)
       if (on_which_process(lattice, t) == ME)
       {
         F.plain(t);
-        std::cout << t << "\t" << F.mean() << "\t" << F.b_err() << '\n';
+        std::cout << t << "\t" << F.mean() << "\t" << F.b_err() << "\n";
       }
     }
     mpi << "==================================\n\n";

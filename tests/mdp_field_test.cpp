@@ -13,6 +13,8 @@
 #include <cassert>
 #include "mdp.h"
 
+using namespace MDP;
+
 /// For debugging purposes only
 bool mdp_field_test(int argc, char **argv)
 {

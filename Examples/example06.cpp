@@ -1,6 +1,8 @@
 // Program: example06.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 float Q(float x, void *a)
 {
    return sin(Pi * x);
@@ -16,7 +18,7 @@ int main()
       a = (sigma * random.gaussian() + a_bar);
       b = random.distribution(Q);
       average += a + b;
-      std::cout << "average=" << average / (i + 1) << '\n';
+      std::cout << "average=" << average / (i + 1) << "\n";
    }
    return 0;
 }

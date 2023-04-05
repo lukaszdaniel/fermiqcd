@@ -45,7 +45,7 @@ int main(int argc, char **argv)
       if (x == A)
       {
         c = +J;
-        std::cout << ME << '\n';
+        std::cout << ME << "\n";
       };
       if (x == B)
         c = -J;
@@ -78,6 +78,6 @@ int main(int argc, char **argv)
   if (B.is_in())
     Rtot -= u(B) / J;
   mdp.add(Rtot);
-  mdp << "R_A-R_B=" << Rtot << '\n';
+  mdp << "R_A-R_B=" << Rtot << "\n";
   mdp.close_wormholes();
 }

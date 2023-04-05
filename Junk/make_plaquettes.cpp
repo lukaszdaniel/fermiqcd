@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 mdp_real average_plaquette1(gauge_field &U, int mu, int nu)
 {
   mdp_lattice &lattice = U.lattice();

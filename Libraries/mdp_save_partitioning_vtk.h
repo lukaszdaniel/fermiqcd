@@ -12,15 +12,18 @@
 #ifndef MDP_SAVE_PARTITIONING_VTK_
 #define MDP_SAVE_PARTITIONING_VTK_
 
-void save_partitioning_vtk(mdp_lattice &lattice, std::string filename)
+namespace MDP
 {
-  mdp_field<int> where(lattice);
-  mdp_site x(lattice);
-  forallsites(x)
+  void save_partitioning_vtk(mdp_lattice &lattice, std::string filename)
   {
-    where(x) = ME;
+    mdp_field<int> where(lattice);
+    mdp_site x(lattice);
+    forallsites(x)
+    {
+      where(x) = ME;
+    }
+    where.save_vtk(filename);
   }
-  where.save_vtk(filename);
-}
+} // namespace MDP
 
 #endif /* MDP_SAVE_PARTITIONING_VTK_ */

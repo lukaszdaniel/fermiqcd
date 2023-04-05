@@ -1,4 +1,7 @@
 #include "fermiqcd.h"
+
+using namespace MDP;
+
 /*
 ./a.out -gauge:start=cold:nt=32:nx=8 -quark:kappa=0.115:source_point=center:load=true -pion:vtk=true -current_static:source_gamma=1:sink_gamma=1:vtk=true
 python qcdutils_vtk.py -u 0.5 -l 0.005 cold.mdp.point.at00016.00004.00004.00004.s3.c2.current_static.vtk

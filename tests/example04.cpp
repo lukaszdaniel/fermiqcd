@@ -35,7 +35,7 @@ int main()
   b = f(a);
 
   int i = 1, j = 2, k = 3;
-  std::cout << a(i, j, k) << '\n';
-  std::cout << b(i, j, k) << '\n';
+  std::cout << a(i, j, k) << "\n";
+  std::cout << b(i, j, k) << "\n";
   return 0;
 }

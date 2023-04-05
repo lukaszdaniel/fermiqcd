@@ -1,6 +1,8 @@
 // Program: example13.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mpi.open_wormholes(argc, argv);

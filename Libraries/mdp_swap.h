@@ -12,26 +12,29 @@
 #ifndef MDP_SWAP_
 #define MDP_SWAP_
 
-template <class T>
-void swap(T &a, T &b)
+namespace MDP
 {
-  T c;
-  c = a;
-  a = b;
-  b = c;
-}
-
-template <class T>
-void swap(T *a, T *b, int n)
-{
-  int i;
-  T c;
-  for (i = 0; i < n; i++)
+  template <class T>
+  void swap(T &a, T &b)
   {
-    c = a[i];
-    a[i] = b[i];
-    b[i] = c;
+    T c;
+    c = a;
+    a = b;
+    b = c;
   }
-}
+
+  template <class T>
+  void swap(T *a, T *b, int n)
+  {
+    int i;
+    T c;
+    for (i = 0; i < n; i++)
+    {
+      c = a[i];
+      a[i] = b[i];
+      b[i] = c;
+    }
+  }
+} // namespace MDP
 
 #endif /* MDP_SWAP_ */

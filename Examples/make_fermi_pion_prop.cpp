@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
@@ -12,7 +14,9 @@ int main(int argc, char **argv)
   mdp_site x(lattice);
   mdp_matrix c2(box[0], 1);
   for (mdp_uint t = 0; t < c2.size(); t++)
+  {
     c2(t) = 0;
+  }
   coefficients quark;
   quark["kappa"] = 1.1;
   quark["c_{sw}"] = 0.3;

@@ -14,10 +14,13 @@
 #ifndef FERMIQCD_GLOBAL_VARS_
 #define FERMIQCD_GLOBAL_VARS_
 
-/// Do or do not dump output to stdout
-bool shutup = false;
+namespace MDP
+{
+    /// Do or do not dump output to stdout
+    bool shutup = false;
 
-/// Do or do not dump output to stdout in loops
-bool shutup_loops = false;
+    /// Do or do not dump output to stdout in loops
+    bool shutup_loops = false;
+} // namespace MDP
 
 #endif /* FERMIQCD_GLOBAL_VARS_ */

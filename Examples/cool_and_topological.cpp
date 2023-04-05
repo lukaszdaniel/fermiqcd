@@ -2,6 +2,8 @@
 // #define TWISTED_BOUNDARY
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 void test_gauge(int nt, int nx, char *filename)
 {
   int box[] = {nt, nx, nx, nx}, nc = 3;

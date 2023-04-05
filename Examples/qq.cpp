@@ -1,5 +1,7 @@
 #include "fermiqcd.h" // include FermiQCD libraries
 
+using namespace MDP;
+
 // Usage example:
 // ./a.out gauge_filename 2 4
 //

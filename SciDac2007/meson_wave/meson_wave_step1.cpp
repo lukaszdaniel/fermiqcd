@@ -1,6 +1,9 @@
 // #define SSE2
 #include "../../Libraries/fermiqcd.h"
 #include "../dump.h"
+
+using namespace MDP;
+
 /*
    this program compute the wave function of a heavy-light meson by
    computing s(x3) = |<B(x) q(y) \bar q (y) \bar B(z)>|^2

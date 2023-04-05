@@ -15,7 +15,9 @@
 #define CHECK_ALL
 #define INCLUDE_DEPRECATED_IO
 
-/// Loop on all local siltes of this process
+namespace MDP
+{
+/// Loop on all local sites of this process
 #define forallsites(x) \
      for (x.start(); x.is_in(); x.next())
 
@@ -31,7 +33,6 @@
      for (x.start(), x.idx = 0; x.idx < x.lattice().nvol; x.idx++)
 
 /// Loop on all sites stored by this process with given parity
-
 // if pofx is EVENODD=2 then loops on even and odd sites
 #define forallsitesandcopiesofparity(x, pofx)                                \
      for (int __process = 0; __process < Nproc; __process++)                 \
@@ -46,5 +47,6 @@
 
 /// Reports a runtime error and the line that caused it
 #define error(a) _mpi_error_message(a, __FILE__, __LINE__);
+} // namespace MDP
 
 #endif /* MDP_MACROS_ */

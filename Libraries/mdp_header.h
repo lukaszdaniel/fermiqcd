@@ -9,3 +9,7 @@
 /// Read attached license in file mdp_license.txt
 /// This file cannot be distributed without file mdp_license.txt
 //////////////////////////////////////////////////////////////////
+
+namespace MDP
+{
+} // namespace MDP

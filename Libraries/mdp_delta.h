@@ -12,11 +12,14 @@
 #ifndef MDP_DELTA_
 #define MDP_DELTA_
 
-/// True if i==j, false otherwise
-template <class T>
-const bool delta(const T &i, const T &j)
+namespace MDP
 {
-  return (i == j) ? true : false;
-}
+  /// True if i==j, false otherwise
+  template <class T>
+  const bool delta(const T &i, const T &j)
+  {
+    return (i == j) ? true : false;
+  }
+} // namespace MDP
 
 #endif /* MDP_DELTA_ */

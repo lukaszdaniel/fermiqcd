@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   forallsites(x)
   {
     std::cout << "Site=(" << x(0) << "," << x(1)
-         << ") is stored by " << ME << '\n';
+         << ") is stored by " << ME << "\n";
   }
   mpi.close_wormholes();
 }

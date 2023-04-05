@@ -1,8 +1,10 @@
 #include <cassert>
 #include <iostream>
 #include <cmath>
+#include "mdp.h"
 
 using namespace std;
+using namespace MDP;
 
 #define MSK1 0xdfffffefU
 #define MSK2 0xddfecb7fU
@@ -164,8 +166,6 @@ public:
     return v * (1.0 / 4294967295.0);
   }
 };
-
-#include "mdp.h"
 
 int main()
 {

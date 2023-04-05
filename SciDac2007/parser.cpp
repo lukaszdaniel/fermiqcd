@@ -3,7 +3,6 @@
 #include <map>
 #include <vector>
 
-
 class Step
 {
 public:
@@ -16,7 +15,7 @@ void parse(int argc, char **argv)
   std::vector<Step> steps;
   Step step;
   std::string s;
-  int i, j, k;
+  int i, j;
 
   for (i = 1; i < argc; i++)
   {

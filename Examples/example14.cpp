@@ -1,6 +1,8 @@
 // Program: example14.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 struct mystruct
 {
   float value; /* or any other structure */

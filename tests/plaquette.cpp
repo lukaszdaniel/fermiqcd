@@ -1,6 +1,7 @@
 #include "fermiqcd.h"
 
 using namespace std;
+using namespace MDP;
 
 void compute_plaquette(mdp_int nt, mdp_int nx, const string &filename)
 {

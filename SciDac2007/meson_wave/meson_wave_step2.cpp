@@ -8,6 +8,8 @@
    and x(0)=0, y(0)=T/4, z(0)=T/2, x(1..3)=z(...3)=(0,0,0), and y(1..3)=x3
 */
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);

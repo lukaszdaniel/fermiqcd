@@ -12,56 +12,59 @@
 #ifndef MDP_TOPOLOGIES_
 #define MDP_TOPOLOGIES_
 
-// //////////////////////////////////////////////////////
-// Basic topologies:
-// //////////////////////////////////////////////////////
-
-void torus_topology(int mu,
-					int *x_dw,
-					int *x,
-					int *x_up,
-					int ndim,
-					int *nx)
+namespace MDP
 {
-	for (int nu = 0; nu < ndim; nu++)
-		if (nu == mu)
-		{
-			x_dw[mu] = (x[mu] - 1 + nx[mu]) % nx[mu];
-			x_up[mu] = (x[mu] + 1) % nx[mu];
-		}
-		else
-			x_up[nu] = x_dw[nu] = x[nu];
-}
+	// //////////////////////////////////////////////////////
+	// Basic topologies:
+	// //////////////////////////////////////////////////////
 
-void box_topology(int mu,
-				  int *x_dw,
-				  int *x,
-				  int *x_up,
-				  int ndim,
-				  int *nx)
-{
-	torus_topology(mu, x_dw, x, x_up, ndim, nx);
-	if (x[mu] == 0)
-		x_dw[mu] = x[mu];
-	if (x[mu] == nx[mu] - 1)
-		x_up[mu] = x[mu];
-}
+	void torus_topology(int mu,
+						int *x_dw,
+						int *x,
+						int *x_up,
+						int ndim,
+						int *nx)
+	{
+		for (int nu = 0; nu < ndim; nu++)
+			if (nu == mu)
+			{
+				x_dw[mu] = (x[mu] - 1 + nx[mu]) % nx[mu];
+				x_up[mu] = (x[mu] + 1) % nx[mu];
+			}
+			else
+				x_up[nu] = x_dw[nu] = x[nu];
+	}
 
-void moebious_topology(int mu,
+	void box_topology(int mu,
 					  int *x_dw,
 					  int *x,
 					  int *x_up,
 					  int ndim,
 					  int *nx)
-{
-	torus_topology(mu, x_dw, x, x_up, ndim, nx);
-	if (mu == 0)
 	{
-		if (x[0] == 0)
-			x_dw[1] = nx[1] - x[1] - 1;
-		if (x[0] == nx[0] - 1)
-			x_up[1] = nx[1] - x[1] - 1;
+		torus_topology(mu, x_dw, x, x_up, ndim, nx);
+		if (x[mu] == 0)
+			x_dw[mu] = x[mu];
+		if (x[mu] == nx[mu] - 1)
+			x_up[mu] = x[mu];
 	}
-}
+
+	void moebious_topology(int mu,
+						   int *x_dw,
+						   int *x,
+						   int *x_up,
+						   int ndim,
+						   int *nx)
+	{
+		torus_topology(mu, x_dw, x, x_up, ndim, nx);
+		if (mu == 0)
+		{
+			if (x[0] == 0)
+				x_dw[1] = nx[1] - x[1] - 1;
+			if (x[0] == nx[0] - 1)
+				x_up[1] = nx[1] - x[1] - 1;
+		}
+	}
+} // namespace MDP
 
 #endif /* MDP_TOPOLOGIES_ */

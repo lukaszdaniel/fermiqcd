@@ -59,6 +59,8 @@
 
 #include "mdp.h"
 
+using namespace MDP;
+
 class ClassVegasPrototype
 {
 public:

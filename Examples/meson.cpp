@@ -1,5 +1,7 @@
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 void accumulate_c2(mdp_array<mdp_complex, 1> &c2,
                    fermi_propagator &Sl, // note props are passed by reference
                    mdp_matrix G1,
@@ -153,9 +155,9 @@ int main(int argc, char **argv)
   // Output parameters
   // //////////////////////////////
   mdp << "=============================================\n";
-  mdp << "Reading gauge configuration = " << input << '\n';
-  mdp << "Number of colors = " << nc << '\n';
-  mdp << "Lattice size = " << L[0] << "x" << L[1] << "x" << L[2] << "x" << L[3] << '\n';
+  mdp << "Reading gauge configuration = " << input << "\n";
+  mdp << "Number of colors = " << nc << "\n";
+  mdp << "Lattice size = " << L[0] << "x" << L[1] << "x" << L[2] << "x" << L[3] << "\n";
   switch (meson)
   {
   case s:
@@ -186,8 +188,8 @@ int main(int argc, char **argv)
     mdp << "Using bicg stabilized inverter\n";
     break;
   }
-  mdp << "Required absolute precision = " << ap << '\n';
-  mdp << "Required relative precision = " << rp << '\n';
+  mdp << "Required absolute precision = " << ap << "\n";
+  mdp << "Required relative precision = " << rp << "\n";
   mdp << "=============================================\n";
 
   // //////////////////////////////
@@ -208,7 +210,7 @@ int main(int argc, char **argv)
 
   // load gauge field
   U.load(input);
-  mdp << "average_plaquette = " << average_plaquette(U) << '\n';
+  mdp << "average_plaquette = " << average_plaquette(U) << "\n";
   if (lcsw != 0.0 || hcsw != 0)
     compute_em_field(U);
 
@@ -289,7 +291,7 @@ int main(int argc, char **argv)
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
   for (t = 0; t < lattice.size(0); t++)
   {
-    mdp << t << ", " << real(c2(t)) << ", " << imag(c2(t)) << '\n';
+    mdp << t << ", " << real(c2(t)) << ", " << imag(c2(t)) << "\n";
   }
 
   mdp.close_wormholes();

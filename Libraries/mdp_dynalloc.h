@@ -16,27 +16,32 @@
 
 #if defined(SSE2) && !defined(OSX)
 #include "malloc.h"
-void *operator new(size_t size)
-{
-  void *p = memalign(64, size);
-  return p;
-}
-
-void operator delete(void *pointer)
-{
-  free(pointer);
-}
-
-void *operator new[](size_t size)
-{
-  void *p = memalign(64, size);
-  return p;
-}
-
-void operator delete[](void *pointer)
-{
-  free(pointer);
-}
 #endif
+namespace MDP
+{
+#if defined(SSE2) && !defined(OSX)
+  void *operator new(size_t size)
+  {
+    void *p = memalign(64, size);
+    return p;
+  }
+
+  void operator delete(void *pointer)
+  {
+    free(pointer);
+  }
+
+  void *operator new[](size_t size)
+  {
+    void *p = memalign(64, size);
+    return p;
+  }
+
+  void operator delete[](void *pointer)
+  {
+    free(pointer);
+  }
+#endif
+} // namespace MDP
 
 #endif /* MDP_DYNALLOC_ */

@@ -12,13 +12,16 @@
 #ifndef MDP_MOD2SIGN_
 #define MDP_MOD2SIGN_
 
-/// Returns +1 is x%2==0 -1 otherwise
-int mdp_mod2sign(int x)
+namespace MDP
 {
-  if ((x % 2) == 0)
-    return +1;
-  else
-    return -1;
-}
+  /// Returns +1 is x%2==0 -1 otherwise
+  int mdp_mod2sign(int x)
+  {
+    if ((x % 2) == 0)
+      return +1;
+    else
+      return -1;
+  }
+} // namespace MDP
 
 #endif /* MDP_MOD2SIGN_ */

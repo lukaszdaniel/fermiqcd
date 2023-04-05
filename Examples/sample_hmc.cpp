@@ -1,7 +1,9 @@
+#include <cmath>
+#include <cstdlib>
 #include "fermiqcd.h"
-#include <math.h>
-#include <stdlib.h>
 // #include "fermiqcd_cg_inverter.hpp"
+
+using namespace MDP;
 
 // #include <sstream>
 // const char* output(std::string file, int num){

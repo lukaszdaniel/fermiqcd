@@ -12,38 +12,41 @@
 #ifndef FERMIQCD_SO_GENERATORS_
 #define FERMIQCD_SO_GENERATORS_
 
-// Example:
-// #include "fermiqcd.h"
-// int main() {
-//  SO_Generators g(4);
-//  for(int a=0; a<g.ngenerators; a++)
-//    cout << "g=" << g.lambda[a] << endl;
-//  return 0;
-// }
-
-class SO_Generators
+namespace MDP
 {
-public:
-  std::vector<mdp_matrix> lambda;
-  int n;
-  int ngenerators;
-  SO_Generators(int n)
+  // Example:
+  // #include "fermiqcd.h"
+  // int main() {
+  //  SO_Generators g(4);
+  //  for(int a=0; a<g.ngenerators; a++)
+  //    cout << "g=" << g.lambda[a] << endl;
+  //  return 0;
+  // }
+
+  class SO_Generators
   {
-    this->n = n;
-    this->ngenerators = n * (n - 1) / 2;
-    lambda.resize(ngenerators);
-    mdp_matrix temp(n, n);
-    mdp_complex z = 1.0 / sqrt(2.0);
-    int k = 0;
-    for (int j = 0; j < n - 1; j++)
-      for (int i = j + 1; i < n; i++)
-      {
-        temp = 0;
-        temp(i, j) = z;
-        temp(j, i) = -z;
-        lambda[k++] = temp;
-      }
-  }
-};
+  public:
+    std::vector<mdp_matrix> lambda;
+    int n;
+    int ngenerators;
+    SO_Generators(int n)
+    {
+      this->n = n;
+      this->ngenerators = n * (n - 1) / 2;
+      lambda.resize(ngenerators);
+      mdp_matrix temp(n, n);
+      mdp_complex z = 1.0 / sqrt(2.0);
+      int k = 0;
+      for (int j = 0; j < n - 1; j++)
+        for (int i = j + 1; i < n; i++)
+        {
+          temp = 0;
+          temp(i, j) = z;
+          temp(j, i) = -z;
+          lambda[k++] = temp;
+        }
+    }
+  };
+} // namespace MDP
 
 #endif /* FERMIQCD_SO_GENERATORS_ */

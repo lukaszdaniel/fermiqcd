@@ -1,5 +1,7 @@
 #include "mdp.h"
 
+using namespace MDP;
+
 int ruleofgame(int a00, int a01, int a02,
                int a10, int a11, int a12,
                int a20, int a21, int a22)
@@ -27,7 +29,7 @@ int myownpartitioning(int *x,
   return (x[0] + x[1]) % Nproc;
 }
 
-// make topolgy with a hole
+// make topology with a hole
 void board_with_hole(int mu,
                      int *x_dw,
                      int *x,

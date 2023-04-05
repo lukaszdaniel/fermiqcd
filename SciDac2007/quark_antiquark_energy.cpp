@@ -2,6 +2,8 @@
 #include "mdp_all.h"
 #include "dump.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);

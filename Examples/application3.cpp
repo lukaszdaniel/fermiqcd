@@ -1,6 +1,8 @@
 // Program: application3.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 // /////////////////////////////////////////////////////
 class scalar_field : public mdp_field<float>
 {

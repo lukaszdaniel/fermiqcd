@@ -1,6 +1,8 @@
 // Program: example09.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mpi.open_wormholes(argc, argv);
@@ -16,7 +18,7 @@ int main(int argc, char **argv)
     {
       a = 5 * 7;
       mpi.add(a);
-      std::cout << "a=" << a << '\n';
+      std::cout << "a=" << a << "\n";
     }
   }
   else

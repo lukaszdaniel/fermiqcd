@@ -2,6 +2,8 @@
 #include "../mdp_all.h"
 #include "../dump.h"
 
+using namespace MDP;
+
 class PunchedWilsonGaugeAction : public WilsonGaugeAction
 {
 public:

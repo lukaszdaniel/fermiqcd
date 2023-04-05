@@ -2,6 +2,8 @@
 // #define TWISTED_BOUNDARY
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 void test_wilson()
 {
   mdp << "START TESTING CLOVER ACTIONS\n";

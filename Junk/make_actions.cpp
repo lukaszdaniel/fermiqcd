@@ -2,6 +2,8 @@
 // #define TWISTED_BOUNDARY
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 void test_gauge(int nt, int nx, int ny, int nz, int nc)
 {
   mdp << "START TESTING GAUGE ACTION\n";
@@ -14,10 +16,10 @@ void test_gauge(int nt, int nx, int ny, int nz, int nc)
   for (mdp_uint i = 0; i < 10; i++)
   {
     WilsonGaugeAction::heatbath(U, coeff);
-    mdp << "plaquette = " << average_plaquette(U) << '\n';
+    mdp << "plaquette = " << average_plaquette(U) << "\n";
   }
   GaugeFixing::fix(U);
-  mdp << "plaquette after gauge fixing = " << average_plaquette(U) << '\n';
+  mdp << "plaquette after gauge fixing = " << average_plaquette(U) << "\n";
   mdp << "END TESTING GAUGE ACTION\n";
 }
 
@@ -34,7 +36,7 @@ void test_gauge_improved(int nt, int nx, int ny, int nz, int nc)
   for (mdp_uint i = 0; i < 10; i++)
   {
     ImprovedGaugeAction::heatbath(U, coeff, 1, "MILC");
-    mdp << "plaquette = " << average_plaquette(U) << '\n';
+    mdp << "plaquette = " << average_plaquette(U) << "\n";
   }
   mdp << "END TESTING IMPROVED GAUGE ACTION\n";
 }

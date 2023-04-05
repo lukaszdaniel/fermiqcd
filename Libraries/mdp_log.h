@@ -12,80 +12,92 @@
 #ifndef MDP_LOG_
 #define MDP_LOG_
 
-/// @brief base class of class mdp_communicator (DO NOT INSTANTIATE)
-/// @see class mdp_communicator
-class mdp_log
+namespace MDP
 {
-private:
-  int level;
-  int max_level;
-  std::vector<std::string> level_tag;
-  std::ostream *os;
+  /// @brief base class of class mdp_communicator (DO NOT INSTANTIATE)
+  /// @see class mdp_communicator
+  class mdp_log
+  {
+  private:
+    int level;
+    int max_level;
+    std::vector<std::string> level_tag;
+    std::ostream *os;
 
-public:
-  bool print;
-  void abort()
-  {
-    exit(-1);
-  }
-  void set_level(int i)
-  {
-    max_level = i;
-  }
-  mdp_log()
-  {
-    level = 0;
-    max_level = 100000;
-    print = true;
-    connect(std::cout);
-  }
-  void connect(std::ostream &os1)
-  {
-    os = &os1;
-  }
-  void connect(std::ofstream &os2)
-  {
-    os = &os2; // is this correct? I think so!
-  }
-  void error_message(std::string s, std::string file = "unkown", int line = 0)
-  {
-    if (print)
+  public:
+    bool print;
+
+    void abort()
     {
-      begin_function("error");
-      *os << "In file \"" << file;
-      *os << "\", before line " << line;
-      *os << ", this error occurred: " << s << '\n';
-      for (; level; level--)
-        if (level < max_level)
-          *os << "</" << level_tag[level - 1] << ">" << '\n';
+      exit(-1);
     }
-    throw s;
-  }
-  void begin_function(std::string s)
-  {
-    level_tag.resize(++level);
-    level_tag[level - 1] = s;
-    if (print && level < max_level)
-      *os << "<" << s << ">" << '\n';
-  }
-  void end_function(std::string s)
-  {
-    if (level_tag[level - 1] == s)
+
+    void set_level(int i)
+    {
+      max_level = i;
+    }
+
+    mdp_log()
+    {
+      level = 0;
+      max_level = 100000;
+      print = true;
+      connect(std::cout);
+    }
+
+    void connect(std::ostream &os1)
+    {
+      os = &os1;
+    }
+
+    void connect(std::ofstream &os2)
+    {
+      os = &os2; // is this correct? I think so!
+    }
+
+    void error_message(std::string s, std::string file = "unkown", int line = 0)
+    {
+      if (print)
+      {
+        begin_function("error");
+        *os << "In file \"" << file;
+        *os << "\", before line " << line;
+        *os << ", this error occurred: " << s << "\n";
+        for (; level; level--)
+          if (level < max_level)
+            *os << "</" << level_tag[level - 1] << ">" << "\n";
+      }
+      throw s;
+    }
+
+    void begin_function(std::string s)
+    {
+      level_tag.resize(++level);
+      level_tag[level - 1] = s;
+      if (print && level < max_level)
+        *os << "<" << s << ">" << "\n";
+    }
+
+    void end_function(std::string s)
+    {
+      if (level_tag[level - 1] == s)
+      {
+        if (print && level < max_level)
+          *os << "</" << level_tag[level - 1] << ">" << "\n";
+        level--;
+      }
+      else
+        error_message("missing end_function()", "unkown", 0);
+    }
+
+    template <class T>
+    mdp_log &operator<<(const T x)
     {
       if (print && level < max_level)
-        *os << "</" << level_tag[level - 1] << ">" << '\n';
-      level--;
+        *os << x;
+      return (*this);
     }
-    else
-      error_message("missing end_function()", "unkown", 0);
-  }
-  template <class T>
-  mdp_log &operator<<(const T x)
-  {
-    if (print && level < max_level)
-      *os << x;
-    return (*this);
-  }
-};
+  };
+} // namespace MDP
 
 #endif /* MDP_LOG_ */

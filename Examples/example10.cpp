@@ -1,6 +1,8 @@
 // Program: example13.cpp
 #include "mdp.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mpi.open_wormholes(argc, argv);
@@ -16,7 +18,7 @@ int main(int argc, char **argv)
     mpi.broadcast(j, 0);
     std::cout << "I am process " << ME
          << ", i=" << i
-         << ", j=" << j << '\n';
+         << ", j=" << j << "\n";
   }
   mpi.close_wormholes();
 }

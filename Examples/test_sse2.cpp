@@ -2,6 +2,8 @@
 // #define TWISTED_BOUNDARY
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 void test_fermi()
 {
   int box[] = {4, 4, 4, 4}, nc = 3;

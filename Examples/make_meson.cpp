@@ -1,6 +1,8 @@
 // #define PARALLEL
 #include "fermiqcd.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   mpi.open_wormholes(argc, argv);

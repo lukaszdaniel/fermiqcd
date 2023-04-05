@@ -16,6 +16,6 @@ int main()
             bin[n]++;
    }
    for (n = 0; n < 10; n++)
-      std::cout << "bin[" << n << "] = " << bin[n] << '\n';
+      std::cout << "bin[" << n << "] = " << bin[n] << "\n";
    return 0;
 }

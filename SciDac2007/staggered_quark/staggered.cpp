@@ -3,6 +3,8 @@
 #include "../../Libraries/fermiqcd.h"
 #include "../dump.h"
 
+using namespace MDP;
+
 int main(int argc, char **argv)
 {
   define_base_matrices("FERMILAB");
@@ -47,7 +49,7 @@ int main(int argc, char **argv)
       if (imag(phi(x, 0)) != 0)
         std::cout << x << std::endl;
     }
-  };
+  }
 
   mdp.close_wormholes();
   return 0;
