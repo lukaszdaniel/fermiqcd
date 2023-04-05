@@ -176,8 +176,7 @@ namespace MDP
       nc = nc_;
       if (nc != a.nc)
         error("mdp_array::mdp_array(...)\nIncompatible size()");
-      if (imax != a.imax)
-        dimension(a.imax);
+      dimension(a.imax);
       for (i = 0; i < ARRAY_MAX_DIM; i++)
         c[i] = a.c[i];
       for (i = 0; i < imax; i++)
