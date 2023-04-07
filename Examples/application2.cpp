@@ -12,10 +12,12 @@ void open_cylinder(int mu, int *x_dw, int *x, int *x_up,
   if ((mu == 0) && (x[0] == nx[0] - 1))
     x_up[0] = x[0];
 }
+
 float resistance(int x0, int x1, int mu)
 {
   return (Pi / 100 * x0);
 }
+
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
@@ -29,7 +31,6 @@ int main(int argc, char **argv)
   mdp_site B(cylinder);
   float precision, old_u;
   float c = 0, J = 1, deltaJ, deltaR, Rtot;
-  // float local_Rtot;
   A.set(15, 7);
   B.set(62, 3);
 
