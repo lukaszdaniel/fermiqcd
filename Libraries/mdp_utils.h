@@ -12,16 +12,13 @@
 #ifndef MDP_UTILS_
 #define MDP_UTILS_
 
+#include <filesystem>
+
 namespace MDP
 {
-  bool file_exists(std::string filename)
+  bool file_exists(const std::string &filename)
   {
-    if (FILE *file = fopen(filename.c_str(), "rb"))
-    {
-      fclose(file);
-      return true;
-    }
-    return false;
+    return std::filesystem::exists(filename);
   }
 
   std::vector<std::string> glob(std::string pattern)

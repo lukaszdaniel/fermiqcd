@@ -27,7 +27,9 @@ int main(int argc, char **argv)
   }
 
   mdp_field_file_header header;
-  int ndim = 4, nc, t, i;
+  int ndim = 4;
+  int nc;
+  int i = 0;
   int *L;
   int verbose = false;
   char meson[1024] = "5x5";
@@ -86,7 +88,7 @@ int main(int argc, char **argv)
   //
 
   // if gauge field exists determine its size (issues with single/double precision)
-  if (is_file(input))
+  if (file_exists(input))
     header = get_info(input);
   else
     error("Unable to access input gauge configuration\n");
@@ -216,7 +218,7 @@ int main(int argc, char **argv)
   if (mdp.me() == 0)
     mdp.print = true;
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
-  for (t = 0; t < lattice.size(0); t += 2)
+  for (int t = 0; t < lattice.size(0); t += 2)
   {
     mdp << t << ", " << real(prop(0, t)) << ", " << imag(prop(0, t)) << "\n";
   }

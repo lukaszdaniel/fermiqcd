@@ -10,18 +10,19 @@ void accumulate_c2(mdp_array<mdp_complex, 1> &c2,
 {
   // I can write this much faster but this is easier to read!
   mdp_site x(Sl.lattice());
-  int a, b, c, d, i, j;
   G1 = Gamma5 * G1;
   G2 = hermitian(Gamma5 * G2);
   forallsites(x)
   {
-    for (a = 0; a < 4; a++)
-      for (b = 0; b < 4; b++)
-        for (c = 0; c < 4; c++)
-          for (d = 0; d < 4; d++)
-            for (i = 0; i < Sl.nc; i++)
-              for (j = 0; j < Sl.nc; j++)
+    for (int a = 0; a < 4; a++)
+      for (int b = 0; b < 4; b++)
+        for (int c = 0; c < 4; c++)
+          for (int d = 0; d < 4; d++)
+            for (int i = 0; i < Sl.nc; i++)
+              for (int j = 0; j < Sl.nc; j++)
+              {
                 c2(x(0)) += real(Sl(x, a, b, i, j) * G1(b, c) * conj(Sh(x, d, c, i, j)) * G2(d, a));
+              }
   }
   mpi.add(c2.address(), c2.size());
 };
@@ -61,7 +62,7 @@ int main(int argc, char **argv)
   }
 
   mdp_field_file_header header;
-  int ndim = 4, nc, t, mu, nu;
+  int ndim = 4;
   int *L;
   int verbose = false, clean = false;
   char input[1024] = "";
@@ -142,13 +143,14 @@ int main(int argc, char **argv)
   }
 
   // if gauge field exists determine its size (issues with single/double precision)
-  if (is_file(input))
+  if (file_exists(input))
     header = get_info(input);
   else
     error("Unable to access input gauge configuration\n");
   if (header.ndim != 4)
     error("Sorry, mesons only in 4D");
-  nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
+
+  int nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
   L = header.box;
 
   // //////////////////////////////
@@ -232,7 +234,7 @@ int main(int argc, char **argv)
   light_quark["kappa"] = lkappa;
   light_quark["c_{sw}"] = lcsw;
   snprintf(output, 1024, "fp_%s_l_kappa%.4f_csw%.4f", input, lkappa, lcsw);
-  if (is_file(output) && !clean)
+  if (file_exists(output) && !clean)
     Sl.load(output);
   else
   {
@@ -245,7 +247,7 @@ int main(int argc, char **argv)
   heavy_quark["kappa"] = hkappa;
   heavy_quark["c_{sw}"] = hcsw;
   snprintf(output, 1024, "fp_%s_l_kappa%.4f_csw%.4f", input, hkappa, hcsw);
-  if (is_file(output) && !clean)
+  if (file_exists(output) && !clean)
     Sh.load(output);
   else
   {
@@ -254,7 +256,7 @@ int main(int argc, char **argv)
   }
 
   // contract propagators with gamma matrices and make meson
-  for (t = 0; t < lattice.size(0); t++)
+  for (int t = 0; t < lattice.size(0); t++)
     c2(t) = 0;
   switch (meson)
   {
@@ -265,20 +267,20 @@ int main(int argc, char **argv)
     accumulate_c2(c2, Sl, Gamma5, Sh, Gamma5);
     break;
   case v:
-    for (mu = 1; mu < 4; mu++)
+    for (int mu = 1; mu < 4; mu++)
       accumulate_c2(c2, Sl, Gamma[mu], Sh, Gamma[mu]);
     break;
   case pv:
-    for (mu = 1; mu < 4; mu++)
+    for (int mu = 1; mu < 4; mu++)
       accumulate_c2(c2, Sl, Gamma5 * Gamma[mu], Sh, Gamma5 * Gamma[mu]);
     break;
   case i0:
-    for (mu = 1; mu < 4; mu++)
+    for (int mu = 1; mu < 4; mu++)
       accumulate_c2(c2, Sl, Sigma[0][mu], Sh, Sigma[0][mu]);
     break;
   case ij:
-    for (mu = 1; mu < 4; mu++)
-      for (nu = 1; nu < 4; nu++)
+    for (int mu = 1; mu < 4; mu++)
+      for (int nu = 1; nu < 4; nu++)
         if (nu > mu)
           accumulate_c2(c2, Sl, Sigma[mu][nu], Sh, Sigma[mu][nu]);
     break;
@@ -289,7 +291,7 @@ int main(int argc, char **argv)
   if (mdp.me() == 0)
     mdp.print = true;
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
-  for (t = 0; t < lattice.size(0); t++)
+  for (int t = 0; t < lattice.size(0); t++)
   {
     mdp << t << ", " << real(c2(t)) << ", " << imag(c2(t)) << "\n";
   }

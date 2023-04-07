@@ -17,7 +17,7 @@ int main(int argc, char **argv)
   double result = 0.0;
 
   // read file metadata
-  if (is_file(gauge_filename))
+  if (file_exists(gauge_filename))
     header = get_info(gauge_filename);
   else
     error("Unable to access gauge configuration\n");
