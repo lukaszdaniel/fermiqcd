@@ -67,7 +67,7 @@ namespace MDP
       fieldT s(psi_in);
       fieldT t(psi_in);
 
-      mdp_field<float> sv(psi_in.lattice());
+      mdp_real_scalar_field sv(psi_in.lattice());
       mdp_site x(psi_in.lattice());
       double residue, rresidue = -1, old_rresidue;
       mdp_complex alpha, beta, rho, rho_old, omega;

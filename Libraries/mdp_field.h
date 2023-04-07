@@ -85,7 +85,7 @@ namespace MDP
   /// @verbatim
   ///    int box[]={10,10,10};
   ///    mdp_lattice lattice(3,box);
-  ///    mdp_field<float> psi(lattice,10);
+  ///    mdp_field<mdp_real> psi(lattice,10);
   ///    mdp_site x(lattice);
   ///    forallsites(x)
   ///      for(int i=0; i<10; i++)

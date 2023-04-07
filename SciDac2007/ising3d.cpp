@@ -11,7 +11,7 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
   int L[] = {20, 20, 20};
   mdp_lattice cube(3, L);
-  mdp_field<float> spin(cube);
+  mdp_real_scalar_field spin(cube);
   mdp_site point(cube);
   int dE = 0, H = cube.size(), dH = 0;
   float kappa = 0.40;

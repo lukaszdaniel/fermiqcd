@@ -366,7 +366,7 @@ namespace MDP
       mdp_site x(U.lattice());
       GaugeClass U_temp(U);
       FermiClass F_temp(p_F);
-      mdp_field<float> Q(U.lattice());
+      mdp_real_scalar_field Q(U.lattice());
       mdp_matrix A;
       // leap frog algorithm
       // F_temp = p_F;

@@ -60,11 +60,12 @@ namespace MDP
 
   class InternetAddress
   {
-  public:
-    struct sockaddr_in address;
-    std::string ipaddress;
-    int port;
+  private:
+    struct sockaddr_in m_address;
+    std::string m_ipaddress;
+    int m_port;
 
+  public:
     InternetAddress(std::string hostname = "127.0.0.1", int port = 0)
     {
 
@@ -76,28 +77,36 @@ namespace MDP
         throw std::string("Invalid hostname");
       strncpy(tmp, inet_ntop(AF_INET, *((struct in_addr *)h->h_addr_list[0])), 16);
 
-      ipaddress = tmp;
-      this->port = port;
-      memset(&address, 0, sizeof(address));
-      address.sin_family = AF_INET;
-      address.sin_port = htons(port);
-      if (!inet_pton(AF_INET, ipaddress.c_str(), &address.sin_addr))
+      m_ipaddress = tmp;
+      m_port = port;
+      memset(&m_address, 0, sizeof(m_address));
+      m_address.sin_family = AF_INET;
+      m_address.sin_port = htons(port);
+      if (!inet_pton(AF_INET, m_ipaddress.c_str(), &m_address.sin_addr))
         exit_message(1, "invalid IP address");
     }
+
+    struct sockaddr_in address() const
+    {
+      return m_address;
+    }
+
     int getPort()
     {
-      return ntohs(address.sin_port);
+      return ntohs(m_address.sin_port);
     }
+
     std::string getIPAddress()
     {
-      return inet_ntop(AF_INET, address.sin_addr);
+      return inet_ntop(AF_INET, m_address.sin_addr);
     }
+
     int Connect(int sfd, int timeout = 0)
     {
       if (!timeout)
       {
-        return connect(sfd, (struct sockaddr *)&address,
-                       (socklen_t)sizeof(address));
+        return connect(sfd, (struct sockaddr *)&m_address,
+                       (socklen_t)sizeof(m_address));
       }
       else
       {
@@ -107,8 +116,8 @@ namespace MDP
         pollfd fds;
         fds.fd = sfd;
         fds.events = POLLWRNORM;
-        int ret = connect(sfd, (struct sockaddr *)&address,
-                          (socklen_t)sizeof(address));
+        int ret = connect(sfd, (struct sockaddr *)&m_address,
+                          (socklen_t)sizeof(m_address));
         if (ret < 0)
         {
           if (errno != EINPROGRESS)
@@ -138,22 +147,25 @@ namespace MDP
       }
       return 0;
     }
+
     int Accept(int fd)
     {
       socklen_t ssize = sizeof(struct sockaddr_in);
-      return accept(fd, (struct sockaddr *)&address, &ssize);
+      return accept(fd, (struct sockaddr *)&m_address, &ssize);
     }
+
     int sendTo(int sfd, void *data, int size, int options = 0)
     {
       return sendto(sfd, data, size, options,
-                    (struct sockaddr *)&address,
-                    (socklen_t)sizeof(address));
+                    (struct sockaddr *)&m_address,
+                    (socklen_t)sizeof(m_address));
     }
+
     int recvFrom(int sfd, void *data, int size, int options = 0)
     {
-      socklen_t address_size = sizeof(address);
+      socklen_t address_size = sizeof(m_address);
       return recvfrom(sfd, data, size, options,
-                      (struct sockaddr *)&address,
+                      (struct sockaddr *)&m_address,
                       (socklen_t *)&address_size);
     }
   };
@@ -265,7 +277,7 @@ namespace MDP
   {
     setSocketReusable(sfd, 1);
     struct ip_mreq mreq;
-    mreq.imr_multiaddr.s_addr = InternetAddress(from, 0).address.sin_addr.s_addr;
+    mreq.imr_multiaddr.s_addr = InternetAddress(from, 0).address().sin_addr.s_addr;
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
     return setsockopt(sfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
   }

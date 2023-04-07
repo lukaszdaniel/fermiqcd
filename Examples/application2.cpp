@@ -22,8 +22,8 @@ int main(int argc, char **argv)
   int mybox[] = {100, 20};
   mdp_lattice cylinder(2, mybox, default_partitioning<0>,
                        open_cylinder);
-  mdp_field<float> u(cylinder);
-  mdp_field<float> r(cylinder, 2);
+  mdp_real_scalar_field u(cylinder);
+  mdp_real_vector_field r(cylinder, 2);
   mdp_site x(cylinder);
   mdp_site A(cylinder);
   mdp_site B(cylinder);

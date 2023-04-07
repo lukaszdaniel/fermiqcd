@@ -133,7 +133,7 @@ public:
     }
   }
 
-  void topological_charge(mdp_field<float> &Q, gauge_field &U)
+  void topological_charge(mdp_field<mdp_real> &Q, gauge_field &U)
   {
     compute_em_notrace_field(U);
     mdp_site x(U.lattice());
@@ -151,7 +151,7 @@ public:
 
   float topological_charge_vtk(gauge_field &U, std::string filename, int t = -1)
   {
-    mdp_field<float> Q(U.lattice()), P(U.lattice());
+    mdp_real_scalar_field Q(U.lattice()), P(U.lattice());
     mdp_site x(U.lattice());
     topological_charge(Q, U);
     Q.save_vtk(filename, t);

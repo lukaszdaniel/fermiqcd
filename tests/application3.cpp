@@ -4,7 +4,7 @@
 using namespace MDP;
 
 // /////////////////////////////////////////////////////
-class scalar_field : public mdp_field<float>
+class scalar_field : public mdp_field<mdp_real>
 {
 public:
   int ndim, nc;
