@@ -32,12 +32,18 @@ mdp_array<mdp_matrix, 3> f(mdp_array<mdp_matrix, 3> &c)
 
 int main()
 {
+  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   mdp_array<mdp_matrix, 3> a, b;
+  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   a = initialize();
+  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   b = f(a);
+  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
 
   int i = 1, j = 2, k = 3;
   std::cout << a(i, j, k) << "\n";
+  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   std::cout << b(i, j, k) << "\n";
+  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   return 0;
 }

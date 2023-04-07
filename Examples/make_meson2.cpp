@@ -193,7 +193,7 @@ int main(int argc, char **argv)
     mpi << "==================================\n";
     mpi << "t\tC2\t\t(error)\n";
     mpi << "==================================\n";
-    for (t = 0; t < Nt; t++)
+    for (int t = 0; t < Nt; t++)
     {
       mpi.barrier(); // syncronize output if in parallel!
       if (on_which_process(lattice, t) == ME)

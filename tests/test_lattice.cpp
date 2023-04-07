@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     mdp_site x(mylattice);
     int sum_lattice_sites = 0;
     mdp_int global_vol = mylattice.global_volume();
-    mdp_int enclosing_vol = mylattice.nvol;
+    mdp_int enclosing_vol = mylattice.enclosing_volume();
     mdp_int local_vol = mylattice.local_volume();
 
     forallsites(x)

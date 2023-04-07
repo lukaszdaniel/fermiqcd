@@ -144,6 +144,7 @@ namespace MDP
   public:
     int (*where)(int *, int, int *);
     void (*neighbour)(int, int *, int *, int *, int, int *);
+
     inline mdp_int global_coordinate(int *x)
     {
       mdp_int global_idx = 0;
@@ -152,6 +153,7 @@ namespace MDP
         global_idx = (global_idx + x[mu]) * nx[mu + 1];
       return global_idx + x[ndim - 1];
     }
+
     inline void global_coordinate(mdp_int global_idx, int *x)
     {
       int mu;
@@ -162,6 +164,7 @@ namespace MDP
       }
       x[0] = global_idx;
     }
+
     inline int compute_parity(int *x)
     {
       int mu = 0;
@@ -170,11 +173,13 @@ namespace MDP
         p = p + x[mu];
       return (p % 2);
     }
+
     mdp_lattice()
     {
       nvol = 0;
       random_obj = 0;
     }
+
     /// declares a lattice object
     /// @param ndim_ dimensions of the lattice
     /// @param nx_ size of the lattice
@@ -196,6 +201,7 @@ namespace MDP
       allocate_lattice(ndim_, ndim_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
+
     /// for weird stuff
     mdp_lattice(int ndim_,
                 int ndir_,
@@ -211,6 +217,7 @@ namespace MDP
       allocate_lattice(ndim_, ndir_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
+
     /// reallocate a lattice dynamically
     /// @param ndim_ dimensions of the lattice
     /// @param nx_ size of the lattice
@@ -230,6 +237,7 @@ namespace MDP
       allocate_lattice(ndim_, ndim_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
+
     /// for weird stuff
     void allocate_lattice(int ndim_,
                           int ndir_,
@@ -549,6 +557,7 @@ namespace MDP
     {
       deallocate_memory();
     }
+
     /// dynamically deallocate a lattice
     void deallocate_memory()
     {
@@ -597,6 +606,7 @@ namespace MDP
           random_obj[idx].initialize(gl[idx + start[ME][0]] + random_seed);
       }
     }
+
     inline mdp_prng &random(mdp_site);
     // //////////////////////////////////
     // functions for external access ...
@@ -608,39 +618,52 @@ namespace MDP
     {
       return ndim;
     }
+
     /// number of directions one can move on the lattice; usually same as ndim
     inline int n_directions() const
     {
       return ndir;
     }
+
     /// number of sites of the lattice
     inline mdp_int size() const
     {
       return nvol_gl;
     }
+
     /// size of the lattice in direction mu
     inline mdp_int size(const int mu) const
     {
       return nx[mu];
     }
+
     /// number of lattice sites stored locally by current process
     inline mdp_int local_volume() const
     {
       return nvol_in;
     }
+
+    inline mdp_int enclosing_volume() const
+    {
+      return nvol;
+    }
+
     /// total lattice volume (deprecated)
     inline mdp_int global_volume() const
     {
       return nvol_gl;
     }
+
     inline mdp_int move_up(const mdp_int idx, const int mu) const
     {
       return up[idx][mu];
     }
+
     inline mdp_int move_down(const mdp_int idx, const int mu) const
     {
       return dw[idx][mu];
     }
+
     inline mdp_int local(mdp_int idx) const
     {
 #if !defined(MDP_NO_LG)
@@ -654,20 +677,24 @@ namespace MDP
       return lg_tmp;
 #endif
     }
+
     inline mdp_int global(mdp_int idx) const
     {
       return gl[idx];
     }
+
     inline int site_parity(const mdp_int idx) const
     {
       return parity[idx];
     }
+
     inline mdp_int start_index(const int process, int p = EVENODD) const
     {
       if (p == EVENODD)
         p = 0;
       return start[process][p];
     }
+
     inline mdp_int stop_index(const int process, int p = EVENODD) const
     {
       if (p == EVENODD)
