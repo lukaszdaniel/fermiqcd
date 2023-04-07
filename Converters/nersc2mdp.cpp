@@ -10,6 +10,7 @@
 #include <complex>
 #include <ctime>
 #include <iostream>
+#include <memory>
 
 using namespace std;
 
@@ -34,14 +35,13 @@ int nx[4];
 
 void block_swap(float *buffer, long length)
 {
-  int i;
   union swapper
   {
     float float_number;
     char pos[4];
   } a, b;
 
-  for (i = 0; i < length; i++)
+  for (int i = 0; i < length; i++)
   {
     a.float_number = *buffer;
     b.pos[0] = a.pos[3];
@@ -55,14 +55,13 @@ void block_swap(float *buffer, long length)
 
 void block_swap_double(double *buffer, long length)
 {
-  int i;
   union swapper
   {
     double double_number;
     char pos[8];
   } a, b;
 
-  for (i = 0; i < length; i++)
+  for (int i = 0; i < length; i++)
   {
     a.double_number = *buffer;
     b.pos[0] = a.pos[7];
@@ -81,19 +80,16 @@ void block_swap_double(double *buffer, long length)
 class short_field
 {
 public:
-  Complex *m;
+  std::unique_ptr<Complex[]> m;
   long size;
   int dim[7];
 
-  short_field()
+  short_field() : m(nullptr)
   {
-    m = 0;
   }
 
   ~short_field()
   {
-    if (m != 0)
-      delete[] m;
   }
 
   void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1, int d = 1)
@@ -106,21 +102,13 @@ public:
     dim[4] = b;
     dim[5] = c;
     dim[6] = d;
-    if (m != 0)
-      delete[] m;
-    m = new Complex[size];
+    m = std::make_unique<Complex[]>(size);
   }
 
   Complex &operator()(int x1, int x2, int x3,
                       int a = 0, int b = 0, int c = 0, int d = 0)
   {
-    return m[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) *
-                   dim[4] +
-               b) *
-                  dim[5] +
-              c) *
-                 dim[6] +
-             d];
+    return m[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
   }
 };
 
@@ -449,7 +437,7 @@ int main(int argc, char **argv)
     {
       read_t_gauge(U, file, precision, swap, rows);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
-      fwrite(U.m, sizeof(Complex), U.size, MDP_fp);
+      fwrite(U.m.get(), sizeof(Complex), U.size, MDP_fp);
     }
   }
   /*

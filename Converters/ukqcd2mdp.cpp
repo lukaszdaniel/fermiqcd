@@ -12,6 +12,7 @@
 #include <cstring>
 #include <complex>
 #include <ctime>
+#include <memory>
 
 using namespace std;
 
@@ -83,19 +84,16 @@ void block_swap_double(double *buffer, long length)
 class short_field
 {
 public:
-  Complex *m;
+  std::unique_ptr<Complex[]> m;
   long size;
   int dim[7];
 
-  short_field()
+  short_field() : m(nullptr)
   {
-    m = 0;
   }
 
   ~short_field()
   {
-    if (m != 0)
-      delete[] m;
   }
 
   void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1, int d = 1)
@@ -108,21 +106,13 @@ public:
     dim[4] = b;
     dim[5] = c;
     dim[6] = d;
-    if (m != 0)
-      delete[] m;
-    m = new Complex[size];
+    m = std::make_unique<Complex[]>(size);
   }
 
   Complex &operator()(int x1, int x2, int x3,
                       int a = 0, int b = 0, int c = 0, int d = 0)
   {
-    return m[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) *
-                   dim[4] +
-               b) *
-                  dim[5] +
-              c) *
-                 dim[6] +
-             d];
+    return m[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
   }
 };
 
@@ -278,9 +268,8 @@ void read_t_prop(short_field &S, char fileprefix[],
   unsigned char *buffer;
   long bytes_to_read;
   long bytes_read;
-  int source_spin, source_colour, x1, x2, x3;
+  int x1, x2, x3;
   // int x0;
-  int sink_spin, sink_colour;
   // int comp;
   long buffer_index;
 
@@ -304,9 +293,9 @@ void read_t_prop(short_field &S, char fileprefix[],
   if (buffer == 0x0)
     error("Out of memory");
 
-  for (source_spin = 0; source_spin < 4; source_spin++)
+  for (int source_spin = 0; source_spin < 4; source_spin++)
   {
-    for (source_colour = 0; source_colour < 3; source_colour++)
+    for (int source_colour = 0; source_colour < 3; source_colour++)
     {
 
       // Construct filename
@@ -342,9 +331,9 @@ void read_t_prop(short_field &S, char fileprefix[],
           for (x1 = 0; x1 < nx[1]; x1++)
           {
 
-            for (sink_spin = 0; sink_spin < 4; sink_spin++)
+            for (int sink_spin = 0; sink_spin < 4; sink_spin++)
             {
-              for (sink_colour = 0; sink_colour < 3; sink_colour++)
+              for (int sink_colour = 0; sink_colour < 3; sink_colour++)
               {
 
                 if (precision == 'F')
@@ -386,12 +375,6 @@ public:
   }
 };
 
-// this does not seem to be used
-// int number(char *x)
-// {
-//   return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-// }
-
 int main(int argc, char **argv)
 {
 
@@ -418,7 +401,6 @@ int main(int argc, char **argv)
   char PRECISION = argv[2][strlen(argv[2]) - 2];
   char SWAP = argv[2][strlen(argv[2]) - 1];
 
-  long x0;
   long time0 = clock() / CLOCKS_PER_SEC;
 
   printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
@@ -429,10 +411,9 @@ int main(int argc, char **argv)
   short_field U; // stores one timeslice
 
   myheader.ndim = 4;
-  int ii;
-  for (ii = 0; ii < 4; ii++)
+  for (int ii = 0; ii < 4; ii++)
     myheader.box_size[ii] = nx[ii];
-  for (ii = 4; ii < 10; ii++)
+  for (int ii = 4; ii < 10; ii++)
     myheader.box_size[ii] = 0;
   myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
   // gauge: bytes_per_site = 4(mu)*9(SU3 matrix)*2(cplx)*4(bytes_per_float)
@@ -455,21 +436,21 @@ int main(int argc, char **argv)
   {
     // U indices: space, space, space, mu, color, color
     U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
-    for (x0 = 0; x0 < nx[0]; x0++)
+    for (int x0 = 0; x0 < nx[0]; x0++)
     {
       read_t_gauge(U, argv[3], PRECISION, SWAP, x0);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
-      fwrite(U.m, sizeof(Complex), U.size, MDP_fp);
+      fwrite(U.m.get(), sizeof(Complex), U.size, MDP_fp);
     }
   }
   if (strcmp(argv[1], "-fermi") == 0)
   {
     U.initialize(nx[1], nx[2], nx[3], 4, 4, 3, 3);
-    for (x0 = 0; x0 < nx[0]; x0++)
+    for (int x0 = 0; x0 < nx[0]; x0++)
     {
       read_t_prop(U, argv[3], PRECISION, SWAP, x0);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
-      fwrite(U.m, sizeof(Complex), U.size, MDP_fp);
+      fwrite(U.m.get(), sizeof(Complex), U.size, MDP_fp);
     }
   }
 

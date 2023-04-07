@@ -4,6 +4,7 @@
 #include <cstring>
 #include <ctime>
 #include <complex>
+#include <memory>
 
 using namespace std;
 
@@ -44,16 +45,17 @@ public:
   int box_size[10];
   long bytes_per_site;
   long sites;
+
   _generic_field_file_header()
   {
     strcpy(file_id, "File Type: MDP FIELD\n");
-  };
+  }
 };
 
 int number(char *x)
 {
   return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-};
+}
 
 void error(const char s[])
 {
@@ -64,14 +66,16 @@ void error(const char s[])
 class short_field
 {
 public:
-  Complex *m;
+  std::unique_ptr<Complex[]> m;
   int size;
   int dim[7];
-  short_field()
+
+  short_field() : m(nullptr)
   {
-    m = 0;
-  };
-  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1, int d = 1)
+  }
+
+  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1,
+                  int d = 1)
   {
     size = x1 * x2 * x3 * a * b * c * d;
     dim[0] = x1;
@@ -81,14 +85,13 @@ public:
     dim[4] = b;
     dim[5] = c;
     dim[6] = d;
-    if (m != 0)
-      delete[] m;
-    m = new Complex[size];
-  };
+    m = std::make_unique<Complex[]>(size);
+  }
+
   Complex &operator()(int x1, int x2, int x3, int a = 0, int b = 0, int c = 0, int d = 0)
   {
     return m[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
-  };
+  }
 };
 
 int main(int argc, char **argv)
@@ -110,7 +113,7 @@ int main(int argc, char **argv)
   };
   sscanf(argv[2], "%ix%ix%ix%i,%i", nx, nx + 1, nx + 2, nx + 3, &nc);
 
-  int x0, x1, x2, x3, mu, nu;
+  int nu = 0;
   long time0 = clock() / CLOCKS_PER_SEC;
 
   if (strcmp(argv[1], "-gauge") == 0)
@@ -125,10 +128,9 @@ int main(int argc, char **argv)
     _generic_field_file_header myheader;
 
     myheader.ndim = 4;
-    int ii;
-    for (ii = 0; ii < 4; ii++)
+    for (int ii = 0; ii < 4; ii++)
       myheader.box_size[ii] = nx[ii];
-    for (ii = 4; ii < 10; ii++)
+    for (int ii = 4; ii < 10; ii++)
       myheader.box_size[ii] = 0;
     myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
     if (strcmp(argv[1], "-gauge") == 0)
@@ -146,12 +148,12 @@ int main(int argc, char **argv)
 
     unsigned int matrix_size = nc * nc * sizeof(Complex);
 
-    for (x0 = 0; x0 < nx[0]; x0++)
+    for (int x0 = 0; x0 < nx[0]; x0++)
     {
-      for (x3 = 0; x3 < nx[3]; x3++)
-        for (x2 = 0; x2 < nx[2]; x2++)
-          for (x1 = 0; x1 < nx[1]; x1++)
-            for (mu = 0; mu < 4; mu++)
+      for (int x3 = 0; x3 < nx[3]; x3++)
+        for (int x2 = 0; x2 < nx[2]; x2++)
+          for (int x1 = 0; x1 < nx[1]; x1++)
+            for (int mu = 0; mu < 4; mu++)
             {
               switch (mu)
               {
@@ -175,7 +177,7 @@ int main(int argc, char **argv)
               }
             }
 
-      fwrite(U.m, U.size, sizeof(Complex), MDP_fp);
+      fwrite(U.m.get(), U.size, sizeof(Complex), MDP_fp);
     };
     fclose(LUIGI_fp);
     fclose(MDP_fp);
@@ -185,5 +187,5 @@ int main(int argc, char **argv)
   else
   {
     printf("I am sorry conversion of propagators not implemnetd yet!\n");
-  };
-};
+  }
+}

@@ -3,6 +3,7 @@
 #include <complex>
 #include <ctime>
 #include <cstring>
+#include <memory>
 
 using namespace std;
 
@@ -108,16 +109,15 @@ void error(const char s[])
 class short_field
 {
 public:
-  Complex *m;
+  std::unique_ptr<Complex[]> m;
   long size;
   int dim[7];
-
-  short_field()
+  short_field() : m(nullptr)
   {
-    m = 0;
   }
 
-  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1, int d = 1)
+  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1,
+                  int d = 1)
   {
     size = x1 * x2 * x3 * a * b * c * d;
     dim[0] = x1;
@@ -127,9 +127,7 @@ public:
     dim[4] = b;
     dim[5] = c;
     dim[6] = d;
-    if (m != 0)
-      delete[] m;
-    m = new Complex[size];
+    m = std::make_unique<Complex[]>(size);
   }
 
   Complex &operator()(int x1, int x2, int x3, int a = 0, int b = 0, int c = 0, int d = 0)
@@ -241,12 +239,12 @@ int main(int argc, char **argv)
       {
         for (mu = 0; mu < U.size; mu++)
         {
-          switch_endianess_byte4(*((long *)U.m + 2 * mu));
-          switch_endianess_byte4(*((long *)U.m + 2 * mu + 1));
+          switch_endianess_byte4(*((long *)U.m.get() + 2 * mu));
+          switch_endianess_byte4(*((long *)U.m.get() + 2 * mu + 1));
         }
       }
 
-      fwrite(U.m, U.size, sizeof(Complex), MDP_fp);
+      fwrite(U.m.get(), U.size, sizeof(Complex), MDP_fp);
     }
     fclose(MILC_fp);
     fclose(MDP_fp);
