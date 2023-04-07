@@ -151,7 +151,7 @@ void test_staggered()
 
 void test_dwfermi()
 {
-  mdp_uint box[] = {4, 4, 4, 4};
+  int box[] = {4, 4, 4, 4};
   int nc = 3;
   int L5 = 5;
 

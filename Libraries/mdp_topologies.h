@@ -65,6 +65,20 @@ namespace MDP
 				x_up[1] = nx[1] - x[1] - 1;
 		}
 	}
+
+	void open_cylinder(int mu,
+					   int *x_dw,
+					   int *x,
+					   int *x_up,
+					   int ndim,
+					   int *nx)
+	{
+		torus_topology(mu, x_dw, x, x_up, ndim, nx);
+		if ((mu == 0) && (x[0] == 0))
+			x_dw[0] = x[0];
+		if ((mu == 0) && (x[0] == nx[0] - 1))
+			x_up[0] = x[0];
+	}
 } // namespace MDP
 
 #endif /* MDP_TOPOLOGIES_ */
