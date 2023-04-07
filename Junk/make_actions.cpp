@@ -65,7 +65,7 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using FermiCloverActionFast\n";
   default_fermi_action = FermiCloverActionFast::mul_Q;
   mul_Q(chi2, psi, U, coeff);
-  if (check_differences(chi1, chi2) > 1e-5)
+  if (check_differences(chi1, chi2) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -74,7 +74,7 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using FermiCloverActionSSE2\n";
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
   mul_Q(chi2, psi, U, coeff);
-  if (check_differences(chi1, chi2) > 1e-5)
+  if (check_differences(chi1, chi2) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -83,7 +83,7 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using MinRes::inverter\n";
   default_fermi_inverter = MinRes::inverter<fermi_field, gauge_field>;
   mul_invQ(chi1, chi2, U, coeff);
-  if (check_differences(chi1, psi) > 1e-5)
+  if (check_differences(chi1, psi) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -92,7 +92,7 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using BiCGStab::inverter\n";
   default_fermi_inverter = BiCGStab::inverter<fermi_field, gauge_field>;
   mul_invQ(chi1, chi2, U, coeff);
-  if (check_differences(chi1, psi) > 1e-5)
+  if (check_differences(chi1, psi) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -128,7 +128,7 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using StaggeredAsqtadActionFast\n";
   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
   mul_Q(chi2, psi, V, coeff);
-  if (check_differences(chi1, chi2) > 1e-5)
+  if (check_differences(chi1, chi2) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -137,7 +137,7 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using FermiCloverActionSSE2\n";
   default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
   mul_Q(chi2, psi, V, coeff);
-  if (check_differences(chi1, chi2) > 1e-5)
+  if (check_differences(chi1, chi2) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -146,7 +146,7 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using MinRes::inverter\n";
   default_staggered_inverter = MinRes::inverter<staggered_field, gauge_field>;
   mul_invQ(chi1, chi2, V, coeff);
-  if (check_differences(chi1, psi) > 1e-5)
+  if (check_differences(chi1, psi) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -155,7 +155,7 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using BiCGStab::inverter\n";
   default_staggered_inverter = BiCGStab::inverter<staggered_field, gauge_field>;
   mul_invQ(chi1, chi2, V, coeff);
-  if (check_differences(chi1, psi) > 1e-5)
+  if (check_differences(chi1, psi) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -164,7 +164,7 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using StaggeredBiCGUML::inverter\n";
   default_staggered_inverter = StaggeredBiCGUML::inverter;
   mul_invQ(chi1, chi2, V, coeff);
-  if (check_differences(chi1, psi) > 1e-5)
+  if (check_differences(chi1, psi) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -197,7 +197,7 @@ void test_dwfermi(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using MinRes::inverter\n";
   default_dwfermi_inverter = MinRes::inverter<dwfermi_field, gauge_field>;
   mul_invQ(chi1, chi2, U, coeff);
-  if (check_differences(chi1, psi) > 1e-5)
+  if (check_differences(chi1, psi) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);
@@ -206,7 +206,7 @@ void test_dwfermi(int nt, int nx, int ny, int nz, int nc)
   mdp << "Using BiCGStab::inverter\n";
   default_dwfermi_inverter = BiCGStab::inverter<dwfermi_field, gauge_field>;
   mul_invQ(chi1, chi2, U, coeff);
-  if (check_differences(chi1, psi) > 1e-5)
+  if (check_differences(chi1, psi) > mdp_precision)
   {
     mdp << "FAILURE\n";
     exit(1);

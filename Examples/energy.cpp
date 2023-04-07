@@ -12,7 +12,7 @@ void compute_energy(int nt, int nx, std::string filename)
                       torus_topology,
                       0, 1, false);
   gauge_field U(lattice, nc);
-  mdp_field<mdp_real> q(lattice);
+  mdp_real_scalar_field q(lattice);
   mdp_site x(lattice);
 
   U.load(filename);

@@ -57,17 +57,6 @@ namespace MDP
     return pattern.replace(i, 1, std::to_string(k).c_str());
   }
 
-  int is_file(std::string filename, const char permission[] = "r")
-  {
-    FILE *fp = fopen(filename.c_str(), permission);
-    if (fp)
-    {
-      fclose(fp);
-      return true;
-    }
-    return false;
-  }
-
   mdp_field_file_header get_info(std::string filename, int proc = 0)
   {
     mdp_field_file_header myheader;

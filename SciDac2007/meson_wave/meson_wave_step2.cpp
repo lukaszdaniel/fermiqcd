@@ -18,9 +18,9 @@ int main(int argc, char **argv)
   mdp_lattice space(3, L + 1);
   mdp_site x(space);
   mdp_site y(space);
-  mdp_field<mdp_complex> s(space, 16);
-  mdp_field<mdp_complex> sum(space);
-  mdp_field<float> Q(space);
+  mdp_complex_vector_field s(space, 16);
+  mdp_complex_scalar_field sum(space);
+  mdp_real_scalar_field Q(space);
   char filename[128];
 
   forallsites(x)

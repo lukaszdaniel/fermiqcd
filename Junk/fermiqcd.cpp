@@ -42,7 +42,7 @@ void cool_vtk(gauge_field &U, mdp_args &arguments, std::string filename)
 
 void plaquette_vtk(gauge_field &U, std::string filename)
 {
-  mdp_field<mdp_real> q(U.lattice());
+  mdp_real_scalar_field q(U.lattice());
   mdp_site x(U.lattice());
   forallsites(x)
   {
@@ -68,12 +68,9 @@ void polyakov_vtk(gauge_field &U, std::string filename)
                     torus_topology,
                     0, 1, false);
   mdp_matrix_field V(space, U.nc, U.nc);
-  mdp_field<mdp_real> q(space, 2);
+  mdp_real_scalar_field q(space, 2);
   mdp_site x(U.lattice());
   mdp_site y(space);
-
-  // int k, mu = 0, nu = 1;
-  // mdp_complex s = 0;
 
   forallsites(y)
       V(y) = 1;
@@ -111,10 +108,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
 
   float abs_precision = arguments.get("-quark", "abs_precision", 1e-12);
   float rel_precision = arguments.get("-quark", "rel_precision", 1e-12);
-  std::string quark_action =
-      arguments.get("-quark", "action", "clover_fast|clover_slow|clover_sse2");
-  std::string inverter =
-      arguments.get("-quark", "alg", "bicgstab|minres|bicgstabvtk|minresvtk");
+  std::string quark_action = arguments.get("-quark", "action", "clover_fast|clover_slow|clover_sse2");
+  std::string inverter = arguments.get("-quark", "alg", "bicgstab|minres|bicgstabvtk|minresvtk");
   mdp << "using action=" << quark_action << " inverter=" << inverter << "\n";
 
   select_action_and_inverter(quark_action, inverter);
@@ -135,7 +130,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   L[0] = U.lattice().size(1);
   L[1] = U.lattice().size(2);
   L[2] = U.lattice().size(3);
-  mdp_field<float> Q(U.lattice());
+  mdp_real_scalar_field Q(U.lattice());
   std::string prefix;
   std::string quarkfilename;
   mdp_real tmp;
@@ -151,7 +146,9 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       arguments.have("-wave_static") ||
       arguments.have("-baryon");
   if (use_propagator)
-    S.allocate_fermi_propagator(U.lattice(), U.nc);
+  {
+    S = fermi_propagator(U.lattice(), U.nc);
+  }
 
   int t0 = arguments.get("-quark", "source_t", 0);
   int x0 = arguments.get("-quark", "source_x", 0);
@@ -501,8 +498,7 @@ int main(int argc, char **argv)
   gauge["u_t"] = arguments.get("-gauge", "u_t", 1.0);
   gauge["u_s"] = arguments.get("-gauge", "u_s", 1.0);
   std::string prefix = arguments.get("-gauge", "prefix", "");
-  std::string gauge_action = arguments.get("-gauge", "action",
-                                           "wilson|wilson_improved|wilson_sse2");
+  std::string gauge_action = arguments.get("-gauge", "action", "wilson|wilson_improved|wilson_sse2");
   quark["kappa"] = arguments.get("-quark", "kappa", 0.12);
   quark["kappa_t"] = arguments.get("-quark", "kappa_t", quark["kappa"]);
   quark["kappa_s"] = arguments.get("-quark", "kappa_s", quark["kappa"]);

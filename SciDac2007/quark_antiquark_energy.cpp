@@ -14,7 +14,7 @@ int main(int argc, char **argv)
   mdp_lattice cube(3, L + 1);
   gauge_field U(lattice, nc);
   mdp_complex_field F(cube, 12);
-  mdp_field<float> Q3(cube);
+  mdp_real_scalar_field Q3(cube);
   mdp_site x(lattice), y(lattice);
   mdp_site x3(cube);
   mdp_matrix A, B, C;
@@ -22,13 +22,14 @@ int main(int argc, char **argv)
   char name[100];
   coefficients gauge;
   gauge["beta"] = 5.0;
-  /*
+#if 0
   set_cold(U);
-  for(int k=0; k<100; k++) {
+  for (int k = 0; k < 100; k++)
+  {
     std::cout << k << std::endl;
-    WilsonGaugeAction::heatbath(U,gauge,1);
+    WilsonGaugeAction::heatbath(U, gauge, 1);
   }
-  */
+#endif
   U.load("sample_gauge_10x10x10x10.mdp");
   WilsonGaugeAction::heatbath(U, gauge, 100);
   for (int conf = 0; conf < 100; conf++)
@@ -70,7 +71,7 @@ int main(int argc, char **argv)
       F(x3, 10) += trace(plaquette(U, x, 1, 3));
       F(x3, 11) += trace(plaquette(U, x, 2, 3));
     }
-    /*
+#if 0
     for (int k = 0; k < 6; k++)
     {
       for (int mu = 0; mu < 12; mu++)
@@ -81,7 +82,7 @@ int main(int argc, char **argv)
         }
       }
     }
-    */
+#endif
     std::cout << "projecting to 3D...\n";
     forallsites(x3)
     {

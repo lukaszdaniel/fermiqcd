@@ -6,7 +6,8 @@ using namespace MDP;
 
 void test_gauge()
 {
-  int box[] = {4, 4, 4, 4}, nc = 3;
+  int box[] = {4, 4, 4, 4};
+  int nc = 3;
   mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   coefficients coeff;
@@ -24,9 +25,10 @@ void test_gauge()
 
 void test_gauge_improved()
 {
-  int box[] = {4, 4, 4, 4}, nc = 3;
+  int box[] = {4, 4, 4, 4};
+  int nc = 3;
   mdp_lattice lattice(4, box, default_partitioning<0>,
-                          torus_topology, 0, 3);
+                      torus_topology, 0, 3);
   gauge_field U(lattice, nc);
   coefficients coeff;
   coeff["beta"] = 6.0;
@@ -40,7 +42,8 @@ void test_gauge_improved()
 
 void test_fermi()
 {
-  int box[] = {4, 4, 4, 4}, nc = 3;
+  int box[] = {4, 4, 4, 4};
+  int nc = 3;
 
   mpi << "\n\nTEST FERMI FIELDS\n\n";
 
@@ -93,12 +96,13 @@ void test_fermi()
 
 void test_staggered()
 {
-  int box[] = {4, 4, 4, 4}, nc = 3;
+  int box[] = {4, 4, 4, 4};
+  int nc = 3;
 
   mpi << "\n\nTEST STAGGERED FIELDS\n\n";
 
   mdp_lattice lattice(4, box, default_partitioning<0>,
-                          torus_topology, 0, 3);
+                      torus_topology, 0, 3);
   gauge_field U(lattice, nc);
   gauge_field V(lattice, nc);
   staggered_field psi(lattice, nc);
@@ -147,7 +151,9 @@ void test_staggered()
 
 void test_dwfermi()
 {
-  int box[] = {4, 4, 4, 4}, nc = 3, L5 = 5;
+  mdp_uint box[] = {4, 4, 4, 4};
+  int nc = 3;
+  int L5 = 5;
 
   mpi << "\n\nTEST DWFIELDS FIELDS\n\n";
 
@@ -178,12 +184,14 @@ void test_dwfermi()
   check_differences(psi, chi1);
 }
 
-/*
- WORK IN PROGRESS
+#if 0
+// WORK IN PROGRESS
 
 void test_sdwf()
 {
-  int box[] = {4, 4, 4, 4}, nc = 3, L5 = 5;
+  int box[] = {4, 4, 4, 4};
+  int nc = 3;
+  int L5 = 5;
 
   if (ME == 0)
     printf("\n\nTEST SDWF FIELDS\n\n");
@@ -212,7 +220,7 @@ void test_sdwf()
     printf("\n\nCheching that inversion was correct\n\n");
   check_differences(psi, chi1);
 }
-*/
+#endif
 
 int main(int argc, char **argv)
 {

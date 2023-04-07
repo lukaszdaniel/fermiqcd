@@ -11,7 +11,7 @@ int main(int argc, char **argv)
   gauge_field U(lattice, 3);
   coefficients gauge;
   gauge["beta"] = 5.0;
-  // mdp_field<float> Q(lattice);
+  // mdp_real_scalar_field Q(lattice);
 
   set_cold(U);
 

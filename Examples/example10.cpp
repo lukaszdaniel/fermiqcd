@@ -6,8 +6,8 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mpi.open_wormholes(argc, argv);
-  int i, j;
-  for (i = 0; i < 5; i++)
+  int j = 0;
+  for (int i = 0; i < 5; i++)
   {
     if (ME == 0)
       j = i;

@@ -16,13 +16,10 @@ void polyakov(int nt, int nx, std::string filename)
                         0, 1, false);
   gauge_field U(lattice, 3);
   mdp_matrix_field V(lattice3d, 3, 3);
-  mdp_field<mdp_real> q(lattice3d, 2);
+  mdp_real_vector_field q(lattice3d, 2);
 
   mdp_site x(lattice);
   mdp_site y(lattice3d);
-
-  // int k,mu=0,nu=1;
-  // mdp_complex s=0;
 
   forallsites(y)
       V(y) = 1;

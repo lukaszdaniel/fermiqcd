@@ -10,8 +10,8 @@ int main(int argc, char **argv)
   mdp_lattice vacuum(3, mybox,
                      default_partitioning<0>,
                      box_topology);
-  mdp_field<float> u(vacuum);
-  mdp_field<float> q(vacuum);
+  mdp_real_scalar_field u(vacuum);
+  mdp_real_scalar_field q(vacuum);
   mdp_site x(vacuum);
   mdp_site A(vacuum);
   mdp_site B(vacuum);

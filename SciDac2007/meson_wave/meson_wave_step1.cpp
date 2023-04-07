@@ -27,7 +27,7 @@ int main(int argc, char **argv)
   mdp_site x0(space);
   mdp_site x3(space);
   mdp_matrix A(nc, nc);
-  mdp_field<mdp_complex> s(space, 16);
+  mdp_complex_vector_field s(space, 16);
   coefficients gauge;
   gauge["beta"] = 2.3;
   // coefficients gauge; gauge["beta"]=5.5;

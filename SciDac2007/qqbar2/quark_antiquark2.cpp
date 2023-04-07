@@ -26,7 +26,6 @@ public:
     else
       zeta = 1;
 
-    int i, j, k, iter, mu, parity;
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
     mdp_site x(U.lattice());
@@ -34,9 +33,9 @@ public:
 
     mdp << coeff;
 
-    for (iter = 0; iter < n_iter; iter++)
-      for (parity = 0; parity < 2; parity++)
-        for (mu = 0; mu < U.ndim; mu++)
+    for (int iter = 0; iter < n_iter; iter++)
+      for (int parity = 0; parity < 2; parity++)
+        for (int mu = 0; mu < U.ndim; mu++)
         {
           forallsitesofparity(x, parity)
           {
@@ -48,8 +47,8 @@ public:
                     x(3) == sites[q](3))
                   continue;
               }
-            for (i = 0; i < U.nc - 1; i++)
-              for (j = i + 1; j < U.nc; j++)
+            for (int i = 0; i < U.nc - 1; i++)
+              for (int j = i + 1; j < U.nc; j++)
               {
                 if (zeta == 1)
                   M = U(x, mu) * staple_H(U, x, mu);
@@ -62,7 +61,7 @@ public:
                 a[2] = M(j, i);
                 a[3] = M(j, j);
                 heatbath_SU2(U.lattice().random(x), beta / U.nc, a);
-                for (k = 0; k < U.nc; k++)
+                for (int k = 0; k < U.nc; k++)
                 {
                   tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                   U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
@@ -120,7 +119,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int N, nc = 2;
+  int N;
+  int nc = 2;
   int L[] = {10, 16, 10, 10};
   int idx[6][3] = {{0, 0, 1}, {1, 0, 2}, {2, 0, 3}, {3, 1, 2}, {4, 1, 3}, {5, 2, 3}};
   mdp_lattice lattice(4, L);
@@ -132,7 +132,7 @@ int main(int argc, char **argv)
   mdp_complex_field PA(cube, 6);
   mdp_complex_field PB(cube, 6);
   mdp_complex P, PC = 0;
-  mdp_field<float> Q3(cube);
+  mdp_real_scalar_field Q3(cube);
   mdp_site x(lattice), y(lattice);
   mdp_site x3(cube), x3b(cube);
   mdp_complex d;

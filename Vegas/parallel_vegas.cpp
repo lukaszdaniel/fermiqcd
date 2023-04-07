@@ -57,6 +57,7 @@
 
 */
 
+#include <algorithm>
 #include "mdp.h"
 
 using namespace MDP;
@@ -90,8 +91,7 @@ private:
 
   void PrintInputParameters(int init, int ncalls, int niterations)
   {
-    int j;
-    if (OutputFile != 0 && ME == 0)
+    if (OutputFile != nullptr && ME == 0)
     {
       fprintf(OutputFile, "======================================\n");
       fprintf(OutputFile, "Vegas Montecarlo Numerical Integration\n");
@@ -107,17 +107,18 @@ private:
       fprintf(OutputFile, "Integration Limits: i\tmin(x[i])\tmax(x[i])\n");
       fprintf(OutputFile,
               "=================================================\n");
-      for (j = 0; j < NumberOfDimensions; j++)
+      for (int j = 0; j < NumberOfDimensions; j++)
         fprintf(OutputFile, "                    %i\t%f\t%f\n",
                 j, IntegrationLimitsMin[j], IntegrationLimitsMax[j]);
       fprintf(OutputFile, "\n");
       fflush(OutputFile);
     }
   }
+
   void PrintOutputParameters()
   {
     // int i, j;
-    if (OutputFile != 0 && ME == 0)
+    if (OutputFile != nullptr && ME == 0)
     {
       if (it == it1)
       {
@@ -136,14 +137,6 @@ private:
       fflush(OutputFile);
       PrintGrid();
     }
-  }
-  inline int maximum(int a, int b)
-  {
-    return (a > b) ? a : b;
-  }
-  inline int minimum(int a, int b)
-  {
-    return (a < b) ? a : b;
   }
 
   // /////////////////////////////////////////////////////
@@ -230,7 +223,7 @@ public:
   void PrintGrid()
   {
     int i, j;
-    if (OutputFileAdvanced != 0 && ME == 0)
+    if (OutputFileAdvanced != nullptr && ME == 0)
     {
       for (j = 0; j < NumberOfDimensions; j++)
       {
@@ -247,7 +240,7 @@ public:
   }
   void PrintOutput()
   {
-    if (OutputFile != 0 && ME == 0)
+    if (OutputFile != nullptr && ME == 0)
     {
       fprintf(OutputFile, "Integral           = %f\n", Integral);
       fprintf(OutputFile, "Standard Deviation = %f\n", StandardDeviation);
@@ -282,7 +275,7 @@ public:
         for (j = 0; j < NumberOfDimensions; j++)
         {
           xn = (kg[j] - mdp_random.plain()) * dxg;
-          ia[j] = maximum(minimum((int)(xn), NDMX - 1), 0); // check NDMX
+          ia[j] = std::max(std::min((int)(xn), NDMX - 1), 0); // check NDMX
           if (ia[j] > 0)
           {
             xo = xi[j][ia[j]] - xi[j][ia[j] - 1];
@@ -371,7 +364,7 @@ public:
       }
       for (k = 1, i = 0; i < NumberOfDimensions; i++)
         k *= ng;
-      npg = maximum(ncalls / k, 2);
+      npg = std::max(ncalls / k, 2);
       calls = npg * k;
       dxg = 1.0 / ng;
       for (dv2g = 1, i = 0; i < NumberOfDimensions; i++)

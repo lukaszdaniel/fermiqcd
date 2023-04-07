@@ -6,7 +6,8 @@ using namespace MDP;
 
 void test_fermi()
 {
-  int box[] = {4, 4, 4, 4}, nc = 3;
+  int box[] = {4, 4, 4, 4};
+  int nc = 3;
 
   mpi << "\n\nTEST FERMI FIELDS\n\n";
 

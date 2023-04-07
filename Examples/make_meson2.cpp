@@ -118,12 +118,7 @@ int main(int argc, char **argv)
   // //////////////////////////////////////////////////////
   // define the number of gauge configurations to be used
   // //////////////////////////////////////////////////////
-  int Nconfig = 100;
-
-  // //////////////////////////////////////////////////////
-  // define some more auxiliary variables
-  // //////////////////////////////////////////////////////
-  int i, j, t, config;
+  constexpr mdp_uint Nconfig = 100;
 
   // //////////////////////////////////////////////////////
   // define a container object for the propagator
@@ -140,7 +135,7 @@ int main(int argc, char **argv)
   // create and skip 100 gauge configuration
   // for each print average plaquette to check termalization
   // //////////////////////////////////////////////////////
-  for (i = 0; i < 100; i++)
+  for (int i = 0; i < 100; i++)
   {
     WilsonGaugeAction::heatbath(U, gauge_coeff);
     mpi << "average_plaquette=" << average_plaquette(U) << "\n";
@@ -149,12 +144,12 @@ int main(int argc, char **argv)
   // //////////////////////////////////////////////////////
   // loop over the gauge configurations
   // //////////////////////////////////////////////////////
-  for (config = 0; config < Nconfig; config++)
+  for (mdp_uint config = 0; config < Nconfig; config++)
   {
 
     // skip 10 gauge configurations and
     // for each print average plaquette
-    for (i = 0; i < 10; i++)
+    for (int i = 0; i < 10; i++)
     {
       WilsonGaugeAction::heatbath(U, gauge_coeff);
       mpi << "average_plaquette=" << average_plaquette(U) << "\n";
@@ -178,13 +173,15 @@ int main(int argc, char **argv)
     //
     // as function of t = t_x
     // ////////////////////////////////////////////////////
-    for (t = 0; t < Nt; t++)
+    for (int t = 0; t < Nt; t++)
+    {
       F(0, t) = 0;
+    }
     forallsites(x)
     {
-      t = x(0);
-      for (i = 0; i < 4; i++)
-        for (j = 0; j < 4; j++)
+      int t = x(0);
+      for (int i = 0; i < 4; i++)
+        for (int j = 0; j < 4; j++)
           F(config, t) +=
               real(trace(Sq(x, i, j) * hermitian(Sh(x, i, j))));
     }

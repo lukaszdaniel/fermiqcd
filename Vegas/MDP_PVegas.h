@@ -89,7 +89,7 @@ namespace MDP
     void PrintInputParameters(int init, int ncalls, int niterations)
     {
       int j;
-      if (OutputFile != 0 && ME == 0)
+      if (OutputFile != nullptr && ME == 0)
       {
         fprintf(OutputFile,
                 "======================================\n");
@@ -120,7 +120,7 @@ namespace MDP
     void PrintOutputParameters()
     {
       int i, j;
-      if (OutputFile != 0 && ME == 0)
+      if (OutputFile != nullptr && ME == 0)
       {
         if (it == it1)
         {
@@ -234,7 +234,7 @@ namespace MDP
     void PrintGrid()
     {
       int i, j;
-      if (OutputFileAdvanced != 0 && ME == 0)
+      if (OutputFileAdvanced != nullptr && ME == 0)
       {
         for (j = 0; j < NumberOfDimensions; j++)
         {
@@ -251,7 +251,7 @@ namespace MDP
     }
     void PrintOutput()
     {
-      if (OutputFile != 0 && ME == 0)
+      if (OutputFile != nullptr && ME == 0)
       {
         fprintf(OutputFile, "Integral           = %f\n", Integral);
         fprintf(OutputFile, "Standard Deviation = %f\n", StandardDeviation);

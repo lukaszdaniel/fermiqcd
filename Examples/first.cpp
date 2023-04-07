@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 
   int L[] = {10, 10};
   mdp_lattice lattice(2, L);
-  mdp_field<float> psi(lattice);
+  mdp_real_scalar_field psi(lattice);
   mdp_site x(lattice);
 
   forallsites(x)

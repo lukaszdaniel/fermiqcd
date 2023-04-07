@@ -5,15 +5,6 @@
 
 using namespace MDP;
 
-// #include <sstream>
-// const char* output(std::string file, int num){
-//   std::ostringstream ostr;
-//   std::string os;
-//   ostr << file << num << ends;
-//   os=ostr.str();
-//   return os.c_str();
-// }
-
 class parameters
 {
 public:
@@ -64,7 +55,7 @@ public:
     cg_absolute_precision = val(prompt(filename, "CG_ABSOLUTE_PRECISION", "1e-14"));
     cg_relative_precision = val(prompt(filename, "CG_RELATIVE_PRECISION", "0"));
     cg_max_steps = val(prompt(filename, "CG_MAX_STEPS", "1000"));
-    // representation=prompt(filename,"REPRESENTATION","SYMMETRIC");
+    // representation = prompt(filename, "REPRESENTATION", "SYMMETRIC");
     representation = prompt(filename, "REPRESENTATION", "FUNDAMENTAL");
     read_in = (int)val(prompt(filename, "READIN", "0"));
   }
@@ -74,14 +65,11 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
 
-  // double starttime;
-
   parameters param;
   // param.read("input");
 
   define_base_matrices("FERMILAB");
   int box[] = {param.T, param.L, param.L, param.L};
-  // int sweep, number=0;
   mdp_lattice lattice(param.ndim, box);
   // unsigned int r=param.seed;
 
@@ -92,7 +80,7 @@ int main(int argc, char **argv)
   else if (param.representation == "FUNDAMENTAL")
     dimrep = U.nc;
   fermi_field psi(lattice, dimrep, param.nspin);
-  // mdp_real pl;
+
   coefficients coeff;
   coeff["time"] = param.T;
   coeff["length"] = param.L;

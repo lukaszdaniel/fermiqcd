@@ -6,7 +6,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
 
-  int box[] = {4, 4, 4, 4}, nc = 3;
+  int box[] = {4, 4, 4, 4};
+  int nc = 3;
   mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   coefficients coeff;

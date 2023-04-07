@@ -454,6 +454,21 @@ namespace MDP
               const char *mode = "w");
 #endif
   };
+
+  /** @brief Other usefull aliases.
+   *
+   * Parked here for now.
+   */
+  using mdp_complex_scalar_field = mdp_field<mdp_complex>;
+  using mdp_complex_vector_field = mdp_field<mdp_complex>;
+
+  using mdp_real_field = mdp_field<mdp_real>;
+  using mdp_real_scalar_field = mdp_field<mdp_real>;
+  using mdp_real_vector_field = mdp_field<mdp_real>;
+
+  using mdp_int_field = mdp_field<mdp_int>;
+  using mdp_int_scalar_field = mdp_field<mdp_int>;
+  using mdp_int_vector_field = mdp_field<mdp_int>;
 } // namespace MDP
 
 #endif /* MDP_FIELD_ */

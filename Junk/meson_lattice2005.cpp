@@ -6,7 +6,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);   // START
   define_base_matrices("FERMIQCD"); // set Gamma convention
-  int n = 3, nconfig = 100;
+  int n = 3;
+  constexpr mdp_suint nconfig = 100;
   int L[] = {16, 8, 8, 8};
   mdp_lattice lattice(4, L);      // declare lattice
   gauge_field U(lattice, n);      // declare fields
@@ -22,9 +23,9 @@ int main(int argc, char **argv)
   for (int t = 0; t < L[TIME]; t++)
     Cpi(t) = 0;
   set_hot(U);
-  for (int k = 0; k < nconfig; k++)
+  for (mdp_suint k = 0; k < nconfig; k++)
   {
-    WilsonGaugeAction::heatbath(U, gauge); // do heatbath
+    WilsonGaugeAction::heatbath(U, gauge);            // do heatbath
     U.save(std::string("gauge") + std::to_string(k)); // save config
     if (quark["c_{SW}"] != 0)
       compute_em_field(U);

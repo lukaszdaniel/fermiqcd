@@ -7,7 +7,8 @@ using namespace MDP;
 void test_gauge()
 {
    mdp << "START TESTING GAUGE ACTION\n";
-   int box[] = {4, 4, 4, 4}, nc = 3;
+   int box[] = {4, 4, 4, 4};
+   int nc = 3;
    mdp_lattice lattice(4, box);
    gauge_field U(lattice, nc);
    coefficients coeff;
@@ -27,7 +28,8 @@ void test_gauge()
 void test_gauge_improved()
 {
    mdp << "START TESTING IMPROVED GAUGE ACTION\n";
-   int box[] = {4, 4, 4, 4}, nc = 3;
+   int box[] = {4, 4, 4, 4};
+   int nc = 3;
    mdp_lattice lattice(4, box, default_partitioning<0>,
                            torus_topology, 0, 3);
    gauge_field U(lattice, nc);
@@ -46,7 +48,8 @@ void test_fermi()
 {
    mdp << "START TESTING CLOVER ACTIONS\n";
 
-   int box[] = {4, 4, 4, 4}, nc = 3;
+   int box[] = {4, 4, 4, 4};
+   int nc = 3;
    mdp_lattice lattice(4, box);
    gauge_field U(lattice, nc);
    fermi_field psi(lattice, nc);
@@ -71,7 +74,7 @@ void test_fermi()
    mul_invQ(chi2, psi, U, coeff);
 
    mdp << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -83,7 +86,7 @@ void test_fermi()
    mul_invQ(chi2, psi, U, coeff);
 
    mdp << "\n\nCheching that CloverActionSlow and CloverActionSSE2 agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -92,7 +95,7 @@ void test_fermi()
 
    mdp << "\n\nCheching that inversion was correct\n\n";
    mul_Q(chi1, chi2, U, coeff);
-   if (check_differences(psi, chi1) > 1e-5)
+   if (check_differences(psi, chi1) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -103,7 +106,7 @@ void test_fermi()
    mul_invQ(chi1, psi, U, coeff);
 
    mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -116,7 +119,8 @@ void test_staggered()
 {
    mdp << "START TESTING STAGGERED ACTIONS\n";
 
-   int box[] = {4, 4, 4, 4}, nc = 3;
+   int box[] = {4, 4, 4, 4};
+   int nc = 3;
    mdp_lattice lattice(4, box, default_partitioning<0>,
                            torus_topology, 0, 3);
    gauge_field U(lattice, nc);
@@ -143,7 +147,7 @@ void test_staggered()
    mul_invQ(chi1, psi, V, coeff);
 
    mdp << "\n\nCheching that AsqtadActionSlow and AsqtadActionFast agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -154,7 +158,7 @@ void test_staggered()
    default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
    mul_invQ(chi2, psi, V, coeff);
    mdp << "\n\nCheching that AsqtadActionSlow and AsqtadActionSSE2 agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -163,7 +167,7 @@ void test_staggered()
 
    mdp << "\n\nCheching that inversion(s) were correct\n\n";
    mul_Q(chi1, chi2, V, coeff);
-   if (check_differences(psi, chi1) > 1e-5)
+   if (check_differences(psi, chi1) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -174,7 +178,7 @@ void test_staggered()
    mul_invQ(chi1, psi, V, coeff);
 
    mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -186,7 +190,9 @@ void test_dwfermi()
 {
    mdp << "START TESTING DOMAIN WALL ACTIONS\n";
 
-   int box[] = {4, 4, 4, 4}, nc = 3, L5 = 5;
+   int box[] = {4, 4, 4, 4};
+   int nc = 3;
+   int L5 = 5;
    mdp_lattice lattice(4, box);
    gauge_field U(lattice, nc);
    dwfermi_field psi(lattice, L5, nc);
@@ -206,7 +212,7 @@ void test_dwfermi()
    mul_Q(chi2, psi, U, coeff);
 
    mdp << "\n\nCheching that DWFermiSlow and DWFermiFast agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -221,7 +227,7 @@ void test_dwfermi()
    mul_invQ(chi2, psi, U, coeff);
 
    mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
-   if (check_differences(chi1, chi2) > 1e-5)
+   if (check_differences(chi1, chi2) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);
@@ -229,7 +235,7 @@ void test_dwfermi()
 
    mul_Q(chi1, chi2, U, coeff);
    mdp << "\n\nCheching that inversion was correct\n\n";
-   if (check_differences(psi, chi1) > 1e-5)
+   if (check_differences(psi, chi1) > mdp_precision)
    {
       mdp << "FAILURE\n";
       exit(1);

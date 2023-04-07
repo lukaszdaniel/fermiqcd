@@ -25,7 +25,8 @@ public:
     else
       zeta = 1;
 
-    int i, j, k, iter, mu, parity;
+    int iter, parity;
+    int mu = 0;
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
     mdp_site x(U.lattice());
@@ -44,8 +45,8 @@ public:
       for (mu = 0; mu < U.ndim; mu++)
       {
 
-        for (i = 0; i < U.nc - 1; i++)
-          for (j = i + 1; j < U.nc; j++)
+        for (int i = 0; i < U.nc - 1; i++)
+          for (int j = i + 1; j < U.nc; j++)
           {
             if (zeta == 1)
               M = U(x, mu) * staple_H(U, x, mu);
@@ -58,7 +59,7 @@ public:
             a[2] = M(j, i);
             a[3] = M(j, j);
             heatbath_SU2(U.lattice().random(x), beta / U.nc, a);
-            for (k = 0; k < U.nc; k++)
+            for (int k = 0; k < U.nc; k++)
             {
               tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
               U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
@@ -80,10 +81,10 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
   mdp_lattice &lattice = U.lattice();
   int L[3] = {lattice.size(1), lattice.size(2), lattice.size(3)};
   mdp_lattice cube(3, L);
-  mdp_field<float> Q3(cube);
+  mdp_real_scalar_field Q3(cube);
   mdp_site x4(lattice);
   mdp_site x3(cube);
-  mdp_field<float> Q4(lattice);
+  mdp_real_scalar_field Q4(lattice);
   char filename[128];
 
   for (int i1 = 0; i1 < c1; i1++)

@@ -25,7 +25,7 @@ int main(int argc, char **argv)
   mul_invQ(phi, psi, U, quark, 1e-7);
 
   mdp_lattice space(3, L + 1);
-  mdp_field<float> s(space, 3);
+  mdp_real_vector_field s(space, 3);
   mdp_site x3(space);
   char filename[128];
   for (int t = 0; t < L[0] - 1; t++)

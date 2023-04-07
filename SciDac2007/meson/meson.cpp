@@ -1,5 +1,4 @@
 // #define SSE2
-#define OSX
 #include "../../Libraries/fermiqcd.h"
 #include "../dump.h"
 
@@ -18,7 +17,7 @@ int main(int argc, char **argv)
   coefficients quark;
   quark["kappa"] = 0.12;
   mdp_lattice space(3, L + 1);
-  mdp_field<float> s(space, L[0]);
+  mdp_real_vector_field s(space, L[0]);
   mdp_site x3(space);
   char filename[128];
   set_cold(U);

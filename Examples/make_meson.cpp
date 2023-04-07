@@ -37,7 +37,8 @@ int main(int argc, char **argv)
 #endif
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
 
-  int nt = 12, nc = 3, t, a, b, i, j;
+  int nt = 12;
+  int nc = 3;
   // double alpha=0.0;
 
   int mybox[] = {nt, 4, 4, 4};
@@ -73,11 +74,11 @@ int main(int argc, char **argv)
 
 #else
 
-  for (t = 0; t < nt; t++)
+  for (int t = 0; t < nt; t++)
     C2(t) = 0;
 
-  for (a = 0; a < 4; a++)
-    for (i = 0; i < nc; i++)
+  for (int a = 0; a < 4; a++)
+    for (int i = 0; i < nc; i++)
     {
       psi = 0;
       x.set(0, 0, 0, 0);
@@ -109,8 +110,8 @@ int main(int argc, char **argv)
 
       forallsites(x)
       {
-        for (b = 0; b < 4; b++)
-          for (j = 0; j < nc; j++)
+        for (int b = 0; b < 4; b++)
+          for (int j = 0; j < nc; j++)
             C2(x(0)) += phi(x, b, j) * conj(chi(x, b, j));
       }
     }
@@ -118,7 +119,7 @@ int main(int argc, char **argv)
 #endif
 
   mpi.add(C2.address(), nt);
-  for (t = 0; t < nt; t++)
+  for (int t = 0; t < nt; t++)
     printf("%i\t%e\t%e\n", t, real(C2(t)), imag(C2(t)));
 
   mpi.close_wormholes();

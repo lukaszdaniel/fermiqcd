@@ -8,7 +8,7 @@ int main(int argc, char **argv)
   define_base_matrices("FERMILAB"); // set gamma matrices
   int L[] = {32, 8, 8, 8};          // lattice volume
   int n = 3;                        // SU(n) gauge group
-  int N = 100;                      // number of gauge configurations
+  constexpr int N = 100;            // number of gauge configurations
   mdp_lattice lattice(4, L);        // make a 4D lattice
   gauge_field U(lattice, n);        // make a gauge field U
   coefficients gauge;               // set physical gauge parameters

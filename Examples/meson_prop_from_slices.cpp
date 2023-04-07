@@ -4,9 +4,10 @@
 
 using namespace MDP;
 
-void meson_prop_from_slice(int nt, int nx, char *filename)
+void meson_prop_from_slice(int nt, int nx, const char *filename)
 {
-  int box[] = {nt, nx, nx, nx}, nc = 3;
+  int box[] = {nt, nx, nx, nx};
+  int nc = 3;
   mdp_lattice lattice(4, box,
                       default_partitioning0,
                       torus_topology,
@@ -18,7 +19,7 @@ void meson_prop_from_slice(int nt, int nx, char *filename)
   mdp_site x(lattice);
   mdp_site y(space);
   fermi_propagator S(lattice, nc);
-  mdp_field<float> Q(space);
+  mdp_real_scalar_field Q(space);
   mdp << "success in allocating vector\n";
   char filename2[128];
   S.load(filename);

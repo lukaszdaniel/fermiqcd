@@ -65,13 +65,16 @@ int main(int argc, char **argv)
   // a regular board parallelized by columns
   mdp_lattice board(2, sides);
   // or a board with a hole parallelized by diagonal stripes
-  // mdp_lattice board(2,sides,myownpartitioning,board_with_hole);
-  mdp_field<int> S(board);    // create field of int on board (S)
-  mdp_field<int> newS(board); // create field of int in board (newS)
-  mdp_site x(board);          // create variable to loop on board
+  // mdp_lattice board(2, sides, myownpartitioning, board_with_hole);
+  mdp_int_scalar_field S(board);    // create field of int on board (S)
+  mdp_int_scalar_field newS(board); // create field of int in board (newS)
+  mdp_site x(board);                // create variable to loop on board
 
   // initialize board at random
-  forallsites(x) S(x) = (board.random(x).plain() > 0.5) ? 1 : 0;
+  forallsites(x)
+  {
+    S(x) = (board.random(x).plain() > 0.5) ? 1 : 0;
+  }
 
   int sum, diff;
   // iterate 1000 times max

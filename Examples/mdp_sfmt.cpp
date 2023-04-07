@@ -37,7 +37,7 @@ private:
   unsigned int *psfmt32;
   void period_certification(void)
   {
-    static unsigned int parity[4] = {PARITY1, PARITY2, PARITY3, PARITY4};
+    static mdp_uint parity[4] = {PARITY1, PARITY2, PARITY3, PARITY4};
     unsigned int inner = 0;
     unsigned int i, j;
     unsigned int work;
@@ -100,7 +100,7 @@ private:
 
   void gen_rand_all(void)
   {
-    unsigned int i;
+    mdp_uint i;
     w128_t *r1, *r2;
 
     r1 = &sfmt[N - 2];

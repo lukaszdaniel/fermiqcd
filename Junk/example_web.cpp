@@ -6,7 +6,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
 
-  int nc = 4, Nconfig = 5;
+  constexpr mdp_suint nc = 4;
+  constexpr mdp_suint Nconfig = 5;
   int mybox[] = {2, 2, 2, 2, 2};
   mdp_lattice mylattice(5, mybox);
   gauge_field U(mylattice, nc);
@@ -15,7 +16,7 @@ int main(int argc, char **argv)
 
   set_hot(U);
 
-  for (int config = 0; config < Nconfig; config++)
+  for (mdp_suint config = 0; config < Nconfig; config++)
   {
     WilsonGaugeAction::heatbath(U, coeff, 1);
     mdp << "config=" << config

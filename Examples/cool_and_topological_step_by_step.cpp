@@ -4,9 +4,10 @@
 
 using namespace MDP;
 
-void test_gauge(int nt, int nx, char *filename)
+void test_gauge(int nt, int nx, const char *filename)
 {
-  int box[] = {nt, nx, nx, nx}, nc = 3;
+  int box[] = {nt, nx, nx, nx};
+  int nc = 3;
   mdp_lattice lattice(4, box,
                           default_partitioning0,
                           torus_topology,

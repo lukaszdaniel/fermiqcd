@@ -63,8 +63,8 @@ int main(int argc, char **argv)
 
   int sides[] = {10, 10};
   mdp_lattice board(2, sides, myownpartitioning, board_with_hole);
-  mdp_field<int> S(board);    // create field of int on board (S)
-  mdp_field<int> newS(board); // create field of int in board (newS)
+  mdp_int_scalar_field S(board);    // create field of int on board (S)
+  mdp_int_scalar_field newS(board); // create field of int in board (newS)
   mdp_site x(board);          // create variable to loop on board
 
   // initialize board at random

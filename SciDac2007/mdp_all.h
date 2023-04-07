@@ -64,6 +64,7 @@ namespace MDP
     struct sockaddr_in address;
     std::string ipaddress;
     int port;
+
     InternetAddress(std::string hostname = "127.0.0.1", int port = 0)
     {
 
@@ -74,8 +75,8 @@ namespace MDP
       if (h->h_length != 4)
         throw std::string("Invalid hostname");
       strncpy(tmp, inet_ntop(AF_INET, *((struct in_addr *)h->h_addr_list[0])), 16);
-      ipaddress = tmp;
 
+      ipaddress = tmp;
       this->port = port;
       memset(&address, 0, sizeof(address));
       address.sin_family = AF_INET;

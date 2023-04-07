@@ -9,7 +9,7 @@ int main(int argc, char **argv)
   int L[] = {10, 10, 8, 6};
   mdp_lattice lattice(4, L);
   mdp_site x(lattice);
-  mdp_field<float> s(lattice, 2);
+  mdp_real_vector_field s(lattice, 2);
   forallsites(x)
   {
     s(x, 0) = sqrt(x(0) * x(0) + x(1) * x(1) + x(2) * x(2) + x(3) * x(3));
