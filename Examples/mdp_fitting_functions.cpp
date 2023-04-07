@@ -34,5 +34,5 @@ int main()
                x[i], y[i].mean, y[i].error, f(x[i], a, ma, 0));
 
     printf("%f %f %f\n", a[0], a[1], a[2]);
-    print(covar);
+    std::cout << covar;
 }
