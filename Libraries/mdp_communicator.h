@@ -287,7 +287,7 @@ namespace MDP
     }
     void add(mdp_matrix &a)
     {
-      add(a.address(), a.rowmax() * a.colmax());
+      add(a.address(), a.rows() * a.cols());
     }
     void add(mdp_matrix *a, mdp_int length)
     {

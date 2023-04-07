@@ -208,7 +208,7 @@ namespace MDP
   /// and returns the projected matrix
   mdp_matrix project_SU(mdp_matrix M, int nstep = 1)
   {
-    int i, j, k, l, step, nc = M.rowmax();
+    int i, j, k, l, step, nc = M.rows();
     mdp_real e0, e1, e2, e3, dk, d;
     mdp_complex dc, u0, u1, u2, u3;
     mdp_matrix B(nc, nc);

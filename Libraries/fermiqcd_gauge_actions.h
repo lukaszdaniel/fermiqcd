@@ -258,7 +258,7 @@ namespace MDP
         y2 = y1 - mu;
         tmp += U(x + mu, mu) * hermitian(U(y2, mu) * U(y1, mu) * U(y0, nu)) * U(y2, nu);
       }
-      prepare(tmp);
+
       return tmp;
     }
 
@@ -304,7 +304,7 @@ namespace MDP
           y2 = y1 - mu;
           tmp += U(x + mu, mu) * hermitian(U(y2, mu) * U(y1, mu) * U(y0, nu)) * U(y2, nu);
         }
-      prepare(tmp);
+
       return tmp;
     }
 

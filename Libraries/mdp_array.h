@@ -12,6 +12,10 @@
 #ifndef MDP_ARRAY_
 #define MDP_ARRAY_
 
+#include <ostream>
+#include <memory>
+#include <array>
+#include <numeric>
 #define ARRAY_MAX_DIM 5
 
 namespace MDP
@@ -23,314 +27,351 @@ namespace MDP
   ///    mdp_array<float,3> a(5,5,5);
   ///    a(0,0,0)=3.15;
   /// @endverbatim
-  template <class T, mdp_uint nc_>
+  template <class T, mdp_uint ndims>
   class mdp_array
   {
   private:
-    enum
-    {
-      FREE,
-      HARD
-    } flag;
+    bool m_shared;
+    mdp_uint m_dim;                             // dimension of the array
+    std::array<mdp_uint, ARRAY_MAX_DIM> m_size; // size of each dimension
+    std::unique_ptr<T[]> m_data;                // data
 
-    T *m; // data
-    mdp_uint nc, c[ARRAY_MAX_DIM];
-    mdp_uint imax; // total n. of elements
+    /** @brief Assign dimension values to this array
+     *
+     * @param c0_ size of 0-th dimension
+     * @param c1_ size of 1-st dimension
+     * @param c2_ size of 2-nd dimension
+     * @param c3_ size of 3-rd dimension
+     * @param c4_ size of 4-th dimension
+     */
+    void calculateDimensions(const mdp_uint c0_, const mdp_uint c1_,
+                             const mdp_uint c2_, const mdp_uint c3_, const mdp_uint c4_)
+    {
+      m_size = {c0_, c1_, c2_, c3_, c4_};
+    }
+
+    /** @brief Assign dimension values to this array
+     *
+     * @param p Pointer to array describing dimensions
+     */
+    void calculateDimensions(const mdp_uint *p)
+    {
+      for (mdp_uint i = 0; i < m_dim; i++)
+        m_size[i] = p[i];
+      for (mdp_uint i = m_dim; i < ARRAY_MAX_DIM; i++)
+        m_size[i] = 1;
+    }
+
+    /** @brief Allocate required memory
+     */
+    void allocate()
+    {
+      if (!m_shared)
+      {
+        m_data = std::make_unique<T[]>(size());
+        if (size() && !m_data)
+          error("mdp_array::allocate()\nOut of memory");
+        // memset(m_data, 0, size() * sizeof(T));
+      }
+    }
+
+    void reallocate()
+    {
+      deallocate();
+      allocate();
+    }
+
+    void deallocate()
+    {
+      if (m_shared)
+      {
+        m_data.release();
+      }
+      else
+      {
+        m_data = nullptr;
+      }
+    }
+
+    void validateIndices(const mdp_uint i0, const mdp_uint i1, const mdp_uint i2,
+                         const mdp_uint i3, const mdp_uint i4)
+    {
+      if ((i1 != 0 && m_dim < 2) ||
+          (i2 != 0 && m_dim < 3) ||
+          (i3 != 0 && m_dim < 4) ||
+          (i4 != 0 && m_dim < ARRAY_MAX_DIM))
+        error("mdp_array::operator()(...)\nIncompatible size()");
+      if (i0 >= m_size[0])
+        error("mdp_array::operator()\nIndex out of bounds");
+      if (i1 >= m_size[1])
+        error("mdp_array::operator()\nIndex out of bounds");
+      if (i2 >= m_size[2])
+        error("mdp_array::operator()\nIndex out of bounds");
+      if (i3 >= m_size[3])
+        error("mdp_array::operator()\nIndex out of bounds");
+      if (i4 >= m_size[4])
+        error("mdp_array::operator()\nIndex out of bounds");
+    }
+
+    /** Copy one array to another array
+     *
+     * @param a Array to be copied
+     */
+    void copyArray(const mdp_array &a)
+    {
+      if (size() != a.size())
+        dimension(a.size());
+
+      for (mdp_uint i = 0; i < ARRAY_MAX_DIM; i++)
+        m_size[i] = a.m_size[i];
+      for (mdp_uint i = 0; i < size(); i++)
+        m_data[i] = a.m_data[i];
+    }
+
   public:
-    inline const int ndim() const
+    /** @brief Dimension of this array
+     *
+     * @return dimension of this array
+     *
+     * @note The value is at most equal to 5
+     */
+    mdp_uint ndim() const
     {
-      return nc;
+      return m_dim;
     }
 
-    inline T *address()
+    /** @brief Begining of this array
+     *
+     * @return Pointer to the begining of this array
+     */
+    T *address()
     {
-      return m;
+      return m_data.get();
     }
 
-    inline mdp_uint *size_address()
+    /** @brief Size of each dimension
+     *
+     * @return Pointer to the array of sizes
+     */
+    const mdp_uint *dims() const
     {
-      return c;
+      return m_size.data();
     }
 
-    inline T &operator[](const mdp_uint i)
+    T &operator[](const mdp_uint i)
     {
 #ifdef CHECK_ALL
       if (i >= size())
         error("mdp_array::operator[]\nIndex out of bounds");
 #endif
-      return m[i];
+      return m_data[i];
     }
 
-    inline const T &operator[](const mdp_uint i) const
+    const T &operator[](const mdp_uint i) const
     {
 #ifdef CHECK_ALL
       if (i >= size())
         error("mdp_array::operator[]\nIndex out of bounds");
 #endif
-      return m[i];
+      return m_data[i];
     }
 
-    inline mdp_uint length(const mdp_uint i) const
-    {
-      return size(i);
-    }
-
-    inline mdp_uint length() const
-    {
-      return imax;
-    }
-
-    inline mdp_uint size(mdp_uint i) const
+    /** @brief Size of i-th dimension
+     *
+     * @return Size of i-th dimension
+     */
+    mdp_uint size(mdp_uint i) const
     {
 #ifdef CHECK_ALL
       if (i >= size())
         error("mdp_array::size(...)\nIndex out of bounds");
 #endif
-      return c[i];
+      return m_size[i];
     }
 
-    inline mdp_uint size() const
+    /** @brief Total size of this array
+     *
+     * @return Total number of elements
+     *
+     * @note This is a product of all dimensions
+     */
+    mdp_uint size() const
     {
-      return imax;
+      return std::accumulate(m_size.begin(), m_size.end(), 1, std::multiplies<mdp_uint>());
     }
 
-    inline void dimension(const mdp_uint *p)
+    void dimension(const mdp_uint *p)
     {
-      if (flag != FREE)
-        error("mdp_array::dimension(...)\nCannot redimension a HARD object");
-      mdp_uint i;
-      for (imax = 1, i = 0; i < nc; i++)
-        imax *= (c[i] = p[i]);
-      for (i = nc; i < ARRAY_MAX_DIM; i++)
-        c[i] = 1;
-      if (m != 0)
-        delete[] m;
-      m = new T[imax];
+      calculateDimensions(p);
+      reallocate();
     }
 
-    inline void dimension(const mdp_uint c0_ = 1, const mdp_uint c1_ = 1, const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
+    void dimension(const mdp_uint c0_ = 1, const mdp_uint c1_ = 1,
+                   const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
     {
-      if (m != 0)
-        delete[] m;
-      c[0] = c0_;
-      imax = c0_;
-      c[1] = c1_;
-      imax *= c1_;
-      c[2] = c2_;
-      imax *= c2_;
-      c[3] = c3_;
-      imax *= c3_;
-      c[4] = c4_;
-      imax *= c4_;
-      m = new T[imax];
+      calculateDimensions(c0_, c1_, c2_, c3_, c4_);
+      allocate();
     }
 
-    inline mdp_array(const mdp_uint c0_ = 1, const mdp_uint c1_ = 1, const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
+    mdp_array(const mdp_uint c0_ = 1, const mdp_uint c1_ = 1, const mdp_uint c2_ = 1,
+              const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
+        : m_shared(false), m_dim(ndims), m_data(nullptr)
     {
-      flag = FREE;
-      nc = nc_;
-      m = 0;
-      dimension(c0_, c1_, c2_, c3_, c4_);
+      calculateDimensions(c0_, c1_, c2_, c3_, c4_);
+      allocate();
     }
 
-    inline mdp_array(const mdp_uint *p)
+    mdp_array(const mdp_uint *p)
+        : m_shared(false), m_dim(ndims), m_data(nullptr)
     {
-      flag = FREE;
-      nc = nc_;
-      m = 0;
-      dimension(p);
+      calculateDimensions(p);
+      allocate();
     }
 
-    inline mdp_array(const T *m0,
-                     const mdp_uint c0_ = 1,
-                     const mdp_uint c1_ = 1,
-                     const mdp_uint c2_ = 1,
-                     const mdp_uint c3_ = 1,
-                     const mdp_uint c4_ = 1)
+    mdp_array(const T *m0, const mdp_uint c0_ = 1, const mdp_uint c1_ = 1,
+              const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
+        : m_shared(true), m_data(m0), m_dim(ndims)
     {
-      flag = HARD;
-      nc = nc_;
-      m = 0;
-      dimension(c0_, c1_, c2_, c3_, c4_);
+      calculateDimensions(c0_, c1_, c2_, c3_, c4_);
     }
 
-    inline mdp_array(const T *m0,
-                     const mdp_uint *p)
+    mdp_array(const T *m0, const mdp_uint *p)
+        : m_shared(true), m_data(m0), m_dim(ndims)
     {
-      flag = HARD;
-      nc = nc_;
-      m = m0;
-      imax = c[0] = p[0];
-      mdp_uint i;
-      for (i = 1; i < nc; i++)
-        imax *= (c[i] = p[i]);
-      for (i = nc; i < ARRAY_MAX_DIM; i++)
-        c[i] = 1;
+      calculateDimensions(p);
     }
 
-    inline mdp_array(const mdp_array &a)
+    mdp_array(const mdp_array &a)
+        : m_shared(false), m_dim(ndims), m_data(nullptr)
     {
-      flag = FREE;
-      mdp_uint i;
-      m = 0;
-      nc = nc_;
-      if (nc != a.nc)
+      if (m_dim != a.m_dim)
         error("mdp_array::mdp_array(...)\nIncompatible size()");
-      dimension(a.imax);
-      for (i = 0; i < ARRAY_MAX_DIM; i++)
-        c[i] = a.c[i];
-      for (i = 0; i < imax; i++)
-        m[i] = a.m[i];
+
+      copyArray(a);
     }
 
     virtual ~mdp_array()
     {
-      nc = imax = 0;
-      if (flag != HARD && m != 0)
-        delete[] m;
+      deallocate();
     }
 
-    inline void operator=(const mdp_array &a)
+    const mdp_array &operator=(const mdp_array &a)
     {
-      mdp_uint i;
-      nc = a.nc;
-      if (nc != a.nc)
-        error("mdp_array::operator=(...)\nIncompatible size()");
-      if (imax != a.imax)
-        dimension(a.imax);
-      for (i = 0; i < ARRAY_MAX_DIM; i++)
-        c[i] = a.c[i];
-      for (i = 0; i < imax; i++)
-        m[i] = a.m[i];
+      m_dim = a.m_dim;
+      copyArray(a);
+      return *this;
     }
 
-    inline friend void prepare(const mdp_array &a)
-    {
-      // do nothing...
-    }
-
-    inline friend mdp_array operator+(const mdp_array &a, const mdp_array &b)
-    {
-      mdp_array tmp(a.c);
-      for (mdp_uint i = 0; i < a.imax; i++)
-        tmp[i] = a[i] + b[i];
-      return tmp;
-    }
-
-    inline friend mdp_array operator-(const mdp_array &a, const mdp_array &b)
-    {
-      mdp_array tmp(a.c);
-      for (mdp_uint i = 0; i < a.imax; i++)
-        tmp[i] = a[i] - b[i];
-      return tmp;
-    }
-
-    template <class T2>
-    inline friend mdp_array operator*(T2 x, const mdp_array &a)
-    {
-      mdp_array tmp(a.c);
-      for (mdp_uint i = 0; i < a.imax; i++)
-        tmp[i] = a[i] * x;
-      return tmp;
-    }
-
-    // Implementation of generic unary operator
-    inline friend mdp_array applytoall(const mdp_array &a,
-                                       T (*fptr)(T, void *), void *x = 0)
-    {
-      mdp_array tmp(a.c);
-      for (mdp_uint i = 0; i < a.imax; i++)
-        tmp[i] = (*fptr)(a[i], x);
-      return tmp;
-    }
-
-    // implementation of generic binary operator
-    inline friend mdp_array applytoall(const mdp_array &a, const mdp_array &b,
-                                       T (*fptr)(T, T, void *), void *x = 0)
-    {
-      mdp_array tmp(a.c);
-      for (mdp_uint i = 0; i < a.imax; i++)
-        tmp[i] = (*fptr)(a[i], b[i], x);
-      return tmp;
-    }
-
-    inline T &operator()(const mdp_uint i0,
-                         const mdp_uint i1 = 0,
-                         const mdp_uint i2 = 0,
-                         const mdp_uint i3 = 0,
-                         const mdp_uint i4 = 0)
+    T &operator()(const mdp_uint i0, const mdp_uint i1 = 0, const mdp_uint i2 = 0,
+                  const mdp_uint i3 = 0, const mdp_uint i4 = 0)
     {
 #ifdef CHECK_ALL
-      if ((i1 != 0 && nc < 2) ||
-          (i2 != 0 && nc < 3) ||
-          (i3 != 0 && nc < 4) ||
-          (i4 != 0 && nc < ARRAY_MAX_DIM))
-        error("mdp_array::operator()(...)\nIncompatible size()");
-      if (i0 >= c[0])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i1 >= c[1])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i2 >= c[2])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i3 >= c[3])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i4 >= c[4])
-        error("mdp_array::operator()\nIndex out of bounds");
+      validateIndices(i0, i1, i2, i3, i4);
 #endif
-      return m[(((i0 * c[1] + i1) * c[2] + i2) * c[3] + i3) * c[4] + i4];
+      return m_data[(((i0 * m_size[1] + i1) * m_size[2] + i2) * m_size[3] + i3) * m_size[4] + i4];
     }
 
-    inline const T &operator()(const mdp_uint i0,
-                               const mdp_uint i1 = 0,
-                               const mdp_uint i2 = 0,
-                               const mdp_uint i3 = 0,
-                               const mdp_uint i4 = 0) const
+    const T &operator()(const mdp_uint i0, const mdp_uint i1 = 0, const mdp_uint i2 = 0,
+                        const mdp_uint i3 = 0, const mdp_uint i4 = 0) const
     {
 #ifdef CHECK_ALL
-      if ((i1 != 0 && nc < 2) ||
-          (i2 != 0 && nc < 3) ||
-          (i3 != 0 && nc < 4) ||
-          (i4 != 0 && nc < ARRAY_MAX_DIM))
-        error("mdp_array::operator()(...)\nIncompatible size()");
-      if (i0 >= c[0])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i1 >= c[1])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i2 >= c[2])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i3 >= c[3])
-        error("mdp_array::operator()\nIndex out of bounds");
-      if (i4 >= c[4])
-        error("mdp_array::operator()\nIndex out of bounds");
+      validateIndices(i0, i1, i2, i3, i4);
 #endif
-      return m[(((i0 * c[1] + i1) * c[2] + i2) * c[3] + i3) * c[4] + i4];
-    }
-
-    friend std::ostream &operator<<(std::ostream &os, const mdp_array &a)
-    {
-      mdp_uint i;
-      os << "{";
-
-      switch (a.ndim())
-      {
-      case 0:
-        break;
-      case 1:
-        for (i = 0; i < a.length(); i++)
-          if (i == 0)
-            os << " " << a[i];
-          else
-            os << ", " << a[i];
-        break;
-      default:
-        os << " Sorry. Option not implemented";
-        break;
-      }
-
-      os << " }";
-      return os;
+      return m_data[(((i0 * m_size[1] + i1) * m_size[2] + i2) * m_size[3] + i3) * m_size[4] + i4];
     }
   };
-} // namespace MDP {
+
+  template <class T, mdp_uint ndims>
+  mdp_array<T, ndims> operator+(const mdp_array<T, ndims> &a, const mdp_array<T, ndims> &b)
+  {
+    mdp_array<T, ndims> tmp(a.dims());
+    for (mdp_uint i = 0; i < a.size(); i++)
+      tmp[i] = a[i] + b[i];
+    return tmp;
+  }
+
+  template <class T, mdp_uint ndims>
+  mdp_array<T, ndims> operator-(const mdp_array<T, ndims> &a, const mdp_array<T, ndims> &b)
+  {
+    mdp_array<T, ndims> tmp(a.dims());
+    for (mdp_uint i = 0; i < a.size(); i++)
+      tmp[i] = a[i] - b[i];
+    return tmp;
+  }
+
+  template <class T, class T2, mdp_uint ndims>
+  mdp_array<T, ndims> operator*(T2 x, const mdp_array<T, ndims> &a)
+  {
+    mdp_array tmp(a.dims());
+    for (mdp_uint i = 0; i < a.size(); i++)
+      tmp[i] = a[i] * x;
+    return tmp;
+  }
+
+  // Implementation of generic unary operator
+  template <class T, mdp_uint ndims>
+  mdp_array<T, ndims> applytoall(const mdp_array<T, ndims> &a, T (*fptr)(T, void *),
+                                 void *x = nullptr)
+  {
+    mdp_array<T, ndims> tmp(a.dims());
+    for (mdp_uint i = 0; i < a.size(); i++)
+      tmp[i] = (*fptr)(a[i], x);
+    return tmp;
+  }
+
+  // implementation of generic binary operator
+  template <class T, mdp_uint ndims>
+  mdp_array<T, ndims> applytoall(const mdp_array<T, ndims> &a, const mdp_array<T, ndims> &b,
+                                 T (*fptr)(T, T, void *), void *x = nullptr)
+  {
+    mdp_array tmp(a.dims());
+    for (mdp_uint i = 0; i < a.size(); i++)
+      tmp[i] = (*fptr)(a[i], b[i], x);
+    return tmp;
+  }
+
+  template <class T, mdp_uint ndims>
+  std::ostream &operator<<(std::ostream &os, const mdp_array<T, ndims> &a)
+  {
+    switch (a.ndim())
+    {
+    case 0:
+      os << "{}";
+      break;
+    case 1:
+      os << "{";
+      for (mdp_uint i = 0; i < a.length(); i++)
+        if (i == 0)
+          os << " " << a[i];
+        else
+          os << ", " << a[i];
+      os << "}";
+      break;
+    case 2:
+      for (mdp_uint i = 0; i < a.size(0); i++)
+      {
+        if (i == 0)
+          os << "{{";
+        else
+          os << " {";
+        for (mdp_uint j = 0; j < a.size(1); j++)
+          if (j == 0)
+            os << " " << a(i, j);
+          else
+            os << ", " << a(i, j) << " ";
+        if (i == (a.size(0) - 1))
+          os << "}}\n";
+        else
+          os << "}, \n";
+      }
+      break;
+    default:
+      os << " Sorry. Option not implemented";
+      break;
+    }
+
+    return os;
+  }
+} // namespace MDP
 
 #endif /* MDP_ARRAY_ */
