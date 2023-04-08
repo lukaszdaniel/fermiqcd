@@ -13,6 +13,8 @@
 #define MDP_UTILS_
 
 #include <filesystem>
+#include <string>
+#include <vector>
 
 namespace MDP
 {
@@ -50,10 +52,10 @@ namespace MDP
     std::string latest = v[v.size() - 1];
     if (latest == "?")
       return pattern.replace(i, 1, std::to_string(0));
-    int k;
+
     latest = latest.substr(i, 5);
-    k = atoi(latest.c_str());
-    k++;
+    int k = 1 + atoi(latest.c_str());
+
     return pattern.replace(i, 1, std::to_string(k).c_str());
   }
 
@@ -63,7 +65,7 @@ namespace MDP
     if (ME == proc)
     {
       FILE *fp = fopen(filename.c_str(), "r");
-      if (fp == 0)
+      if (fp == nullptr)
         error("Unable to open file");
       size_t count = sizeof(mdp_field_file_header) / sizeof(char);
       if (fread(&myheader, sizeof(char), count, fp) != count)
@@ -79,11 +81,10 @@ namespace MDP
 
   int mail(std::string email, std::string message)
   {
-    std::string s;
     static int ret;
     if (ME == 0)
     {
-      s = "echo '" + message + "' | mail -s 'MDP MESSAGE' " + email;
+      std::string s = "echo '" + message + "' | mail -s 'MDP MESSAGE' " + email;
       ret = system(s.c_str());
     }
     mpi.broadcast(ret, 0);
@@ -92,11 +93,10 @@ namespace MDP
 
   int mail_file(std::string email, std::string filename)
   {
-    std::string s;
     static int ret;
     if (ME == 0)
     {
-      s = "more " + filename + " | mail -s 'MDP MESSAGE' " + email;
+      std::string s = "more " + filename + " | mail -s 'MDP MESSAGE' " + email;
       ret = system(s.c_str());
     }
     mpi.broadcast(ret, 0);
@@ -119,13 +119,13 @@ namespace MDP
 
   int parse_int(std::string a, std::string b, int value = 0)
   {
-    int i = a.find(std::string(":") + b), j = 0;
+    int i = a.find(std::string(":") + b);
     if (i < 0)
       return value;
     else
     {
       i += b.length() + 2;
-      j = a.find(":", i);
+      int j = a.find(":", i);
       if (j < 0)
         j = a.length();
       sscanf(a.substr(i, j - i).c_str(), "%i", &value);
@@ -133,15 +133,31 @@ namespace MDP
     }
   }
 
-  float parse_float(std::string a, std::string b, float value = 0.0)
+  mdp_uint parse_uint(std::string a, std::string b, mdp_uint value = 0)
   {
-    int i = a.find(std::string(":") + b), j = 0;
+    int i = a.find(std::string(":") + b);
     if (i < 0)
       return value;
     else
     {
       i += b.length() + 2;
-      j = a.find(":", i);
+      int j = a.find(":", i);
+      if (j < 0)
+        j = a.length();
+      sscanf(a.substr(i, j - i).c_str(), "%u", &value);
+      return value;
+    }
+  }
+
+  float parse_float(std::string a, std::string b, float value = 0.0)
+  {
+    int i = a.find(std::string(":") + b);
+    if (i < 0)
+      return value;
+    else
+    {
+      i += b.length() + 2;
+      int j = a.find(":", i);
       if (j < 0)
         j = a.length();
       sscanf(a.substr(i, j - i).c_str(), "%f", &value);
@@ -151,84 +167,18 @@ namespace MDP
 
   std::string parse_string(std::string a, std::string b, std::string value = "")
   {
-    int i = a.find(std::string(":") + b), j = 0;
-    // char cvalue[512];
+    int i = a.find(std::string(":") + b);
     if (i < 0)
       return value;
     else
     {
       i += b.length() + 2;
-      j = a.find(":", i);
+      int j = a.find(":", i);
       if (j < 0)
         j = a.length();
       return a.substr(i, j - i);
     }
   }
-
-  class mdp_args
-  {
-  public:
-    std::vector<std::string> args;
-    mdp_args(int argc, char **argv)
-    {
-      for (int i = 1; i < argc; i++)
-        this->args.push_back(argv[i]);
-    }
-    int length()
-    {
-      return args.size();
-    }
-    bool have(std::string name)
-    {
-      for (size_t i = 0; i < this->args.size(); i++)
-        if (this->args[i] == name || startswith(this->args[i], name + ":"))
-          return true;
-      return false;
-    }
-    float get(std::string name, std::string key, float value = 0.0)
-    {
-      for (size_t i = 0; i < this->args.size(); i++)
-        if (startswith(this->args[i], name + ":"))
-          return parse_float(this->args[i], key, value);
-      return value;
-    }
-    float get(std::string name, std::string key, double value = 0.0)
-    {
-      for (size_t i = 0; i < this->args.size(); i++)
-        if (startswith(this->args[i], name + ":"))
-        {
-          value = parse_float(this->args[i], key, value);
-          break;
-        }
-      mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
-      return value;
-    }
-    int get(std::string name, std::string key, int value = 0)
-    {
-      for (size_t i = 0; i < this->args.size(); i++)
-        if (startswith(this->args[i], name + ":"))
-        {
-          value = parse_int(this->args[i], key, value);
-          break;
-        }
-      mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
-      return value;
-    }
-    std::string get(std::string name, std::string key, std::string value = "")
-    {
-      int i = value.find('|');
-      if (i >= 0)
-        value = value.substr(0, i);
-      for (size_t i = 0; i < this->args.size(); i++)
-        if (startswith(this->args[i], name + ":"))
-        {
-          value = parse_string(this->args[i], key, value);
-          break;
-        }
-      mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
-      return value;
-    }
-  };
 } // namespace MDP
 
 #endif /* MDP_UTILS_ */
