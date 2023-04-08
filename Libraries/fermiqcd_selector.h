@@ -12,6 +12,8 @@
 #ifndef FERMIQCD_SELECTOR_
 #define FERMIQCD_SELECTOR_
 
+#include <string>
+
 namespace MDP
 {
   void select_action_and_inverter(std::string quark_action, std::string inverter)

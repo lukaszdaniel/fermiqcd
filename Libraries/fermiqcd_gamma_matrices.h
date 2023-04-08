@@ -20,16 +20,15 @@
 #ifndef FERMIQCD_GAMMA_MATRICES_
 #define FERMIQCD_GAMMA_MATRICES_
 
-namespace MDP
-{
-  // modified 20 Nov 2009 to include MILC convention
+// modified 20 Nov 2009 to include MILC convention
+#include <string>
 
 #define GAMMA_MATRICES
 
-  // ////////////////////////////////////////////////////////////////////
-  // Gamma matrices and relatives!
-  // ////////////////////////////////////////////////////////////////////
-
+namespace MDP
+{
+  /** @brief Gamma matrices and relatives!
+   */
   mdp_complex Gamma_val[4][4], Sigma_val[4][4][4];
   int Gamma_idx[4][4], Sigma_idx[4][4][4];
   mdp_complex Gamma5_val[4], GammaxGamma5_val[4][4];
@@ -44,7 +43,7 @@ namespace MDP
   mdp_matrix Gamma[4], Gamma1, Gamma5, Pleft, Pright, Lambda[9];
   mdp_matrix Sigma[4][4], sigma[4];
 
-  /// @brief define convetion for Gamma matrices and bases of SU(2) and SU(3)
+  /// @brief define convention for Gamma matrices and bases of SU(2) and SU(3)
   ///
   /// At the beginning of any FermiQCD program you MUST call
   /// @verbatim

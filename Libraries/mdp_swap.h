@@ -15,20 +15,11 @@
 namespace MDP
 {
   template <class T>
-  void swap(T &a, T &b)
-  {
-    T c;
-    c = a;
-    a = b;
-    b = c;
-  }
-
-  template <class T>
   void swap(T *a, T *b, int n)
   {
     int i;
     T c;
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
       c = a[i];
       a[i] = b[i];

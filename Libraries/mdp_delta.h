@@ -18,7 +18,7 @@ namespace MDP
   template <class T>
   const bool delta(const T &i, const T &j)
   {
-    return (i == j) ? true : false;
+    return (i == j);
   }
 } // namespace MDP
 

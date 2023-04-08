@@ -12,10 +12,9 @@
 #ifndef FERMIQCD_FERMI_ACTIONS_SSE2_
 #define FERMIQCD_FERMI_ACTIONS_SSE2_
 
+#ifdef SSE2
 namespace MDP
 {
-#ifdef SSE2
-
   /// @brief Wilson/Clover action SSE/SSE2
   ///
   /// Only on Pentium 4 or compatible. Compile with -DSSE2
@@ -47,7 +46,7 @@ namespace MDP
                       int parity = EVENODD)
     {
 
-      int ndim = psi_in.lattice().ndim;
+      int ndim = psi_in.lattice().n_dimensions();
       int nspin = psi_in.nspin;
       int nc = psi_in.nc;
       mdp_real kappa_t = 0;
@@ -96,7 +95,7 @@ namespace MDP
       if (parity != EVENODD)
         error("FermiCloverActionSSE2\nparity must be EVENODD here");
 
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
 
       _sse_spinor *chi = (_sse_spinor *)chi_out.physical_address();
       _sse_check_alignment((void *)chi, 0xf);
@@ -1359,11 +1358,10 @@ namespace MDP
 
         /*************** end of loop ***********************/
       }
-#endif // if defined(USE_DOUBLE_PRECISION)
+#endif // USE_DOUBLE_PRECISION
     }
   };
-
-#endif // if defined(SSE2)
 } // namespace MDP
+#endif // SSE2
 
 #endif /* FERMIQCD_FERMI_ACTIONS_SSE2_ */

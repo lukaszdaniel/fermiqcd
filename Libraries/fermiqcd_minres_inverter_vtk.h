@@ -16,11 +16,13 @@
 
 namespace MDP
 {
+  std::string inversion_vtk_prefix = "test";
+
   // /////////////////////////////////////////////
   // implementation of the minimum residue inversion
   // /////////////////////////////////////////////
 
-  /// @brief the minimum residure inverter
+  /// @brief the minimum residue inverter
   ///
   /// It inverts mul_Q(psi_out,psi_in,U,coeff) iteratively
   /// @param psi_out the output field passed by reference
@@ -47,9 +49,6 @@ namespace MDP
   /// @endverbatim
   /// Note that mul_invQ(chi,psi,U,coeff) reads
   /// \f$ \chi=(/\!\!\!D[U]+m)^{-1}\psi \f$
-
-  std::string inversion_vtk_prefix = "test";
-
   class MinResVtk
   {
   public:
@@ -103,7 +102,7 @@ namespace MDP
 
         // computing residue
         residue = norm_square(r);
-        residue = sqrt(residue / r.global_size());
+        residue = std::sqrt(residue / r.global_size());
 
         // computing relative residue
         old_rresidue = rresidue;
@@ -116,7 +115,7 @@ namespace MDP
           {
             s(x) = 0.0;
             for (int k = 0; k < psi_in.nc; k++)
-              s(x) += sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
+              s(x) += std::sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
           }
           filename1 = filename_prefix + ".field" + std::to_string(a) + "." + std::to_string(step) + ".vtk";
           s.save_vtk(filename1, tc);

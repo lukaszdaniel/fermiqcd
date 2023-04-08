@@ -12,8 +12,12 @@
 #ifndef FERMIQCD_SU_GENERATORS_
 #define FERMIQCD_SU_GENERATORS_
 
+#include <vector>
+#include <cmath>
+
 namespace MDP
 {
+  // SU(n) generator
   // Example:
   // #include "fermiqcd.h"
   // int main() {
@@ -22,22 +26,12 @@ namespace MDP
   //    cout << "g=" << g.lambda[a] << endl;
   //  return 0;
   // }
-
   class SU_Generators
   {
   public:
     std::vector<mdp_matrix> lambda;
     int n;
     int ngenerators;
-    SU_Generators(int n)
-    {
-      this->n = n;
-      this->ngenerators = (n * n - 1);
-      lambda.resize(ngenerators);
-
-      for (int a = 0; a < ngenerators; a++)
-        lambda[a] = build_matrix(a);
-    }
 
     mdp_matrix build_matrix(int a)
     {
@@ -62,14 +56,24 @@ namespace MDP
       }
       for (int i = 0; i < n - 1; i++)
       {
-        mult = vec[pos2 + i] * (1.0 / sqrt(2. + 2. / (1. + i)) / (1. + i));
+        mult = vec[pos2 + i] * (1.0 / std::sqrt(2. + 2. / (1. + i)) / (1. + i));
         for (int j = 0; j < i + 1; j++)
         {
           mat(j, j) += mult;
         }
         mat(i + 1, i + 1) -= (1 + i) * mult;
       }
-      return I * sqrt(2) * mat;
+      return I * std::sqrt(2) * mat;
+    }
+
+    SU_Generators(int N)
+    {
+      n = N;
+      ngenerators = (n * n - 1);
+      lambda.resize(ngenerators);
+
+      for (int a = 0; a < ngenerators; a++)
+        lambda[a] = build_matrix(a);
     }
   };
 } // namespace MDP

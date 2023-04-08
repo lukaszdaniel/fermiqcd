@@ -12,12 +12,15 @@
 #ifndef MDP_TIMER_
 #define MDP_TIMER_
 
+#include <string>
+
 namespace MDP
 {
-#ifndef NO_POSIX
-
   double walltime()
   {
+#ifdef NO_POSIX
+    return (double)clock() / CLOCKS_PER_SEC;
+#else
     double mic, time;
     double mega = 0.000001;
     struct timeval tp;
@@ -34,6 +37,7 @@ namespace MDP
     static mdp_int base_usec = 0;
 
     gettimeofday(&tp, &tzp);
+
     if (base_sec == 0)
     {
       base_sec = tp.tv_sec;
@@ -44,17 +48,25 @@ namespace MDP
     mic = (double)(tp.tv_usec - base_usec);
     time = (time + mic * mega);
     return (time);
+#endif
   }
 
   std::string getname()
   {
+#ifdef NO_POSIX
+    return std::string("localhost");
+#else
     static char tmp[1024];
     gethostname(tmp, 1024);
     return std::string(tmp);
+#endif
   }
 
   void getcpuusage(double &user, double &total)
   {
+#ifdef NO_POSIX
+    user = total = 0;
+#else
     static mdp_int t[4], s[4];
     double sum, usage[4];
     FILE *fp;
@@ -81,25 +93,8 @@ namespace MDP
     usage[3] /= sum;
     user = 100.0 * (usage[0]);                        // user usage
     total = 100.0 * (usage[0] + usage[1] + usage[2]); // cpu usage
-  }
-#else
-
-  double walltime()
-  {
-    return (double)clock() / CLOCKS_PER_SEC;
-  }
-
-  std::string getname()
-  {
-    return std::string("localhost");
-  }
-
-  void getcpuusage(double &user, double &total)
-  {
-    user = total = 0;
-  }
-
 #endif
+  }
 } // namespace MDP
 
 #endif /* MDP_TIMER_ */

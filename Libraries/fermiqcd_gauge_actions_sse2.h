@@ -534,16 +534,17 @@ namespace MDP
       else
         u_s = 1;
 
-      // if(Nproc!=1)  error("improved_heatbath() does not work in parallel!");
+      // if (Nproc != 1)
+      //   error("improved_heatbath() does not work in parallel!");
 
       if (U.ndim != 4)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): ndim!=4 (use heatbath instead)");
 
-      /*
-        if((U.lattice().size(0) % 3!=0) || (U.lattice().size(1) % 3!=0) ||
-        (U.lattice().size(2) % 3!=0) || (U.lattice().size(3) % 3!=0))
+#if 0
+      if ((U.lattice().size(0) % 3 != 0) || (U.lattice().size(1) % 3 != 0) ||
+          (U.lattice().size(2) % 3 != 0) || (U.lattice().size(3) % 3 != 0))
         error("lattice is not divisible by 3");
-      */
+#endif
 
       if (U.nc == 1)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): U(1)? (use metropolis instead)");
@@ -578,13 +579,11 @@ namespace MDP
         alpha_s = -4.0 * std::log(u_s) / 3.0684;
         c_p = 1.0;
         c_r = -0.05 * std::pow((double)u_s, (double)-2.0) * (1.0 + 0.4805 * alpha_s);
-        ;
         c_c = -1.00 * std::pow((double)u_s, (double)-2.0) * (0.03325 * alpha_s);
-        ;
       }
       else
       {
-        mdp << "Using default non-improved action" << "\n";
+        mdp << "Using default non-improved action\n";
         stats = WilsonGaugeAction::heatbath(U, coeff, n_iter);
         end_function("ImprovedGaugeAction__heatbath");
         return stats;

@@ -12,79 +12,82 @@
 #ifndef FERMIQCD_TOPOLOGICAL_CHARGE_
 #define FERMIQCD_TOPOLOGICAL_CHARGE_
 
+#include <string>
+
 namespace MDP
 {
 #if 0
-// Under development - DOES NOT WORK!!!!
+  // Under development - DOES NOT WORK!!!!
 
-class HypSmearing
-{
-public:
-  std::vector<float> alpha;
-  bool in(int x, std::vector<int> set)
+  class HypSmearing
   {
-    for (int i = 0; i < set.size(); i++)
-      if (x == set[i])
-        return true;
-    return false;
-  }
+  public:
+    std::vector<float> alpha;
 
-public:
-  static void smear_aux(gauge_field &U,
-                        std::vector<int> set,
-                        int cooling_steps = 10)
-  {
-    mdp_site x(U.lattice());
-    mdp_site y(U.lattice());
-    mdp_matrix A(U.nc, U.nc)
-        mdp_matrix
-        staples(U.nc, U.nc) for (int m = 0; m < U.ndim - 1; m++)
+    bool in(int x, std::vector<int> set)
     {
-      forallsites(x)
-      {
-        for (int mu = 0; mu < U.ndim; mu++)
-        {
-          for (int i = 0; i < U.nc; i++)
-            for (int j = 0; j < U.nc; j++)
-              staples(i, j) = 0;
-          for (int nu = 0; nu < U.nc; nu++)
-            y = x + nu;
-          for (int i = 0; i < U.nc; i++)
-            for (int j = 0; j < U.nc; j++)
-            {
-              A(i, j) = 0;
-              for (int k = 0; k < U.nc; k +)
-                A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
-            }
-          for (int i = 0; i < U.nc; i++)
-            for (int j = 0; j < U.nc; j++)
-            {
-              for (int k = 0; k < U.nc; k +)
-                staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
-            }
-          y = x - nu;
-          for (int i = 0; i < U.nc; i++)
-            for (int j = 0; j < U.nc; j++)
-            {
-              A(i, j) = 0;
-              for (int k = 0; k < U.nc; k +)
-                A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
-            }
-          for (int i = 0; i < U.nc; i++)
-            for (int j = 0; j < U.nc; j++)
-            {
-              for (int k = 0; k < U.nc; k +)
-                staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
-            }
-        }
-      }
-      for (int i = 0; i < U.nc; i++)
-        for (int j = 0; j < U.nc; j++)
-          U(x, mu, i, j) = (1.0 - alpha[m]) * U(x, mu, i, j) + alpha[m] * staples(i, j);
-      U(x, mu) = ProjectSUN(U(x, mu));
+      for (int i = 0; i < set.size(); i++)
+        if (x == set[i])
+          return true;
+      return false;
     }
-  }
-};
+
+  public:
+    static void smear_aux(gauge_field &U,
+                          std::vector<int> set,
+                          int cooling_steps = 10)
+    {
+      mdp_site x(U.lattice());
+      mdp_site y(U.lattice());
+      mdp_matrix A(U.nc, U.nc)
+          mdp_matrix
+          staples(U.nc, U.nc) for (int m = 0; m < U.ndim - 1; m++)
+      {
+        forallsites(x)
+        {
+          for (int mu = 0; mu < U.ndim; mu++)
+          {
+            for (int i = 0; i < U.nc; i++)
+              for (int j = 0; j < U.nc; j++)
+                staples(i, j) = 0;
+            for (int nu = 0; nu < U.nc; nu++)
+              y = x + nu;
+            for (int i = 0; i < U.nc; i++)
+              for (int j = 0; j < U.nc; j++)
+              {
+                A(i, j) = 0;
+                for (int k = 0; k < U.nc; k++)
+                  A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
+              }
+            for (int i = 0; i < U.nc; i++)
+              for (int j = 0; j < U.nc; j++)
+              {
+                for (int k = 0; k < U.nc; k++)
+                  staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
+              }
+            y = x - nu;
+            for (int i = 0; i < U.nc; i++)
+              for (int j = 0; j < U.nc; j++)
+              {
+                A(i, j) = 0;
+                for (int k = 0; k < U.nc; k++)
+                  A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
+              }
+            for (int i = 0; i < U.nc; i++)
+              for (int j = 0; j < U.nc; j++)
+              {
+                for (int k = 0; k < U.nc; k++)
+                  staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
+              }
+          }
+        }
+        for (int i = 0; i < U.nc; i++)
+          for (int j = 0; j < U.nc; j++)
+            U(x, mu, i, j) = (1.0 - alpha[m]) * U(x, mu, i, j) + alpha[m] * staples(i, j);
+        U(x, mu) = ProjectSUN(U(x, mu));
+      }
+    }
+  };
 #endif
 
   // from Bonnet et al. Phys Rev D 62, 094509
@@ -109,10 +112,12 @@ public:
           {
             U(x, mu) = (1.0 - alpha) * V(x, mu);
             for (int nu = 0; nu < U.ndim; nu++)
+            {
               if (nu != mu)
                 U(x, mu) += (1.0 - alpha) / 6 *
                             (V(x, nu) * V(x + nu, mu) * hermitian(V(x + mu, nu)) +
                              hermitian(V(x - nu, nu)) * V(x - nu, mu) * V((x - nu) + mu, nu));
+            }
             U(x, mu) = project_SU(U(x, mu), cooling_steps);
           }
         }

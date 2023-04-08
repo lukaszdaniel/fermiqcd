@@ -13,6 +13,7 @@
 #define MDP_PRNG_SFMT_
 
 #include <cassert>
+#include <cstddef> // for size_t
 
 #define MSK1 0xdfffffefU
 #define MSK2 0xddfecb7fU
@@ -29,14 +30,14 @@ namespace MDP
   {
   private:
     bool initialized;
-    static const unsigned int MEXP = 19937;
-    static const unsigned int N = 156;
-    static const unsigned int N32 = 624;
-    static const unsigned int POS1 = 122;
-    static const unsigned int SL1 = 18;
-    static const unsigned int SL2 = 1;
-    static const unsigned int SR1 = 11;
-    static const unsigned int SR2 = 1;
+    static constexpr unsigned int MEXP = 19937;
+    static constexpr unsigned int N = 156;
+    static constexpr unsigned int N32 = 624;
+    static constexpr unsigned int POS1 = 122;
+    static constexpr unsigned int SL1 = 18;
+    static constexpr unsigned int SL2 = 1;
+    static constexpr unsigned int SR1 = 11;
+    static constexpr unsigned int SR2 = 1;
     unsigned int idx;
 
     struct W128_T

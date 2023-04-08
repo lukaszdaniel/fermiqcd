@@ -53,7 +53,7 @@ namespace MDP
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
-      int ndim = psi_in.lattice().ndim;
+      int ndim = psi_in.lattice().n_dimensions();
       int nspin = psi_in.nspin;
       int nc = psi_in.nc;
       mdp_real kappa_t = 0;
@@ -190,7 +190,7 @@ namespace MDP
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
-      int ndim = psi_in.lattice().ndim;
+      int ndim = psi_in.lattice().n_dimensions();
       int nspin = psi_in.nspin;
       int nc = psi_in.nc;
       mdp_real kappa_t = 0;

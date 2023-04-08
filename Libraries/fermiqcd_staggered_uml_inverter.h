@@ -87,7 +87,7 @@ namespace MDP
       if (parity == EVENODD)
         opposite_parity = EVENODD;
 
-      // psi_out=psi_in;
+      // psi_out = psi_in;
       // t = M^Dagger M psi_out
 
       mdp << "BEGIN BiConjugate Gradient Inversion of Q Q^DAGGER (?) ...\n";
@@ -117,8 +117,8 @@ namespace MDP
         }
       }
 
-      residue = sqrt(real_scalar_product(r, r, parity));
-      norm = sqrt(real_scalar_product(psi_in, psi_in, parity));
+      residue = std::sqrt(real_scalar_product(r, r, parity));
+      norm = std::sqrt(real_scalar_product(psi_in, psi_in, parity));
 
       target_residue = absolute_precision * norm;
 
@@ -200,7 +200,7 @@ namespace MDP
       mdp_site x(U.lattice());
       int i;
       staggered_field r(psi_in.lattice(), U.nc);
-      mdp_real mass;
+      mdp_real mass = 1.0;
       inversion_stats stats;
       if (coeff.has_key("mass"))
         mass = coeff["mass"];
@@ -208,7 +208,7 @@ namespace MDP
         error("coefficient mass undeclared");
       coeff["mass"] = 0;
 
-      // set masses to zero (becasue use mul_q for d_slash)
+      // set masses to zero (because use mul_q for d_slash)
 
       // It is important to initilize the output here
       // because staggered_BiCG_QQh uses it.

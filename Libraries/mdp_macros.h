@@ -30,7 +30,7 @@ namespace MDP
 
 /// Loop on all sites stored by this process
 #define forallsitesandcopies(x) \
-     for (x.start(), x.idx = 0; x.idx < x.lattice().nvol; x.idx++)
+     for (x.start(), x.idx = 0; x.idx < x.lattice().enclosing_volume(); x.idx++)
 
 /// Loop on all sites stored by this process with given parity
 // if pofx is EVENODD=2 then loops on even and odd sites

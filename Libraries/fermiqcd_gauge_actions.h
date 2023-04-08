@@ -14,6 +14,8 @@
 #ifndef FERMIQCD_GAUGE_ACTIONS_
 #define FERMIQCD_GAUGE_ACTIONS_
 
+#include <string>
+
 namespace MDP
 {
   /*
@@ -375,7 +377,7 @@ namespace MDP
     static int strange_mapping(mdp_site &x)
     {
       int mu, type = 0;
-      for (mu = 0; mu < x.lattice().ndim; mu++)
+      for (mu = 0; mu < x.lattice().n_dimensions(); mu++)
         type += (int)std::pow((float)iGauge_min, mu) * (x(mu) % iGauge_min);
       return type;
     }
@@ -458,7 +460,7 @@ namespace MDP
       }
       else
       {
-        mdp << "Using default non-improved action" << "\n";
+        mdp << "Using default non-improved action\n";
         stats = WilsonGaugeAction::heatbath(U, coeff, n_iter);
         end_function("ImprovedGaugeAction__heatbath");
         return stats;

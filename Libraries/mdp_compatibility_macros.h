@@ -12,6 +12,8 @@
 #ifndef MDP_COMPATIBILITY_MACROS_
 #define MDP_COMPATIBILITY_MACROS_
 
+namespace MDP
+{
 #define myreal mdp_real
 #define site mdp_site
 #define Complex mdp_complex
@@ -28,5 +30,6 @@
 #define Vector_field mdp_vector_field
 #define NMatrix_field mdp_nmatrix_field
 #define mdp_random_generator mdp_prng
+} // namespace MDP
 
 #endif /* MDP_COMPATIBILITY_MACROS_ */

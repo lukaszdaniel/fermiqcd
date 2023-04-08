@@ -14,6 +14,8 @@
 #ifndef FERMIQCD_FERMI_FIELD_
 #define FERMIQCD_FERMI_FIELD_
 
+#include <iostream>
+
 namespace MDP
 {
   /// @brief wilson fermionic field
@@ -30,18 +32,22 @@ namespace MDP
   class fermi_field : public mdp_complex_field
   {
   public:
-    int nspin, nc;
+    int nspin;
+    int nc;
+
     fermi_field()
     {
       reset_field();
     }
+
     fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4)
     {
-      reset_field();
+      deallocate_field();
       nc = nc_;
       nspin = nspin_;
       allocate_field(a, nspin * nc);
     }
+
     void allocate_fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4)
     {
       deallocate_field();
@@ -49,29 +55,43 @@ namespace MDP
       nspin = nspin_;
       allocate_field(a, nspin * nc);
     }
+
     fermi_field(const fermi_field &chi) : mdp_complex_field(chi)
     {
       nc = chi.nc;
       nspin = chi.nspin;
     }
+
     void operator=(const fermi_field &chi)
     {
       nc = chi.nc;
       nspin = chi.nspin;
       mdp_complex_field::operator=(chi);
     }
+
+    /** @brief returns the matrix stored at site x
+     */
     inline mdp_matrix operator()(mdp_site x)
     {
       return mdp_matrix(address(x), nspin, nc);
     }
+
+    /** @brief returns the vector of spin \e a stored at site x
+     */
     inline mdp_matrix operator()(mdp_site x, int a)
     {
       return mdp_matrix(address(x, a * nc), nc, 1);
     }
+
+    /** @brief returns the (a,i) component of the matrix stored at site x
+     */
     inline mdp_complex &operator()(mdp_site x, int a, int i)
     {
       return *(address(x, a * nc + i));
     }
+
+    /** @brief returns the (a,i) const component of the matrix stored at site x
+     */
     inline const mdp_complex &operator()(mdp_site x, int a, int i) const
     {
       return *(address(x, a * nc + i));

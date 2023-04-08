@@ -12,6 +12,8 @@
 #ifndef MDP_POSTSCRIPT_
 #define MDP_POSTSCRIPT_
 
+#include <cstdio>
+
 namespace MDP
 {
   /// @brief to output and draw in postscript
@@ -30,6 +32,7 @@ namespace MDP
     {
       BOLD = 10
     };
+
     FILE *fp;
     float X0, Y0, Z0;
     float X1, Y1, Z1;
@@ -41,28 +44,28 @@ namespace MDP
     {
       fp = 0;
       scale = 1;
-    };
+    }
 
     mdp_postscript(char filename[])
     {
       open(filename);
-    };
+    }
 
     virtual ~mdp_postscript()
     {
-      if (fp != 0)
+      if (fp != nullptr)
         close();
-    };
+    }
 
     FILE *open(char filename[])
     {
       printf("Making frame: %s\n", filename);
       fp = fopen(filename, "w");
-      if (fp != 0)
+      if (fp != nullptr)
         fprintf(fp, "%%!PS-Adobe-3.0 EPSF-3.0\n");
       fflush(fp);
       return fp;
-    };
+    }
 
     void close()
     {
@@ -71,8 +74,8 @@ namespace MDP
       fprintf(fp, "%%%%EOF\n");
       fflush(fp);
       fclose(fp);
-      fp = 0;
-    };
+      fp = nullptr;
+    }
 
     void size(float x0, float y0, float x1, float y1)
     {
@@ -83,7 +86,7 @@ namespace MDP
       fprintf(fp, "%%%%BoundingBox: %.0f %.0f %.0f %.0f\n", scale * x0, scale * y0, scale * x1, scale * y1);
       fprintf(fp, "%%%%EndComments\n");
       fflush(fp);
-    };
+    }
 
     void line(float x0, float y0, float x1, float y1)
     {
@@ -92,7 +95,7 @@ namespace MDP
       fprintf(fp, "%.2f %.2f lineto\n", scale * x1, scale * y1);
       fprintf(fp, "stroke\n");
       fflush(fp);
-    };
+    }
 
     void box(float x0, float y0, float x1, float y1, int fill = 0)
     {
@@ -107,14 +110,14 @@ namespace MDP
         fprintf(fp, "fill\n");
       fprintf(fp, "stroke\n");
       fflush(fp);
-    };
+    }
 
     void arc(float x0, float y0, float r, float alpha, float beta)
     {
       fprintf(fp, "%.2f %.2f %.2f %.2f %.2f arc\n", scale * x0, scale * y0, scale * r, alpha, beta);
       fprintf(fp, "stroke\n");
       fflush(fp);
-    };
+    }
 
     void circle(float x0, float y0, float r, int fill = 0)
     {
@@ -135,12 +138,12 @@ namespace MDP
         fprintf(fp, "} for\n");
       };
       fflush(fp);
-    };
+    }
 
     void pen(float size)
     {
       fprintf(fp, "%.2f setlinewidth\n", size);
-    };
+    }
 
     // colors are numbers in [0,1] black=(0,0,0) white=(1,1,1)
     void color(float r, float g, float b)
@@ -150,13 +153,13 @@ namespace MDP
       c1 = g;
       c2 = b;
       fflush(fp);
-    };
+    }
 
     void font(const char *text, int size)
     {
       fprintf(fp, "/%s findfont\n%i scalefont\nsetfont\n", text, size);
       fflush(fp);
-    };
+    }
 
     void print(float x0, float y0, char text[])
     {
@@ -164,7 +167,7 @@ namespace MDP
       fprintf(fp, "(%s) show\n", text);
       fprintf(fp, "stroke\n");
       fflush(fp);
-    };
+    }
   };
 } // namespace MDP
 

@@ -14,9 +14,9 @@
 #ifndef FERMIQCD_FERMILAB_ACTION_
 #define FERMIQCD_FERMILAB_ACTION_
 
+#ifdef SSE2
 namespace MDP
 {
-#ifdef SSE2
 
   class FermiFermilabActionNew
   {
@@ -571,7 +571,7 @@ namespace MDP
       }
     }
   };
-#endif
 } // namespace MDP
+#endif // SSE2
 
 #endif /* FERMIQCD_FERMILAB_ACTION_ */

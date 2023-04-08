@@ -40,8 +40,8 @@ namespace MDP
   class GaugeFixing
   {
   public:
-    static const int Coulomb = 0;
-    static const int Landau = 10;
+    static constexpr int Coulomb = 0;
+    static constexpr int Landau = 10;
 
     static void hit(gauge_field &U,
                     int mu,
@@ -57,7 +57,7 @@ namespace MDP
       static mdp_complex x0, x1;
       int k, nu, nc = U.nc;
       int opposite_parity = EVENODD;
-      mdp_field<mdp_complex> W(U.lattice(), 4);
+      mdp_complex_vector_field W(U.lattice(), 4);
       mdp_matrix U_up(nc, nc), U_dw(nc, nc);
       mdp_matrix A;
       mdp_site x(U.lattice());
@@ -91,7 +91,7 @@ namespace MDP
         ai_sq = a1 * a1 + a2 * a2 + a3 * a3;
         a0_sq = a0 * a0;
         b = (overrelaxation_boost * a0_sq + ai_sq) / (a0_sq + ai_sq);
-        c = sqrt(a0_sq + b * b * ai_sq);
+        c = std::sqrt(a0_sq + b * b * ai_sq);
         d = b / c;
         a0 /= c;
         a1 *= d;
@@ -189,13 +189,14 @@ namespace MDP
         U.update();
       }
     }
+
     /// performs the gauge fixing
     /// @param U the gauge field
     /// @param mu = GaugeFixing::Coulomb or GaugeFixing::Landau or other direction
     /// @param max_steps maximum number of gaugefixing steps
-    /// @param parget_precision precision in gaugefixing
+    /// @param target_precision precision in gaugefixing
     /// @param overrelaxation_boost
-    /// @param z3 if set to true fixes residual Z(n) symmatry due to lattice
+    /// @param z3 if set to true fixes residual Z(n) symmetry due to lattice
     ///           torus topology
     static gaugefixing_stats fix(gauge_field &U,
                                  int mu = 0,
@@ -249,7 +250,7 @@ namespace MDP
         mpi.add(precision);
         mpi.add(action);
 
-        precision = sqrt(precision / (U.nc * U.nc * U.lattice().global_volume()));
+        precision = std::sqrt(precision / (U.nc * U.nc * U.lattice().global_volume()));
         action = action / (2.0 * U.nc * U.lattice().global_volume());
 
         mdp << step << "\t" << action << "\t" << precision << "\n";

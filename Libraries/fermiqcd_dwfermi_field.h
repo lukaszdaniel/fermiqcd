@@ -32,26 +32,32 @@ namespace MDP
   class dwfermi_field : public mdp_complex_field
   {
   public:
-    int nspin, nc, L5;
+    int nspin;
+    int nc;
+    int L5;
+
     dwfermi_field()
     {
       reset_field();
       L5 = 0;
     }
+
     dwfermi_field(mdp_lattice &a, int L5_, int nc_, int nspin_ = 4)
     {
-      reset_field();
+      deallocate_field();
       L5 = L5_;
       nc = nc_;
       nspin = nspin_;
       allocate_field(a, L5 * nspin * nc);
     }
+
     dwfermi_field(const dwfermi_field &psi) : mdp_complex_field(psi)
     {
       L5 = psi.L5;
       nc = psi.nc;
       nspin = psi.nspin;
     }
+
     void allocate_dwfermi_field(mdp_lattice &a,
                                 int L5_, int nc_, int nspin_ = 4)
     {
@@ -61,22 +67,35 @@ namespace MDP
       nspin = nspin_;
       allocate_field(a, L5 * nspin * nc);
     }
+
+    /** @brief returns the matrix stored at site x and site \e L5_ in 5-th dimension
+     */
     inline mdp_matrix operator()(mdp_site x, int L5_)
     {
       return mdp_matrix(address(x, L5_ * nc * nspin), nspin, nc);
     }
+
+    /** @brief returns the vector of colour \e a stored at site x and site \e L5_ in 5-th dimension
+     */
     inline mdp_matrix operator()(mdp_site x, int L5_, int a)
     {
       return mdp_matrix(address(x, (L5_ * nspin + a) * nc), nc, 1);
     }
+
+    /** @brief returns the (a,i) component of the matrix stored at site x and site \e L5_ in 5-th dimension
+     */
     inline mdp_complex &operator()(mdp_site x, int L5_, int a, int i)
     {
       return *(address(x, (L5_ * nspin + a) * nc + i));
     }
+
+    /** @brief returns the (a,i) const component of the matrix stored at site x and site \e L5_ in 5-th dimension
+     */
     inline const mdp_complex &operator()(mdp_site x, int L5_, int a, int i) const
     {
       return *(address(x, (L5_ * nspin + a) * nc + i));
     }
+
     void operator=(mdp_complex a)
     {
       for (mdp_int i = 0; i < size; i++)

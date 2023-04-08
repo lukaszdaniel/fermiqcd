@@ -12,6 +12,12 @@
 #ifndef MDP_LOG_
 #define MDP_LOG_
 
+#include <vector>
+#include <fstream>
+#include <ostream>
+#include <iostream>
+#include <string>
+
 namespace MDP
 {
   /// @brief base class of class mdp_communicator (DO NOT INSTANTIATE)
@@ -65,7 +71,7 @@ namespace MDP
         *os << ", this error occurred: " << s << "\n";
         for (; level; level--)
           if (level < max_level)
-            *os << "</" << level_tag[level - 1] << ">" << "\n";
+            *os << "</" << level_tag[level - 1] << ">\n";
       }
       throw s;
     }
@@ -75,7 +81,7 @@ namespace MDP
       level_tag.resize(++level);
       level_tag[level - 1] = s;
       if (print && level < max_level)
-        *os << "<" << s << ">" << "\n";
+        *os << "<" << s << ">\n";
     }
 
     void end_function(std::string s)
@@ -83,7 +89,7 @@ namespace MDP
       if (level_tag[level - 1] == s)
       {
         if (print && level < max_level)
-          *os << "</" << level_tag[level - 1] << ">" << "\n";
+          *os << "</" << level_tag[level - 1] << ">\n";
         level--;
       }
       else

@@ -12,9 +12,12 @@
 #ifndef MDP_FITTING_FUNCTIONS_
 #define MDP_FITTING_FUNCTIONS_
 
+#include <memory>
+
 namespace MDP
 {
-  /// Fits y[i], x[i] for i0<=i<in with y=a[0]*x+a[1]
+  /** @brief Fits y[i], x[i] for i0<=i<in with y=a[0]*x+a[1]
+   */
   void linear_fit(float *x, mdp_measure *y, mdp_int i0, mdp_int in, mdp_measure *a)
   {
     mdp_int i;
@@ -40,15 +43,17 @@ namespace MDP
     a[1].error = sqrt(Sxx / det);
   }
 
-  ///  finds x=xmin that minimizes
-  ///  (*fp)(&x,1,dummy)
-  ///   must be:
-  ///  (*fp)(&ax) > (*fp)(&bx) && (*fp)(&cx) > (*fp)(&bx)
+  /** @brief Fitting function
+   *  finds x=xmin that minimizes
+   *  (*fp)(&x,1,dummy)
+   *   must be:
+   *  (*fp)(&ax) > (*fp)(&bx) && (*fp)(&cx) > (*fp)(&bx)
+   */
   float golden_rule(float (*fp)(float *, mdp_int, void *), float &xmin,
                     float ax, float bx, float cx,
-                    float tol = 0.001, mdp_int niter = 100, void *dummy = 0)
+                    float tol = 0.001, mdp_int niter = 100, void *dummy = nullptr)
   {
-    static const float CGOLD = 0.3819660;
+    static constexpr float CGOLD = 0.3819660;
     mdp_int iter;
     float a, b, d = 0, etemp, fu, fv, fw, fx, p, q, r, tol1, tol2, u, v, w, x, xm;
     float e = 0.0;
@@ -139,21 +144,21 @@ namespace MDP
 
   typedef float (*BLM_function)(float, float *, mdp_int, void *);
 
-  /////////////////////////////////////////////////////////////////////
-  /// This function is used by the BayesianLevenbergMarquardt
-  /// It computes the chi_square (including the Baesyan term)
-  /// and fills alpha and beta
-  ///
-  /// alpha(j,k)=\sum_i (Dy(x[i],a)/Da[j])*(Dy(x[i],a)/Da[k])/dy[i]^2
-  /// beta(j)=sum_i     (y[i]-y(x[i],a))*(dy(x[i],a)/da[j])/dy[i]^2
-  ///
-  /// chi_square=\sum_i (y[i]-y(x[i],a))*(y[i]-y(x[i],a))/dy[i]^2
-  ///           +\sum_{j,k} (a[j]-a0[j])*(a[k]-a0[k])*sigma(j,k)
-  ///
-  /// This function take into account multipliticty factors
-  /// y[i].num, i.e. the numbers of measures used to determine y[i].mean
-  /// This is used as a weight factor!
-  /////////////////////////////////////////////////////////////////////
+  /** @brief This function is used by the BayesianLevenbergMarquardt
+   * It computes the chi_square (including the Baesyan term)
+   * and fills alpha and beta
+   *
+   * \f$ \alpha(j,k)=\sum_i (Dy(x[i],a)/Da[j])*(Dy(x[i],a)/Da[k])/dy[i]^2\f$
+   *
+   * \f$ \beta(j)=sum_i     (y[i]-y(x[i],a))*(dy(x[i],a)/da[j])/dy[i]^2\f$
+   *
+   * \f$ \chi_{square}=\sum_i (y[i]-y(x[i],a))*(y[i]-y(x[i],a))/dy[i]^2
+   *           +\sum_{j,k} (a[j]-a0[j])*(a[k]-a0[k])*\sigma(j,k)\f$
+   *
+   * This function take into account multipliticty factors
+   * y[i].num, i.e. the numbers of measures used to determine y[i].mean
+   * This is used as a weight factor!
+   */
 
   float BLMaux(float *x, mdp_measure *y,
                mdp_int i_min, mdp_int i_max,
@@ -166,7 +171,7 @@ namespace MDP
   {
     mdp_int i, j, k;
     double sig2i, chi_square, dy, ymod, wt;
-    double *dyda = new double[ma];
+    std::unique_ptr<double[]> dyda = std::make_unique<double[]>(ma);
 
     for (i = 0; i < ma; i++)
     {
@@ -203,33 +208,31 @@ namespace MDP
       for (j = 0; j < ma; j++)
         chi_square += (a0[i] - a[i]) * sigma(i, j).real() * (a0[j] - a[j]);
 
-    delete[] dyda;
     return chi_square;
   }
 
-  /////////////////////////////////////////////////////////////////////
-  /// This implements the BaesyanLevenbergMarquardt
-  /// It uses mdp_matrix.
-  /// Arguments are:
-  ///
-  /// x[i]          : an array of float
-  /// y[i]          : an array of Measures
-  /// i_min, i_max  : range to be used in the fit
-  ///                 points within the range that have y[i].num=0
-  ///                 are ignored
-  /// a[i], ma      : vector of paramters for the fit and number of parameters
-  ///                 they are all used in the fit
-  ///                 the initial values are used as preons
-  /// covar(i,j)    : covariance matrix for the preons
-  /// func(x,a,ma,junk) : the function to be used in the fit
-  /// h             : a float used to evaluate derivatives
-  /// nmax          : max number of iterations
-  /// junk          : junk to be passed to func
-  ///
-  /// Return the Baesyan ChiSquare. To obtain the correct chi_square
-  ///  rerun it with same ftting values and nmax=1;
-  /////////////////////////////////////////////////////////////////////
-
+  /** @brief This implements the BaesyanLevenbergMarquardt
+   *
+   * It uses mdp_matrix.
+   * Arguments are:
+   *
+   * x[i]          : an array of float
+   * y[i]          : an array of Measures
+   * i_min, i_max  : range to be used in the fit
+   *                 points within the range that have y[i].num=0
+   *                 are ignored
+   * a[i], ma      : vector of paramters for the fit and number of parameters
+   *                 they are all used in the fit
+   *                 the initial values are used as preons
+   * covar(i,j)    : covariance matrix for the preons
+   * func(x,a,ma,junk) : the function to be used in the fit
+   * h             : a float used to evaluate derivatives
+   * nmax          : max number of iterations
+   * junk          : junk to be passed to func
+   *
+   * Return the Baesyan ChiSquare. To obtain the correct chi_square
+   *  rerun it with same ftting values and nmax=1;
+   */
   float BaesyanLevenbergMarquardt(float *x, mdp_measure *y,
                                   mdp_int i_min, mdp_int i_max,
                                   float *a, int ma,
@@ -245,8 +248,8 @@ namespace MDP
     double chi_square = 0;
     double old_chi_square = 0;
     mdp_matrix alpha(ma, ma);
-    float *atry = new float[ma];
-    float *a0 = new float[ma];
+    std::unique_ptr<float[]> atry = std::make_unique<float[]>(ma);
+    std::unique_ptr<float[]> a0 = std::make_unique<float[]>(ma);
     mdp_matrix sigma(ma, ma);
     mdp_matrix beta(ma, 1);
     mdp_matrix oneda(ma, 1);
@@ -263,7 +266,7 @@ namespace MDP
       atry[i] = a[i];
       a0[i] = a[i];
     }
-    chi_square = BLMaux(x, y, i_min, i_max, a, a0, sigma,
+    chi_square = BLMaux(x, y, i_min, i_max, a, a0.get(), sigma,
                         ma, alpha, beta, func, h, junk);
     old_chi_square = chi_square;
 
@@ -283,15 +286,13 @@ namespace MDP
 
       for (i = 0; i < ma; i++)
         atry[i] = a[i] + real(oneda(i, 0));
-      chi_square = BLMaux(x, y, i_min, i_max, atry, a0, sigma,
+      chi_square = BLMaux(x, y, i_min, i_max, atry.get(), a0.get(), sigma,
                           ma, covar, oneda, func, h, junk);
 
       if (fabs(chi_square - old_chi_square) < 1e-4 || lambda == 0)
       {
         covar = inv(covar);
 
-        delete[] atry;
-        delete[] a0;
         return chi_square;
       }
       else if (chi_square <= old_chi_square)

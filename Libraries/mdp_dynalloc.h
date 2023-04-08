@@ -14,12 +14,13 @@
 #ifndef MDP_DYNALLOC_
 #define MDP_DYNALLOC_
 
-#if defined(SSE2) && !defined(OSX)
-#include "malloc.h"
+#if defined(SSE2) && !defined(__APPLE__)
+#include <cstdlib>
 #endif
+
 namespace MDP
 {
-#if defined(SSE2) && !defined(OSX)
+#if defined(SSE2) && !defined(__APPLE__)
   void *operator new(size_t size)
   {
     void *p = memalign(64, size);

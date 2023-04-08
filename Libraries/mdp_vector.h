@@ -12,32 +12,42 @@
 #ifndef MDP_VECTOR_
 #define MDP_VECTOR_
 
+#include <array>
+
 namespace MDP
 {
-  /// @brief discerete vectors to navigate on a lattice
+  /// @brief discrete vectors to navigate on a lattice
   ///
   class mdp_vector
   {
+  private:
+    std::array<int, 10> m_x;
+
   public:
-    int x[10];
     mdp_vector()
     {
-      x[0] = x[1] = x[2] = x[3] = x[4] = 0;
-      x[5] = x[6] = x[7] = x[8] = x[9] = 0;
+      m_x.fill(0);
     }
+
     mdp_vector(int x0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
                int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
     {
-      x[0] = x0;
-      x[1] = x1;
-      x[2] = x2;
-      x[3] = x3;
-      x[4] = x4;
-      x[5] = x5;
-      x[6] = x6;
-      x[7] = x7;
-      x[8] = x8;
-      x[9] = x9;
+      m_x[0] = x0;
+      m_x[1] = x1;
+      m_x[2] = x2;
+      m_x[3] = x3;
+      m_x[4] = x4;
+      m_x[5] = x5;
+      m_x[6] = x6;
+      m_x[7] = x7;
+      m_x[8] = x8;
+      m_x[9] = x9;
+    }
+
+    // Overloading [] operator to access elements in array style
+    const int operator[](mdp_suint index) const
+    {
+      return m_x[index];
     }
   };
 
@@ -73,16 +83,15 @@ namespace MDP
   inline mdp_int vector2binary(mdp_vector v)
   {
 #ifdef CHECK_ALL
-    if ((fabs(0.5 - v.x[0]) > 1) || (fabs(0.5 - v.x[1]) > 1) ||
-        (fabs(0.5 - v.x[2]) > 1) || (fabs(0.5 - v.x[3]) > 1) ||
-        (fabs(0.5 - v.x[4]) > 1) || (fabs(0.5 - v.x[5]) > 1) ||
-        (fabs(0.5 - v.x[6]) > 1) || (fabs(0.5 - v.x[7]) > 1) ||
-        (fabs(0.5 - v.x[8]) > 1) || (fabs(0.5 - v.x[9]) > 1) ||
-        (fabs(0.5 - v.x[2]) > 1))
+    if ((fabs(0.5 - v[0]) > 1) || (fabs(0.5 - v[1]) > 1) ||
+        (fabs(0.5 - v[2]) > 1) || (fabs(0.5 - v[3]) > 1) ||
+        (fabs(0.5 - v[4]) > 1) || (fabs(0.5 - v[5]) > 1) ||
+        (fabs(0.5 - v[6]) > 1) || (fabs(0.5 - v[7]) > 1) ||
+        (fabs(0.5 - v[8]) > 1) || (fabs(0.5 - v[9]) > 1) ||
+        (fabs(0.5 - v[2]) > 1))
       error("vector2binary");
 #endif
-    return v.x[0] + 2 * v.x[1] + 4 * v.x[2] + 8 * v.x[3] + 16 * v.x[4] +
-           32 * v.x[5] + 64 * v.x[6] + 128 * v.x[7] + 256 * v.x[8] + 512 * v.x[9];
+    return v[0] + 2 * v[1] + 4 * v[2] + 8 * v[3] + 16 * v[4] + 32 * v[5] + 64 * v[6] + 128 * v[7] + 256 * v[8] + 512 * v[9];
   }
 } // namespace MDP
 

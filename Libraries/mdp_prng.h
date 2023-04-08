@@ -12,6 +12,8 @@
 #ifndef MDP_PRNG_
 #define MDP_PRNG_
 
+#include <cmath>
+
 namespace MDP
 {
   /// @brief Marsaglia's random number generator (same as UKQCD)
@@ -123,11 +125,13 @@ namespace MDP
       ui = 97; /*  There is a bug in the original Fortran version */
       uj = 33; /*  of UNI -- i and j should be SAVEd in UNI()     */
     }
+
     mdp_prng(mdp_int k = 0)
     {
       if (k == 0)
         initialize(ME);
     }
+
     /// returns a gaussian random number
     float gaussian(float sigma = 1)
     {
@@ -140,7 +144,7 @@ namespace MDP
       float x, y;
       if (i == 0)
       {
-        x = (float)sqrt(-2.0 * std::log(plain()));
+        x = (float)std::sqrt(-2.0 * std::log(plain()));
         y = (float)2.0 * Pi * plain();
         i = 1;
         r = sigma * x * ((float)std::cos(y));
@@ -152,8 +156,9 @@ namespace MDP
         return r;
       }
     }
+
     /// draws a random float in (0,1) from a distribution using accept-reject
-    double distribution(float (*fp)(float, void *), void *a = 0)
+    double distribution(float (*fp)(float, void *), void *a = nullptr)
     {
       float x, y;
       do
@@ -163,6 +168,7 @@ namespace MDP
       } while ((*fp)(x, a) >= y);
       return x;
     }
+
     /// returns a random SU(n) matrix using Cabibbo-Marinari
     mdp_matrix SU(int n)
     {
@@ -175,7 +181,7 @@ namespace MDP
       if (n == 1)
       {
         tmp.dimension(1, 1);
-        alpha = 2.0 * Pi * this->plain();
+        alpha = 2.0 * Pi * plain();
         tmp(0, 0) = mdp_complex(std::cos(alpha), std::sin(alpha));
         return tmp;
       }
@@ -185,10 +191,10 @@ namespace MDP
       for (i = 0; i < (n - 1); i++)
         for (j = i + 1; j < n; j++)
         {
-          alpha = Pi * this->plain();
-          phi = 2.0 * Pi * this->plain();
-          cos_theta = 2.0 * this->plain() - 1.0;
-          sin_theta = sqrt(1.0 - cos_theta * cos_theta);
+          alpha = Pi * plain();
+          phi = 2.0 * Pi * plain();
+          cos_theta = 2.0 * plain() - 1.0;
+          sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
           sin_alpha = std::sin(alpha);
           a0 = std::cos(alpha);
           a1 = sin_alpha * sin_theta * std::cos(phi);
@@ -208,7 +214,7 @@ namespace MDP
     void skip(int n)
     {
       for (int i = 0; i < n; i++)
-        this->plain();
+        plain();
     }
   } mdp_random; /// the global random number generator
 } // namespace MDP

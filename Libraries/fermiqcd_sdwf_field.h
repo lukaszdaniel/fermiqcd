@@ -16,7 +16,8 @@
 
 namespace MDP
 {
-  /// @brief field for domain wall staggered fermions
+  /** @brief field for domain wall staggered fermions
+   */
   class sdwf_field : public mdp_complex_field
   {
   public:
@@ -28,95 +29,102 @@ namespace MDP
       L5 = L5_;
       nc = nc_;
       nspin = nspin_;
-      ndim = a.ndim;
+      ndim = a.n_dimensions();
       allocate_field(a, L5 * nc);
     }
+
     sdwf_field(sdwf_field &chi)
     {
       // attention here that nspin_ is ignored!
       nc = chi.nc;
       nspin = chi.nspin;
       L5 = chi.L5;
-      ndim = chi.lattice().ndim;
+      ndim = chi.lattice().n_dimensions();
       allocate_field(chi.lattice(), L5 * nc);
     }
+
+    /** @brief returns the \e x5 component of the vector stored at site x
+     */
     mdp_matrix operator()(mdp_site x, int x5)
     {
       return mdp_matrix(address(x, x5 * nc), nc, 1);
     }
+
+    /** @brief returns the \e x5 component of the vector of colour \e i stored at site x
+     */
     inline mdp_complex &operator()(mdp_site x, int x5, int i)
     {
       return *(address(x, x5 * nc + i));
     }
+
+    /** @brief returns the \e x5 const component of the vector of colour \e i stored at site x
+     */
     inline const mdp_complex &operator()(mdp_site x, int x5, int i) const
     {
       return *(address(x, x5 * nc + i));
     }
+
     void operator=(mdp_complex a)
     {
       for (mdp_int i = 0; i < size; i++)
         m[i] = a;
     }
+
     inline mdp_real component(mdp_site x, int mu)
     {
       return x(mu) % 2;
     }
+
     inline mdp_real eta(mdp_site x, int mu)
     {
       int tmp;
-      int i;
       int i_max = (mu + ndim - 1) % ndim;
       tmp = 0;
-      for (i = 1; i <= i_max; i++)
+      for (int i = 1; i <= i_max; i++)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }
-    /*
-    inline mdp_real zeta(mdp_site x, int mu) {
 
-    }
-    */
     inline mdp_real eps(mdp_site x)
     {
       int tmp;
-      int i;
       tmp = x(0);
-      for (i = 1; i < ndim; i++)
+      for (int i = 1; i < ndim; i++)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }
+
     inline mdp_real type(mdp_site x)
     {
       mdp_real tmp;
-      int i;
       tmp = x(0) % 2;
-      for (i = 1; i < ndim; i++)
+      for (int i = 1; i < ndim; i++)
         tmp += (x(i) % 2) * std::pow(2.0, i);
       return tmp;
     }
+
     inline mdp_site chiral_shift(mdp_site x)
     {
-      int i;
-      for (i = 0; i < ndim; i++)
+      for (int i = 0; i < ndim; i++)
         if (x(i) % 2 == 1)
           x = x - i;
         else
           x = x + i;
       return x;
     }
+
     inline mdp_real chiral_phase(mdp_site x)
     { // (Gamma5 (x) 1)
       int tmp = ndim / 2;
-      int i;
-      for (i = 1; i < ndim; i += 2)
+      for (int i = 1; i < ndim; i += 2)
         tmp += x(i);
       return (mdp_real)mdp_mod2sign(tmp);
     }
+
     inline mdp_real chiral_phase2(mdp_site x)
     { // (Gamma5 (x) Gamma5)
       int tmp = 0;
-      int i;
-      for (i = 0; i < ndim; i++)
+      for (int i = 0; i < ndim; i++)
         tmp += x(i);
       return (mdp_real)mdp_mod2sign(tmp);
     }

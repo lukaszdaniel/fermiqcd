@@ -16,19 +16,20 @@
 
 namespace MDP
 {
-  static const int KS_NDIM = 4;
-
 #ifndef TWISTED_BOUNDARY
 
-  class phase_field : public mdp_field<int>
+  static constexpr int KS_NDIM = 4;
+
+  class phase_field : public mdp_int_scalar_field
   {
   public:
     phase_field(mdp_lattice &a)
     {
-      if (a.ndim != 4)
+      if (a.n_dimensions() != 4)
         error("fermiqcd_staggered_mesons/phase_field: ndim!=4");
       allocate_field(a, 16);
-    };
+    }
+
     int component(mdp_site x, mdp_site y)
     {
       int i = 0, mu;
@@ -40,6 +41,7 @@ namespace MDP
       }
       return *address(x, i);
     }
+
     void compute(mdp_matrix GAMMA, mdp_matrix ZETA)
     {
       int A[KS_NDIM], B[KS_NDIM];
@@ -172,8 +174,8 @@ namespace MDP
     }
   }
 
-  const int local_source = 1; // 2^0
-  const int wall_source = 2;  // 2^1
+  constexpr int local_source = 1; // 2^0
+  constexpr int wall_source = 2;  // 2^1
 
   mdp_matrix make_meson(gauge_field &U, gauge_field &V,
                         mdp_matrix GAMMA,

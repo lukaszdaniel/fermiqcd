@@ -12,6 +12,10 @@
 #ifndef MDP_GLOBAL_VARS_
 #define MDP_GLOBAL_VARS_
 
+#include <string>
+#include <limits>  // for numeric_limits()
+#include <cstdint> // for uint8_t
+
 namespace MDP
 {
     const int EVEN = 0;

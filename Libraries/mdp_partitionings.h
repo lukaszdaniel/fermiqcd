@@ -12,29 +12,51 @@
 #ifndef MDP_PARTITIONINGS_
 #define MDP_PARTITIONINGS_
 
+#include <cmath>
+
 namespace MDP
 {
+  /** @brief Partition function
+   *
+   * @param x Point x[] on the lattice
+   * @param ndim Dimension of the box
+   * @param nx Box containing the lattice
+   *
+   * @return Suggested process ID for point x[]
+   *
+   * @note Shorthand for generic default_partitioning<0>
+   * function
+   */
   int default_partitioning0(int *x,
                             int ndim,
                             int *nx)
   {
-    float tpp1 = (float)nx[0] / Nproc;
-    int tpp2 = (int)tpp1;
-    if (tpp1 - tpp2 > 0)
-      tpp2 += 1;
-    return x[0] / tpp2;
+    default_partitioning<0>(x, ndim, nx);
   }
 
+  /** @brief Partition function
+   *
+   * Function to calculate suggested process ID
+   * based on the location of point x[], lattice size
+   * and the number of available processes.
+   *
+   * Roughly speaking lattice of size S in dim
+   * direction will be split into Nproc chunks.
+   * Each chunk will belong to one process ID.
+   *
+   * @param x Point x[] on the lattice
+   * @param ndim Dimension of the box
+   * @param nx Box containing the lattice
+   *
+   * @return Suggested process ID for point x[]
+   */
   template <int dim>
   int default_partitioning(int *x,
                            int ndim,
                            int *nx)
   {
-    float tpp1 = (float)nx[dim] / Nproc;
-    int tpp2 = (int)tpp1;
-    if (tpp1 - tpp2 > 0)
-      tpp2 += 1;
-    return x[dim] / tpp2;
+    int partition_factor = std::ceil((1.0 * nx[dim]) / Nproc);
+    return x[dim] / partition_factor;
   }
 } // namespace MDP
 

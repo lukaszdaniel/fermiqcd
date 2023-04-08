@@ -41,21 +41,29 @@ namespace MDP
   {
   public:
     int nc;
+
     staggered_propagator(mdp_lattice &mylattice, int nc_)
     {
       nc = nc_;
-      int ndim = mylattice.ndim;
+      int ndim = mylattice.n_dimensions();
       allocate_field(mylattice, ndim * ndim * nc * nc);
     }
+
+    /** @brief returns the matrix of colour \e a stored at site x
+     */
     inline mdp_matrix operator()(mdp_site x, int a)
     {
       mdp_matrix tmp(address(x, a * nc * nc), nc, nc);
       return tmp;
     }
+
+    /** @brief returns the (i,j) component of the matrix of colour \e a stored at site x
+     */
     inline mdp_complex &operator()(mdp_site x, int a, int i, int j)
     {
       return *(address(x) + a * nc * nc + i * nc + j);
     }
+
     friend void generate(staggered_propagator &S, gauge_field &U,
                          coefficients &coeff,
                          mdp_real absolute_precision = fermi_inversion_precision,
@@ -67,7 +75,7 @@ namespace MDP
       staggered_field psi(S.lattice(), S.nc);
       staggered_field chi(S.lattice(), S.nc);
       mdp_site x(S.lattice());
-      int ndim = S.lattice().ndim;
+      int ndim = S.lattice().n_dimensions();
       int nc = S.nc;
       int i, j, mu, a;
 
@@ -79,7 +87,7 @@ namespace MDP
         fflush(stdout);
       }
 
-      for (a = 0; a < (0x1 << ndim); a++)
+      for (a = 0; a < (1 << ndim); a++)
         for (j = 0; j < nc; j++)
         {
           forallsitesandcopies(x)
@@ -105,7 +113,7 @@ namespace MDP
             the source is smeared before the inversion
             the sink must be smeared using smear_sink.
           */
-          if (smf != 0)
+          if (smf != nullptr)
             (*smf)(psi, U);
           mul_invQ(chi, psi, U, coeff, absolute_precision, relative_precision, max_steps);
 
@@ -115,6 +123,7 @@ namespace MDP
               S(x, a, i, j) = chi(x, i);
           }
         }
+
       if (ME == 0 && shutup == false)
       {
         printf("END Generating ordinary propagator. Time: %f (sec)\n",

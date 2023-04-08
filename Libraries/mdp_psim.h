@@ -12,6 +12,9 @@
 #ifndef MDP_PSIM_
 #define MDP_PSIM_
 
+#ifndef NO_POSIX
+
+#include <unistd.h> // for getpid()
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
@@ -23,8 +26,11 @@
 #include <map>
 // #include <sys/types.h>
 #include <sys/stat.h>
+#ifndef _WIN64
 #include <sys/socket.h>
 #include <sys/errno.h>
+#endif
+#include <sys/file.h> // for flock()
 #include <fcntl.h>
 
 namespace MDP
@@ -972,5 +978,7 @@ namespace MDP
     }
   };
 } // namespace MDP
+
+#endif // NO_POSIX
 
 #endif /* MDP_PSIM_ */
