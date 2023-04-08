@@ -11,9 +11,9 @@ float Q(float x, void *a)
 int main()
 {
    mdp_prng random;
-   int i, N = 100;
+   constexpr mdp_suint N = 100;
    float a, b, average = 0, sigma = 0.3, a_bar = 1;
-   for (i = 0; i < N; i++)
+   for (mdp_suint i = 0; i < N; i++)
    {
       a = (sigma * random.gaussian() + a_bar);
       b = random.distribution(Q);

@@ -1,7 +1,6 @@
 #include <cmath>
 #include <cstdlib>
 #include "fermiqcd.h"
-// #include "fermiqcd_cg_inverter.hpp"
 
 using namespace MDP;
 

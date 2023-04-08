@@ -8,6 +8,7 @@ int main(int argc, char **argv)
   int nc = 3;
   int box[] = {8, 4, 4, 4};
   mdp_lattice lattice(4, box);
+
   gauge_field U(lattice, nc);
   set_hot(U);
   U.save("gauge.hot");

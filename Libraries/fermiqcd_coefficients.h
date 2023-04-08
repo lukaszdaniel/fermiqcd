@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_COEFFICIENTS_
 #define FERMIQCD_COEFFICIENTS_
 
+#include <map>
+#include <string>
+
 namespace MDP
 {
   /// @brief container for action parameters
@@ -37,29 +40,27 @@ namespace MDP
   class coefficients : public std::map<std::string, mdp_real>
   {
   public:
-    bool has_key(const std::string s) const
+    bool has_key(const std::string &s) const
     {
-      if (this->find(s) == this->end())
-        return false;
-      return true;
+      return (find(s) != end());
     }
-    /* for some reason the const declaration does not do anything. removing
+#if 0
+    // for some reason the const declaration does not do anything. removing
     const mdp_real &operator[](const std::string s) const
     {
-      std::cout << "HERE\n";
       if (!has_key(s))
       {
-        mdp << "coefficient " << s << " is undefined but required" << "\n";
+        mdp << "coefficient " << s << " is undefined but required\n";
         exit(1);
       }
       return static_cast<std::map<std::string, mdp_real>>(*this)[s];
     }
+
     mdp_real &operator[](const std::string s)
     {
-      std::cout << "THERE\n";
       return static_cast<std::map<std::string, mdp_real> *>(this)->operator[](s);
     }
-    */
+#endif
   };
 
   void dagger(coefficients &coeff)

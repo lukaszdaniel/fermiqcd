@@ -31,7 +31,6 @@ namespace MDP
   /// mul_Q(chi,psi,U,coeff);
   /// @endverbatim
   /// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
-
   class DWFermiActionSlow
   {
   public:
@@ -125,7 +124,6 @@ namespace MDP
   /// mul_Q(chi,psi,U,coeff);
   /// @endverbatim
   /// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
-
   class DWFermiActionFast
   {
   public:

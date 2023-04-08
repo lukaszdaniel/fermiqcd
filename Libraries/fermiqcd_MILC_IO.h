@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_MILC_IO_
 #define FERMIQCD_MILC_IO_
 
+#include <string>
+#include <cstdio>
+
 namespace MDP
 {
   bool milc_read_as_float_noswitch(FILE *fp,

@@ -49,9 +49,6 @@ PRG_SUFFIX_FLAG := 1
 # If you know how to write a better makefile send it to me please!
 #
 
-# ifndef CXX
-# CXX     = g++
-# endif
 # Basic compilation flags (-O2 for speed)
 # Flags for double precision and sse (P4 optiomizations)
 #CXXFLAGS = -DSSE2 -O3

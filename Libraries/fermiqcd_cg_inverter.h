@@ -73,9 +73,6 @@ namespace MDP
 
       // mpi << "\tstep\tresidue\t\ttime (sec)\n";
 
-      // int mulQ=1;
-      // int guesszero=1,debug=0;
-
       psi_out = 0;
       r = psi_in;
       p = r;
@@ -107,8 +104,8 @@ namespace MDP
         beta = rrtmp2 / rrtmp;
         pnew = rnew;
         mdp_add_scaled_field(pnew, beta, p);
-        // old_rresidue=rresidue;
-        residue = sqrt(rrtmp2 / (psi_in.global_size()));
+        // old_rresidue = rresidue;
+        residue = std::sqrt(rrtmp2 / (psi_in.global_size()));
         rresidue = relative_residue(rnew, psi_out);
         p = pnew;
         r = rnew;

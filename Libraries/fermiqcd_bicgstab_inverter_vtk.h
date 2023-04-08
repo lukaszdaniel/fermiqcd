@@ -119,7 +119,7 @@ namespace MDP
 
         // computation of residue
         residue = norm_square(r);
-        residue = sqrt(residue / r.global_size());
+        residue = std::sqrt(residue / r.global_size());
 
         // computation of rresidue
         old_rresidue = rresidue;
@@ -132,7 +132,7 @@ namespace MDP
           {
             sv(x) = 0.0;
             for (int k = 0; k < psi_in.nc; k++)
-              sv(x) += sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
+              sv(x) += std::sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
           }
           filename1 = filename_prefix + ".field" + std::to_string(a) + "." + std::to_string(step) + ".vtk";
           sv.save_vtk(filename1, tc);

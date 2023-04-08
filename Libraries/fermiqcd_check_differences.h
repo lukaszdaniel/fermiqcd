@@ -16,7 +16,7 @@
 
 namespace MDP
 {
-  // compares two fields and returns the max distrance between
+  // compares two fields and returns the max distance between
   // equivalent components.
   float check_differences(mdp_field<mdp_complex> &chi,
                           mdp_field<mdp_complex> &psi)

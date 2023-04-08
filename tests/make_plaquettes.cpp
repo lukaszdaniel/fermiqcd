@@ -18,8 +18,8 @@ int main(int argc, char **argv)
   U.load("gauge.cold");
   mdp_site x(lattice);
   x.set(0, 0, 0, 0);
-  std::cout << U(x, 0) << "\n";
-  std::cout << U(x, 0) * hermitian(U(x, 0)) << "\n";
+  std::cout << U(x, 0) << std::endl;
+  std::cout << U(x, 0) * hermitian(U(x, 0)) << std::endl;
   mdp << "plaquette:" << average_plaquette(U) << "\n";
   mdp.close_wormholes();
   return 0;

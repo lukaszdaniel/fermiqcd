@@ -6,10 +6,9 @@ using namespace MDP;
 mdp_array<mdp_matrix, 3> initialize()
 {
   mdp_array<mdp_matrix, 3> d(20, 20, 20);
-  int i, j, k;
-  for (i = 0; i < 20; i++)
-    for (j = 0; j < 20; j++)
-      for (k = 0; k < 20; k++)
+  for (int i = 0; i < 20; i++)
+    for (int j = 0; j < 20; j++)
+      for (int k = 0; k < 20; k++)
       {
         d(i, j, k).dimension(2, 2);
         d(i, j, k)(0, 0) = k;

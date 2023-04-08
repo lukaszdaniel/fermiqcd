@@ -113,7 +113,7 @@ namespace MDP
 
         // computation of residue
         residue = norm_square(r);
-        residue = sqrt(residue / r.global_size());
+        residue = std::sqrt(residue / r.global_size());
 
         // computation of rresidue
         old_rresidue = rresidue;

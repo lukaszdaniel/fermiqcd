@@ -13,8 +13,6 @@ int main(int argc, char **argv)
   coefficients gauge;
   gauge["beta"] = 6.0;
 
-  int k;
-  // int mu=0,nu=1;
   mdp_complex s = 0;
 
   forallsites(x)
@@ -26,7 +24,7 @@ int main(int argc, char **argv)
   int d[4][2];
 
   U.update();
-  for (k = 0; k < 1; k++)
+  for (int k = 0; k < 100; k++)
   {
     WilsonGaugeAction::heatbath(U, gauge, 1);
 

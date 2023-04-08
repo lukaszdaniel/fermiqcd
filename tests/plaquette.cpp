@@ -1,9 +1,8 @@
 #include "fermiqcd.h"
 
-using namespace std;
 using namespace MDP;
 
-void compute_plaquette(mdp_int nt, mdp_int nx, const string &filename)
+void compute_plaquette(mdp_int nt, mdp_int nx, const std::string &filename)
 {
   mdp_int L[] = {nt, nx, nx, nx};
   mdp_int nc = 3;
@@ -21,8 +20,8 @@ void compute_plaquette(mdp_int nt, mdp_int nx, const string &filename)
     if (x(0) == 0)
     {
       q(x) = 0;
-      for (mdp_suint mu = 0; mu < 4; mu++)
-        for (mdp_suint nu = mu + 1; nu < 4; nu++)
+      for (int mu = 0; mu < 4; mu++)
+        for (int nu = mu + 1; nu < 4; nu++)
           q(x) += real(trace(plaquette(U, x, mu, nu)));
     }
   }

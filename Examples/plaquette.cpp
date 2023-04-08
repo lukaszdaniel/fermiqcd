@@ -2,10 +2,10 @@
 
 using namespace MDP;
 
-void compute_plaquette(int nt, int nx, std::string filename)
+void compute_plaquette(mdp_int nt, mdp_int nx, const std::string &filename)
 {
-  int L[] = {nt, nx, nx, nx};
-  int nc = 3;
+  mdp_int L[] = {nt, nx, nx, nx};
+  mdp_int nc = 3;
   char output[512];
   mdp_lattice lattice(4, L,
                       default_partitioning<1>,
@@ -40,8 +40,8 @@ int main(int argc, char **argv)
   assert(header.ndim == 4);
   assert(header.box[2] == header.box[1]);
   assert(header.box[3] == header.box[1]);
-  int nt = header.box[0];
-  int nx = header.box[1];
+  mdp_int nt = header.box[0];
+  mdp_int nx = header.box[1];
   compute_plaquette(nt, nx, argv[1]);
   mpi.close_wormholes();
   return 0;

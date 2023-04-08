@@ -53,7 +53,7 @@ namespace MDP
 			   coefficients &coeff)
 	{
 		(*default_dwfermi_action)(psi_out, psi_in, U, coeff);
-	};
+	}
 
 	/// Pointer to the current dwfermi inverter
 	inversion_stats (*default_dwfermi_inverter)(dwfermi_field &,
@@ -73,7 +73,7 @@ namespace MDP
 							 int max_steps = 2000)
 	{
 		return (*default_dwfermi_inverter)(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
-	};
+	}
 } // namespace MDP
 
 #endif /* FERMIQCD_DWFERMI_ALGORITHMS_ */
