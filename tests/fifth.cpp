@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   int d[4][2];
 
   U.update();
-  for (int k = 0; k < 100; k++)
+  for (int k = 0; k < 1; k++)
   {
     WilsonGaugeAction::heatbath(U, gauge, 1);
 

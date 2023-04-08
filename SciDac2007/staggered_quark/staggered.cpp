@@ -1,5 +1,4 @@
 // #define SSE2
-#define OSX
 #include "../../Libraries/fermiqcd.h"
 #include "../dump.h"
 
