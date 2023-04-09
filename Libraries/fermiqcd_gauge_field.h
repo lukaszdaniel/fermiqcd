@@ -38,11 +38,13 @@ namespace MDP
   {
   public:
     int ndim, nc, nem;
+
     em_field()
     {
       ndim = nc = nem = 0;
       reset_field();
     }
+
     em_field(mdp_lattice &a, int nc_)
     {
       reset_field();
@@ -51,6 +53,7 @@ namespace MDP
       nem = (ndim * (ndim - 1)) / 2;
       allocate_field(a, nem * nc * nc);
     }
+
     em_field(em_field &em)
     {
       reset_field();
@@ -59,6 +62,7 @@ namespace MDP
       nem = (ndim * (ndim - 1)) / 2;
       allocate_field(em.lattice(), nem * nc * nc);
     }
+
     void allocate_em_field(mdp_lattice &a, int nc_)
     {
       deallocate_field();
@@ -86,8 +90,10 @@ namespace MDP
         return mu + (nu * (2 * ndim - nu - 3)) / 2 - 1 + nem;
       // error("wrong call to ordered_index() with mu>=nu");
       return -1; // error in this case!
-    };
+    }
 
+    /** @brief returns the matrix in directions \e mu, \e nu stored at site x
+     */
     inline mdp_matrix operator()(mdp_site x, int mu, int nu)
     {
 #ifdef CHECK_ALL
@@ -97,6 +103,9 @@ namespace MDP
       int k = ordered_index(mu, nu);
       return mdp_matrix(address(x, k * nc * nc), nc, nc);
     }
+
+    /** @brief returns the (i,j) component of the matrix in directions \e mu, \e nu stored at site x
+     */
     inline mdp_complex &operator()(mdp_site x, int mu, int nu, int i, int j)
     {
 #ifdef CHECK_ALL
@@ -106,6 +115,9 @@ namespace MDP
       int k = ordered_index(mu, nu);
       return *(address(x, (k * nc + i) * nc + j));
     }
+
+    /** @brief returns the (i,j) const component of the matrix in directions \e mu, \e nu stored at site x
+     */
     inline const mdp_complex &operator()(mdp_site x, int mu, int nu,
                                          int i, int j) const
     {
@@ -142,25 +154,29 @@ namespace MDP
   public:
     em_field em;
     mdp_nmatrix_field long_links;
-    mdp_field<mdp_int> i_jump;
+    mdp_int_scalar_field i_jump;
     mdp_matrix_field swirls;
 
     int ndim, nc;
+
     gauge_field()
     {
       reset_field();
     }
+
     gauge_field(const gauge_field &U) : mdp_complex_field(U)
     {
       ndim = U.ndim;
       nc = U.nc;
     }
+
     void operator=(const gauge_field &U)
     {
       ndim = U.ndim;
       nc = U.nc;
       mdp_complex_field::operator=(U);
     }
+
     gauge_field(mdp_lattice &a, int nc_)
     {
       reset_field();
@@ -168,6 +184,7 @@ namespace MDP
       nc = nc_;
       allocate_field(a, a.ndim * nc * nc);
     }
+
     void allocate_gauge_field(mdp_lattice &a, int nc_)
     {
       deallocate_field();
@@ -175,6 +192,9 @@ namespace MDP
       nc = nc_;
       allocate_field(a, a.ndim * nc * nc);
     }
+
+    /** @brief returns the matrix in direction \e mu stored at site x
+     */
     inline mdp_matrix operator()(mdp_site x, int mu)
     {
 #ifndef TWIST_BOUNDARY
@@ -196,6 +216,8 @@ namespace MDP
 #endif
     }
 
+    /** @brief returns the const matrix in direction \e mu stored at site x
+     */
     inline const mdp_matrix operator()(mdp_site x, int mu) const
     {
 #ifndef TWISTED_BOUNDARY
@@ -217,6 +239,8 @@ namespace MDP
 #endif
     }
 
+    /** @brief returns the (i,j) component of the matrix in direction \e mu stored at site x
+     */
     inline mdp_complex &operator()(mdp_site x, int mu, int i, int j)
     {
 #ifdef TWISTED_BOUNDARY
@@ -226,6 +250,8 @@ namespace MDP
       return *(address(x, (mu * nc + i) * nc + j));
     }
 
+    /** @brief returns the (i,j) const component of the matrix in direction \e mu stored at site x
+     */
     inline const mdp_complex &operator()(mdp_site x, int mu, int i, int j) const
     {
 #ifdef TWISTED_BOUNDARY
@@ -235,26 +261,41 @@ namespace MDP
       return *(address(x, (mu * nc + i) * nc + j));
     }
 
+    /** @brief returns the matrix in direction \e mu stored at site x
+     *
+     * @note if \e sign is negative returned matrix is a hermitian matrix
+     * if direction \e -mu
+     */
     inline mdp_matrix operator()(mdp_site x, int sign, int mu)
     {
-      mdp_matrix tmp;
       if (sign == +1)
-        tmp = (*this)(x, mu);
+        return (*this)(x, mu);
       if (sign == -1)
-        tmp = hermitian((*this)(x - mu, mu));
-      return tmp;
+        return hermitian((*this)(x - mu, mu));
+
+      return mdp_matrix();
     }
+
+    /** @brief returns the const matrix in direction \e mu stored at site x
+     *
+     * @note if \e sign is negative returned matrix is a hermitian matrix
+     * if direction \e -mu
+     */
     inline const mdp_matrix operator()(mdp_site x, int sign, int mu) const
     {
-      mdp_matrix tmp;
       if (sign == +1)
-        tmp = (*this)(x, mu);
+        return (*this)(x, mu);
       if (sign == -1)
-        tmp = hermitian((*this)(x - mu, mu));
-      return tmp;
+        return hermitian((*this)(x - mu, mu));
+
+      return mdp_matrix();
     }
 
 #ifndef TWISTED_BOUNDARY
+    /** @brief returns the (i,j) const component of the matrix in direction \e mu stored at site x
+     *
+     * @note if \e sign is negative returned element is conjugated
+     */
     inline const mdp_complex operator()(mdp_site x, int sign, int mu,
                                         int i, int j) const
     {
@@ -263,16 +304,17 @@ namespace MDP
       if (sign == -1)
         return conj(*(address(x - mu, (mu * nc + j) * nc + i)));
       error("call to U(x,0,mu,i,j)");
+
       return mdp_complex(0, 0);
-    };
+    }
 #endif
 
-      // /////////////////////////////////////////////////////
-      // /////////////////////////////////////////////////////
-      // stuff for twisted boundary conditions
-      // ignore if you do not care
-      // /////////////////////////////////////////////////////
-      // /////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////
+    // stuff for twisted boundary conditions
+    // ignore if you do not care
+    // /////////////////////////////////////////////////////
+    // /////////////////////////////////////////////////////
 
 #ifdef TWISTED_BOUNDARY
     inline friend void twist_boundary(mdp_matrix &M, mdp_site &x)
@@ -426,6 +468,32 @@ namespace MDP
     }
 #endif
   };
+
+  mdp_real SymanzikAction(gauge_field &U)
+  {
+    mdp_real tmp = 0;
+    mdp_site x(U.lattice());
+    mdp_real c1 = -1.0 / 12; // Symanzik
+    //  mdp_real c1=-0.331; //Iwasaki
+    //  mdp_real c1=-1.4088; //DBW2
+
+    // U.update();
+
+    forallsites(x)
+    {
+      for (int mu = 0; mu < U.ndim - 1; mu++)
+      {
+        for (int nu = mu + 1; nu < U.ndim; nu++)
+        {
+          tmp += (1 - 8 * c1) * (1 - real(trace(plaquette(U, x, mu, nu))) / U.nc) +
+                 c1 * (2 - 1.0 / U.nc * real(trace(U(x, mu) * (U(x + mu, mu) * U((x + mu) + mu, nu) * hermitian(U((x + mu) + nu, mu)) * hermitian(U(x + nu, mu)) + U(x + mu, nu) * U((x + mu) + nu, nu) * hermitian(U((x + nu) + nu, mu)) * hermitian(U(x + nu, nu))) * hermitian(U(x, nu)))));
+        }
+      }
+    }
+
+    mdp.add(tmp);
+    return tmp / (U.lattice().global_volume());
+  }
 } // namespace MDP
 
 #endif /* FERMIQCD_GAUGE_FIELD_ */
