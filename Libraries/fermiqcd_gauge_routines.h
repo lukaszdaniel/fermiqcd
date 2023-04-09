@@ -163,6 +163,32 @@ namespace MDP
     return tmp;
   }
 
+  mdp_real SymanzikAction(gauge_field &U)
+  {
+    mdp_real tmp = 0;
+    mdp_site x(U.lattice());
+    mdp_real c1 = -1.0 / 12; // Symanzik
+    //  mdp_real c1=-0.331; //Iwasaki
+    //  mdp_real c1=-1.4088; //DBW2
+
+    // U.update();
+
+    forallsites(x)
+    {
+      for (int mu = 0; mu < U.ndim - 1; mu++)
+      {
+        for (int nu = mu + 1; nu < U.ndim; nu++)
+        {
+          tmp += (1 - 8 * c1) * (1 - real(trace(plaquette(U, x, mu, nu))) / U.nc) +
+                 c1 * (2 - 1.0 / U.nc * real(trace(U(x, mu) * (U(x + mu, mu) * U((x + mu) + mu, nu) * hermitian(U((x + mu) + nu, mu)) * hermitian(U(x + nu, mu)) * +U(x + mu, nu) * U((x + mu) + nu, nu) * hermitian(U((x + nu) + nu, mu)) * hermitian(U(x + nu, nu))) * hermitian(U(x, nu)))));
+        }
+      }
+    }
+
+    mdp.add(tmp);
+    return tmp / (U.lattice().global_volume());
+  }
+
 #if 0
   // obsolete stuff
 
