@@ -72,7 +72,7 @@ namespace MDP
       allocate_field(a, nem * nc * nc);
     }
 
-    inline int ordered_index(int mu, int nu) const
+    int ordered_index(int mu, int nu) const
     {
       // ////////////////////////
       // this map mu, nu -> k  //
@@ -94,7 +94,7 @@ namespace MDP
 
     /** @brief returns the matrix in directions \e mu, \e nu stored at site x
      */
-    inline mdp_matrix operator()(mdp_site x, int mu, int nu)
+    mdp_matrix operator()(mdp_site x, int mu, int nu)
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
@@ -106,7 +106,7 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix in directions \e mu, \e nu stored at site x
      */
-    inline mdp_complex &operator()(mdp_site x, int mu, int nu, int i, int j)
+    mdp_complex &operator()(mdp_site x, int mu, int nu, int i, int j)
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
@@ -118,7 +118,7 @@ namespace MDP
 
     /** @brief returns the (i,j) const component of the matrix in directions \e mu, \e nu stored at site x
      */
-    inline const mdp_complex &operator()(mdp_site x, int mu, int nu,
+    const mdp_complex &operator()(mdp_site x, int mu, int nu,
                                          int i, int j) const
     {
 #ifdef CHECK_ALL
@@ -195,7 +195,7 @@ namespace MDP
 
     /** @brief returns the matrix in direction \e mu stored at site x
      */
-    inline mdp_matrix operator()(mdp_site x, int mu)
+    mdp_matrix operator()(mdp_site x, int mu)
     {
 #ifndef TWIST_BOUNDARY
       return mdp_matrix(address(x, mu * nc * nc), nc, nc);
@@ -218,7 +218,7 @@ namespace MDP
 
     /** @brief returns the const matrix in direction \e mu stored at site x
      */
-    inline const mdp_matrix operator()(mdp_site x, int mu) const
+    const mdp_matrix operator()(mdp_site x, int mu) const
     {
 #ifndef TWISTED_BOUNDARY
       return mdp_matrix(address(x, mu * nc * nc), nc, nc);
@@ -241,7 +241,7 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix in direction \e mu stored at site x
      */
-    inline mdp_complex &operator()(mdp_site x, int mu, int i, int j)
+    mdp_complex &operator()(mdp_site x, int mu, int i, int j)
     {
 #ifdef TWISTED_BOUNDARY
       if (!in_block(x))
@@ -252,7 +252,7 @@ namespace MDP
 
     /** @brief returns the (i,j) const component of the matrix in direction \e mu stored at site x
      */
-    inline const mdp_complex &operator()(mdp_site x, int mu, int i, int j) const
+    const mdp_complex &operator()(mdp_site x, int mu, int i, int j) const
     {
 #ifdef TWISTED_BOUNDARY
       if (!in_block(x))
@@ -266,7 +266,7 @@ namespace MDP
      * @note if \e sign is negative returned matrix is a hermitian matrix
      * if direction \e -mu
      */
-    inline mdp_matrix operator()(mdp_site x, int sign, int mu)
+    mdp_matrix operator()(mdp_site x, int sign, int mu)
     {
       if (sign == +1)
         return (*this)(x, mu);
@@ -281,7 +281,7 @@ namespace MDP
      * @note if \e sign is negative returned matrix is a hermitian matrix
      * if direction \e -mu
      */
-    inline const mdp_matrix operator()(mdp_site x, int sign, int mu) const
+    const mdp_matrix operator()(mdp_site x, int sign, int mu) const
     {
       if (sign == +1)
         return (*this)(x, mu);
@@ -296,7 +296,7 @@ namespace MDP
      *
      * @note if \e sign is negative returned element is conjugated
      */
-    inline const mdp_complex operator()(mdp_site x, int sign, int mu,
+    const mdp_complex operator()(mdp_site x, int sign, int mu,
                                         int i, int j) const
     {
       if (sign == +1)
@@ -317,7 +317,7 @@ namespace MDP
     // /////////////////////////////////////////////////////
 
 #ifdef TWISTED_BOUNDARY
-    inline friend void twist_boundary(mdp_matrix &M, mdp_site &x)
+    friend void twist_boundary(mdp_matrix &M, mdp_site &x)
     {
       static int mu, block;
       static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
@@ -435,7 +435,7 @@ namespace MDP
       end_function("gauge_field__define_twist_matrices");
     }
 
-    inline friend void twist_eat_fields(mdp_matrix &M, mdp_site &x,
+    friend void twist_eat_fields(mdp_matrix &M, mdp_site &x,
                                         gauge_field &omega)
     {
       begin_function("gauge_field__twist_eat_matrices");

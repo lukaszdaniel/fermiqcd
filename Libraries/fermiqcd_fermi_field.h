@@ -71,28 +71,28 @@ namespace MDP
 
     /** @brief returns the matrix stored at site x
      */
-    inline mdp_matrix operator()(mdp_site x)
+    mdp_matrix operator()(mdp_site x)
     {
       return mdp_matrix(address(x), nspin, nc);
     }
 
     /** @brief returns the vector of spin \e a stored at site x
      */
-    inline mdp_matrix operator()(mdp_site x, int a)
+    mdp_matrix operator()(mdp_site x, int a)
     {
       return mdp_matrix(address(x, a * nc), nc, 1);
     }
 
     /** @brief returns the (a,i) component of the matrix stored at site x
      */
-    inline mdp_complex &operator()(mdp_site x, int a, int i)
+    mdp_complex &operator()(mdp_site x, int a, int i)
     {
       return *(address(x, a * nc + i));
     }
 
     /** @brief returns the (a,i) const component of the matrix stored at site x
      */
-    inline const mdp_complex &operator()(mdp_site x, int a, int i) const
+    const mdp_complex &operator()(mdp_site x, int a, int i) const
     {
       return *(address(x, a * nc + i));
     }

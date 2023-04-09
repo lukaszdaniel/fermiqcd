@@ -152,7 +152,7 @@ namespace MDP
      * Calculate ordinal (global) coordinate of
      * a n-dimentional point x[].
      */
-    inline mdp_int global_coordinate(int *x)
+    mdp_int global_coordinate(int *x)
     {
       mdp_int global_idx = 0;
       int mu;
@@ -166,7 +166,7 @@ namespace MDP
      * Given the ordinal coordinate, recover
      * x = (x0, x1, ... x9) coordinates.
      */
-    inline void global_coordinate(mdp_int global_idx, int *x)
+    void global_coordinate(mdp_int global_idx, int *x)
     {
       for (int mu = ndim - 1; mu > 0; mu--)
       {
@@ -176,7 +176,7 @@ namespace MDP
       x[0] = global_idx;
     }
 
-    inline int compute_parity(int *x)
+    int compute_parity(int *x)
     {
       int mu = 0;
       int p = 0;
@@ -623,7 +623,7 @@ namespace MDP
       }
     }
 
-    inline mdp_prng &random(mdp_site);
+    mdp_prng &random(mdp_site);
     // //////////////////////////////////
     // functions for external access ...
     // to be used to access member variables
@@ -631,28 +631,28 @@ namespace MDP
 
     /** @brief number of dimensions of the lattice
      */
-    inline int n_dimensions() const
+    int n_dimensions() const
     {
       return ndim;
     }
 
     /** @brief number of directions one can move on the lattice; usually same as ndim
      */
-    inline int n_directions() const
+    int n_directions() const
     {
       return ndir;
     }
 
     /** @brief number of sites of the lattice
      */
-    inline mdp_int size() const
+    mdp_int size() const
     {
       return nvol_gl;
     }
 
     /** @brief size of the lattice in direction mu
      */
-    inline mdp_int size(const int mu) const
+    mdp_int size(const int mu) const
     {
       return nx[mu];
     }
@@ -668,7 +668,7 @@ namespace MDP
 
     /** @brief number of lattice sites stored locally by current process
      */
-    inline mdp_int local_volume() const
+    mdp_int local_volume() const
     {
       return nvol_in;
     }
@@ -676,14 +676,14 @@ namespace MDP
     /** @brief number of lattice sites stored locally by current process
      * together with the number of copies of the neigbouring sites
      */
-    inline mdp_int enclosing_volume() const
+    mdp_int enclosing_volume() const
     {
       return nvol;
     }
 
     /** @brief total lattice volume
      */
-    inline mdp_int global_volume() const
+    mdp_int global_volume() const
     {
       return nvol_gl;
     }
@@ -693,17 +693,17 @@ namespace MDP
       return next_next;
     }
 
-    inline mdp_int move_up(const mdp_int idx, const int mu) const
+    mdp_int move_up(const mdp_int idx, const int mu) const
     {
       return up[idx][mu];
     }
 
-    inline mdp_int move_down(const mdp_int idx, const int mu) const
+    mdp_int move_down(const mdp_int idx, const int mu) const
     {
       return dw[idx][mu];
     }
 
-    inline mdp_int local(mdp_int idx) const
+    mdp_int local(mdp_int idx) const
     {
 #ifndef MDP_NO_LG
       return lg[idx];
@@ -717,24 +717,24 @@ namespace MDP
 #endif
     }
 
-    inline mdp_int global(mdp_int idx) const
+    mdp_int global(mdp_int idx) const
     {
       return gl[idx];
     }
 
-    inline int site_parity(const mdp_int idx) const
+    int site_parity(const mdp_int idx) const
     {
       return parity[idx];
     }
 
-    inline mdp_int start_index(const int process, int p = EVENODD) const
+    mdp_int start_index(const int process, int p = EVENODD) const
     {
       if (p == EVENODD)
         p = 0;
       return start[process][p];
     }
 
-    inline mdp_int stop_index(const int process, int p = EVENODD) const
+    mdp_int stop_index(const int process, int p = EVENODD) const
     {
       if (p == EVENODD)
         p = 1;

@@ -380,12 +380,12 @@ namespace MDP
 #endif
     }
 
-    inline const int me()
+    const int me()
     {
       return my_id;
     }
 
-    inline const int nproc()
+    const int nproc()
     {
       return my_nproc;
     }
@@ -556,13 +556,13 @@ namespace MDP
   }
 
   /// Logs in xml the start of a function with message s
-  inline void begin_function(std::string s)
+  void begin_function(std::string s)
   {
     mpi.begin_function(s);
   }
 
   /// Logs in xml the end of a function with message s
-  inline void end_function(std::string s)
+  void end_function(std::string s)
   {
     mpi.end_function(s);
   }

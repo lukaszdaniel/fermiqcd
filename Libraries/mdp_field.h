@@ -201,7 +201,7 @@ namespace MDP
       deallocate_memory();
     }
     /// returns component i of the vector of objects T stored at site x
-    inline T &operator()(mdp_site x, int i = 0)
+    T &operator()(mdp_site x, int i = 0)
     {
 #ifdef CHECK_ALL
       if (!(x.is_here()))
@@ -212,21 +212,21 @@ namespace MDP
       return m[x.idx * field_components + i];
     }
 
-    inline T &operator()(int idx, int i = 0)
+    T &operator()(int idx, int i = 0)
     {
       return m[idx * field_components + i];
     }
     /// retruns the address of the vector of objects T stored at site x
-    inline T *operator[](mdp_site x)
+    T *operator[](mdp_site x)
     {
       return address(x, 0);
     }
-    inline T &operator[](mdp_int i)
+    T &operator[](mdp_int i)
     {
       return m[i];
     }
 
-    inline T *address(mdp_site x, int i = 0) const
+    T *address(mdp_site x, int i = 0) const
     {
 #ifdef CHECK_ALL
       if (!(x.is_here()))
@@ -307,7 +307,7 @@ namespace MDP
         m[i] /= a;
     }
     /// returns by reference the lattice this field is defined on
-    inline mdp_lattice &lattice() const
+    mdp_lattice &lattice() const
     {
       return *ptr;
     }
@@ -370,31 +370,31 @@ namespace MDP
     // ////////////////////////////////////
 
     /// lattice size in units of sizeof(T)
-    inline mdp_int global_size()
+    mdp_int global_size()
     {
       return field_components * lattice().global_volume();
     }
-    inline mdp_int physical_size()
+    mdp_int physical_size()
     {
       return size;
     }
-    inline mdp_int size_per_site()
+    mdp_int size_per_site()
     {
       return field_components;
     }
-    inline mdp_int physical_local_start(int i = 2)
+    mdp_int physical_local_start(int i = 2)
     {
       if (i == 2)
         i = 0;
       return field_components * lattice().start[ME][i];
     }
-    inline mdp_int physical_local_stop(int i = 2)
+    mdp_int physical_local_stop(int i = 2)
     {
       if (i == 2)
         i = 1;
       return field_components * lattice().stop[ME][i];
     }
-    inline T *physical_address(mdp_int i = 0)
+    T *physical_address(mdp_int i = 0)
     {
       return m + i;
     }

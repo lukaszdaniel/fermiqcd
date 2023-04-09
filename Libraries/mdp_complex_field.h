@@ -109,7 +109,7 @@ namespace MDP
     mdp_complex_field(const mdp_complex_field &other) : mdp_field<mdp_complex>(other)
     {
     }
-    inline void operator=(const mdp_complex_field &psi)
+    void operator=(const mdp_complex_field &psi)
     {
       if (&lattice() != &psi.lattice() ||
           size != psi.size ||
@@ -133,7 +133,7 @@ namespace MDP
         m[i] = psi.m[i];
     }
 
-    inline void operator*=(const mdp_complex alpha)
+    void operator*=(const mdp_complex alpha)
     {
       mdp_int i_min = physical_local_start(EVENODD);
       mdp_int i_max = physical_local_stop(EVENODD);
@@ -141,12 +141,12 @@ namespace MDP
       for (; i < i_max; i++)
         m[i] *= alpha;
     }
-    inline void operator/=(const mdp_complex alpha)
+    void operator/=(const mdp_complex alpha)
     {
       (*this) *= (1.0 / alpha);
     }
 
-    inline void operator*=(const mdp_real alpha)
+    void operator*=(const mdp_real alpha)
     {
       mdp_int i_min = physical_local_start(EVENODD);
       mdp_int i_max = physical_local_stop(EVENODD);
@@ -173,12 +173,12 @@ namespace MDP
         m[i] *= alpha;
     }
 
-    inline void operator/=(const mdp_real alpha)
+    void operator/=(const mdp_real alpha)
     {
       (*this) *= (1.0 / alpha);
     }
 
-    inline void operator+=(mdp_complex_field &psi)
+    void operator+=(mdp_complex_field &psi)
     {
       mdp_int i_min = psi.physical_local_start(EVENODD);
       mdp_int i_max = psi.physical_local_stop(EVENODD);
@@ -199,7 +199,7 @@ namespace MDP
         m[i] += psi.m[i];
     }
 
-    inline void operator-=(mdp_complex_field &psi)
+    void operator-=(mdp_complex_field &psi)
     {
       mdp_int i_min = psi.physical_local_start(EVENODD);
       mdp_int i_max = psi.physical_local_stop(EVENODD);
@@ -220,7 +220,7 @@ namespace MDP
         m[i] -= psi.m[i];
     }
 
-    inline friend mdp_real norm_square(mdp_complex_field &psi,
+    friend mdp_real norm_square(mdp_complex_field &psi,
                                        int parity = EVENODD)
     {
       double n2 = 0;
@@ -249,7 +249,7 @@ namespace MDP
       return n2;
     }
 
-    inline friend mdp_complex scalar_product(mdp_complex_field &psi,
+    friend mdp_complex scalar_product(mdp_complex_field &psi,
                                              mdp_complex_field &chi,
                                              int parity = EVENODD)
     {
@@ -284,7 +284,7 @@ namespace MDP
       return n2;
     }
 
-    inline friend mdp_real real_scalar_product(mdp_complex_field &psi,
+    friend mdp_real real_scalar_product(mdp_complex_field &psi,
                                                mdp_complex_field &chi,
                                                int parity = EVENODD)
     {
@@ -320,7 +320,7 @@ namespace MDP
       return n2;
     }
 
-    inline friend mdp_real imag_scalar_product(mdp_complex_field &psi,
+    friend mdp_real imag_scalar_product(mdp_complex_field &psi,
                                                mdp_complex_field &chi,
                                                int parity = EVENODD)
     {
@@ -354,7 +354,7 @@ namespace MDP
       return n2;
     }
 
-    inline friend void mdp_add_scaled_field(mdp_complex_field &psi,
+    friend void mdp_add_scaled_field(mdp_complex_field &psi,
                                             mdp_real alpha,
                                             mdp_complex_field &chi,
                                             int parity = EVENODD)
@@ -384,7 +384,7 @@ namespace MDP
         psi[i] += alpha * chi[i];
     }
 
-    inline friend void mdp_add_scaled_field(mdp_complex_field &psi,
+    friend void mdp_add_scaled_field(mdp_complex_field &psi,
                                             mdp_complex alpha,
                                             mdp_complex_field &chi,
                                             int parity = EVENODD)
@@ -397,13 +397,13 @@ namespace MDP
         psi[i] += alpha * chi[i];
     }
 
-    inline friend mdp_complex operator*(mdp_complex_field &psi,
+    friend mdp_complex operator*(mdp_complex_field &psi,
                                         mdp_complex_field &chi)
     {
       return scalar_product(psi, chi);
     }
 
-    inline friend mdp_real relative_residue(mdp_complex_field &p,
+    friend mdp_real relative_residue(mdp_complex_field &p,
                                             mdp_complex_field &q,
                                             int parity = EVENODD)
     {

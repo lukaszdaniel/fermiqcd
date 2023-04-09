@@ -71,12 +71,12 @@ namespace MDP
     }
 
     /// returns by reference the lattice the site lives on
-    inline mdp_lattice &lattice()
+    mdp_lattice &lattice()
     {
       return *ptr;
     }
 
-    inline mdp_site(mdp_int i, mdp_lattice *ptr2)
+    mdp_site(mdp_int i, mdp_lattice *ptr2)
     {
       idx = i;
       ptr = ptr2;
@@ -87,7 +87,7 @@ namespace MDP
     }
 
 #ifdef BLOCKSITE
-    inline mdp_site(mdp_int i, mdp_lattice *ptr2, int b[], int sign = 0, int mu = 0)
+    mdp_site(mdp_int i, mdp_lattice *ptr2, int b[], int sign = 0, int mu = 0)
     {
       idx = i;
       ptr = ptr2;
@@ -106,13 +106,13 @@ namespace MDP
 #endif
     }
 
-    inline mdp_site operator=(mdp_int i)
+    mdp_site operator=(mdp_int i)
     {
       idx = lattice().start[ME][0] + i;
       return mdp_site(idx, ptr);
     }
 
-    inline mdp_site operator=(mdp_site x)
+    mdp_site operator=(mdp_site x)
     {
       if (ptr == x.ptr)
         idx = x.idx;
@@ -126,19 +126,19 @@ namespace MDP
       return mdp_site(idx, ptr);
     }
 
-    inline bool operator==(mdp_site x)
+    bool operator==(mdp_site x)
     {
       if ((idx == NOWHERE) || (x.idx == NOWHERE))
         return false;
       return (global_index() == x.global_index());
     }
 
-    inline bool operator!=(mdp_site x)
+    bool operator!=(mdp_site x)
     {
       return !(*this == x);
     }
 
-    inline void start(int np = 0)
+    void start(int np = 0)
     {
 #ifdef BLOCKSITE
       for (int k = 0; k < BLOCKSITE; k++)
@@ -147,7 +147,7 @@ namespace MDP
       idx = lattice().start[ME][np];
     }
 
-    inline void next()
+    void next()
     {
       ++idx;
     }
@@ -155,7 +155,7 @@ namespace MDP
     /** @brief checks if the site is inside the portion of the lattice stored by
      * the current process
      */
-    inline bool is_in()
+    bool is_in()
     {
       return ((idx >= lattice().start[ME][0]) && (idx < lattice().stop[ME][1]));
     }
@@ -164,14 +164,14 @@ namespace MDP
      * the current process or if the site is in a local copy of a remote
      * site
      */
-    inline int is_here()
+    int is_here()
     {
       return ((idx >= 0) && (idx < lattice().enclosing_volume()));
     }
 
     /** @brief returns the parity EVEN or ODD of the site
      */
-    inline int parity()
+    int parity()
     {
       return lattice().site_parity(idx);
     }
@@ -179,7 +179,7 @@ namespace MDP
     /** @brief true if the site is stored locally as a copy of a site local
      * in another process
      */
-    inline int is_in_boundary()
+    int is_in_boundary()
     {
       return (lattice().wh[idx] != ME);
     }
@@ -187,28 +187,28 @@ namespace MDP
     /// returns the local index of the site
     /// local index is assigned by the process to the local sites and copies
     /// of remote sites. local index is not unique thoughout the lattice.
-    inline mdp_int local_index()
+    mdp_int local_index()
     {
       return idx;
     }
 
     /** @brief returns the global (unique) index of the site
      */
-    inline mdp_int global_index()
+    mdp_int global_index()
     {
       return lattice().global(idx);
     }
 
     /** @brief sets the site by its local index (dangerous)
      */
-    inline void set_local(mdp_int idx2)
+    void set_local(mdp_int idx2)
     {
       idx = idx2;
     }
 
     /** @brief sets the site by its global index
      */
-    inline void set_global(mdp_int idx_gl)
+    void set_global(mdp_int idx_gl)
     {
       mdp_int idx2 = lattice().local(idx_gl);
       if (idx2 == NOWHERE)
@@ -218,7 +218,7 @@ namespace MDP
 
     /** @brief returns the site shifted forward in direction mu=(0...ndim-1)
      */
-    inline mdp_site operator+(int mu)
+    mdp_site operator+(int mu)
     {
       mdp_int idx2 = lattice().up[idx][mu];
       if (idx2 == NOWHERE)
@@ -237,7 +237,7 @@ namespace MDP
 
     /** @brief returns the site shifted backwards in direction mu=(0...ndim-1)
      */
-    inline mdp_site operator-(int mu)
+    mdp_site operator-(int mu)
     {
       mdp_int idx2 = lattice().dw[idx][mu];
       if (idx2 == NOWHERE)
@@ -253,7 +253,7 @@ namespace MDP
     /** @brief returns a site shifted i position (backwards if i<0 or forward if i>0)
      * in direction mu=(0...mdim-1)
      */
-    inline mdp_site hop(int i, int mu)
+    mdp_site hop(int i, int mu)
     {
       mdp_site y(lattice());
       y = (*this);
@@ -275,7 +275,7 @@ namespace MDP
 
     /** @brief sets the site to the coordinates stored in vector v
      */
-    inline mdp_site operator=(mdp_vector v)
+    mdp_site operator=(mdp_vector v)
     {
       set(v[0], v[1], v[2], v[3], v[4],
           v[5], v[6], v[7], v[8], v[9]);
@@ -284,7 +284,7 @@ namespace MDP
 
     /// returns a site similar to the present but
     /// each coordinates mu of the site shifted according to v[mu]
-    inline mdp_site operator+(mdp_vector v)
+    mdp_site operator+(mdp_vector v)
     {
       int mu, step;
       mdp_site y = *this;
@@ -302,7 +302,7 @@ namespace MDP
 
     /// returns a site similar to the present but
     /// each coordinates mu of the site shifted according to -v[mu]
-    inline mdp_site operator-(mdp_vector v)
+    mdp_site operator-(mdp_vector v)
     {
       int mu, step;
       mdp_site y = *this;
@@ -319,7 +319,7 @@ namespace MDP
     }
 
     /// returns mu coordinate of the site
-    inline int operator()(int mu)
+    int operator()(int mu)
     {
       return lattice().co[idx][mu];
     }
@@ -427,7 +427,7 @@ namespace MDP
     /// converts a site into a binary number
     /// to be used only if the site is a vertex of an hypercube centered
     /// at the origin. this is used to make staggered mesons
-    inline friend mdp_int site2binary(mdp_site x)
+    friend mdp_int site2binary(mdp_site x)
     {
       int a = 0;
       for (int mu = 0; mu < x.lattice().n_dimensions(); mu++)
@@ -474,7 +474,7 @@ namespace MDP
 #ifdef MDP_LATTICE
 
   /// Returns the local object mdp_prng at site x of the lattice
-  inline mdp_prng &mdp_lattice::random(mdp_site x)
+  mdp_prng &mdp_lattice::random(mdp_site x)
   {
     if (local_random_generator)
     {
@@ -490,7 +490,7 @@ namespace MDP
   /// When compiled with TWISTED_BOUNDARY the mdp_site class keeps track of
   /// sites that moved around the boundary of the torus topology. this function
   /// Returns false if this is one such site, true otherwise.
-  inline int in_block(mdp_site x)
+  int in_block(mdp_site x)
   {
 #ifdef TWISTED_BOUNDARY
     for (int mu = 0; mu < x.lattice().n_dimensions(); mu++)

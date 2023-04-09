@@ -70,28 +70,28 @@ namespace MDP
 
     /** @brief returns the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    inline mdp_matrix operator()(mdp_site x, int L5_)
+    mdp_matrix operator()(mdp_site x, int L5_)
     {
       return mdp_matrix(address(x, L5_ * nc * nspin), nspin, nc);
     }
 
     /** @brief returns the vector of colour \e a stored at site x and site \e L5_ in 5-th dimension
      */
-    inline mdp_matrix operator()(mdp_site x, int L5_, int a)
+    mdp_matrix operator()(mdp_site x, int L5_, int a)
     {
       return mdp_matrix(address(x, (L5_ * nspin + a) * nc), nc, 1);
     }
 
     /** @brief returns the (a,i) component of the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    inline mdp_complex &operator()(mdp_site x, int L5_, int a, int i)
+    mdp_complex &operator()(mdp_site x, int L5_, int a, int i)
     {
       return *(address(x, (L5_ * nspin + a) * nc + i));
     }
 
     /** @brief returns the (a,i) const component of the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    inline const mdp_complex &operator()(mdp_site x, int L5_, int a, int i) const
+    const mdp_complex &operator()(mdp_site x, int L5_, int a, int i) const
     {
       return *(address(x, (L5_ * nspin + a) * nc + i));
     }

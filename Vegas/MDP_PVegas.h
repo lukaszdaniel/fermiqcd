@@ -60,6 +60,10 @@
 #ifndef MDP_PVEGAS_
 #define MDP_PVEGAS_
 
+#include <algorithm>
+#include <cstdio>
+#include <cmath>
+
 namespace MDP
 {
   class VegasClass
@@ -139,14 +143,6 @@ namespace MDP
         fflush(OutputFile);
         PrintGrid();
       }
-    }
-    inline int maximum(int a, int b)
-    {
-      return (a > b) ? a : b;
-    }
-    inline int minimum(int a, int b)
-    {
-      return (a < b) ? a : b;
     }
 
     // /////////////////////////////////////////////////////
@@ -287,7 +283,7 @@ namespace MDP
           for (j = 0; j < NumberOfDimensions; j++)
           {
             xn = (kg[j] - Random.plain()) * dxg;
-            ia[j] = maximum(minimum((int)(xn), NDMX - 1), 0); // check NDMX
+            ia[j] = std::max(std::min((int)(xn), NDMX - 1), 0); // check NDMX
             if (ia[j] > 0)
             {
               xo = xi[j][ia[j]] - xi[j][ia[j] - 1];
@@ -365,7 +361,7 @@ namespace MDP
         ng = 1;
         if (mds)
         { // Set up for stratification.
-          ng = (int)pow(ncalls / 2.0 + 0.25, 1.0 / NumberOfDimensions);
+          ng = (int)std::pow(ncalls / 2.0 + 0.25, 1.0 / NumberOfDimensions);
           mds = 1;
           if ((2 * ng - NDMX) >= 0)
           {
@@ -377,12 +373,12 @@ namespace MDP
         }
         for (k = 1, i = 0; i < NumberOfDimensions; i++)
           k *= ng;
-        npg = maximum(ncalls / k, 2);
+        npg = std::max(ncalls / k, 2);
         calls = npg * k;
         dxg = 1.0 / ng;
         for (dv2g = 1, i = 0; i < NumberOfDimensions; i++)
           dv2g *= dxg;
-        dv2g = pow(calls * dv2g / npg, 2.0) / (npg - 1.0);
+        dv2g = std::pow(calls * dv2g / npg, 2.0) / (npg - 1.0);
         xnd = nd;
         dxg *= xnd;
         xjac = 1.0 / calls;

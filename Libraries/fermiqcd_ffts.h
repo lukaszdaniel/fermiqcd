@@ -16,7 +16,7 @@
 
 namespace MDP
 {
-  inline mdp_int i2pow(mdp_int n)
+  mdp_int i2pow(mdp_int n)
   {
     return 0x0001 << n;
   }

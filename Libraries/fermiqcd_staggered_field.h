@@ -57,21 +57,21 @@ namespace MDP
 
     /** @brief returns the vector stored at site x
      */
-    inline mdp_matrix operator()(mdp_site x)
+    mdp_matrix operator()(mdp_site x)
     {
       return mdp_matrix(address(x), nc, 1);
     }
 
     /** @brief returns the i-th component of the vector stored at site x
      */
-    inline mdp_complex &operator()(mdp_site x, int i)
+    mdp_complex &operator()(mdp_site x, int i)
     {
       return *(address(x, i));
     }
 
     /** @brief returns the i-th const component of the vector stored at site x
      */
-    inline const mdp_complex &operator()(mdp_site x, int i) const
+    const mdp_complex &operator()(mdp_site x, int i) const
     {
       return *(address(x, i));
     }
@@ -82,12 +82,12 @@ namespace MDP
         m[i] = a;
     }
 
-    inline mdp_real component(mdp_site x, int mu)
+    mdp_real component(mdp_site x, int mu)
     {
       return x(mu) % 2;
     }
 
-    inline mdp_real eta(mdp_site x, int mu)
+    mdp_real eta(mdp_site x, int mu)
     {
 #ifdef USE_GOLTERMAN
       int i_max = (mu + ndim - 1) % ndim;
@@ -102,7 +102,7 @@ namespace MDP
       return mdp_mod2sign(tmp);
     }
 
-    inline mdp_real eps(mdp_site x)
+    mdp_real eps(mdp_site x)
     {
       int tmp = x(0);
       for (int i = 1; i < ndim; i++)
@@ -110,7 +110,7 @@ namespace MDP
       return mdp_mod2sign(tmp);
     }
 
-    inline mdp_real type(mdp_site x)
+    mdp_real type(mdp_site x)
     {
       mdp_real tmp = x(0) % 2;
       for (int i = 1; i < ndim; i++)

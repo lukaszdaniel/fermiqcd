@@ -51,7 +51,7 @@ namespace MDP
     }
   };
 
-  inline mdp_vector binary2versor(mdp_int a)
+  mdp_vector binary2versor(mdp_int a)
   {
     mdp_vector v((a)&0x1,
                  (a >> 1) & 0x1,
@@ -66,7 +66,7 @@ namespace MDP
     return v;
   }
 
-  inline int versor2binary(int x0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
+  int versor2binary(int x0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
                            int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
   {
 #ifdef CHECK_ALL
@@ -80,7 +80,7 @@ namespace MDP
     return x0 + 2 * x1 + 4 * x2 + 8 * x3 + 16 * x4 + 32 * x5 + 64 * x6 + 128 * x7 + 256 * x8 + 512 * x9;
   }
 
-  inline mdp_int vector2binary(mdp_vector v)
+  mdp_int vector2binary(mdp_vector v)
   {
 #ifdef CHECK_ALL
     if ((fabs(0.5 - v[0]) > 1) || (fabs(0.5 - v[1]) > 1) ||

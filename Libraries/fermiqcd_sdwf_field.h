@@ -52,14 +52,14 @@ namespace MDP
 
     /** @brief returns the \e x5 component of the vector of colour \e i stored at site x
      */
-    inline mdp_complex &operator()(mdp_site x, int x5, int i)
+    mdp_complex &operator()(mdp_site x, int x5, int i)
     {
       return *(address(x, x5 * nc + i));
     }
 
     /** @brief returns the \e x5 const component of the vector of colour \e i stored at site x
      */
-    inline const mdp_complex &operator()(mdp_site x, int x5, int i) const
+    const mdp_complex &operator()(mdp_site x, int x5, int i) const
     {
       return *(address(x, x5 * nc + i));
     }
@@ -70,12 +70,12 @@ namespace MDP
         m[i] = a;
     }
 
-    inline mdp_real component(mdp_site x, int mu)
+    mdp_real component(mdp_site x, int mu)
     {
       return x(mu) % 2;
     }
 
-    inline mdp_real eta(mdp_site x, int mu)
+    mdp_real eta(mdp_site x, int mu)
     {
       int tmp;
       int i_max = (mu + ndim - 1) % ndim;
@@ -85,7 +85,7 @@ namespace MDP
       return mdp_mod2sign(tmp);
     }
 
-    inline mdp_real eps(mdp_site x)
+    mdp_real eps(mdp_site x)
     {
       int tmp;
       tmp = x(0);
@@ -94,7 +94,7 @@ namespace MDP
       return mdp_mod2sign(tmp);
     }
 
-    inline mdp_real type(mdp_site x)
+    mdp_real type(mdp_site x)
     {
       mdp_real tmp;
       tmp = x(0) % 2;
@@ -103,7 +103,7 @@ namespace MDP
       return tmp;
     }
 
-    inline mdp_site chiral_shift(mdp_site x)
+    mdp_site chiral_shift(mdp_site x)
     {
       for (int i = 0; i < ndim; i++)
         if (x(i) % 2 == 1)
@@ -113,7 +113,7 @@ namespace MDP
       return x;
     }
 
-    inline mdp_real chiral_phase(mdp_site x)
+    mdp_real chiral_phase(mdp_site x)
     { // (Gamma5 (x) 1)
       int tmp = ndim / 2;
       for (int i = 1; i < ndim; i += 2)
@@ -121,7 +121,7 @@ namespace MDP
       return (mdp_real)mdp_mod2sign(tmp);
     }
 
-    inline mdp_real chiral_phase2(mdp_site x)
+    mdp_real chiral_phase2(mdp_site x)
     { // (Gamma5 (x) Gamma5)
       int tmp = 0;
       for (int i = 0; i < ndim; i++)

@@ -65,7 +65,7 @@ namespace MDP
 
     /** @brief returns the matrix \e alpha, \e beta stored at site x
      */
-    inline mdp_matrix operator()(mdp_site x, int a, int b)
+    mdp_matrix operator()(mdp_site x, int a, int b)
     {
       mdp_matrix tmp(address(x, (a * nspin + b) * nc * nc), nc, nc);
       return tmp;
@@ -73,7 +73,7 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix \e alpha, \e beta stored at site x
      */
-    inline mdp_complex &operator()(mdp_site x, int a, int b, int i, int j)
+    mdp_complex &operator()(mdp_site x, int a, int b, int i, int j)
     {
       return *(address(x, ((a * nspin + b) * nc + i) * nc + j));
     }

@@ -42,7 +42,7 @@ namespace MDP
 
   public:
     /// return a uniform random number in (0,1)
-    inline float plain()
+    float plain()
     {
       float luni; /* local variable for Float */
       luni = u[ui] - u[uj];
