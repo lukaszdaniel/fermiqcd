@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=24698
+PSIM LOG: process 0 of 1 created with pid=40023
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -71,7 +71,7 @@ beta = 0.059, average plaquette = 0.0354614(0.0347675)
 beta = 0.06, average plaquette = 0.0352539(0.0340864)
 beta = 0.061, average plaquette = 0.0345337(0.0350233)
 beta = 0.062, average plaquette = 0.0323486(0.0367947)
-beta = 0.0629999, average plaquette = 0.0367798(0.0389535)
+beta = 0.063, average plaquette = 0.0367798(0.0389535)
 beta = 0.064, average plaquette = 0.0420654(0.0382436)
 beta = 0.065, average plaquette = 0.0445801(0.0397271)
 beta = 0.066, average plaquette = 0.0453247(0.0404147)
@@ -130,7 +130,7 @@ beta = 0.118, average plaquette = 0.310168(0.0991964)
 beta = 0.119, average plaquette = 0.348145(0.0985523)
 beta = 0.12, average plaquette = 0.364355(0.0966242)
 beta = 0.121, average plaquette = 0.388586(0.102645)
-beta = 0.122, average plaquette = 0.440479(0.0980666)
+beta = 0.122, average plaquette = 0.44043(0.0980611)
 beta = 0.123, average plaquette = 0.471948(0.0964439)
 beta = 0.124, average plaquette = 0.521582(0.0884597)
 beta = 0.125, average plaquette = 0.600061(0.078642)
@@ -162,11 +162,11 @@ beta = 0.149, average plaquette = 1(3.57628e-07)
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=12.78% PROCESS=12.99% COMM=0.00%
+* Process 0 stats: CPU=13.38% PROCESS=13.61% COMM=0.00%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 1.87033 sec.
+PROCESS 0 ENDING AFTER 2.16016 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating

@@ -113,7 +113,7 @@ int main(int argc, char **argv)
   set_random(psi);
 
   HMC<gauge_field, fermi_field> hmc(U, psi, coeff);
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 4; i++)
   {
     hmc.step();
     mdp << "acceptance=" << hmc.acceptance_rate() << "\n";
