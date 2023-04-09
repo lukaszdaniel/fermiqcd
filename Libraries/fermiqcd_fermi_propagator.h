@@ -38,18 +38,22 @@ namespace MDP
   class fermi_propagator : public mdp_complex_field
   {
   public:
-    int nspin, nc;
+    int nspin;
+    int nc;
+
     fermi_propagator()
     {
       reset_field();
-    };
+    }
+
     fermi_propagator(mdp_lattice &mylattice, int nc_, int nspin_ = 4)
     {
       reset_field();
       nspin = nspin_;
       nc = nc_;
       allocate_field(mylattice, nspin * nspin * nc * nc);
-    };
+    }
+
     void allocate_fermi_propagator(mdp_lattice &mylattice,
                                    int nc_, int nspin_ = 4)
     {
@@ -57,16 +61,23 @@ namespace MDP
       nspin = nspin_;
       nc = nc_;
       allocate_field(mylattice, nspin * nspin * nc * nc);
-    };
+    }
+
+    /** @brief returns the matrix \e alpha, \e beta stored at site x
+     */
     inline mdp_matrix operator()(mdp_site x, int a, int b)
     {
       mdp_matrix tmp(address(x, (a * nspin + b) * nc * nc), nc, nc);
       return tmp;
-    };
+    }
+
+    /** @brief returns the (i,j) component of the matrix \e alpha, \e beta stored at site x
+     */
     inline mdp_complex &operator()(mdp_site x, int a, int b, int i, int j)
     {
       return *(address(x, ((a * nspin + b) * nc + i) * nc + j));
-    };
+    }
+
     /// makes the quark propagator
     ///
     /// @param S the output propagator
@@ -84,9 +95,8 @@ namespace MDP
                          int max_steps = 2000,
                          void (*smf)(fermi_field &,
                                      gauge_field &,
-                                     coefficients &) = 0,
-                         coefficients smear_coeff = coefficients(),
-                         int comp = 0)
+                                     coefficients &) = nullptr,
+                         coefficients smear_coeff = coefficients())
     {
       fermi_field psi(S.lattice(), S.nc, S.nspin);
       fermi_field chi(S.lattice(), S.nc, S.nspin);
@@ -119,7 +129,7 @@ namespace MDP
             the source is smeared before the inversion
             the sink must be smeared using smear_sink.
           */
-          if (smf != 0)
+          if (smf != nullptr)
             (*smf)(psi, U, smear_coeff);
           stats = mul_invQ(chi, psi, U, coeff,
                            absolute_precision, relative_precision, max_steps);
@@ -206,7 +216,7 @@ namespace MDP
       };
     } while (1);
     begin_function("print_propagator");
-  };
+  }
 
   void smear_propagator(fermi_propagator &S, gauge_field &U, int smear_steps = 10, float alpha = 1.0)
   {

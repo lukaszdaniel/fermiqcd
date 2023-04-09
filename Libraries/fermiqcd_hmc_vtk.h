@@ -12,11 +12,13 @@
 #ifndef FERMIQCD_HMC_VTK_
 #define FERMIQCD_HMC_VTK_
 
+#include <vector>
+#include <iostream>
+
 namespace MDP
 {
   // Experimental, based on code developed by Simon Catterall
   //
-
   template <class GaugeClass, class FermiClass>
   class HMCVTK
   {
@@ -36,10 +38,10 @@ namespace MDP
     FermiClass *to_old_f_F;
 
   public:
-    static const int FUNDAMENTAL = 0;
-    static const int SYMMETRIC = 1;
-    static const int ANTISYMMETRIC = 2;
-    static const int SO4 = 14;
+    static constexpr int FUNDAMENTAL = 0;
+    static constexpr int SYMMETRIC = 1;
+    static constexpr int ANTISYMMETRIC = 2;
+    static constexpr int SO4 = 14;
     coefficients coeff;
     double bs, bs_old;
     double fs, fs_old;
@@ -50,26 +52,26 @@ namespace MDP
     std::vector<mdp_matrix> S;
     std::vector<mdp_matrix> lambda;
 
-    HMCVTK(GaugeClass &U, FermiClass &F, coefficients &coeff)
+    HMCVTK(GaugeClass &U, FermiClass &F, coefficients &coeff_)
     {
 
-      this->coeff = coeff;
-      this->accepted = 0;
-      this->steps = 0;
+      coeff = coeff_;
+      accepted = 0;
+      steps = 0;
 
-      this->to_F = &F;
-      this->to_U = &U;
-      this->to_V = &U; // initialize should change this
+      to_F = &F;
+      to_U = &U;
+      to_V = &U; // initialize should change this
 
-      this->to_f_U = new GaugeClass(U.lattice(), U.nc);
-      this->to_p_U = new GaugeClass(U.lattice(), U.nc);
-      this->to_old_U = new GaugeClass(U.lattice(), U.nc);
-      this->to_old_f_U = new GaugeClass(U.lattice(), U.nc);
+      to_f_U = new GaugeClass(U.lattice(), U.nc);
+      to_p_U = new GaugeClass(U.lattice(), U.nc);
+      to_old_U = new GaugeClass(U.lattice(), U.nc);
+      to_old_f_U = new GaugeClass(U.lattice(), U.nc);
 
-      this->to_f_F = new FermiClass(F.lattice(), F.nc);
-      this->to_p_F = new FermiClass(F.lattice(), F.nc);
-      this->to_old_F = new FermiClass(F.lattice(), F.nc);
-      this->to_old_f_F = new FermiClass(F.lattice(), F.nc);
+      to_f_F = new FermiClass(F.lattice(), F.nc);
+      to_p_F = new FermiClass(F.lattice(), F.nc);
+      to_old_F = new FermiClass(F.lattice(), F.nc);
+      to_old_f_F = new FermiClass(F.lattice(), F.nc);
 
       std::cout << to_p_U->lattice().ndim << std::endl;
 
@@ -78,32 +80,32 @@ namespace MDP
 
     ~HMCVTK()
     {
-      delete this->to_f_U;
-      delete this->to_p_U;
-      delete this->to_old_U;
-      delete this->to_old_f_U;
-      delete this->to_f_F;
-      delete this->to_p_F;
-      delete this->to_old_F;
-      delete this->to_old_f_F;
-      if (this->to_V != this->to_U)
-        delete this->to_V;
+      delete to_f_U;
+      delete to_p_U;
+      delete to_old_U;
+      delete to_old_f_U;
+      delete to_f_F;
+      delete to_p_F;
+      delete to_old_F;
+      delete to_old_f_F;
+      if (to_V != to_U)
+        delete to_V;
     }
 
     void step()
     {
-      GaugeClass &U = *(this->to_U);
-      GaugeClass &V = *(this->to_V);
-      FermiClass &F = *(this->to_F);
-      GaugeClass &f_U = *(this->to_f_U);
-      FermiClass &f_F = *(this->to_f_F);
+      GaugeClass &U = *(to_U);
+      GaugeClass &V = *(to_V);
+      FermiClass &F = *(to_F);
+      GaugeClass &f_U = *(to_f_U);
+      FermiClass &f_F = *(to_f_F);
 
-      GaugeClass &p_U = *(this->to_p_U);
-      GaugeClass &old_U = *(this->to_old_U);
-      GaugeClass &old_f_U = *(this->to_old_f_U);
-      FermiClass &p_F = *(this->to_p_F);
-      FermiClass &old_F = *(this->to_old_F);
-      FermiClass &old_f_F = *(this->to_old_f_F);
+      GaugeClass &p_U = *(to_p_U);
+      GaugeClass &old_U = *(to_old_U);
+      GaugeClass &old_f_U = *(to_old_f_U);
+      FermiClass &p_F = *(to_p_F);
+      FermiClass &old_F = *(to_old_F);
+      FermiClass &old_f_F = *(to_old_f_F);
 
       double h_old, k_old, k_new, s_new, h_new;
 
@@ -351,6 +353,7 @@ namespace MDP
       }
       return action_gauge + action_fermi;
     }
+
     void compute_fields_evolution(GaugeClass &U,
                                   GaugeClass &p_U,
                                   GaugeClass &f_U,
@@ -387,7 +390,7 @@ namespace MDP
           U(x, mu) = A * U(x, mu);
         }
       }
-      Q.save_vtk(std::string("pressure_" + std::to_string(this->steps) + ".vtk"));
+      Q.save_vtk(std::string("pressure_" + std::to_string(steps) + ".vtk"));
       U.update();
 
       compute_force(U, nf_U, F, nf_F);
@@ -483,6 +486,7 @@ namespace MDP
         f_U.update();
       }
     }
+
     void compute_fermion_forces(GaugeClass &U,
                                 GaugeClass &f_U,
                                 FermiClass &sol,

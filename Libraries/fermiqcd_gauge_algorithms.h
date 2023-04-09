@@ -16,32 +16,34 @@
 
 namespace MDP
 {
-  /// make a cold gauge configuration
+  /** @brief make a cold gauge configuration
+   */
   void set_cold(gauge_field &U)
   {
     begin_function("set_cold");
-    mdp << "Creating a cold gauge configuration" << "\n";
+    mdp << "Creating a cold gauge configuration\n";
     mdp_site x(U.lattice());
-    int mu;
+
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim; mu++)
+      for (int mu = 0; mu < U.ndim; mu++)
         U(x, mu) = mdp_identity(U.nc);
     }
     U.update();
     end_function("set_cold");
   }
 
-  /// Make a hot gauge configuration
+  /** @brief Make a hot gauge configuration
+   */
   void set_hot(gauge_field &U)
   {
     begin_function("set_hot");
-    mdp << "Creating a hot gauge configuration" << "\n";
+    mdp << "Creating a hot gauge configuration\n";
     mdp_site x(U.lattice());
-    int mu;
+
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim; mu++)
+      for (int mu = 0; mu < U.ndim; mu++)
         U(x, mu) = U.lattice().random(x).SU(U.nc);
     }
     U.update();
@@ -53,10 +55,10 @@ namespace MDP
   {
     begin_function("check_unitarity");
     mdp_site x(U.lattice());
-    int mu;
     mdp_int how_many = 0;
-    for (x.idx = 0; x.idx < U.lattice().nvol; x.idx++)
-      for (mu = 0; mu < U.ndim; mu++)
+
+    for (x.idx = 0; x.idx < U.lattice().enclosing_volume(); x.idx++)
+      for (int mu = 0; mu < U.ndim; mu++)
         if (max(inv(U(x, mu)) - hermitian(U(x, mu))) > precision)
           how_many++;
     mdp.add(how_many);
@@ -93,6 +95,249 @@ namespace MDP
     }
     mdp.add(tmp);
     return 2.0 * tmp / (U.ndim * (U.ndim - 1) * U.lattice().nvol_gl * U.nc);
+  }
+
+  /** @brief Compute average Time plaquette
+   */
+  mdp_real TimePlaquette(gauge_field &U)
+  {
+    mdp_real tmp = 0;
+    mdp_site x(U.lattice());
+    // U.update();
+    mdp_suint mu = 0;
+    forallsites(x)
+    {
+      for (mdp_suint nu = mu + 1; nu < U.ndim; nu++)
+        tmp += real(trace(plaquette(U, x, mu, nu)));
+    }
+    mdp.add(tmp);
+    return tmp / (U.lattice().global_volume() * (U.ndim - 1));
+  }
+
+  /** @brief Compute average Space plaquette
+   */
+  mdp_real SpacePlaquette(gauge_field &U)
+  {
+    mdp_real tmp = 0;
+    mdp_site x(U.lattice());
+    // U.update();
+
+    forallsites(x)
+    {
+      for (mdp_suint mu = 1; mu < U.ndim - 1; mu++)
+        for (mdp_suint nu = mu + 1; nu < U.ndim; nu++)
+          tmp += real(trace(plaquette(U, x, mu, nu)));
+    }
+    mdp.add(tmp);
+    return 2 * tmp / (U.lattice().global_volume() * (U.ndim - 2) * (U.ndim - 1));
+  }
+
+  /** @brief Polyakov field L(vec(x))
+   */
+  mdp_matrix_field PolyakovField(gauge_field &U)
+  {
+    mdp_site x(U.lattice()), y(U.lattice());
+    mdp_matrix_field L(U.lattice(), U.nc, U.nc);
+
+    forallsites(x)
+    {
+      if (x(0) == 0)
+      {
+        y = x;
+        L(x) = U(x, 0);
+        for (mdp_int i = 1; i < U.lattice().size(0); i++)
+        {
+          y = y + 0;
+          L(x) *= U(y, 0);
+        }
+      }
+    }
+    L.update();
+    return L;
+  }
+
+  /** @brief Compute averaged Polyakov loop: L(x) - polyakov field
+   */
+  mdp_complex PolyakovLoop(gauge_field &U)
+  {
+
+    mdp_site x(U.lattice());
+    mdp_complex sum = 0;
+    mdp_matrix_field L(U.lattice(), U.nc, U.nc);
+
+    L = PolyakovField(U);
+    forallsites(x)
+    {
+      if (x(0) == 0)
+        sum += trace(L(x));
+    }
+    mdp.add(sum);
+
+    return sum * U.lattice().size(0) / (U.lattice().global_volume() * U.nc);
+  }
+
+  /// Relaxation algorithm
+  /** @brief Relaxation algorithm
+   */
+  void relaxation(gauge_field &U, mdp_uint n_iter = 1)
+  {
+    if (U.nc == 1)
+      error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
+
+    mdp_matrix M;
+    mdp_complex a[4], tmpUik;
+    mdp_site x(U.lattice());
+    mdp_real dk;
+    mdp_real e[4];
+
+    for (mdp_uint iter = 0; iter < n_iter; iter++)
+      for (mdp_suint parity = 0; parity < 2; parity++)
+        for (mdp_suint mu = 0; mu < U.ndim; mu++)
+        {
+          forallsitesofparity(x, parity)
+          {
+            for (mdp_suint i = 0; i < U.nc - 1; i++)
+              for (mdp_suint j = i + 1; j < U.nc; j++)
+              {
+                M = U(x, mu) * staple_H(U, x, mu);
+
+                e[0] = real(M(i, i) + M(j, j));
+                e[1] = imag(M(i, j) + M(j, i));
+                e[2] = real(M(i, j) - M(j, i));
+                e[3] = imag(M(i, i) - M(j, j));
+
+                dk = 0;
+                for (mdp_suint t = 0; t < 4; t++)
+                {
+                  dk += std::pow(e[t], 2);
+                }
+                dk = std::sqrt(dk);
+                for (mdp_suint t = 0; t < 4; t++)
+                {
+                  e[t] /= dk;
+                }
+
+                a[0] = mdp_complex(e[0], -e[3]);
+                a[1] = -mdp_complex(e[2], e[1]);
+                a[2] = mdp_complex(e[2], -e[1]);
+                a[3] = mdp_complex(e[0], e[3]);
+
+                for (mdp_suint k = 0; k < U.nc; k++)
+                {
+                  tmpUik = (a[0] * a[0] + a[2] * a[1]) * U(x, mu, i, k) + (a[1] * (a[0] + a[3])) * U(x, mu, j, k);
+                  U(x, mu, j, k) = (a[2] * (a[0] + a[3])) * U(x, mu, i, k) + (a[1] * a[2] + a[3] * a[3]) * U(x, mu, j, k);
+                  U(x, mu, i, k) = tmpUik;
+                }
+              }
+          }
+          U.update(parity, mu, U.nc * U.nc);
+        }
+  }
+
+  /// Unitarize SU(N) matrix
+  /*
+   *          [ e0 e1 e2 ]
+   * SU(3) =  [ |  |  |  ]
+   *          [ .  .  .  ]
+   *
+   *
+   */
+  mdp_real unitarize(gauge_field &U)
+  {
+
+    mdp_real stats;
+    mdp_suint mu = 0;
+    mdp_site x(U.lattice());
+    mdp_real precision = 0;
+    mdp_matrix e(U.nc, U.nc);
+    mdp_matrix m(U.nc - 1, U.nc - 1);
+    mdp_real quadnorm;
+    mdp_complex scalar;
+    e = U(x, mu);
+
+    forallsites(x)
+    {
+      for (mdp_suint mu = 0; mu < U.ndim; mu++)
+      {
+        precision += abs(1 - det(U(x, mu)));
+
+        // Gram-Schmidt's orthonormalization method for the 'U.nc' vectors (e1, e2, ..., en)
+        for (mdp_suint i = 0; i < U.nc; i++)
+        {
+          for (mdp_suint k = 0; k < i; k++)
+          {
+            scalar = 0;
+            for (mdp_suint j = 0; j < U.nc; j++)
+            {
+              scalar += conj(e(k, j)) * e(i, j);
+            } //<ek|ei>
+            for (mdp_suint j = 0; j < U.nc; j++)
+            {
+              e(i, j) -= e(k, j) * scalar;
+            } // ei = ei - ek<ek|ei>
+          }
+          quadnorm = 0;
+          for (mdp_suint j = 0; j < U.nc; j++)
+            quadnorm += abs2(e(i, j)); // quadnorm = ||ei||^2
+
+          for (mdp_suint j = 0; j < U.nc; j++)
+            e(i, j) /= std::sqrt(quadnorm); // ei = ei/||ei||
+        }
+
+        // The last vector is calculated as the cross product: ek = ei x ej
+        mdp_suint i = U.nc - 1;
+        for (mdp_suint j = 0; j < U.nc; j++)
+        {
+          for (mdp_suint s = 0; s < U.nc - 1; s++)
+          {
+            for (mdp_suint k = 0; k < U.nc - 1; k++)
+            {
+              if (k < j)
+                m(s, k) = e(s, k);
+              else
+                m(s, k) = e(s, k + 1);
+            }
+          }
+          e(i, j) = det(conj(m));
+          if ((j + i) % 2 == 1)
+            e(i, j) *= -1;
+        }
+        U(x, mu) = e;
+      }
+    }
+    mdp.add(precision);
+    stats = precision / (U.ndim * U.lattice().global_volume());
+
+    return stats;
+  }
+
+  ///////////////////////////////////////////////////////////////////////////
+  /// Polyakov Loop correlation L(x,y)
+  mdp_matrix PolyCor(gauge_field &U)
+  {
+    mdp_site x(U.lattice());
+    mdp_matrix proj(U.ndim - 1, U.lattice().size(1));
+    mdp_matrix_field L(U.lattice(), U.nc, U.nc);
+
+    L = PolyakovField(U);
+    for (mdp_suint mu = 1; mu < U.ndim; mu++)
+    {
+      for (mdp_int i = 0; i < U.lattice().size(1); i++)
+      {
+        proj(mu - 1, i) = 0.0;
+        for (mdp_int k = 0; k < U.lattice().size(1); k++)
+        {
+          if (mu == 1)
+            x.set(0, i, k);
+          else
+            x.set(0, k, i);
+          proj(mu - 1, i) += trace(L(x));
+        }
+        proj(mu - 1, i) /= U.lattice().size(1);
+      }
+    }
+
+    return proj;
   }
 
   /// Given a field U compute the chromo-eletro-magntic field U.em

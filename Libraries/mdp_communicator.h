@@ -12,15 +12,33 @@
 #ifndef MDP_COMMUNICATOR_
 #define MDP_COMMUNICATOR_
 
+#include <ctime>
 #ifdef PARALLEL
 #include "mpi.h"
 #endif
+
 namespace MDP
 {
 #ifdef PARALLEL
-
   typedef MPI_Request mdp_request;
+#else // not PARALLEL
+  typedef int mdp_request;
+  typedef int MPI_Comm;
+#endif
 
+#ifdef PARALLEL
+  /// @brief DO NOT INSTANTIATE use object mdp instead
+  ///
+  /// Example:
+  /// @verbatim
+  /// int main(int argc, char**argv) {
+  ///    mdp.open_wormholes(argc,argv);
+  ///    // your code here
+  ///    mdp << 3.14 << endl;  // only process 0 prints
+  ///    mdp.close_wormholes();
+  ///    return 0;
+  /// }
+  /// @endverbatim
   class mdp_communicator : public mdp_log
   {
   private:
@@ -72,18 +90,22 @@ namespace MDP
       getcpuusage(a, b);
       end_function("open_wormholes");
     }
+
     int tag(int i, int j)
     {
       return i * nproc() + j;
     }
+
     inline const int me()
     {
       return my_id;
     }
+
     inline const int nproc()
     {
       return my_nproc;
     }
+
     void print_stats()
     {
 #ifndef NO_POSIX
@@ -111,6 +133,7 @@ namespace MDP
       delete[] c;
 #endif
     }
+
     void close_wormholes()
     {
       begin_function("close_wormholes");
@@ -126,17 +149,21 @@ namespace MDP
       end_function("close_wormholes");
       end_function("PROGRAM");
     }
+
     void abort()
     {
       MPI_Abort(communicator, 1);
     }
+
     mdp_communicator()
     {
       wormholes_open = false;
     }
+
     virtual ~mdp_communicator()
     {
     }
+
     template <class T>
     void put(T &obj, int destination)
     {
@@ -145,12 +172,14 @@ namespace MDP
                 tag(me(), destination), communicator, &r);
       wait(r);
     }
+
     template <class T>
     void put(T &obj, int destination, mdp_request &r)
     {
       MPI_Isend(&obj, sizeof(T) / sizeof(char), MPI_CHAR, destination,
                 tag(me(), destination), communicator, &r);
     }
+
     template <class T>
     void get(T &obj, int source)
     {
@@ -158,6 +187,7 @@ namespace MDP
       MPI_Recv(&obj, sizeof(T) / sizeof(char), MPI_CHAR, source,
                tag(source, me()), communicator, &status);
     }
+
     template <class T>
     void put(T *objptr, mdp_int length, int destination)
     {
@@ -166,6 +196,7 @@ namespace MDP
                 tag(me(), destination), communicator, &r);
       wait(r);
     }
+
     template <class T>
     void put(T *objptr, mdp_int length, int destination, mdp_request &r)
     {
@@ -173,6 +204,7 @@ namespace MDP
                     tag(me(), destination), communicator, &r) != MPI_SUCCESS)
         error("Failure to send");
     }
+
     template <class T>
     void get(T *objptr, mdp_int length, int source)
     {
@@ -181,52 +213,62 @@ namespace MDP
                    tag(source, me()), communicator, &status) != MPI_SUCCESS)
         error("Failure to receive");
     }
+
     void wait(mdp_request &r)
     {
       MPI_Status status;
       MPI_Wait(&r, &status);
     }
+
     void wait(mdp_request *r, int length)
     {
       MPI_Status status;
       MPI_Waitall(length, r, &status);
     }
+
     // Compatibility functions
     // obj1 is input, obj2 is output
     void add(float &obj1, float &obj2)
     {
       MPI_Allreduce(&obj1, &obj2, 1, MPI_FLOAT, MPI_SUM, communicator);
     }
+
     void add(float *obj1, float *obj2, mdp_int length)
     {
       MPI_Allreduce(obj1, obj2, length, MPI_FLOAT, MPI_SUM, communicator);
     }
+
     void add(double &obj1, double &obj2)
     {
       MPI_Allreduce(&obj1, &obj2, 1, MPI_DOUBLE, MPI_SUM, communicator);
     }
+
     void add(double *obj1, double *obj2, mdp_int length)
     {
       MPI_Allreduce(obj1, obj2, length, MPI_DOUBLE, MPI_SUM, communicator);
     }
+
     void add(mdp_int &obj1)
     {
       mdp_int obj2 = 0;
       MPI_Allreduce(&obj1, &obj2, 1, MPI_LONG, MPI_SUM, communicator);
       obj1 = obj2;
     }
+
     void add(float &obj1)
     {
       float obj2 = 0;
       MPI_Allreduce(&obj1, &obj2, 1, MPI_FLOAT, MPI_SUM, communicator);
       obj1 = obj2;
     }
+
     void add(double &obj1)
     {
       double obj2 = 0;
       MPI_Allreduce(&obj1, &obj2, 1, MPI_DOUBLE, MPI_SUM, communicator);
       obj1 = obj2;
     }
+
     void add(mdp_int *obj1, mdp_int length)
     {
       mdp_int i;
@@ -238,6 +280,7 @@ namespace MDP
         obj1[i] = obj2[i];
       delete[] obj2;
     }
+
     void add(float *obj1, mdp_int length)
     {
       mdp_int i;
@@ -249,6 +292,7 @@ namespace MDP
         obj1[i] = obj2[i];
       delete[] obj2;
     }
+
     void add(double *obj1, mdp_int length)
     {
       mdp_int i;
@@ -260,6 +304,7 @@ namespace MDP
         obj1[i] = obj2[i];
       delete[] obj2;
     }
+
     void add(mdp_complex &obj1)
     {
       mdp_complex obj2 = 0;
@@ -270,6 +315,7 @@ namespace MDP
 #endif
       obj1 = obj2;
     }
+
     void add(mdp_complex *obj1, mdp_int length)
     {
       mdp_int i;
@@ -285,6 +331,7 @@ namespace MDP
         obj1[i] = obj2[i];
       delete[] obj2;
     }
+
     void add(mdp_matrix &a)
     {
       add(a.address(), a.rows() * a.cols());
@@ -295,6 +342,7 @@ namespace MDP
       for (i = 0; i < length; i++)
         add(a[i]);
     }
+
     template <class T>
     void add(std::vector<T> &a)
     {
@@ -305,21 +353,25 @@ namespace MDP
     {
       MPI_Barrier(communicator);
     }
+
     template <class T>
     void broadcast(T &obj, int p)
     {
       MPI_Bcast(&obj, sizeof(T) / sizeof(char), MPI_CHAR, p, communicator);
     }
+
     template <class T>
     void broadcast(T *obj, mdp_int length, int p)
     {
       MPI_Bcast(obj, length * sizeof(T) / sizeof(char), MPI_CHAR, p, communicator);
     }
+
     void reset_time()
     {
       mytime = MPI_Wtime();
       comm_time = 0;
     }
+
     double time()
     {
       return MPI_Wtime() - mytime;
@@ -327,7 +379,6 @@ namespace MDP
   };
 
 #else
-#include <ctime>
   typedef int mdp_request;
 
   /// @brief DO NOT INSTANTIATE use object mdp instead
@@ -351,19 +402,23 @@ namespace MDP
     // int    communicator;
     int wormholes_open;
     double mytime; // total time
+
     double MPI_Wtime()
     {
       return walltime();
     }
+
     int my_id;
     int my_nproc;
 
   public:
     double comm_time; /// time spent in communications
+
     mdp_communicator()
     {
       wormholes_open = false;
     }
+
     template <class T>
     void put(T &obj, int destination)
     {
@@ -371,6 +426,7 @@ namespace MDP
       nodes->send(destination, "", obj);
 #endif
     }
+
     template <class T>
     void put(T &obj, int destination, mdp_request &r)
     {
@@ -378,6 +434,7 @@ namespace MDP
       nodes->send(destination, "", obj);
 #endif
     }
+
     template <class T>
     void get(T &obj, int source)
     {
@@ -385,6 +442,7 @@ namespace MDP
       nodes->recv(source, "", obj);
 #endif
     }
+
     template <class T>
     void put(T *objptr, mdp_int length, int destination)
     {
@@ -392,6 +450,7 @@ namespace MDP
       nodes->send(destination, "", objptr, length);
 #endif
     }
+
     template <class T>
     void put(T *objptr, mdp_int length, int destination, mdp_request &r)
     {
@@ -399,6 +458,7 @@ namespace MDP
       nodes->send(destination, "", objptr, length);
 #endif
     }
+
     template <class T>
     void get(T *objptr, mdp_int length, int source)
     {
@@ -406,6 +466,7 @@ namespace MDP
       nodes->recv(source, "", objptr, length);
 #endif
     }
+
     // ////////////////////////////////
     // Compatibility functions
     // obj1 is input, obj2 is output
@@ -415,6 +476,7 @@ namespace MDP
       obj2 = nodes->add(obj1);
 #endif
     }
+
     void add(float *obj1, float *obj2, mdp_int length)
     {
 #ifndef NO_POSIX
@@ -475,15 +537,16 @@ namespace MDP
 #endif
     }
 
-    /*
+#if 0
     void add(mdp_int *obj1, mdp_int length)
     {
-  #ifndef NO_POSIX
+#ifndef NO_POSIX
       for (mdp_int i = 0; i < length; i++)
         obj1[i] = nodes->add(obj1[i]);
-  #endif
+#endif
     }
-    */
+#endif
+
     void add(float *obj1, mdp_int length)
     {
 #ifndef NO_POSIX
@@ -581,14 +644,17 @@ namespace MDP
       comm_time = 0;
     }
 
-    /// returns the time in seconds since call to mdp_communicator::open_wormholes
+    /** @brief returns the time in seconds since call to mdp_communicator::open_wormholes
+     */
     double time()
     {
       return MPI_Wtime() - mytime;
     }
 
-    /// starts communications
-    /// parses command line argument for MPI or PSIM parameters
+    /** @brief starts communications
+     *
+     * parses command line argument for MPI or PSIM parameters
+     */
     void open_wormholes(int argc, char **argv)
     {
       if (wormholes_open)
@@ -606,6 +672,7 @@ namespace MDP
         print = true;
       else
         print = false;
+
       begin_function("PROGRAM");
       begin_function("open_wormholes");
       (*this) << "<head>\n"
@@ -615,6 +682,7 @@ namespace MDP
                  "* copyrighted by www.metacryption.com           *\n"
                  "*************************************************\n"
                  "</head>\n";
+
       reset_time();
       double a, b;
       getcpuusage(a, b);
@@ -622,15 +690,15 @@ namespace MDP
       end_function("open_wormholes");
     }
 
-    /// prints statistics about parallel processes
+    /** @brief prints statistics about parallel processes
+     */
     void print_stats()
     {
 #ifndef NO_POSIX
-      int i;
       double *a = new double[nproc()];
       double *b = new double[nproc()];
       double *c = new double[nproc()];
-      for (i = 0; i < nproc(); i++)
+      for (int i = 0; i < nproc(); i++)
         a[i] = b[i] = c[i] = 0;
       getcpuusage(a[me()], b[me()]);
       c[me()] = 100.0 * comm_time / (time());
@@ -638,7 +706,7 @@ namespace MDP
       add(b, nproc());
       add(c, nproc());
       char buffer[256];
-      for (i = 0; i < nproc(); i++)
+      for (int i = 0; i < nproc(); i++)
       {
         snprintf(buffer, 256,
                  "* Process %i stats: CPU=%.2f%% PROCESS=%.2f%% COMM=%.2f%%\n",
@@ -652,7 +720,8 @@ namespace MDP
 #endif
     }
 
-    /// closes parallel communications
+    /** @brief closes parallel communications
+     */
     void close_wormholes()
     {
       begin_function("close_wormholes");
@@ -672,7 +741,8 @@ namespace MDP
 #endif
     }
 
-    /// forces the process to exit(-1)
+    /** @brief forces the process to exit
+     */
     void abort()
     {
       (*this) << "calling abort...";

@@ -35,13 +35,14 @@ namespace MDP
     }
     return tmp;
   }
+
   inline mdp_matrix staple(gauge_field &U, mdp_site x, int mu)
   {
     mdp_matrix tmp(U.nc, U.nc);
     mdp_site y(U.lattice());
-    int nu;
+
     tmp = 0;
-    for (nu = 0; nu < U.ndim; nu++)
+    for (int nu = 0; nu < U.ndim; nu++)
       if (nu != mu)
       {
         tmp += U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
@@ -67,6 +68,7 @@ namespace MDP
     }
     return tmp;
   }
+
   inline mdp_matrix staple_H(gauge_field &U, mdp_site x, int mu)
   {
     mdp_matrix tmp(U.nc, U.nc);
@@ -82,6 +84,7 @@ namespace MDP
       }
     return tmp;
   }
+
   inline mdp_matrix staple_H_unisotropic(gauge_field &U, mdp_site x, int mu, mdp_real zeta)
   {
     mdp_matrix tmp(U.nc, U.nc);
@@ -160,7 +163,8 @@ namespace MDP
     return tmp;
   }
 
-  /* obsolete stuff
+#if 0
+  // obsolete stuff
 
   void fast_mul_AB_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                         int &ni)
@@ -178,6 +182,7 @@ namespace MDP
       }
     }
   }
+
   void fast_mul_ABH_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                          int &ni)
   {
@@ -194,6 +199,7 @@ namespace MDP
       }
     }
   }
+
   void fast_mul_AHB_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                          int &ni)
   {
@@ -209,6 +215,7 @@ namespace MDP
       }
     }
   }
+
   void fast_mul_AHBH_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                           int &ni)
   {
@@ -242,6 +249,7 @@ namespace MDP
       }
     }
   }
+
   void fast_mul_ABH_addto_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                             int &ni)
   {
@@ -258,6 +266,7 @@ namespace MDP
       }
     }
   }
+
   void fast_mul_AHB_addto_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                             int &ni)
   {
@@ -273,48 +282,56 @@ namespace MDP
       }
     }
   }
+
   void fast_add_AB_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                         int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] = a[i] + b[i];
   }
+
   void fast_add_AB_addto_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                            int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] += a[i] + b[i];
   }
+
   void fast_add_aAbB_to_C(mdp_complex c1, mdp_complex *a1, mdp_complex c2, mdp_complex *a2,
                           mdp_complex *c, int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] = c1 * a1[i] + c2 * a2[i];
   }
+
   void fast_add_aAbB_addto_C(mdp_complex c1, mdp_complex *a1, mdp_complex c2, mdp_complex *a2,
                              mdp_complex *c, int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] += c1 * a1[i] + c2 * a2[i];
   }
+
   void fast_add_aAbB_to_C(mdp_complex c1, mdp_complex *a1, mdp_complex c2, mdp_complex *a2,
                           mdp_complex c3, mdp_complex *a3, mdp_complex *c, int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] = c1 * a1[i] + c2 * a2[i] + c3 * a3[i];
   }
+
   void fast_add_aAbB_addto_C(mdp_complex c1, mdp_complex *a1, mdp_complex c2, mdp_complex *a2,
                              mdp_complex c3, mdp_complex *a3, mdp_complex *c, int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] += c1 * a1[i] + c2 * a2[i] + c3 * a3[i];
   }
+
   void fast_scalar_mul_AB_to_C(mdp_complex a, mdp_complex *b, mdp_complex *c,
                                int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] = a * b[i];
   }
+
   void fast_scalar_mul_AB_addto_C(mdp_complex a, mdp_complex *b, mdp_complex *c,
                                   int &ni)
   {
@@ -338,6 +355,7 @@ namespace MDP
       }
     }
   }
+
   void fast_mul_ABH_subto_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                             int &ni)
   {
@@ -354,6 +372,7 @@ namespace MDP
       }
     }
   }
+
   void fast_mul_AHB_subto_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                             int &ni)
   {
@@ -369,24 +388,28 @@ namespace MDP
       }
     }
   }
+
   void fast_add_AB_subto_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                            int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] -= a[i] + b[i];
   }
+
   void fast_add_aAbB_subto_C(mdp_complex c1, mdp_complex *a1, mdp_complex c2, mdp_complex *a2,
                              mdp_complex *c, int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] -= c1 * a1[i] + c2 * a2[i];
   }
+
   void fast_add_aAbB_subto_C(mdp_complex c1, mdp_complex *a1, mdp_complex c2, mdp_complex *a2,
                              mdp_complex c3, mdp_complex *a3, mdp_complex *c, int &ni)
   {
     for (int i = 0; i < ni * ni; i++)
       c[i] -= c1 * a1[i] + c2 * a2[i] + c3 * a3[i];
   }
+
   void fast_scalar_mul_AB_subto_C(mdp_complex a, mdp_complex *b, mdp_complex *c,
                                   int &ni)
   {
@@ -419,6 +442,7 @@ namespace MDP
     }
     return tmp;
   }
+
   inline mdp_matrix staple(gauge_field &U, mdp_site x, int mu)
   {
     int nc = U.nc;
@@ -459,6 +483,7 @@ namespace MDP
     }
     return tmp;
   }
+
   inline mdp_matrix staple_H(gauge_field &U, mdp_site x, int mu)
   {
     int nc = U.nc;
@@ -545,7 +570,7 @@ namespace MDP
     fast_mul_ABH_to_C(&b2(0, 0), &U(x, nu, 0, 0), &tmp(0, 0), nc);
     return tmp;
   }
-  */
+#endif
 } // namespace MDP
 
 #endif /* FERMIQCD_GAUGE_ROUTINES_ */

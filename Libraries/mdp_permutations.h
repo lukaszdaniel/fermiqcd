@@ -32,8 +32,7 @@ namespace MDP
   // the fisrt k-1 are already sorted
   void mdp_permutation_sort(int map[], int k)
   {
-    int i, tmp;
-    for (i = k - 1; i >= 0; i--)
+    for (int i = k - 1; i >= 0; i--)
       if (map[i] > map[i + 1])
       {
         std::swap(map[i], map[i + 1]);
@@ -50,16 +49,15 @@ namespace MDP
   int mdp_permutation(int n, int k, int i)
   {
     std::unique_ptr<int[]> map = std::make_unique<int[]>(i + 1);
-    int j, l, m;
 
     if (i > n || k > mdp_permutations(n))
       return -1;
 
-    for (j = 0; j <= i; j++)
+    for (int j = 0; j <= i; j++)
     {
       map[j] = (k % mdp_permutations(n - j)) / mdp_permutations(n - 1 - j);
       mdp_permutation_sort(map.get(), j - 1);
-      for (l = 0; l < j; l++)
+      for (int l = 0; l < j; l++)
         if (map[l] <= map[j])
           map[j]++;
       if (i == j)

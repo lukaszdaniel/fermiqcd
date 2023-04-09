@@ -67,13 +67,13 @@ namespace MDP
   {
   private:
     // Typed Constants
-    const static int PROCESS_COUNT_MIN = 1;        // minimum number of processes
-    const static int PROCESS_COUNT_MAX = 128;      // maximum number of processes
-    const static int CONN_LIST_IGNORE = -1;        // connections that cannot occur
-    const static int PROCESS_PARENT = 0;           // The parent process ID number
-    const static int COMM_RECV = 0;                // socket array indicator for reading
-    const static int COMM_SEND = 1;                // socket array indicator for writing
-    const static int COMM_TIMEOUT_DEFAULT = 86400; // 1 day default
+    static constexpr int PROCESS_COUNT_MIN = 1;        // minimum number of processes
+    static constexpr int PROCESS_COUNT_MAX = 128;      // maximum number of processes
+    static constexpr int CONN_LIST_IGNORE = -1;        // connections that cannot occur
+    static constexpr int PROCESS_PARENT = 0;           // The parent process ID number
+    static constexpr int COMM_RECV = 0;                // socket array indicator for reading
+    static constexpr int COMM_SEND = 1;                // socket array indicator for writing
+    static constexpr int COMM_TIMEOUT_DEFAULT = 86400; // 1 day default
 
     // common enum values for logging routines
     enum enumBegEnd
@@ -81,11 +81,13 @@ namespace MDP
       LOG_BEGIN,
       LOG_END
     };
+
     enum enumSendRecv
     {
       LOG_SR_SEND,
       LOG_SR_RECV
     };
+
     enum enumSendRecvStep
     {
       LOG_SR_START,
@@ -103,18 +105,25 @@ namespace MDP
     FILE *_logfileFD;         // file descriptor for the logging file
     int _processID;           // process ID of "this" process
 
-    int (*_socketFD)[2]; // array to hold all of the sockets
-    int _commTimeout;    // defaults to COMM_TIMEOUT_DEFAULT
+    /** @brief 2D array to hold all of the sockets
+     *
+     * First entry is the table of processes
+     * Second entry is the socket array indicator for reading/writing
+     */
+    int (*_socketFD)[2];
 
+    /** @brief defaults to COMM_TIMEOUT_DEFAULT
+     */
+    int _commTimeout;
+
+    /** @brief Hash Map to hold out of sequence (send/receive) data
+     */
     std::map<std::string, std::vector<char>> *_hash;
-    // Hash Map to hold out of sequence (send/receive) data
 
-    // *******************************************************************
-    // ***         Private Method: psim_begin                          ***
-    // ***                                                             ***
-    // ***  Used by the constructor ONLY                               ***
-    // *******************************************************************
-
+    /** @brief Initialise processes
+     *
+     * @note Used by the constructor ONLY
+     */
     void psim_begin(int processCount, std::string logFileName, int verbatim)
     {
       _processCount = processCount;
@@ -122,7 +131,7 @@ namespace MDP
       _verbatim = verbatim;
 
       open_log();
-      if ((processCount < PROCESS_COUNT_MIN) || (processCount < PROCESS_COUNT_MIN))
+      if ((processCount < PROCESS_COUNT_MIN) || (processCount > PROCESS_COUNT_MAX))
       {
         log("PSIM ERROR: Invalid number of processes");
         throw std::string("PSIM ERROR: Invalid number of processes");
@@ -139,13 +148,8 @@ namespace MDP
       log(buffer, 1);
     }
 
-    // *******************************************************************
-    // ***         Private Method: psim_end                            ***
-    // ***                                                             ***
-    // ***  Used by the destructor ONLY                                ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Used by the destructor ONLY
+     */
     void psim_end()
     {
       for (int source = 0; source < _processCount; source++)
@@ -158,6 +162,7 @@ namespace MDP
             close(_socketFD[_processCount * source + dest][COMM_RECV]);
         }
       }
+
       if (_socketFD != NULL)
         delete[] _socketFD;
       _socketFD = NULL;
@@ -176,14 +181,9 @@ namespace MDP
       close_log();
     }
 
-    // *******************************************************************
-    // ***         Private Method: initialize                          ***
-    // ***                                                             ***
-    // ***  Used by the constructor, this method sets up values and    ***
-    // ***  some of the needed resources.                              ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Used by the constructor, this method sets up values and
+     * some of the needed resources.
+     */
     void initialize(int processCount)
     {
       _processCount = processCount;
@@ -196,6 +196,7 @@ namespace MDP
         log("PSIM ERROR: failure to allocate hash");
         throw std::string("PSIM ERROR: failure to allocate hash");
       }
+
       _socketFD = new int[_processCount * _processCount][2];
       if (_socketFD == NULL)
       {
@@ -287,14 +288,9 @@ namespace MDP
       }
     }
 
-    // *******************************************************************
-    // ***         Private Method: check_process_id                    ***
-    // ***                                                             ***
-    // ***  Varifies that the destination process ID is valid. This    ***
-    // ***  is done before data is sent or received.                   ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Verifies that the destination process ID is valid. This
+     * is done before data is sent or received.
+     */
     void check_process_id(int processID)
     {
 
@@ -311,14 +307,9 @@ namespace MDP
       }
     }
 
-    // *******************************************************************
-    // ***         Private Method: open_log                            ***
-    // ***                                                             ***
-    // ***  This method initializes the process log and sets it up for ***
-    // ***  appending messages.                                        ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief This method initializes the process log and sets it up for
+     * appending messages.
+     */
     void open_log()
     {
       _doLogging = false;
@@ -345,27 +336,17 @@ namespace MDP
       _doLogging = true;
     }
 
-    // *******************************************************************
-    // ***         Private Method: close_log                           ***
-    // ***                                                             ***
-    // ***  Closes the log file.                                       ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Closes the log file.
+     */
     void close_log()
     {
       if (_doLogging)
         fclose(_logfileFD);
     }
 
-    // *******************************************************************
-    // ***         Private Method: logSendRecv                         ***
-    // ***                                                             ***
-    // ***  Centralizes the repetitive task of logging the steps       ***
-    // ***  during send and receive.                                   ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Centralizes the repetitive task of logging the steps
+     * during send and receive.
+     */
     void logSendRecv(int sourcedestProcessID,
                      std::string tag,
                      enumSendRecv method,
@@ -382,35 +363,24 @@ namespace MDP
       log(buffer);
     }
 
-    // *******************************************************************
-    // ***         Private Method: get_source_index                    ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief get_source_index
+     */
     int get_source_index(int source)
     {
       check_process_id(source);
       return _processCount * source + _processID;
     }
 
-    // *******************************************************************
-    // ***         Private Method: detDestIndex                        ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief detDestIndex
+     */
     int get_dest_index(int dest)
     {
       check_process_id(dest);
       return _processCount * _processID + dest;
     }
 
-    // *******************************************************************
-    // ***         Private Method: send_buffer                         ***
-    // ***                                                             ***
-    // ***  Handles the sending of binary data.                        ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Handles the sending of binary data.
+     */
     void send_buffer(int destProcessID,
                      const void *pdataToSend, mdp_int dataSize)
     {
@@ -433,33 +403,23 @@ namespace MDP
       close(fd);
     }
 
-    // *******************************************************************
-    // ***         Private Method: send_binary                         ***
-    // ***                                                             ***
-    // ***  Sends a data tag and a vector of chars (as binary data).   ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Sends a data tag and a vector of chars (as binary data).
+     */
     void send_binary(int destProcessID,
                      const std::string &tag,
                      const std::vector<char> &data)
     {
 
-      int tagSize = tag.size();
-      int dataSize = data.size();
+      size_t tagSize = tag.size();
+      size_t dataSize = data.size();
       send_buffer(destProcessID, &tagSize, sizeof(tagSize));
       send_buffer(destProcessID, tag.c_str(), tagSize);
       send_buffer(destProcessID, &dataSize, sizeof(dataSize));
       send_buffer(destProcessID, &data[0], dataSize);
     }
 
-    // *******************************************************************
-    // ***         Private Method: recv_buffer                         ***
-    // ***                                                             ***
-    // ***  Handles the receiving of binary data through the sockets.  ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Handles the receiving of binary data through the sockets.
+     */
     void recv_buffer(int sourceProcessID,
                      void *pdataToReceive, mdp_int dataSize)
     {
@@ -468,15 +428,15 @@ namespace MDP
       int sourceIndex = get_source_index(sourceProcessID);
       if (read(_socketFD[sourceIndex][COMM_RECV], &counter, sizeof(counter)) != sizeof(counter))
       {
-        log("PSIM ERROR: timeout error in readin from socket");
-        throw std::string("PSIM ERROR: timeout error in readin from socket");
+        log("PSIM ERROR: timeout error in reading from socket");
+        throw std::string("PSIM ERROR: timeout error in reading from socket");
       }
       snprintf(filename, 512, ".fifo.%i.%i.%i", sourceProcessID, _processID, counter);
       int fd = open(filename, O_RDONLY);
       if (read(fd, (char *)pdataToReceive, dataSize) != dataSize)
       {
-        log("PSIM ERROR: timeout error in readin from socket");
-        throw std::string("PSIM ERROR: timeout error in readin from socket");
+        log("PSIM ERROR: timeout error in reading from socket");
+        throw std::string("PSIM ERROR: timeout error in reading from socket");
       }
       else
       {
@@ -485,14 +445,9 @@ namespace MDP
       close(fd);
     }
 
-    // *******************************************************************
-    // ***         Private Method: recv_binary                         ***
-    // ***                                                             ***
-    // ***  Receives data utilizing a data tag to make sure that the   ***
-    // ***  data coming in is what was expected.                       ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Receives data utilizing a data tag to make sure that the
+     * data coming in is what was expected.
+     */
     void recv_binary(int sourceProcessID,
                      const std::string &tag,
                      std::vector<char> &data)
@@ -565,22 +520,9 @@ namespace MDP
     }
 
   public:
-    // *******************************************************************
-    // *******************************************************************
-    // ***                                                             ***
-    // ***                P U B L I C   M E T H O D S                  ***
-    // ***                                                             ***
-    // *******************************************************************
-    // *******************************************************************
-
-    // *******************************************************************
-    // ***               Constructor: mdp_psim                         ***
-    // ***                                                             ***
-    // ***  Provide the number of processes to create and the name of  ***
-    // ***  the logfile if desired and "" if no logfile is needed.     ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Provide the number of processes to create and the name of
+     * the logfile if desired and "" if no logfile is needed.
+     */
     mdp_psim(int processCount, std::string logFileName = ".psim.log", int verbatim = 0)
     {
       psim_begin(processCount, logFileName, verbatim);
@@ -594,14 +536,9 @@ namespace MDP
       psim_begin(processCount, logFileName, verbatim);
     }
 
-    // *******************************************************************
-    // ***               Destructor: ~mdp_psim                         ***
-    // ***                                                             ***
-    // ***  Deallocates space that was created within the process,     ***
-    // ***  releases sockets, closes the log, etc.                       ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Deallocates space that was created within the process,
+     * releases sockets, closes the log, etc.
+     */
     virtual ~mdp_psim()
     {
       psim_end();
@@ -612,7 +549,7 @@ namespace MDP
     // ***                                                             ***
     // ***  Accepts a string and appends the message to the common     ***
     // ***  log file.  Note: locking is not necessary because of the   ***
-    // ***  deffinition of append.  It does not matter how many        ***
+    // ***  definition of append.  It does not matter how many        ***
     // ***  processes share file pointers, writing will always occur   ***
     // ***  at the end of the file.                                    ***
     // ***                                                             ***
@@ -638,27 +575,17 @@ namespace MDP
       }
     }
 
-    // *******************************************************************
-    // ***         Public Method: id                                   ***
-    // ***                                                             ***
-    // ***  Returns an integer identifying which process is currently  ***
-    // ***  executing.                                                 ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Returns an integer identifying which process is currently
+     * executing.
+     */
     int id()
     {
       return _processID;
     }
 
-    // *******************************************************************
-    // ***         Public Method: nprocs                               ***
-    // ***                                                             ***
-    // ***  Returns an integer identifying the current number of       ***
-    // ***  active processes.                                          ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Returns an integer identifying the current number of
+     * active processes.
+     */
     int nprocs()
     {
       return _processCount;
@@ -673,7 +600,7 @@ namespace MDP
     // ***                                                             ***
     // *******************************************************************
 
-    void setCommTimeout(unsigned int commTimeout)
+    void setCommTimeout(mdp_uint commTimeout)
     {
       _commTimeout = commTimeout;
     }
@@ -681,7 +608,7 @@ namespace MDP
     // *******************************************************************
     // ***         Public Method: send                                 ***
     // ***                                                             ***
-    // ***  This aynchronous method sends the data referenced bu       ***
+    // ***  This asynchronous method sends the data referenced by      ***
     // ***  "dataToSend" to "destProcessID".  The size of the data     ***
     // ***  is obtained by looking at the type "T".                    ***
     // ***                                                             ***
@@ -695,14 +622,14 @@ namespace MDP
       for (unsigned int k = 0; k < sizeof(T); k++)
         data[k] = ((char *)&dataToSend)[k];
       send_binary(destProcessID, dataTag, data);
-      // cout << _processID << "->" << destProcessID << " " << dataTag << " " << dataToSend << endl;
+      // std::cout << _processID << "->" << destProcessID << " " << dataTag << " " << dataToSend << std::endl;
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_SUCCESS);
     }
 
     // *******************************************************************
     // ***         Public Method: send                                 ***
     // ***                                                             ***
-    // ***  This aynchronous method sends the data at location         ***
+    // ***  This asynchronous method sends the data at location        ***
     // ***  "pdataToSend" to "destProcessID".  The size of the data    ***
     // ***  being sent is provided in the integer: "dataSize".         ***
     // ***                                                             ***
@@ -714,7 +641,7 @@ namespace MDP
     {
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);
       std::vector<char> data(sizeof(T) * dataSize);
-      for (mdp_uint k = 0; k < data.size(); k++)
+      for (size_t k = 0; k < data.size(); k++)
         data[k] = ((char *)pdataToSend)[k];
       send_binary(destProcessID, dataTag, data);
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_SUCCESS);
@@ -742,7 +669,7 @@ namespace MDP
       };
       for (unsigned int k = 0; k < sizeof(T); k++)
         ((char *)&dataToReceive)[k] = data[k];
-      // cout << _processID << "<-" << sourceProcessID << " " << dataTag << " " << dataToReceive << endl;
+      // std::cout << _processID << "<-" << sourceProcessID << " " << dataTag << " " << dataToReceive << std::endl;
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_SUCCESS);
     }
 
@@ -767,7 +694,7 @@ namespace MDP
         log("PSIM ERROR: recv invalid data size");
         throw std::string("PSIM ERROR: recv invalid data size");
       }
-      for (mdp_uint k = 0; k < data.size(); k++)
+      for (size_t k = 0; k < data.size(); k++)
         ((char *)pdataToReceive)[k] = data[k];
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_SUCCESS);
     }
@@ -896,14 +823,9 @@ namespace MDP
       return dataList;
     }
 
-    // *******************************************************************
-    // ***         Public Method: barrier                              ***
-    // ***                                                             ***
-    // ***  Initiates a blocking point so that the processes pause     ***
-    // ***  until ALL processes have reached the barrier.              ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief Initiates a blocking point so that the processes pause
+     * until ALL processes have reached the barrier.
+     */
     void barrier()
     {
       int dummy;
@@ -911,20 +833,14 @@ namespace MDP
       collect(PROCESS_PARENT, dummy);
     }
 
-    // *******************************************************************
-    // ***         Public Method: add                                  ***
-    // ***                                                             ***
-    // *** All parallel processes sum their data in parallel.  The sum ***
-    // *** is returned.                                                ***
-    // ***                                                             ***
-    // *******************************************************************
-
+    /** @brief All parallel processes sum their data in parallel.  The sum
+     * is returned.
+     */
     template <class T>
     T add(T &item)
     {
-      std::vector<T> dataList;
       T total = 0;
-      dataList = collect(PROCESS_PARENT, item);
+      std::vector<T> dataList = collect(PROCESS_PARENT, item);
       if (_processID == PROCESS_PARENT)
         for (size_t i = 0; i < dataList.size(); i++)
         {

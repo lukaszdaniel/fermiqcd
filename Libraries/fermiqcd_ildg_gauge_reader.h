@@ -12,6 +12,8 @@
 #ifndef FERMIQCD_ILDG_GAUGE_READER_
 #define FERMIQCD_ILDG_GAUGE_READER_
 
+#include <string>
+
 namespace MDP
 {
   void ildg_gauge_reader(gauge_field &U,

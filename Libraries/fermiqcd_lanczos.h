@@ -80,7 +80,7 @@ namespace MDP
       q += r;
       alpha = real_scalar_product(p, q);
       mdp_add_scaled_field(q, -alpha, p);
-      beta = sqrt(norm_square(q));
+      beta = std::sqrt(norm_square(q));
 
       if (output_check)
       {

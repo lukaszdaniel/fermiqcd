@@ -31,13 +31,15 @@ namespace MDP
     return M;
   }
 
-  /// Pointer to current Staggered/Asqtad action
+  /** @brief Pointer to current Staggered/Asqtad action
+   */
   void (*default_staggered_action)(staggered_field &,
                                    staggered_field &,
                                    gauge_field &,
                                    coefficients &, int) = StaggeredAsqtadActionFast::mul_Q;
 
-  /// Executes current Staggered/Asqtad action
+  /** @brief Executes current Staggered/Asqtad action
+   */
   void mul_Q(staggered_field &psi_out,
              staggered_field &psi_in,
              gauge_field &U,
@@ -51,14 +53,16 @@ namespace MDP
   // choice of the default inversion method
   // ////////////////////////////////////////////////
 
-  /// Pointer to current Staggered/Asqtad inverter
+  /** @brief Pointer to current Staggered/Asqtad inverter
+   */
   inversion_stats (*default_staggered_inverter)(staggered_field &,
                                                 staggered_field &,
                                                 gauge_field &,
                                                 coefficients &,
                                                 mdp_real, mdp_real, int) = &(BiCGStab::inverter<staggered_field, gauge_field>);
 
-  /// Executes current Staggered/Asqtad inverter
+  /** @brief Executes current Staggered/Asqtad inverter
+   */
   inversion_stats mul_invQ(staggered_field &psi_out,
                            staggered_field &psi_in,
                            gauge_field &U,
@@ -75,9 +79,10 @@ namespace MDP
   // ////////////////////////////////////////////////////////////
   // ////////////////////////////////////////////////////////////
 
-  /// Takes a plaquette and a type of action and returns a 1D array
-  /// with weights of paths required to build fat links for the action
-  /// @see lepage_improved_links()
+  /** @brief Takes a plaquette and a type of action and returns a 1D array
+   * with weights of paths required to build fat links for the action
+   * @see lepage_improved_links()
+   */
   mdp_array<mdp_real, 1> lepage_coefficients(mdp_real plaquette, const char type[])
   {
     begin_function("lepage_coefficients");

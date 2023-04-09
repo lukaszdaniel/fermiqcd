@@ -29,7 +29,6 @@ namespace MDP
 	/// mul_Q(chi,psi,U,coeff);
 	/// @endverbatim
 	/// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
-
 	class StaggeredAsqtadActionSlow
 	{
 	public:
@@ -58,10 +57,14 @@ namespace MDP
 
 			if (two_mass != 0)
 				forallsitesofparity(x, parity)
+				{
 					chi_out(x) = two_mass * chi_in(x);
+				}
 			else
 				forallsitesofparity(x, parity)
+				{
 					chi_out(x) = 0;
+				}
 
 			if (!U.long_links.allocated())
 			{
@@ -187,10 +190,10 @@ namespace MDP
 											  conj(FU_dw[3 * 2 + i]) * Fchi_dw[2]);
 
 						// //////////////////////////////////////
-						// The follwoing is called the Naik Term
+						// The following is called the Naik Term
 						// ... for the Lepage improved action
 						// //////////////////////////////////////
-						// with this phase naik= -1/24*pow(u0,-2)
+						// with this phase naik= -1/24*std::pow(u0,-2)
 						// //////////////////////////////////////
 						if (U.long_links.allocated())
 						{

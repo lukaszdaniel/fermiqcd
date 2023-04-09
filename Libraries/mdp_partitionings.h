@@ -18,24 +18,6 @@ namespace MDP
 {
   /** @brief Partition function
    *
-   * @param x Point x[] on the lattice
-   * @param ndim Dimension of the box
-   * @param nx Box containing the lattice
-   *
-   * @return Suggested process ID for point x[]
-   *
-   * @note Shorthand for generic default_partitioning<0>
-   * function
-   */
-  int default_partitioning0(int *x,
-                            int ndim,
-                            int *nx)
-  {
-    default_partitioning<0>(x, ndim, nx);
-  }
-
-  /** @brief Partition function
-   *
    * Function to calculate suggested process ID
    * based on the location of point x[], lattice size
    * and the number of available processes.
@@ -57,6 +39,24 @@ namespace MDP
   {
     int partition_factor = std::ceil((1.0 * nx[dim]) / Nproc);
     return x[dim] / partition_factor;
+  }
+
+  /** @brief Partition function
+   *
+   * @param x Point x[] on the lattice
+   * @param ndim Dimension of the box
+   * @param nx Box containing the lattice
+   *
+   * @return Suggested process ID for point x[]
+   *
+   * @note Shorthand for generic default_partitioning<0>
+   * function
+   */
+  int default_partitioning0(int *x,
+                            int ndim,
+                            int *nx)
+  {
+    return default_partitioning<0>(x, ndim, nx);
   }
 } // namespace MDP
 

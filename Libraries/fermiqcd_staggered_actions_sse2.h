@@ -89,6 +89,7 @@ namespace MDP
         s = psi + ix;
 
         x.idx = ix;
+
         if (sign > 0)
         {
           sign0 = (int)(psi_in.eta(x, 0) + 1);
@@ -222,6 +223,7 @@ namespace MDP
           _sse_float_prefetch_spinor(sp);
           up++;
         }
+
         _sse_double_load(*sm);
         _sse_double_su3_inverse_multiply(*um);
         _sse_double_load(r);
@@ -383,6 +385,7 @@ namespace MDP
           _sse_float_prefetch_spinor(sp);
           up++;
         }
+
         _sse_double_load(*sm);
         _sse_double_su3_inverse_multiply(*um);
         _sse_double_load(r);
@@ -737,7 +740,7 @@ namespace MDP
     }
   };
 
-#endif // id fefined(SSE2)
+#endif // SSE2
 } // namespace MDP
 
 #endif /* FERMIQCD_STAGGERED_ACTIONS_SSE2_ */

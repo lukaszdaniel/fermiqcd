@@ -59,7 +59,8 @@ namespace MDP
     }
   };
 
-  /// smears a propagator
+  /** @brief smears a propagator
+   */
   void smearSink(fermi_propagator &S,
                  gauge_field &U,
                  void (*smf)(fermi_field &,

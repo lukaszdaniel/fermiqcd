@@ -18,49 +18,37 @@ namespace MDP
   template <class T>
   void switch_endianess_byte4(T &a)
   {
+    constexpr unsigned int size = 4;
+    if (sizeof(T) != size)
+      error("switch_endianess_byte: sizeof(T) mismatch");
     char *p = (char *)&a;
-    static char q[4];
-    if (sizeof(T) == 4)
+    static char q[size];
+    for (unsigned int i = 0; i < size; ++i)
     {
-      q[0] = p[0];
-      q[1] = p[1];
-      q[2] = p[2];
-      q[3] = p[3];
-      p[0] = q[3];
-      p[1] = q[2];
-      p[2] = q[1];
-      p[3] = q[0];
+      q[i] = p[i];
     }
-    else
-      error("switch_endianess_byte4: sizeof(T)!=4");
+    for (unsigned int i = 0; i < size; ++i)
+    {
+      p[i] = q[size - 1 - i];
+    }
   }
 
   template <class T>
   void switch_endianess_byte8(T &a)
   {
+    constexpr unsigned int size = 8;
+    if (sizeof(T) != size)
+      error("switch_endianess_byte: sizeof(T) mismatch");
     char *p = (char *)&a;
-    static char q[8];
-    if (sizeof(T) == 8)
+    static char q[size];
+    for (unsigned int i = 0; i < size; ++i)
     {
-      q[0] = p[0];
-      q[1] = p[1];
-      q[2] = p[2];
-      q[3] = p[3];
-      q[4] = p[4];
-      q[5] = p[5];
-      q[6] = p[6];
-      q[7] = p[7];
-      p[0] = q[7];
-      p[1] = q[6];
-      p[2] = q[5];
-      p[3] = q[4];
-      p[4] = q[3];
-      p[5] = q[2];
-      p[6] = q[1];
-      p[7] = q[0];
+      q[i] = p[i];
     }
-    else
-      error("switch_endianess_byte8 sizeof(T)!=8");
+    for (unsigned int i = 0; i < size; ++i)
+    {
+      p[i] = q[size - 1 - i];
+    }
   }
 } // namespace MDP
 

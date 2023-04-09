@@ -14,6 +14,8 @@
 
 #define MDP_LATTICE
 
+#include <string>
+
 namespace MDP
 {
   const mdp_int NOWHERE = INT_MAX;
@@ -145,6 +147,11 @@ namespace MDP
     int (*where)(int *, int, int *);
     void (*neighbour)(int, int *, int *, int *, int, int *);
 
+    /** @brief Calculate global coordinate
+     *
+     * Calculate ordinal (global) coordinate of
+     * a n-dimentional point x[].
+     */
     inline mdp_int global_coordinate(int *x)
     {
       mdp_int global_idx = 0;
@@ -154,10 +161,14 @@ namespace MDP
       return global_idx + x[ndim - 1];
     }
 
+    /** @brief Translate global coordinate into x[] coordinates
+     *
+     * Given the ordinal coordinate, recover
+     * x = (x0, x1, ... x9) coordinates.
+     */
     inline void global_coordinate(mdp_int global_idx, int *x)
     {
-      int mu;
-      for (mu = ndim - 1; mu > 0; mu--)
+      for (int mu = ndim - 1; mu > 0; mu--)
       {
         x[mu] = global_idx % nx[mu];
         global_idx = (global_idx - x[mu]) / nx[mu];
@@ -550,39 +561,44 @@ namespace MDP
       mpi << "Lattice created.\n";
       mpi.end_function("allocate_lattice");
     }
-    // ////////////////////////////////////////////////////
-    // deallocate all the dynamically alocated arrays
-    // ////////////////////////////////////////////////////
+
+    /** @brief deallocate all the dynamically allocated arrays
+     */
     virtual ~mdp_lattice()
     {
       deallocate_memory();
     }
 
-    /// dynamically deallocate a lattice
+    /** @brief dynamically deallocate a lattice
+     */
     void deallocate_memory()
     {
       if (nvol == 0)
         return;
+
       int process, new_idx;
       delete[] nx;
+
       for (process = 0; process < Nproc; process++)
         if (process != ME)
         {
           if (len_to_send[process][0] + len_to_send[process][1] != 0)
             delete[] to_send[process];
         }
+
       for (new_idx = 0; new_idx < nvol; new_idx++)
       {
         delete[] dw[new_idx];
         delete[] up[new_idx];
         delete[] co[new_idx];
       }
+
       delete[] dw;
       delete[] up;
       delete[] co;
       delete[] wh;
       delete[] gl;
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
       delete[] lg;
 #else
       fclose(lg_file);
@@ -590,9 +606,9 @@ namespace MDP
       delete[] parity;
       delete[] random_obj;
     }
-    // ////////////////////////////////////////////////////
-    // initialize random number generator for each local mdp_site
-    // ////////////////////////////////////////////////////
+
+    /** @brief initialize random number generator for each local mdp_site
+     */
     void initialize_random(mdp_int random_seed_ = 0)
     {
       random_seed = random_seed_;
@@ -613,45 +629,68 @@ namespace MDP
     // to be used to access member variables
     // /////////////////////////////////
 
-    /// number of dimensions of the lattice (deprecated_
+    /** @brief number of dimensions of the lattice
+     */
     inline int n_dimensions() const
     {
       return ndim;
     }
 
-    /// number of directions one can move on the lattice; usually same as ndim
+    /** @brief number of directions one can move on the lattice; usually same as ndim
+     */
     inline int n_directions() const
     {
       return ndir;
     }
 
-    /// number of sites of the lattice
+    /** @brief number of sites of the lattice
+     */
     inline mdp_int size() const
     {
       return nvol_gl;
     }
 
-    /// size of the lattice in direction mu
+    /** @brief size of the lattice in direction mu
+     */
     inline mdp_int size(const int mu) const
     {
       return nx[mu];
     }
 
-    /// number of lattice sites stored locally by current process
+    /** @brief Size of each dimension
+     *
+     * @return Pointer to the array of sizes
+     */
+    const mdp_int *dims() const
+    {
+      return nx;
+    }
+
+    /** @brief number of lattice sites stored locally by current process
+     */
     inline mdp_int local_volume() const
     {
       return nvol_in;
     }
 
+    /** @brief number of lattice sites stored locally by current process
+     * together with the number of copies of the neigbouring sites
+     */
     inline mdp_int enclosing_volume() const
     {
       return nvol;
     }
 
-    /// total lattice volume (deprecated)
+    /** @brief total lattice volume
+     */
     inline mdp_int global_volume() const
     {
       return nvol_gl;
+    }
+
+    mdp_suint boundary_thickness() const
+    {
+      return next_next;
     }
 
     inline mdp_int move_up(const mdp_int idx, const int mu) const
@@ -666,7 +705,7 @@ namespace MDP
 
     inline mdp_int local(mdp_int idx) const
     {
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
       return lg[idx];
 #else
       mdp_int lg_tmp;

@@ -45,14 +45,14 @@ namespace MDP
     mdp_real charge; // this is 1/g
     mdp_real lambda;
     mdp_matrix eta[4][4];
-    Instanton4D(int nc, int sub_i, int sub_j, mdp_real charge, mdp_real lambda, std::vector<mdp_real> &p)
+    Instanton4D(int nc_, int sub_i_, int sub_j_, mdp_real charge_, mdp_real lambda_, std::vector<mdp_real> &p_)
     {
-      this->nc = nc;
-      this->sub_i = sub_i;
-      this->sub_j = sub_j;
-      this->lambda = lambda;
-      this->charge = charge;
-      this->p = p;
+      nc = nc_;
+      sub_i = sub_i_;
+      sub_j = sub_j_;
+      lambda = lambda_;
+      charge = charge_;
+      p = p_;
       mdp_matrix T(nc, nc);
       mdp_matrix sigma_rot1[4];
       mdp_matrix sigma_rot2[4];
@@ -74,8 +74,8 @@ namespace MDP
       for (int mu = 0; mu < 4; mu++)
         for (int nu = 0; nu < 4; nu++)
         {
-          this->eta[mu][nu].dimension(nc, nc);
-          this->eta[mu][nu] = 0;
+          eta[mu][nu].dimension(nc, nc);
+          eta[mu][nu] = 0;
           for (int a = 1; a < 4; a++)
           {
             T = 0;
@@ -85,15 +85,15 @@ namespace MDP
             T(sub_j, sub_j) = sigma_rot3[a](1, 1);
             if (a > 0 && mu > 0 && nu > 0)
             {
-              this->eta[mu][nu] += epsilon123(a, mu, nu) * T;
+              eta[mu][nu] += epsilon123(a, mu, nu) * T;
             }
             else if (mu == 0 && a > 0 && a == nu)
             {
-              this->eta[mu][nu] -= T; // T[a]*(-1)*delta(a,nu)
+              eta[mu][nu] -= T; // T[a]*(-1)*delta(a,nu)
             }
             else if (nu == 0 && a > 0 && a == mu)
             {
-              this->eta[mu][nu] += T; // T[a]*delta(a,mu)
+              eta[mu][nu] += T; // T[a]*delta(a,mu)
             }
           }
         }
@@ -101,20 +101,20 @@ namespace MDP
       for (int mu = 0; mu < 4; mu++)
         for (int nu = 0; nu < 4; nu++)
         {
-          this->eta[mu][nu].dimension(nc, nc);
+          eta[mu][nu].dimension(nc, nc);
           for (int i = 0; i < nc; i++)
             for (int j = 0; j < nc; j++)
               if (i == j && (i != sub_i && i != sub_j))
               {
-                this->eta[mu][nu](i, j) = 1;
+                eta[mu][nu](i, j) = 1;
               }
               else if ((i != sub_i && i != sub_j) || (j != sub_i && j != sub_j))
               {
-                this->eta[mu][nu](i, j) = 0;
+                eta[mu][nu](i, j) = 0;
               }
               else if (mu == 0 && nu == 0)
               {
-                this->eta[mu][nu](i, j) = 0;
+                eta[mu][nu](i, j) = 0;
               }
               else
               {
@@ -124,18 +124,18 @@ namespace MDP
                 {
                   if (mu == 0)
                   {
-                    // this->eta[mu][nu](i,j) += ((a==nu)?-1:0);
-                    this->eta[mu][nu](i, j) += sigma[a](i0, j0) * ((a == nu) ? -1 : 0);
+                    // eta[mu][nu](i,j) += ((a==nu)?-1:0);
+                    eta[mu][nu](i, j) += sigma[a](i0, j0) * ((a == nu) ? -1 : 0);
                   }
                   else if (nu == 0)
                   {
-                    // this->eta[mu][nu](i,j) += ((a==mu)?+1:0);
-                    this->eta[mu][nu](i, j) += sigma[a](i0, j0) * ((a == mu) ? +1 : 0);
+                    // eta[mu][nu](i,j) += ((a==mu)?+1:0);
+                    eta[mu][nu](i, j) += sigma[a](i0, j0) * ((a == mu) ? +1 : 0);
                   }
                   else
                   {
-                    // this->eta[mu][nu](i,j) += epsilon123(a,mu,nu);
-                    this->eta[mu][nu](i, j) += sigma[a](i0, j0) * epsilon123(a, mu, nu);
+                    // eta[mu][nu](i,j) += epsilon123(a,mu,nu);
+                    eta[mu][nu](i, j) += sigma[a](i0, j0) * epsilon123(a, mu, nu);
                   }
                 }
               }
@@ -147,13 +147,13 @@ namespace MDP
       int v[4];
       // mdp_lattice &lattice=x.lattice();
       for (int nu = 0; nu < 4; nu++)
-        v[nu] = x(nu) - this->p[nu];
+        v[nu] = x(nu) - p[nu];
       float d2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];
-      mdp_matrix A(this->nc, this->nc);
+      mdp_matrix A(nc, nc);
       A = 0;
       for (int nu = 0; nu < 4; nu++)
-        A += this->eta[mu][nu] * v[nu];
-      return (2.0 * this->charge / (d2 + this->lambda * this->lambda)) * A;
+        A += eta[mu][nu] * v[nu];
+      return (2.0 * charge / (d2 + lambda * lambda)) * A;
     }
   };
 } // namespace MDP
