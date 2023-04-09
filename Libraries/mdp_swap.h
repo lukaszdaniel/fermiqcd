@@ -12,18 +12,16 @@
 #ifndef MDP_SWAP_
 #define MDP_SWAP_
 
+#include <algorithm>
+
 namespace MDP
 {
   template <class T>
-  void swap(T *a, T *b, int n)
+  void swap(T *a, T *b, mdp_uint n)
   {
-    int i;
-    T c;
-    for (int i = 0; i < n; i++)
+    for (mdp_uint i = 0; i < n; i++)
     {
-      c = a[i];
-      a[i] = b[i];
-      b[i] = c;
+      std::swap(a[i], b[i]);
     }
   }
 } // namespace MDP
