@@ -98,8 +98,8 @@ namespace MDP
 
     void operator=(mdp_complex a)
     {
-      for (mdp_int i = 0; i < size; i++)
-        m[i] = a;
+      for (mdp_int i = 0; i < m_size; i++)
+        m_data[i] = a;
     }
   };
 } // namespace MDP

@@ -18,12 +18,12 @@ namespace MDP
 	// Basic topologies:
 	// //////////////////////////////////////////////////////
 
-	void torus_topology(int mu,
+	void torus_topology(const int mu,
 						int *x_dw,
-						int *x,
+						const int *x,
 						int *x_up,
-						int ndim,
-						int *nx)
+						const int ndim,
+						const int *nx)
 	{
 		for (int nu = 0; nu < ndim; nu++)
 			if (nu == mu)
@@ -35,12 +35,12 @@ namespace MDP
 				x_up[nu] = x_dw[nu] = x[nu];
 	}
 
-	void box_topology(int mu,
+	void box_topology(const int mu,
 					  int *x_dw,
-					  int *x,
+					  const int *x,
 					  int *x_up,
-					  int ndim,
-					  int *nx)
+					  const int ndim,
+					  const int *nx)
 	{
 		torus_topology(mu, x_dw, x, x_up, ndim, nx);
 		if (x[mu] == 0)
@@ -49,12 +49,12 @@ namespace MDP
 			x_up[mu] = x[mu];
 	}
 
-	void moebious_topology(int mu,
+	void moebious_topology(const int mu,
 						   int *x_dw,
-						   int *x,
+						   const int *x,
 						   int *x_up,
-						   int ndim,
-						   int *nx)
+						   const int ndim,
+						   const int *nx)
 	{
 		torus_topology(mu, x_dw, x, x_up, ndim, nx);
 		if (mu == 0)
@@ -66,12 +66,12 @@ namespace MDP
 		}
 	}
 
-	void open_cylinder(int mu,
+	void open_cylinder(const int mu,
 					   int *x_dw,
-					   int *x,
+					   const int *x,
 					   int *x_up,
-					   int ndim,
-					   int *nx)
+					   const int ndim,
+					   const int *nx)
 	{
 		torus_topology(mu, x_dw, x, x_up, ndim, nx);
 		if ((mu == 0) && (x[0] == 0))

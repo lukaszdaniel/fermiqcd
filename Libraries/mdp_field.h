@@ -104,45 +104,45 @@ namespace MDP
   class mdp_field
   {
   protected:
-    mdp_lattice *ptr; /* this points to the lattice for this field  */
-    T *m;             /* this is to store the main field            */
-    mdp_int Tsize;
-    mdp_int size;         /* this is the size of the field in sizeof(T) */
-    int field_components; /* this is the size of the structure per site */
+    mdp_lattice *m_ptr; /* this points to the lattice for this field  */
+    T *m_data;          /* this is to store the main field            */
+    mdp_int m_Tsize;
+    mdp_int m_size;         /* this is the size of the field in sizeof(T) */
+    int m_field_components; /* this is the size of the structure per site */
+
+    /// the field file header, contains data only if field was read from file
+    mdp_field_file_header m_header;
 
   public:
-    /// the field file header, contains data only if field was read from file
-    mdp_field_file_header header;
-
     /// declare empty field (zero size)
     mdp_field()
     {
-      m = nullptr;
-      Tsize = sizeof(T);
-      size = field_components = 0;
+      m_data = nullptr;
+      m_Tsize = sizeof(T);
+      m_size = m_field_components = 0;
     }
 
     /// declares a field on lattice a and allocates a vector of n T at each site
     mdp_field(mdp_lattice &a, int n = 1)
     {
-      m = nullptr;
+      m_data = nullptr;
       allocate_field(a, n);
     }
 
     mdp_field(const mdp_field &field)
     {
-      m = nullptr;
-      allocate_field(field.lattice(), field.field_components);
+      m_data = nullptr;
+      allocate_field(field.lattice(), field.m_field_components);
       mdp_int i_min = physical_local_start(EVENODD);
       mdp_int i_max = physical_local_stop(EVENODD);
       for (mdp_int i = i_min; i < i_max; i++)
-        m[i] = field.m[i];
+        m_data[i] = field.m_data[i];
     }
 
     /// checks if a field is allocated of has zero-size
     bool allocated()
     {
-      return (m != nullptr);
+      return (m_data != nullptr);
     }
 
     /// Allows dynamical allocation of a field that is not allocated
@@ -150,34 +150,34 @@ namespace MDP
     {
       deallocate_field();
       if (n == 0)
-        n = field_components;
+        n = m_field_components;
       else
-        field_components = n;
-      if (field_components == 0)
+        m_field_components = n;
+      if (m_field_components == 0)
         error("You cannot have a field of zero size!");
-      size = a.nvol * field_components;
-      Tsize = sizeof(T);
-      m = new T[size];
-      if (m == nullptr)
+      m_size = a.nvol * m_field_components;
+      m_Tsize = sizeof(T);
+      m_data = new T[m_size];
+      if (m_data == nullptr)
         error("OUT OF MEMORY !!!!");
-      ptr = &a;
+      m_ptr = &a;
       fill_header();
     }
 
 #if 0
     void allocate_field(T *memory_address, mdp_lattice &a, int n = 0)
     {
-      m = nullptr;
+      m_data = nullptr;
       if (n == 0)
-        n = field_components;
+        n = m_field_components;
       else
-        field_components = n;
-      if (field_components == 0)
+        m_field_components = n;
+      if (m_field_components == 0)
         error("You cannot have a field of zero size!");
-      Tsize = sizeof(T);
-      size = a.nvol * field_components;
-      m = memory_address;
-      ptr = &a;
+      m_Tsize = sizeof(T);
+      m_size = a.nvol * m_field_components;
+      m_data = memory_address;
+      m_ptr = &a;
       fill_header();
     }
 #endif
@@ -185,28 +185,28 @@ namespace MDP
     void fill_header()
     {
       int i;
-      header.bytes_per_site = Tsize * field_components;
-      header.sites = lattice().size();
-      header.ndim = lattice().ndim;
+      m_header.bytes_per_site = m_Tsize * m_field_components;
+      m_header.sites = lattice().size();
+      m_header.ndim = lattice().ndim;
       for (i = 0; i < lattice().ndim; i++)
-        header.box[i] = lattice().size(i);
+        m_header.box[i] = lattice().size(i);
       for (; i < 10; i++)
-        header.box[i] = 0;
+        m_header.box[i] = 0;
     }
 
     void deallocate_memory()
     {
-      if (m != nullptr)
-        delete[] m;
-      m = nullptr;
-      size = field_components = 0;
+      if (m_data != nullptr)
+        delete[] m_data;
+      m_data = nullptr;
+      m_size = m_field_components = 0;
     }
 
     /// do not use, may cause memory leaks
     void reset_field()
     {
-      m = nullptr;
-      size = field_components = 0;
+      m_data = nullptr;
+      m_size = m_field_components = 0;
     }
 
     /// dynamically deallocate field
@@ -229,12 +229,12 @@ namespace MDP
         error("You are looking for a site that is not here");
       }
 #endif
-      return m[x.idx * field_components + i];
+      return m_data[x.idx * m_field_components + i];
     }
 
     T &operator()(int idx, int i = 0)
     {
-      return m[idx * field_components + i];
+      return m_data[idx * m_field_components + i];
     }
 
     /// retruns the address of the vector of objects T stored at site x
@@ -245,7 +245,7 @@ namespace MDP
 
     T &operator[](mdp_int i)
     {
-      return m[i];
+      return m_data[i];
     }
 
     T *address(mdp_site x, int i = 0) const
@@ -256,7 +256,7 @@ namespace MDP
         error("You are looking for a site that is not here");
       }
 #endif
-      return m + x.idx * field_components + i;
+      return m_data + x.idx * m_field_components + i;
     }
 
     /// shifts the entire fields in direction mu of i steps
@@ -265,7 +265,7 @@ namespace MDP
     /// function requires communication
     void shift(int i, int mu)
     {
-      mdp_field tmp(lattice(), field_components);
+      mdp_field tmp(lattice(), m_field_components);
       mdp_site x(lattice());
       while (i != 0)
       {
@@ -274,7 +274,7 @@ namespace MDP
         {
           forallsites(x)
           {
-            for (int k = 0; k < field_components; k++)
+            for (int k = 0; k < m_field_components; k++)
               tmp(x, k) = (*this)(x - mu, k); // mind here
           }
           i--;
@@ -283,7 +283,7 @@ namespace MDP
         {
           forallsites(x)
           {
-            for (int k = 0; k < field_components; k++)
+            for (int k = 0; k < m_field_components; k++)
               tmp(x, k) = (*this)(x + mu, k); // mind here
           }
           i++;
@@ -295,56 +295,56 @@ namespace MDP
     void operator=(const mdp_field &a)
     {
       if (&lattice() != &a.lattice() ||
-          size != a.size ||
-          field_components != a.field_components)
+          m_size != a.m_size ||
+          m_field_components != a.m_field_components)
         error("mdp_field: operator=() incompatible fields");
       mdp_int i = 0;
-      for (; i < size; i++)
-        m[i] = a.m[i];
+      for (; i < m_size; i++)
+        m_data[i] = a.m_data[i];
     }
 
     void operator=(const T a)
     {
-      for (mdp_int i = 0; i < size; i++)
-        m[i] = a;
+      for (mdp_int i = 0; i < m_size; i++)
+        m_data[i] = a;
     }
 
     void operator+=(const mdp_field &a)
     {
-      for (mdp_int i = 0; i < size; i++)
-        m[i] += a.m[i];
+      for (mdp_int i = 0; i < m_size; i++)
+        m_data[i] += a.m_data[i];
     }
 
     void operator-=(const mdp_field &a)
     {
-      for (mdp_int i = 0; i < size; i++)
-        m[i] -= a.m[i];
+      for (mdp_int i = 0; i < m_size; i++)
+        m_data[i] -= a.m_data[i];
     }
 
     template <class T2>
     void operator*=(const T2 a)
     {
-      for (mdp_int i = 0; i < size; i++)
-        m[i] *= a;
+      for (mdp_int i = 0; i < m_size; i++)
+        m_data[i] *= a;
     }
 
     template <class T2>
     void operator/=(const T2 a)
     {
-      for (mdp_int i = 0; i < size; i++)
-        m[i] /= a;
+      for (mdp_int i = 0; i < m_size; i++)
+        m_data[i] /= a;
     }
 
     /// returns by reference the lattice this field is defined on
     mdp_lattice &lattice() const
     {
-      return *ptr;
+      return *m_ptr;
     }
 
     /// returns the total memory in bytes occupied by the field
     mdp_int field_size()
     {
-      return lattice().size() * field_components * Tsize;
+      return lattice().size() * m_field_components * m_Tsize;
     }
 
     /// returns the total space in bytes required to store the field
@@ -359,7 +359,7 @@ namespace MDP
     {
       int x[10];
       lattice().global_coordinate(i, x);
-      return (*(lattice().where))(x, lattice().ndim, lattice().nx);
+      return (*(lattice().where()))(x, lattice().ndim, lattice().nx);
     }
 
     void switch_endianess_4bytes()
@@ -367,13 +367,13 @@ namespace MDP
       // I am not sure if this works for complex<double>
       int32_t *p;
 
-      if (Tsize * field_components % 4 != 0)
+      if (m_Tsize * m_field_components % 4 != 0)
         error("Field not % 4");
       mdp_site x(lattice());
       forallsitesandcopies(x)
       {
         p = (int32_t *)address(x);
-        for (mdp_int i = 0; i < Tsize * field_components / 4; i++)
+        for (mdp_int i = 0; i < m_Tsize * m_field_components / 4; i++)
         {
           switch_endianess_byte4(*(p + i));
         }
@@ -385,13 +385,13 @@ namespace MDP
       // I am not sure if this works for complex<double>
       int64_t *p;
 
-      if (Tsize * field_components % 8 != 0)
+      if (m_Tsize * m_field_components % 8 != 0)
         error("Field not % 8");
       mdp_site x(lattice());
       forallsitesandcopies(x)
       {
         p = (int64_t *)address(x);
-        for (mdp_int i = 0; i < Tsize * field_components / 8; i++)
+        for (mdp_int i = 0; i < m_Tsize * m_field_components / 8; i++)
         {
           std::cout << '.';
           switch_endianess_byte8(*(p + i));
@@ -406,36 +406,36 @@ namespace MDP
     /// lattice size in units of sizeof(T)
     mdp_int global_size()
     {
-      return field_components * lattice().global_volume();
+      return m_field_components * lattice().global_volume();
     }
 
     mdp_int physical_size()
     {
-      return size;
+      return m_size;
     }
 
     mdp_int size_per_site()
     {
-      return field_components;
+      return m_field_components;
     }
 
     mdp_int physical_local_start(int i = 2)
     {
       if (i == 2)
         i = 0;
-      return field_components * lattice().start[ME][i];
+      return m_field_components * lattice().start[ME][i];
     }
 
     mdp_int physical_local_stop(int i = 2)
     {
       if (i == 2)
         i = 1;
-      return field_components * lattice().stop[ME][i];
+      return m_field_components * lattice().stop[ME][i];
     }
 
     T *physical_address(mdp_int i = 0)
     {
-      return m + i;
+      return m_data + i;
     }
 
     /// the most important communication function in MDP.

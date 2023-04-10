@@ -112,25 +112,25 @@ namespace MDP
     void operator=(const mdp_complex_field &psi)
     {
       if (&lattice() != &psi.lattice() ||
-          size != psi.size ||
-          field_components != psi.field_components)
+          m_size != psi.m_size ||
+          m_field_components != psi.m_field_components)
         error("mdp_field: operator=() impatible fields");
 
       mdp_int i = 0;
 
 #if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      _sse_double *r = (_sse_double *)m;
-      _sse_double *s = (_sse_double *)psi.m;
+      _sse_double *r = (_sse_double *)m_data;
+      _sse_double *s = (_sse_double *)psi.m_data;
 
-      for (; i < size - 7; i += 8, r += 8, s += 8)
+      for (; i < m_size - 7; i += 8, r += 8, s += 8)
       {
         _sse_double_prefetch_16(s + 8);
         _sse_double_copy_16(r, s);
       }
 #endif
 
-      for (; i < size; i++)
-        m[i] = psi.m[i];
+      for (; i < m_size; i++)
+        m_data[i] = psi.m_data[i];
     }
 
     void operator*=(const mdp_complex alpha)
@@ -139,7 +139,7 @@ namespace MDP
       mdp_int i_max = physical_local_stop(EVENODD);
       mdp_int i = i_min;
       for (; i < i_max; i++)
-        m[i] *= alpha;
+        m_data[i] *= alpha;
     }
     void operator/=(const mdp_complex alpha)
     {
@@ -170,7 +170,7 @@ namespace MDP
 #endif
 
       for (; i < i_max; i++)
-        m[i] *= alpha;
+        m_data[i] *= alpha;
     }
 
     void operator/=(const mdp_real alpha)
@@ -196,7 +196,7 @@ namespace MDP
 #endif
 
       for (; i < i_max; i++)
-        m[i] += psi.m[i];
+        m_data[i] += psi.m_data[i];
     }
 
     void operator-=(mdp_complex_field &psi)
@@ -217,7 +217,7 @@ namespace MDP
 #endif
 
       for (; i < i_max; i++)
-        m[i] -= psi.m[i];
+        m_data[i] -= psi.m_data[i];
     }
 
     friend mdp_real norm_square(mdp_complex_field &psi,
@@ -433,10 +433,10 @@ namespace MDP
                        mdp_int skip_bytes = 0)
     {
 #ifdef USE_DOUBLE_PRECISION
-      header.bytes_per_site /= 2;
+      m_header.bytes_per_site /= 2;
       save(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_write_double_as_float);
-      header.bytes_per_site *= 2;
+      m_header.bytes_per_site *= 2;
 #else
       save(filename, processIO, max_buffer_size, load_header, skip_bytes, 0);
 #endif
@@ -451,10 +451,10 @@ namespace MDP
     {
 
 #ifdef USE_DOUBLE_PRECISION
-      header.bytes_per_site /= 2;
+      m_header.bytes_per_site /= 2;
       load(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_read_double_as_float, true);
-      header.bytes_per_site *= 2;
+      m_header.bytes_per_site *= 2;
 #else
       load(filename, processIO, max_buffer_size, load_header, skip_bytes, 0, true);
 #endif
@@ -468,10 +468,10 @@ namespace MDP
                         mdp_int skip_bytes = 0)
     {
 #if !defined(USE_DOUBLE_PRECISION)
-      header.bytes_per_site *= 2;
+      m_header.bytes_per_site *= 2;
       load(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_read_float_as_double, true);
-      header.bytes_per_site /= 2;
+      m_header.bytes_per_site /= 2;
 #else
       load(filename, processIO, max_buffer_size, load_header, skip_bytes, 0, true);
 #endif
@@ -485,10 +485,10 @@ namespace MDP
                         mdp_int skip_bytes = 0)
     {
 #if !defined(USE_DOUBLE_PRECISION)
-      header.bytes_per_site *= 2;
+      m_header.bytes_per_site *= 2;
       save(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_write_float_as_double);
-      header.bytes_per_site /= 2;
+      m_header.bytes_per_site /= 2;
 #else
       save(filename, processIO, max_buffer_size, load_header, skip_bytes, 0);
 #endif

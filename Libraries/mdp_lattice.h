@@ -56,9 +56,9 @@ namespace MDP
     mdp_int stop[_NprocMax_][2];
     mdp_int len_to_send[_NprocMax_][2];
     mdp_int *to_send[_NprocMax_];
-    bool local_random_generator;
 
   private:
+    bool local_random_generator;
     mdp_prng *random_obj;
     mdp_int random_seed;
     // ////////////////////////////////////////////////////
@@ -77,7 +77,7 @@ namespace MDP
 
       // sending length ///////////////////////////
 #if 0 // debugging code below
-    if (Nproc % 2 == 1 || where != default_partitioning0)
+    if (Nproc % 2 == 1 || m_where != default_partitioning0)
     {
 #endif
       for (dp = 1; dp < Nproc; dp++)
@@ -143,9 +143,14 @@ namespace MDP
 #endif
     }
 
+    int (*m_where)(const int *, const int, const int *);
+    void (*m_neighbour)(const int mu, int *x_dw, const int *x, int *x_up, const int ndim, const int *nx);
+
   public:
-    int (*where)(int *, int, int *);
-    void (*neighbour)(int, int *, int *, int *, int, int *);
+    auto &where() const
+    {
+      return m_where;
+    }
 
     /** @brief Calculate global coordinate
      *
@@ -195,14 +200,14 @@ namespace MDP
     /// @param ndim_ dimensions of the lattice
     /// @param nx_ size of the lattice
     /// @param where pointer to a partitioning function
-    /// @parem neighbour_ pointer to a topology function.
+    /// @param neighbour_ pointer to a topology function.
     /// @param random_seed_ seed to be used by the parallel prng
     /// @param next_next_ size of the buffer between neighbour processes
     /// @param local_random_ true is local random generator is required
     mdp_lattice(int ndim_,
                 int nx_[],
-                int (*where_)(int *, int, int *) = default_partitioning0,
-                void (*neighbour_)(int, int *, int *, int *, int, int *) = torus_topology,
+                int (*where_)(const int *, const int, const int *) = default_partitioning0,
+                void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true)
@@ -217,8 +222,8 @@ namespace MDP
     mdp_lattice(int ndim_,
                 int ndir_,
                 int nx_[],
-                int (*where_)(int *, int, int *) = default_partitioning0,
-                void (*neighbour_)(int, int *, int *, int *, int, int *) = torus_topology,
+                int (*where_)(const int *, const int, const int *) = default_partitioning0,
+                void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true)
@@ -233,14 +238,14 @@ namespace MDP
     /// @param ndim_ dimensions of the lattice
     /// @param nx_ size of the lattice
     /// @param where pointer to a partitioning function
-    /// @parem neighbour_ pointer to a topology function.
+    /// @param neighbour_ pointer to a topology function.
     /// @param random_seed_ seed to be used by the parallel prng
     /// @param next_next_ size of the buffer between neighbour processes
     /// @param local_random_ true is local random generator is required
     void allocate_lattice(int ndim_,
                           int nx_[],
-                          int (*where_)(int *, int, int *) = default_partitioning0,
-                          void (*neighbour_)(int, int *, int *, int *, int, int *) = torus_topology,
+                          int (*where_)(const int *, const int, const int *) = default_partitioning0,
+                          void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
                           mdp_int random_seed_ = 0,
                           int next_next_ = 1,
                           bool local_random_ = true)
@@ -253,8 +258,8 @@ namespace MDP
     void allocate_lattice(int ndim_,
                           int ndir_,
                           int nx_[],
-                          int (*where_)(int *, int, int *) = default_partitioning0,
-                          void (*neighbour_)(int, int *, int *, int *, int, int *) = torus_topology,
+                          int (*where_)(const int *, const int, const int *) = default_partitioning0,
+                          void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
                           mdp_int random_seed_ = 0,
                           int next_next_ = 1,
                           bool local_random_ = true)
@@ -276,8 +281,8 @@ namespace MDP
       mdp_int global_idx, old_idx, new_idx;
       ndim = ndim_;
       ndir = ndir_;
-      where = where_;
-      neighbour = neighbour_;
+      m_where = where_;
+      m_neighbour = neighbour_;
       next_next = next_next_;
       nvol = 0;
       nvol_gl = 1;
@@ -326,7 +331,7 @@ namespace MDP
       do
       {
         global_idx = global_coordinate(x);
-        if ((*where)(x, ndim, nx) == ME)
+        if ((*m_where)(x, ndim, nx) == ME)
         {
 #if !defined(MDP_NO_LG)
           local_mdp_sites[nvol] = global_idx;
@@ -343,12 +348,12 @@ namespace MDP
           is_boundary = false;
           for (mu = 0; mu < ndir; mu++)
           {
-            (*neighbour)(mu, x_dw, x, x_up, ndim, nx);
-            if (((*where)(x_up, ndim, nx) >= Nproc) ||
-                ((*where)(x_dw, ndim, nx) >= Nproc))
+            (*m_neighbour)(mu, x_dw, x, x_up, ndim, nx);
+            if (((*m_where)(x_up, ndim, nx) >= Nproc) ||
+                ((*m_where)(x_dw, ndim, nx) >= Nproc))
               error("Incorrect patitioning");
-            if (((*where)(x_up, ndim, nx) == ME) ||
-                ((*where)(x_dw, ndim, nx) == ME))
+            if (((*m_where)(x_up, ndim, nx) == ME) ||
+                ((*m_where)(x_dw, ndim, nx) == ME))
               is_boundary = true;
             // ////////////////////////////////////////////////////
             // cases:
@@ -361,32 +366,32 @@ namespace MDP
             for (nu = 0; nu < ndir; nu++)
               if ((nu != mu) || (next_next > 1))
               {
-                (*neighbour)(nu, x_dw_dw, x_dw, x_dw_up, ndim, nx);
-                (*neighbour)(nu, x_up_dw, x_up, x_up_up, ndim, nx);
-                if (((*where)(x_up_dw, ndim, nx) >= Nproc) ||
-                    ((*where)(x_up_up, ndim, nx) >= Nproc) ||
-                    ((*where)(x_dw_dw, ndim, nx) >= Nproc) ||
-                    ((*where)(x_dw_up, ndim, nx) >= Nproc))
+                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, ndim, nx);
+                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, ndim, nx);
+                if (((*m_where)(x_up_dw, ndim, nx) >= Nproc) ||
+                    ((*m_where)(x_up_up, ndim, nx) >= Nproc) ||
+                    ((*m_where)(x_dw_dw, ndim, nx) >= Nproc) ||
+                    ((*m_where)(x_dw_up, ndim, nx) >= Nproc))
                   error("Incorrect patitioning");
-                if (((*where)(x_up_dw, ndim, nx) == ME) ||
-                    ((*where)(x_up_up, ndim, nx) == ME) ||
-                    ((*where)(x_dw_dw, ndim, nx) == ME) ||
-                    ((*where)(x_dw_up, ndim, nx) == ME))
+                if (((*m_where)(x_up_dw, ndim, nx) == ME) ||
+                    ((*m_where)(x_up_up, ndim, nx) == ME) ||
+                    ((*m_where)(x_dw_dw, ndim, nx) == ME) ||
+                    ((*m_where)(x_dw_up, ndim, nx) == ME))
                   is_boundary = true;
                 if (next_next == 3)
                   for (rho = 0; rho < ndir; rho++)
                   {
-                    (*neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, ndim, nx);
-                    (*neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, ndim, nx);
-                    if (((*where)(x_up_up_up, ndim, nx) >= Nproc) ||
-                        ((*where)(x_up_up_dw, ndim, nx) >= Nproc) ||
-                        ((*where)(x_dw_dw_up, ndim, nx) >= Nproc) ||
-                        ((*where)(x_dw_dw_dw, ndim, nx) >= Nproc))
+                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, ndim, nx);
+                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, ndim, nx);
+                    if (((*m_where)(x_up_up_up, ndim, nx) >= Nproc) ||
+                        ((*m_where)(x_up_up_dw, ndim, nx) >= Nproc) ||
+                        ((*m_where)(x_dw_dw_up, ndim, nx) >= Nproc) ||
+                        ((*m_where)(x_dw_dw_dw, ndim, nx) >= Nproc))
                       error("Incorrect patitioning");
-                    if (((*where)(x_up_up_up, ndim, nx) == ME) ||
-                        ((*where)(x_up_up_dw, ndim, nx) == ME) ||
-                        ((*where)(x_dw_dw_up, ndim, nx) == ME) ||
-                        ((*where)(x_dw_dw_dw, ndim, nx) == ME))
+                    if (((*m_where)(x_up_up_up, ndim, nx) == ME) ||
+                        ((*m_where)(x_up_up_dw, ndim, nx) == ME) ||
+                        ((*m_where)(x_dw_dw_up, ndim, nx) == ME) ||
+                        ((*m_where)(x_dw_dw_dw, ndim, nx) == ME))
                       is_boundary = true;
                   }
               }
@@ -467,7 +472,7 @@ namespace MDP
                     "Unable to read to temporary file");
             global_coordinate(lms_tmp, x);
 #endif
-            if (((*where)(x, ndim, nx) == process) && (compute_parity(x) == np))
+            if (((*m_where)(x, ndim, nx) == process) && (compute_parity(x) == np))
             {
               new_idx = stop[process][np];
 #if !defined(MDP_NO_LG)
@@ -506,7 +511,7 @@ namespace MDP
           co[new_idx][mu] = x[mu];
         for (mu = 0; mu < ndir; mu++)
         {
-          (*neighbour)(mu, x_dw, x, x_up, ndim, nx);
+          (*m_neighbour)(mu, x_dw, x, x_up, ndim, nx);
           if (wh[new_idx] == ME)
           {
             dw[new_idx][mu] = local(global_coordinate(x_dw));

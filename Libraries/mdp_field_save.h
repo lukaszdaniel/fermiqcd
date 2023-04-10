@@ -41,34 +41,34 @@ namespace MDP
     filename = next_to_latest_file(filename);
 
     mdp_int header_size = 0;
-    mdp_int psize = field_components * Tsize;
+    mdp_int psize = m_field_components * m_Tsize;
     mdp_int idx_gl, nvol_gl = lattice().nvol_gl;
     double mytime = mpi.time();
-    header.reset();
+    m_header.reset();
     if (ME == processIO)
     {
       mdp_int *buffer_size = new mdp_int[Nproc];
       mdp_int *buffer_ptr = new mdp_int[Nproc];
-      mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, field_components);
-      T *short_buffer = new T[field_components];
+      mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
+      T *short_buffer = new T[m_field_components];
       int process;
       for (process = 0; process < Nproc; process++)
         buffer_ptr[process] = 0;
       std::cout << "Saving file " << filename
                 << " from process " << processIO
-                << " (buffer = " << max_buffer_size << " sites)" << "\n";
+                << " (buffer = " << max_buffer_size << " sites)\n";
       fflush(stdout);
       FILE *fp = fopen(filename.c_str(), "wb+");
       if (fp == 0)
         error("Unable to open file");
 
-      header.set_time();
+      m_header.set_time();
 
       if (save_header)
       {
         header_size = sizeof(mdp_field_file_header);
         if (fseek(fp, skip_bytes, SEEK_SET) ||
-            fwrite(&header, header_size, 1, fp) != 1)
+            fwrite(&m_header, header_size, 1, fp) != 1)
           error("Unable to write file header");
       }
 
@@ -84,9 +84,9 @@ namespace MDP
           {
             mpi.get(buffer_size[process], process);
             mpi.get(&(large_buffer(process, 0, 0)),
-                    buffer_size[process] * field_components, process);
+                    buffer_size[process] * m_field_components, process);
           }
-          for (int k = 0; k < field_components; k++)
+          for (int k = 0; k < m_field_components; k++)
             short_buffer[k] = large_buffer(process, buffer_ptr[process], k);
           buffer_ptr[process]++;
           if (buffer_ptr[process] == buffer_size[process])
@@ -94,15 +94,15 @@ namespace MDP
         }
         if (process == processIO)
         {
-          for (int k = 0; k < field_components; k++)
-            short_buffer[k] = *(m + lattice().local(idx_gl) * field_components + k);
+          for (int k = 0; k < m_field_components; k++)
+            short_buffer[k] = *(m_data + lattice().local(idx_gl) * m_field_components + k);
         }
         if (process != NOWHERE)
         {
           if (user_write)
           {
             if (!user_write(fp, short_buffer,
-                            field_components * Tsize,
+                            m_field_components * m_Tsize,
                             skip_bytes,
                             idx_gl, lattice()))
               error("propably out ofdisk space");
@@ -134,7 +134,7 @@ namespace MDP
       int process;
       mdp_int buffer_size = 0, idx, idx_gl;
       mdp_int *local_index = new mdp_int[max_buffer_size];
-      mdp_array<T, 2> local_buffer(max_buffer_size, field_components);
+      mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       mdp_request request;
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
@@ -148,11 +148,11 @@ namespace MDP
             ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
         {
           for (idx = 0; idx < buffer_size; idx++)
-            for (int k = 0; k < field_components; k++)
-              local_buffer(idx, k) = *(m + local_index[idx] * field_components + k);
+            for (int k = 0; k < m_field_components; k++)
+              local_buffer(idx, k) = *(m_data + local_index[idx] * m_field_components + k);
           mpi.put(buffer_size, processIO, request);
           mpi.wait(request);
-          mpi.put(&(local_buffer(0, 0)), buffer_size * field_components,
+          mpi.put(&(local_buffer(0, 0)), buffer_size * m_field_components,
                   processIO, request);
           mpi.wait(request);
           buffer_size = 0;

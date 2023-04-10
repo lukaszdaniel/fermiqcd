@@ -29,8 +29,8 @@ namespace MDP
 		if (ME == processIO)
 		{
 			mdp_int *buffer_size = new mdp_int[Nproc];
-			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, field_components);
-			T *short_buffer = new T[field_components];
+			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
+			T *short_buffer = new T[m_field_components];
 			int process;
 			mdp_request request;
 
@@ -61,21 +61,21 @@ namespace MDP
 				if (process != NOWHERE)
 				{
 					if (sort_x != 0)
-						if (fseek(fp, sort_x(lattice(), idx_gl) * Tsize * field_components + header_size, SEEK_SET) < 0)
+						if (fseek(fp, sort_x(lattice(), idx_gl) * m_Tsize * m_field_components + header_size, SEEK_SET) < 0)
 							error("unexpected end of file");
-					if ((fread(short_buffer, Tsize, field_components, fp) -
-						 field_components) != 0)
+					if ((fread(short_buffer, m_Tsize, m_field_components, fp) -
+						 m_field_components) != 0)
 						error("unexpected end of file");
 				}
 				if ((process != NOWHERE) && (process != processIO))
 				{
-					for (int k = 0; k < field_components; k++)
+					for (int k = 0; k < m_field_components; k++)
 						large_buffer(process, buffer_size[process], k) = short_buffer[k];
 					buffer_size[process]++;
 					if (buffer_size[process] == max_buffer_size)
 					{
 						mpi.put(&(large_buffer(process, 0, 0)),
-								max_buffer_size * field_components, process, request);
+								max_buffer_size * m_field_components, process, request);
 						mpi.wait(request);
 						buffer_size[process] = 0;
 					}
@@ -86,15 +86,15 @@ namespace MDP
 								(buffer_size[process] > 0))
 							{
 								mpi.put(&(large_buffer(process, 0, 0)),
-										buffer_size[process] * field_components,
+										buffer_size[process] * m_field_components,
 										process, request);
 								mpi.wait(request);
 							}
 				}
 				if (process == processIO)
 				{
-					for (int k = 0; k < field_components; k++)
-						*(m + lattice().lg[idx_gl] * field_components + k) = short_buffer[k];
+					for (int k = 0; k < m_field_components; k++)
+						*(m_data + lattice().lg[idx_gl] * m_field_components + k) = short_buffer[k];
 				}
 			}
 			delete[] buffer_size;
@@ -106,7 +106,7 @@ namespace MDP
 			int process;
 			mdp_int buffer_size = 0, idx;
 			mdp_int *local_index = new mdp_int[max_buffer_size];
-			mdp_array<T, 2> local_buffer(max_buffer_size, field_components);
+			mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
 				process = where_global(idx_gl);
@@ -118,10 +118,10 @@ namespace MDP
 				if ((buffer_size == max_buffer_size) ||
 					((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
 				{
-					mpi.get(&(local_buffer(0, 0)), buffer_size * field_components, processIO);
+					mpi.get(&(local_buffer(0, 0)), buffer_size * m_field_components, processIO);
 					for (idx = 0; idx < buffer_size; idx++)
-						for (int k = 0; k < field_components; k++)
-							*(m + local_index[idx] * field_components + k) = local_buffer(idx, k);
+						for (int k = 0; k < m_field_components; k++)
+							*(m_data + local_index[idx] * m_field_components + k) = local_buffer(idx, k);
 					buffer_size = 0;
 				}
 			}
@@ -156,8 +156,8 @@ namespace MDP
 		{
 			mdp_int *buffer_size = new mdp_int[Nproc];
 			mdp_int *buffer_ptr = new mdp_int[Nproc];
-			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, field_components);
-			T *short_buffer = new T[field_components];
+			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
+			T *short_buffer = new T[m_field_components];
 			int process;
 			for (process = 0; process < Nproc; process++)
 				buffer_ptr[process] = 0;
@@ -189,9 +189,9 @@ namespace MDP
 					{
 						mpi.get(buffer_size[process], process);
 						mpi.get(&(large_buffer(process, 0, 0)),
-								buffer_size[process] * field_components, process);
+								buffer_size[process] * m_field_components, process);
 					}
-					for (int k = 0; k < field_components; k++)
+					for (int k = 0; k < m_field_components; k++)
 						short_buffer[k] = large_buffer(process, buffer_ptr[process], k);
 					buffer_ptr[process]++;
 					if (buffer_ptr[process] == buffer_size[process])
@@ -199,16 +199,16 @@ namespace MDP
 				}
 				if (process == processIO)
 				{
-					for (int k = 0; k < field_components; k++)
-						short_buffer[k] = *(m + lattice().lg[idx_gl] * field_components + k);
+					for (int k = 0; k < m_field_components; k++)
+						short_buffer[k] = *(m_data + lattice().lg[idx_gl] * m_field_components + k);
 				}
 				if (process != NOWHERE)
 				{
 					if (sort_x != 0)
-						if (fseek(fp, sort_x(lattice(), idx_gl) * Tsize * field_components + header_size, SEEK_SET) < 0)
+						if (fseek(fp, sort_x(lattice(), idx_gl) * m_Tsize * m_field_components + header_size, SEEK_SET) < 0)
 							error("unexpected end of file");
-					if ((fwrite(short_buffer, Tsize, field_components, fp) -
-						 field_components) != 0)
+					if ((fwrite(short_buffer, m_Tsize, m_field_components, fp) -
+						 m_field_components) != 0)
 						error("I cannot write on the file. I am confused !?!?");
 				}
 			}
@@ -224,7 +224,7 @@ namespace MDP
 			int process;
 			mdp_int buffer_size = 0, idx, idx_gl;
 			mdp_int *local_index = new mdp_int[max_buffer_size];
-			mdp_array<T, 2> local_buffer(max_buffer_size, field_components);
+			mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 			mdp_request request;
 			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
@@ -238,11 +238,11 @@ namespace MDP
 					((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
 				{
 					for (idx = 0; idx < buffer_size; idx++)
-						for (int k = 0; k < field_components; k++)
-							local_buffer(idx, k) = *(m + local_index[idx] * field_components + k);
+						for (int k = 0; k < m_field_components; k++)
+							local_buffer(idx, k) = *(m_data + local_index[idx] * m_field_components + k);
 					mpi.put(buffer_size, processIO, request);
 					mpi.wait(request);
-					mpi.put(&(local_buffer(0, 0)), buffer_size * field_components,
+					mpi.put(&(local_buffer(0, 0)), buffer_size * m_field_components,
 							processIO, request);
 					mpi.wait(request);
 					buffer_size = 0;

@@ -29,9 +29,9 @@ namespace MDP
     if (d == -1)
     {
       d = 0;
-      ncomp = field_components;
+      ncomp = m_field_components;
     }
-    if ((ncomp == field_components) && (d != 0))
+    if ((ncomp == m_field_components) && (d != 0))
       error("update(): packet is too big");
     if (np < 2)
       ni = nf = np;
@@ -61,7 +61,7 @@ namespace MDP
         for (idx = 0; idx < length; idx++)
           for (k = 0; k < ncomp; k++)
             dynamic_buffer[idx * ncomp + k] =
-                *(m + lattice().to_send[process][start_to_send + idx] * field_components + d * ncomp + k);
+                *(m_data + lattice().to_send[process][start_to_send + idx] * m_field_components + d * ncomp + k);
         mpi.put(dynamic_buffer, length * ncomp, process, request);
         std::cout.flush();
       }
@@ -74,10 +74,10 @@ namespace MDP
       length = lattice().stop[process][nf] - lattice().start[process][ni];
       if (length > 0)
       {
-        if (ncomp == field_components)
+        if (ncomp == m_field_components)
         {
-          where_to = m + lattice().start[process][ni] * field_components;
-          mpi.get(where_to, length * field_components, process);
+          where_to = m_data + lattice().start[process][ni] * m_field_components;
+          mpi.get(where_to, length * m_field_components, process);
           where_to = 0;
         }
         else
@@ -86,7 +86,7 @@ namespace MDP
           mpi.get(where_to, length * ncomp, process);
           for (idx = 0; idx < length; idx++)
             for (k = 0; k < ncomp; k++)
-              *(m + (lattice().start[process][ni] + idx) * field_components +
+              *(m_data + (lattice().start[process][ni] + idx) * m_field_components +
                 d * ncomp + k) = where_to[idx * ncomp + k];
           delete[] where_to;
         }

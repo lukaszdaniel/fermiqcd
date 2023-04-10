@@ -46,15 +46,15 @@ namespace MDP
       return false;
     mdp_int header_size = 0;
     size_t idx_gl, nvol_gl = lattice().nvol_gl;
-    size_t psize = field_components * Tsize;
+    size_t psize = m_field_components * m_Tsize;
     double mytime = mpi.time();
     bool reversed_header_endianess = false;
     struct stat statbuf;
     if (ME == processIO)
     {
       mdp_int *buffer_size = new mdp_int[Nproc];
-      mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, field_components);
-      T *short_buffer = new T[field_components];
+      mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
+      T *short_buffer = new T[m_field_components];
       int process;
       mdp_request request;
 
@@ -62,7 +62,7 @@ namespace MDP
         buffer_size[process] = 0;
       std::cout << "Loading file " << filename
                 << " from process " << processIO
-                << " (buffer = " << max_buffer_size << " sites)" << "\n";
+                << " (buffer = " << max_buffer_size << " sites)\n";
       fflush(stdout);
       stat(filename.c_str(), &statbuf);
       int total_size = statbuf.st_size;
@@ -87,7 +87,7 @@ namespace MDP
 
         std::cout << "reverse: " << reversed_header_endianess << std::endl;
 
-        if (tmp_header.endianess != header.endianess)
+        if (tmp_header.endianess != m_header.endianess)
           fprintf(stderr, "Unrecognized endianess... trying to read anyway\n");
 
         // UGLY BUT FIXES INCOMPATIBIITY
@@ -97,28 +97,28 @@ namespace MDP
         tmp_header.sites = actual_size;
         header_size += total_size - (tmp_header.bytes_per_site * actual_size + header_size);
 
-        if (tmp_header.ndim != header.ndim)
+        if (tmp_header.ndim != m_header.ndim)
         {
           fprintf(stderr, "mdp_field.load(): wrong ndim\n");
           return false;
         }
         for (i = 0; i < lattice().ndim; i++)
-          if (tmp_header.box[i] != header.box[i])
+          if (tmp_header.box[i] != m_header.box[i])
           {
             fprintf(stderr, "mdp_file.load(): wrong lattice size\n");
             return false;
           }
-        if (tmp_header.bytes_per_site != header.bytes_per_site)
+        if (tmp_header.bytes_per_site != m_header.bytes_per_site)
         {
           fprintf(stderr, "mdp_file.load(): wrong type of field (%i bytes per site?)\n", tmp_header.bytes_per_site);
           return false;
         }
-        if (tmp_header.sites != header.sites)
+        if (tmp_header.sites != m_header.sites)
         {
           fprintf(stderr, "mdp_field.load(): wrong number of sites\n");
           return false;
         }
-        header = tmp_header;
+        m_header = tmp_header;
       }
 
       skip_bytes += header_size;
@@ -134,7 +134,7 @@ namespace MDP
           if (user_read)
           {
             if (!user_read(fp, short_buffer,
-                           field_components * Tsize,
+                           m_field_components * m_Tsize,
                            skip_bytes,
                            idx_gl, lattice()))
               error("unexpected end of file");
@@ -159,13 +159,13 @@ namespace MDP
         }
         if ((process != NOWHERE) && (process != processIO))
         {
-          for (int k = 0; k < field_components; k++)
+          for (int k = 0; k < m_field_components; k++)
             large_buffer(process, buffer_size[process], k) = short_buffer[k];
           buffer_size[process]++;
           if (buffer_size[process] == max_buffer_size)
           {
             mpi.put(&(large_buffer(process, 0, 0)),
-                    max_buffer_size * field_components, process, request);
+                    max_buffer_size * m_field_components, process, request);
             mpi.wait(request);
             buffer_size[process] = 0;
           }
@@ -176,15 +176,15 @@ namespace MDP
                   (buffer_size[process] > 0))
               {
                 mpi.put(&(large_buffer(process, 0, 0)),
-                        buffer_size[process] * field_components,
+                        buffer_size[process] * m_field_components,
                         process, request);
                 mpi.wait(request);
               }
         }
         if (process == processIO)
         {
-          for (int k = 0; k < field_components; k++)
-            *(m + lattice().local(idx_gl) * field_components + k) = short_buffer[k];
+          for (int k = 0; k < m_field_components; k++)
+            *(m_data + lattice().local(idx_gl) * m_field_components + k) = short_buffer[k];
         }
       }
       delete[] buffer_size;
@@ -196,7 +196,7 @@ namespace MDP
       int process;
       mdp_int buffer_size = 0, idx;
       mdp_int *local_index = new mdp_int[max_buffer_size];
-      mdp_array<T, 2> local_buffer(max_buffer_size, field_components);
+      mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
         process = where_global(idx_gl);
@@ -208,10 +208,10 @@ namespace MDP
         if ((buffer_size == max_buffer_size) ||
             ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
         {
-          mpi.get(&(local_buffer(0, 0)), buffer_size * field_components, processIO);
+          mpi.get(&(local_buffer(0, 0)), buffer_size * m_field_components, processIO);
           for (idx = 0; idx < buffer_size; idx++)
-            for (int k = 0; k < field_components; k++)
-              *(m + local_index[idx] * field_components + k) = local_buffer(idx, k);
+            for (int k = 0; k < m_field_components; k++)
+              *(m_data + local_index[idx] * m_field_components + k) = local_buffer(idx, k);
           buffer_size = 0;
         }
       }
