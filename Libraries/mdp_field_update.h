@@ -61,7 +61,7 @@ namespace MDP
         for (idx = 0; idx < length; idx++)
           for (k = 0; k < ncomp; k++)
             dynamic_buffer[idx * ncomp + k] =
-                *(m_data + lattice().to_send[process][start_to_send + idx] * m_field_components + d * ncomp + k);
+                *(m_data.get() + lattice().to_send[process][start_to_send + idx] * m_field_components + d * ncomp + k);
         mpi.put(dynamic_buffer, length * ncomp, process, request);
         std::cout.flush();
       }
@@ -76,7 +76,7 @@ namespace MDP
       {
         if (ncomp == m_field_components)
         {
-          where_to = m_data + lattice().start[process][ni] * m_field_components;
+          where_to = m_data.get() + lattice().start[process][ni] * m_field_components;
           mpi.get(where_to, length * m_field_components, process);
           where_to = 0;
         }
@@ -86,7 +86,7 @@ namespace MDP
           mpi.get(where_to, length * ncomp, process);
           for (idx = 0; idx < length; idx++)
             for (k = 0; k < ncomp; k++)
-              *(m_data + (lattice().start[process][ni] + idx) * m_field_components +
+              *(m_data.get() + (lattice().start[process][ni] + idx) * m_field_components +
                 d * ncomp + k) = where_to[idx * ncomp + k];
           delete[] where_to;
         }

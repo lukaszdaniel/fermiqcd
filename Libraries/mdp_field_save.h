@@ -95,7 +95,7 @@ namespace MDP
         if (process == processIO)
         {
           for (int k = 0; k < m_field_components; k++)
-            short_buffer[k] = *(m_data + lattice().local(idx_gl) * m_field_components + k);
+            short_buffer[k] = *(m_data.get() + lattice().local(idx_gl) * m_field_components + k);
         }
         if (process != NOWHERE)
         {
@@ -149,7 +149,7 @@ namespace MDP
         {
           for (idx = 0; idx < buffer_size; idx++)
             for (int k = 0; k < m_field_components; k++)
-              local_buffer(idx, k) = *(m_data + local_index[idx] * m_field_components + k);
+              local_buffer(idx, k) = *(m_data.get() + local_index[idx] * m_field_components + k);
           mpi.put(buffer_size, processIO, request);
           mpi.wait(request);
           mpi.put(&(local_buffer(0, 0)), buffer_size * m_field_components,

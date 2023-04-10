@@ -12,6 +12,8 @@
 #ifndef MDP_FIELD_
 #define MDP_FIELD_
 
+#include <memory>
+
 namespace MDP
 {
   /// @brief header for field file IO
@@ -105,7 +107,7 @@ namespace MDP
   {
   protected:
     mdp_lattice *m_ptr; /* this points to the lattice for this field  */
-    T *m_data;          /* this is to store the main field            */
+    std::unique_ptr<T[]> m_data;          /* this is to store the main field            */
     mdp_int m_Tsize;
     mdp_int m_size;         /* this is the size of the field in sizeof(T) */
     int m_field_components; /* this is the size of the structure per site */
@@ -157,7 +159,7 @@ namespace MDP
         error("You cannot have a field of zero size!");
       m_size = a.nvol * m_field_components;
       m_Tsize = sizeof(T);
-      m_data = new T[m_size];
+      m_data = std::make_unique<T[]>(m_size);
       if (m_data == nullptr)
         error("OUT OF MEMORY !!!!");
       m_ptr = &a;
@@ -196,8 +198,8 @@ namespace MDP
 
     void deallocate_memory()
     {
-      if (m_data != nullptr)
-        delete[] m_data;
+      // if (m_data != nullptr)
+      //   delete[] m_data;
       m_data = nullptr;
       m_size = m_field_components = 0;
     }
@@ -256,7 +258,7 @@ namespace MDP
         error("You are looking for a site that is not here");
       }
 #endif
-      return m_data + x.idx * m_field_components + i;
+      return m_data.get() + x.idx * m_field_components + i;
     }
 
     /// shifts the entire fields in direction mu of i steps
@@ -435,7 +437,7 @@ namespace MDP
 
     T *physical_address(mdp_int i = 0)
     {
-      return m_data + i;
+      return m_data.get() + i;
     }
 
     /// the most important communication function in MDP.

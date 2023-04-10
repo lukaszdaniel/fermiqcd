@@ -263,11 +263,8 @@ namespace MDP
         }
     }
 
-    // *******************************************************************
-    // ***         Private Method: fork_processes                      ***
-    // ***                                                             ***
-    // ***                                                             ***
-    // *******************************************************************
+    /** @brief Fork processes
+     */
     void fork_processes()
     {
       _processID = 0;
@@ -472,11 +469,10 @@ namespace MDP
         else
         {
           recv_buffer(sourceProcessID, &size, sizeof(size));
-          char *buffer = new char[size + 1];
-          recv_buffer(sourceProcessID, buffer, size);
-          buffer[size] = 0;
-          tagReceived = buffer;
-          delete[] buffer;
+          std::vector<char> buffer(size + 1);
+          recv_buffer(sourceProcessID, buffer.data(), size);
+          buffer[size] = '\0';
+          tagReceived = buffer.data();
 
           if (tagReceived == tag)
           {
