@@ -66,11 +66,11 @@ void error(const char s[])
 class short_field
 {
 public:
-  std::unique_ptr<Complex[]> m;
+  std::unique_ptr<Complex[]> m_data;
   int size;
   int dim[7];
 
-  short_field() : m(nullptr)
+  short_field() : m_data(nullptr)
   {
   }
 
@@ -85,12 +85,12 @@ public:
     dim[4] = b;
     dim[5] = c;
     dim[6] = d;
-    m = std::make_unique<Complex[]>(size);
+    m_data = std::make_unique<Complex[]>(size);
   }
 
   Complex &operator()(int x1, int x2, int x3, int a = 0, int b = 0, int c = 0, int d = 0)
   {
-    return m[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
+    return m_data[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
   }
 };
 
@@ -177,7 +177,7 @@ int main(int argc, char **argv)
               }
             }
 
-      fwrite(U.m.get(), U.size, sizeof(Complex), MDP_fp);
+      fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
     };
     fclose(LUIGI_fp);
     fclose(MDP_fp);

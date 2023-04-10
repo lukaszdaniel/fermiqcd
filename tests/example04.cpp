@@ -21,9 +21,7 @@ mdp_array<mdp_matrix, 3> initialize()
 
 mdp_array<mdp_matrix, 3> f(mdp_array<mdp_matrix, 3> &c)
 {
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   mdp_array<mdp_matrix, 3> d(c.size(0), c.size(1), c.size(2));
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   for (mdp_uint i = 0; i < c.size(0); i++)
     for (mdp_uint j = 0; j < c.size(1); j++)
       for (mdp_uint k = 0; k < c.size(2); k++)
@@ -33,18 +31,12 @@ mdp_array<mdp_matrix, 3> f(mdp_array<mdp_matrix, 3> &c)
 
 int main()
 {
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   mdp_array<mdp_matrix, 3> a, b;
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   a = initialize();
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   b = f(a);
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
 
   int i = 1, j = 2, k = 3;
   std::cout << a(i, j, k) << "\n";
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   std::cout << b(i, j, k) << "\n";
-  std::cerr << __FILE__ << ":" << __LINE__ << std::endl;
   return 0;
 }

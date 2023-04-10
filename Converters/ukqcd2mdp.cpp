@@ -84,11 +84,11 @@ void block_swap_double(double *buffer, long length)
 class short_field
 {
 public:
-  std::unique_ptr<Complex[]> m;
+  std::unique_ptr<Complex[]> m_data;
   long size;
   int dim[7];
 
-  short_field() : m(nullptr)
+  short_field() : m_data(nullptr)
   {
   }
 
@@ -106,13 +106,13 @@ public:
     dim[4] = b;
     dim[5] = c;
     dim[6] = d;
-    m = std::make_unique<Complex[]>(size);
+    m_data = std::make_unique<Complex[]>(size);
   }
 
   Complex &operator()(int x1, int x2, int x3,
                       int a = 0, int b = 0, int c = 0, int d = 0)
   {
-    return m[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
+    return m_data[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
   }
 };
 
@@ -122,7 +122,7 @@ void read_t_gauge(short_field &U, char fileprefix[],
 {
 
   char filename[200];
-  unsigned char *buffer;                        // array to store the raw data
+  std::unique_ptr<unsigned char[]> buffer;      // array to store the raw data
   long file_length = Ndim * 12 * sizeof(float); // file length in bytes (one time slice)
   long bytes_read;                              // monitor how many bytes we read
   int x1, x2, x3, mu, a, b, muf;
@@ -153,13 +153,13 @@ void read_t_gauge(short_field &U, char fileprefix[],
 
   // Open, read, check and close the file! Allocate storage space in
   // buffer[].
-  buffer = new unsigned char[file_length];
+  buffer = std::make_unique<unsigned char[]>(file_length);
   if (buffer == 0x0)
     error("Unable to allocate memory");
   fp = fopen(filename, "rb");
   if (fp == (FILE *)NULL)
     error("Unable to open file");
-  bytes_read = fread(buffer, sizeof(unsigned char), file_length, fp);
+  bytes_read = fread(buffer.get(), sizeof(unsigned char), file_length, fp);
   if (bytes_read != file_length)
     error("Read wrong number of bytes");
   fclose(fp);
@@ -169,22 +169,22 @@ void read_t_gauge(short_field &U, char fileprefix[],
   {
     if (precision == 'F')
     {
-      block_swap((float *)buffer, file_length / sizeof(float));
+      block_swap((float *)buffer.get(), file_length / sizeof(float));
     }
     else
     {
-      block_swap_double((double *)buffer, file_length / sizeof(double));
+      block_swap_double((double *)buffer.get(), file_length / sizeof(double));
     }
   }
 
   // for checking...
   // if (precision == 'F')
   // {
-  //   printf("buffer[0] = %g\n", ((float *)buffer)[0]);
+  //   printf("buffer[0] = %g\n", ((float *)buffer.get())[0]);
   // }
   // else
   // {
-  //   printf("buffer[0] = %g\n", ((double *)buffer)[0]);
+  //   printf("buffer[0] = %g\n", ((double *)buffer.get())[0]);
   // }
 
   // Copy the whole thing into the lattice structure by looping over the
@@ -214,13 +214,13 @@ void read_t_gauge(short_field &U, char fileprefix[],
               // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
               if (precision == 'F')
               {
-                U(x1, x2, x3, mu, b, a) = Complex(((float *)buffer)[buf_index],
-                                                  ((float *)buffer)[buf_index + 1]);
+                U(x1, x2, x3, mu, b, a) = Complex(((float *)buffer.get())[buf_index],
+                                                  ((float *)buffer.get())[buf_index + 1]);
               }
               else
               {
-                U(x1, x2, x3, mu, b, a) = Complex(((double *)buffer)[buf_index],
-                                                  ((double *)buffer)[buf_index + 1]);
+                U(x1, x2, x3, mu, b, a) = Complex(((double *)buffer.get())[buf_index],
+                                                  ((double *)buffer.get())[buf_index + 1]);
               }
               buf_index += 2;
             }
@@ -234,7 +234,7 @@ void read_t_gauge(short_field &U, char fileprefix[],
         }
       }
 
-  delete[] buffer; // free the buffer
+  buffer.reset(); // free the buffer
 
   // for checking...
   // printf("U(0,0,0,0,0,1) = %g + I %g\n", real(U(0,0,0,0,0,1)),
@@ -265,7 +265,7 @@ void read_t_prop(short_field &S, char fileprefix[],
 
   char filename[200];
   FILE *fp;
-  unsigned char *buffer;
+  std::unique_ptr<unsigned char[]> buffer;
   long bytes_to_read;
   long bytes_read;
   int x1, x2, x3;
@@ -289,7 +289,7 @@ void read_t_prop(short_field &S, char fileprefix[],
     bytes_to_read = Nspace * 3 * 4 * 2 * sizeof(double);
 
   // Allocate space to buffer[]
-  buffer = new unsigned char[bytes_to_read];
+  buffer = std::make_unique<unsigned char[]>(bytes_to_read);
   if (buffer == 0x0)
     error("Out of memory");
 
@@ -307,7 +307,7 @@ void read_t_prop(short_field &S, char fileprefix[],
       fp = fopen(filename, "rb");
       if (fp == (FILE *)NULL)
         error("Unable to open file");
-      bytes_read = fread(buffer, sizeof(unsigned char), bytes_to_read, fp);
+      bytes_read = fread(buffer.get(), sizeof(unsigned char), bytes_to_read, fp);
       if (bytes_read != bytes_to_read)
         error("Wrong number of bytes read");
       fclose(fp);
@@ -317,11 +317,11 @@ void read_t_prop(short_field &S, char fileprefix[],
       {
         if (precision == 'F')
         {
-          block_swap((float *)buffer, bytes_to_read / sizeof(float));
+          block_swap((float *)buffer.get(), bytes_to_read / sizeof(float));
         }
         else
         {
-          block_swap_double((double *)buffer, bytes_to_read / sizeof(double));
+          block_swap_double((double *)buffer.get(), bytes_to_read / sizeof(double));
         }
       }
 
@@ -339,22 +339,22 @@ void read_t_prop(short_field &S, char fileprefix[],
                 if (precision == 'F')
                 {
                   S(x1, x2, x3, sink_spin, source_spin, sink_colour, source_colour) =
-                      Complex(((float *)buffer)[buffer_index],
-                              ((float *)buffer)[buffer_index + 1]);
+                      Complex(((float *)buffer.get())[buffer_index],
+                              ((float *)buffer.get())[buffer_index + 1]);
                 }
                 else
                 {
                   S(x1, x2, x3, sink_spin, source_spin, sink_colour, source_colour) =
-                      Complex(((double *)buffer)[buffer_index],
-                              ((double *)buffer)[buffer_index + 1]);
+                      Complex(((double *)buffer.get())[buffer_index],
+                              ((double *)buffer.get())[buffer_index + 1]);
                 }
                 buffer_index += 2;
-              }    // sink_colour;
-            }      // sink spin
-          }        // spatial loops
-    }              // source colour
-  }                // source spin
-  delete[] buffer; // now free the buffer
+              }   // sink_colour;
+            }     // sink spin
+          }       // spatial loops
+    }             // source colour
+  }               // source spin
+  buffer.reset(); // now free the buffer
 }
 
 class _generic_field_file_header
@@ -440,7 +440,7 @@ int main(int argc, char **argv)
     {
       read_t_gauge(U, argv[3], PRECISION, SWAP, x0);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
-      fwrite(U.m.get(), sizeof(Complex), U.size, MDP_fp);
+      fwrite(U.m_data.get(), sizeof(Complex), U.size, MDP_fp);
     }
   }
   if (strcmp(argv[1], "-fermi") == 0)
@@ -450,7 +450,7 @@ int main(int argc, char **argv)
     {
       read_t_prop(U, argv[3], PRECISION, SWAP, x0);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
-      fwrite(U.m.get(), sizeof(Complex), U.size, MDP_fp);
+      fwrite(U.m_data.get(), sizeof(Complex), U.size, MDP_fp);
     }
   }
 

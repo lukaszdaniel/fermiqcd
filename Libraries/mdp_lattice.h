@@ -316,7 +316,7 @@ namespace MDP
       // nvol counts the mdp_sites stored in local_mdp_sites
       // ///////////////////////////////////////////////////////////////////
       //
-      // cases of intereset...:
+      // cases of interest...:
       //
       // next_next < 0 => only local mdp_sites NEW!
       // next_next = 0 => only x+mu and x-mu (wilson) NEW!
@@ -328,6 +328,7 @@ namespace MDP
 
       for (mu = 0; mu < ndim; mu++)
         x[mu] = 0;
+
       do
       {
         global_idx = global_coordinate(x);
@@ -539,14 +540,14 @@ namespace MDP
         if (ME == 0)
         {
           FILE *fp = fopen(mdp_random_seed_filename, "r");
-          if (fp != 0)
+          if (fp != nullptr)
           {
             if (fread(&random_seed_, sizeof(random_seed_), 1, fp) != 1)
               random_seed_ = 0;
             fclose(fp);
           };
           fp = fopen(mdp_random_seed_filename, "w");
-          if (fp != 0)
+          if (fp != nullptr)
           {
             random_seed_ += 1;
             fwrite(&random_seed_, sizeof(random_seed_), 1, fp);

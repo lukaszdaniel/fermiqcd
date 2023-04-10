@@ -43,7 +43,7 @@ namespace MDP
         m_data = std::make_unique<mdp_complex[]>(size());
         if (size() && !m_data)
           error("mdp_matrix::allocate()\nOut of memory");
-        // memset(m_data, 0, size() * sizeof(mdp_complex));
+        // memset(m_data.get(), 0, size() * sizeof(mdp_complex));
       }
     }
 
