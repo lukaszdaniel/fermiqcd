@@ -119,8 +119,8 @@ namespace MDP
      */
     void copyArray(const mdp_array &a)
     {
-      if (size() != a.size())
-        dimension(a.size());
+      // if (size() != a.size())
+      dimension(a.size());
 
       for (mdp_uint i = 0; i < ARRAY_MAX_DIM; i++)
         m_size[i] = a.m_size[i];
