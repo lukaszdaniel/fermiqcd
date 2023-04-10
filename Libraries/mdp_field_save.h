@@ -42,7 +42,7 @@ namespace MDP
 
     mdp_int header_size = 0;
     mdp_int psize = m_field_components * m_Tsize;
-    mdp_int idx_gl, nvol_gl = lattice().nvol_gl;
+    mdp_int idx_gl, nvol_gl = lattice().global_volume();
     double mytime = mpi.time();
     m_header.reset();
     if (ME == processIO)

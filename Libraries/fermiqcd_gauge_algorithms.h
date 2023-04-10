@@ -77,7 +77,7 @@ namespace MDP
       tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
-    return tmp / (U.lattice().nvol_gl * U.nc);
+    return tmp / (U.lattice().global_volume() * U.nc);
   }
 
   /// Compute average plaquette (all planes)
@@ -94,7 +94,7 @@ namespace MDP
           tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
-    return 2.0 * tmp / (U.ndim * (U.ndim - 1) * U.lattice().nvol_gl * U.nc);
+    return 2.0 * tmp / (U.ndim * (U.ndim - 1) * U.lattice().global_volume() * U.nc);
   }
 
   /** @brief Compute average Time plaquette
@@ -392,8 +392,8 @@ namespace MDP
   {
     if ((&(U.lattice()) != &(V.lattice())) || (U.nc != V.nc) || (U.ndim != V.ndim))
       error("fermiqcd_gauge_auxiliary_functions/compute_long_links: U and V are not compatible lattices");
-    if (V.lattice().next_next < length)
-      error("fermiqcd_gauge_auxiliary_functions/compute_long_links: next_next is not big enough");
+    if (V.lattice().boundary_thickness() < length)
+      error("fermiqcd_gauge_auxiliary_functions/compute_long_links: boundary thickness is not big enough");
 
     U.long_links.deallocate_memory();
     U.long_links.allocate_mdp_nmatrix_field(V.lattice(), U.ndim, U.nc, U.nc);
@@ -564,7 +564,7 @@ namespace MDP
       }
     }
     forallsites(x) sum += trace(psi1(x));
-    return sum / (U.lattice().nvol_gl * U.nc);
+    return sum / (U.lattice().global_volume() * U.nc);
   }
 
   /// Takes a field U, a site x, a path d of length and compute the product

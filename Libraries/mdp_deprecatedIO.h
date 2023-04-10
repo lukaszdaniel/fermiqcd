@@ -23,7 +23,7 @@ namespace MDP
 							mdp_int (*sort_x)(mdp_lattice &, mdp_int),
 							int auto_switch_endianess)
 	{
-		mdp_int idx_gl, nvol_gl = lattice().nvol_gl;
+		mdp_int idx_gl, nvol_gl = lattice().global_volume();
 		double mytime = mpi.time();
 		int try_switch_endianess = false;
 		if (ME == processIO)
@@ -150,7 +150,7 @@ namespace MDP
 							mdp_int (*sort_x)(mdp_lattice &, mdp_int),
 							const char *mode)
 	{
-		mdp_int idx_gl, nvol_gl = lattice().nvol_gl;
+		mdp_int idx_gl, nvol_gl = lattice().global_volume();
 		double mytime = mpi.time();
 		if (ME == processIO)
 		{

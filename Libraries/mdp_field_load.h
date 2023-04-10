@@ -45,7 +45,7 @@ namespace MDP
     if (filename == "?")
       return false;
     mdp_int header_size = 0;
-    size_t idx_gl, nvol_gl = lattice().nvol_gl;
+    size_t idx_gl, nvol_gl = lattice().global_volume();
     size_t psize = m_field_components * m_Tsize;
     double mytime = mpi.time();
     bool reversed_header_endianess = false;

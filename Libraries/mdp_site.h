@@ -277,8 +277,7 @@ namespace MDP
      */
     mdp_site operator=(mdp_vector v)
     {
-      set(v[0], v[1], v[2], v[3], v[4],
-          v[5], v[6], v[7], v[8], v[9]);
+      set(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9]);
       return *this;
     }
 
@@ -300,8 +299,9 @@ namespace MDP
       return y;
     }
 
-    /// returns a site similar to the present but
-    /// each coordinates mu of the site shifted according to -v[mu]
+    /** @brief returns a site similar to the present but
+     * each coordinates mu of the site shifted according to -v[mu]
+     */
     mdp_site operator-(mdp_vector v)
     {
       mdp_site y = *this;

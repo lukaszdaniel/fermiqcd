@@ -340,7 +340,7 @@ namespace MDP
       double action_gauge = 0.0, action_fermi = 0.0;
       mdp_site x(U.lattice());
       FermiClass inverse_F(F);
-      double c = coeff["beta"] * (U.ndim * (U.ndim - 1) * U.lattice().nvol_gl) / 2;
+      double c = coeff["beta"] * (U.ndim * (U.ndim - 1) * U.lattice().global_volume()) / 2;
       action_gauge = -c * average_plaquette(U);
       if (coeff["dynamical_fermions"] > 0)
       {

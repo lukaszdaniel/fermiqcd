@@ -193,7 +193,7 @@ namespace MDP
     mdp_lattice()
     {
       nvol = 0;
-      random_obj = 0;
+      m_random_obj = nullptr;
     }
 
     /// declares a lattice object
@@ -213,7 +213,7 @@ namespace MDP
                 bool local_random_ = true)
     {
       nvol = 0;
-      random_obj = 0;
+      m_random_obj = nullptr;
       allocate_lattice(ndim_, ndim_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
@@ -229,7 +229,7 @@ namespace MDP
                 bool local_random_ = true)
     {
       nvol = 0;
-      random_obj = 0;
+      m_random_obj = nullptr;
       allocate_lattice(ndim_, ndir_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
@@ -649,13 +649,6 @@ namespace MDP
       return ndir;
     }
 
-    /** @brief number of sites of the lattice
-     */
-    mdp_int size() const
-    {
-      return nvol_gl;
-    }
-
     /** @brief size of the lattice in direction mu
      */
     mdp_int size(const int mu) const
@@ -694,7 +687,14 @@ namespace MDP
       return nvol_gl;
     }
 
-    mdp_suint boundary_thickness() const
+    /** @brief number of sites of the lattice
+     */
+    mdp_int size() const
+    {
+      return nvol_gl;
+    }
+
+    mdp_int boundary_thickness() const
     {
       return next_next;
     }
