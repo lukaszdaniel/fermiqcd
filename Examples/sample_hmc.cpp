@@ -12,6 +12,7 @@ public:
   mdp_real trajectory_length, beta, timestep, mass;
   mdp_real cg_absolute_precision, cg_relative_precision, cg_max_steps;
   std::string representation;
+
   parameters()
   {
     L = 6;
@@ -35,6 +36,7 @@ public:
     // representation="SYMMETRIC";
     read_in = 0;
   }
+
   void read(std::string filename)
   {
     L = (int)val(prompt(filename, "L", "8"));

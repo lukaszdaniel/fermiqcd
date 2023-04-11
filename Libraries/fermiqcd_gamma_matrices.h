@@ -59,9 +59,10 @@ namespace MDP
   void define_base_matrices(std::string convention = "FERMILAB")
   {
     begin_function("define_base_matrices");
-    int i, j, a, b, mu, nu; // was int i,j,k;
-    for (i = 0; i < 4; i++)
+
+    for (int i = 0; i < 4; i++)
       Gamma[i].dimension(4, 4);
+
     Gamma5.dimension(4, 4);
 
     if (convention == "UKQCD")
@@ -215,7 +216,7 @@ namespace MDP
 
     /* sigma matrices SU(2) generators */
 
-    for (i = 0; i < 4; i++)
+    for (int i = 0; i < 4; i++)
       sigma[i].dimension(2, 2);
     sigma[0](0, 0) = +1;
     sigma[0](1, 1) = +1;
@@ -228,7 +229,7 @@ namespace MDP
 
     /* Lambda matrices SU(3) generators */
 
-    for (i = 0; i < 9; i++)
+    for (int i = 0; i < 9; i++)
       Lambda[i].dimension(3, 3);
 
     Lambda[0](0, 0) = +1;
@@ -264,8 +265,8 @@ namespace MDP
 
     mdp_matrix tmp;
 
-    for (i = 0; i < 4; i++)
-      for (j = 0; j < 4; j++)
+    for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++)
       {
         Sigma[i][j].dimension(4, 4);
         if (i != j)
@@ -276,8 +277,8 @@ namespace MDP
 
     /* Filling arrays for fast Gamma multiplication */
 
-    for (a = 0; a < 4; a++)
-      for (b = 0; b < 4; b++)
+    for (int a = 0; a < 4; a++)
+      for (int b = 0; b < 4; b++)
       {
         if (Gamma5(a, b) != mdp_complex(0, 0))
         {
@@ -288,11 +289,11 @@ namespace MDP
         }
       }
 
-    for (mu = 0; mu < 4; mu++)
+    for (int mu = 0; mu < 4; mu++)
     {
       tmp = Gamma[mu] * Gamma5;
-      for (a = 0; a < 4; a++)
-        for (b = 0; b < 4; b++)
+      for (int a = 0; a < 4; a++)
+        for (int b = 0; b < 4; b++)
         {
           if (Gamma[mu](a, b) != mdp_complex(0, 0))
           {
@@ -313,10 +314,10 @@ namespace MDP
 
     /* Filling arrays for fast Sigma multiplication */
 
-    for (mu = 0; mu < 4; mu++)
-      for (nu = 0; nu < 4; nu++)
-        for (a = 0; a < 4; a++)
-          for (b = 0; b < 4; b++)
+    for (int mu = 0; mu < 4; mu++)
+      for (int nu = 0; nu < 4; nu++)
+        for (int a = 0; a < 4; a++)
+          for (int b = 0; b < 4; b++)
           {
             if (Sigma[mu][nu](a, b) != mdp_complex(0, 0))
             {
@@ -329,20 +330,20 @@ namespace MDP
 
     // Filling G16;
 
-    for (a = 0; a < 4; a++)
+    for (int a = 0; a < 4; a++)
     {
       G16_idx[0][a] = a;
       G16_val[0][a] = 1;
       G16_idx[1][a] = Gamma5_idx[a];
       G16_val[1][a] = Gamma5_val[a];
-      for (mu = 0; mu < 4; mu++)
+      for (int mu = 0; mu < 4; mu++)
       {
         G16_idx[2 + mu][a] = Gamma_idx[mu][a];
         G16_val[2 + mu][a] = Gamma_val[mu][a];
         G16_idx[6 + mu][a] = Gamma_idx[mu][Gamma5_idx[a]];
         G16_val[6 + mu][a] = Gamma_val[mu][Gamma5_idx[a]] * Gamma5_val[a];
       }
-      for (mu = 1; mu < 4; mu++)
+      for (int mu = 1; mu < 4; mu++)
       {
         G16_idx[9 + mu][a] = Gamma_idx[0][Gamma_idx[mu][a]];
         G16_val[9 + mu][a] = Gamma_val[0][Gamma_idx[mu][a]] * Gamma_val[mu][a];

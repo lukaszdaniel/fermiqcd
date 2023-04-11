@@ -14,9 +14,11 @@
 
 namespace MDP
 {
-  /// The only communication function for a field object
-  /// To be invoked every time field variables are assigned and
-  /// Need to be sinchronized between the parallel processes
+  /** @brief The only communication function for a field object
+   *
+   * To be invoked every time field variables are assigned and
+   * need to be synchronized between the parallel processes
+   */
   template <class T>
   void mdp_field<T>::update(int np, int d, int ncomp)
   {
@@ -24,25 +26,34 @@ namespace MDP
     T *where_to = 0;
     mpi.comm_time -= mpi.time();
     mdp_request request;
-    mdp_int start_to_send, dp, process, length, idx;
-    int k, ni, nf;
+    mdp_int start_to_send = 0;
+    mdp_int process = 0;
+    mdp_int length = 0;
+    int ni, nf;
+
     if (d == -1)
     {
       d = 0;
       ncomp = m_field_components;
     }
+
     if ((ncomp == m_field_components) && (d != 0))
       error("update(): packet is too big");
+
     if (np < 2)
+    {
       ni = nf = np;
+    }
     else
     {
       ni = 0;
       nf = 1;
     }
-    for (dp = 1; dp < Nproc; dp++)
+
+    for (mdp_int dp = 1; dp < Nproc; dp++)
     {
       process = (ME + dp) % Nproc;
+
       if (np < 2)
       {
         length = lattice().len_to_send[process][np];
@@ -51,23 +62,31 @@ namespace MDP
       {
         length = lattice().len_to_send[process][0] + lattice().len_to_send[process][1];
       }
+
       if (np == 1)
+      {
         start_to_send = lattice().len_to_send[process][0];
+      }
       else
+      {
         start_to_send = 0;
+      }
+
       if (length > 0)
       {
         dynamic_buffer = new T[length * ncomp];
-        for (idx = 0; idx < length; idx++)
-          for (k = 0; k < ncomp; k++)
+        for (mdp_int idx = 0; idx < length; idx++)
+          for (mdp_int k = 0; k < ncomp; k++)
+          {
             dynamic_buffer[idx * ncomp + k] =
                 *(m_data.get() + lattice().to_send[process][start_to_send + idx] * m_field_components + d * ncomp + k);
+          }
         mpi.put(dynamic_buffer, length * ncomp, process, request);
         std::cout.flush();
       }
       else
       {
-        dynamic_buffer = 0;
+        dynamic_buffer = nullptr;
       }
 
       process = (ME - dp + Nproc) % Nproc;
@@ -78,22 +97,25 @@ namespace MDP
         {
           where_to = m_data.get() + lattice().start[process][ni] * m_field_components;
           mpi.get(where_to, length * m_field_components, process);
-          where_to = 0;
+          where_to = nullptr;
         }
         else
         {
           where_to = new T[length * ncomp];
           mpi.get(where_to, length * ncomp, process);
-          for (idx = 0; idx < length; idx++)
-            for (k = 0; k < ncomp; k++)
+          for (mdp_int idx = 0; idx < length; idx++)
+            for (mdp_int k = 0; k < ncomp; k++)
+            {
               *(m_data.get() + (lattice().start[process][ni] + idx) * m_field_components +
                 d * ncomp + k) = where_to[idx * ncomp + k];
+            }
           delete[] where_to;
         }
       }
 
       process = (ME + dp) % Nproc;
-      if (dynamic_buffer != 0)
+
+      if (dynamic_buffer != nullptr)
       {
         mpi.wait(request);
         delete[] dynamic_buffer;

@@ -28,12 +28,11 @@ namespace MDP
   void dft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
            mdp_int offset = 0, mdp_int coeff = 1)
   {
-    int i, j;
     mdp_complex phase = exp(2.0 * Pi * I * sign / n);
-    for (i = 0; i < n; i++)
+    for (int i = 0; i < n; i++)
     {
       fft_f[offset + coeff * i] = 0;
-      for (j = 0; j < n; j++)
+      for (int j = 0; j < n; j++)
         fft_f[offset + coeff * i] += f[offset + coeff * j] * pow(phase, i * j);
       fft_f[offset + coeff * i] /= std::sqrt(n);
     }

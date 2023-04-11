@@ -14,21 +14,6 @@
 
 namespace MDP
 {
-  /**
-   * Best way to save a field to a VTK file.
-   * @param filename
-   *   String giving name of file to create
-   * @param t
-   *   Int that specifies which timeslice to save.  Value of -1 saves all timeslices.
-   * @param component
-   *   Int specifying which component to save.  Value of -1 saves all components.
-   * @processIO
-   *   Int naming the ID of processor that should perform the save
-   * @param ASCII
-   *   Bool flag to save data in ASCII when true, binary when false
-   * @return
-   *   Returns true on success, throws an error for unexpected conditions.
-   */
   template <class T>
   bool mdp_field<T>::save_vtk(std::string filename,
                               int t,
@@ -42,12 +27,10 @@ namespace MDP
 
     int max_buffer_size = 1024;
     int timeslice;
-    // mdp_int header_size = 0;
-    // mdp_int psize = m_field_components * m_Tsize;
-    mdp_int idx_gl, nvol_gl = lattice().global_volume();
+    mdp_int nvol_gl = lattice().global_volume();
     double mytime = mpi.time();
     m_header.reset();
-    if (lattice().ndim < 3 || lattice().ndim > 4)
+    if (lattice().n_dimensions() < 3 || lattice().n_dimensions() > 4)
       error("mdp_field::save_vtk only works for ndim=3 and 4");
     if (ME == processIO)
     {
@@ -62,18 +45,17 @@ namespace MDP
                 << " from process " << processIO
                 << " (buffer = " << max_buffer_size << " sites)\n";
       fflush(stdout);
-      FILE *fp = 0;
+      FILE *fp = nullptr;
 
       float fval;
       char tmp[1024];
       char header[1024];
-      // int skip_bytes=0;
 
       int space_volume = lattice().size() / lattice().size(0);
       int LZ = lattice().size(1);
       int LY = lattice().size(2);
       int LX = lattice().size(3);
-      if (lattice().ndim == 3)
+      if (lattice().n_dimensions() == 3)
       {
         space_volume = lattice().size();
         LZ = lattice().size(0);
@@ -81,12 +63,6 @@ namespace MDP
         LX = lattice().size(2);
         t = -1;
       }
-      int fc;
-      // int fc2;
-      // if (component == -1)
-      //   fc2 = fc = m_field_components;
-      // else
-      //   fc2 = fc = component;
 
       snprintf(header, 1024,
                "# vtk DataFile Version 2.0\n"
@@ -104,7 +80,7 @@ namespace MDP
       fp = fopen(filename_tmp.c_str(), "wb");
       fwrite(header, sizeof(char), strlen(header), fp);
 
-      for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+      for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
         process = where_global(idx_gl);
         if ((process != NOWHERE) && (process != processIO))
@@ -134,9 +110,9 @@ namespace MDP
             snprintf(header, 1024, "\nSCALARS scalars_t%i float\nLOOKUP_TABLE default\n", timeslice);
             fwrite(header, sizeof(char), strlen(header), fp);
           }
-          if (t < 0 || timeslice == t || lattice().ndim == 3)
+          if (t < 0 || timeslice == t || lattice().n_dimensions() == 3)
           {
-            for (fc = 0; fc < m_field_components; fc++)
+            for (mdp_int fc = 0; fc < m_field_components; fc++)
               if (component == -1 || fc == component)
               {
                 fval = (float)short_buffer[fc];
@@ -169,11 +145,11 @@ namespace MDP
     else
     {
       int process;
-      mdp_int buffer_size = 0, idx, idx_gl;
+      mdp_int buffer_size = 0;
       mdp_int *local_index = new mdp_int[max_buffer_size];
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       mdp_request request;
-      for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+      for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
         process = where_global(idx_gl);
         if (process == ME)
@@ -184,7 +160,7 @@ namespace MDP
         if ((buffer_size == max_buffer_size) ||
             ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
         {
-          for (idx = 0; idx < buffer_size; idx++)
+          for (mdp_int idx = 0; idx < buffer_size; idx++)
             for (int k = 0; k < m_field_components; k++)
               local_buffer(idx, k) = *(m_data.get() + local_index[idx] * m_field_components + k);
           mpi.put(buffer_size, processIO, request);

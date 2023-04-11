@@ -16,10 +16,11 @@
 
 namespace MDP
 {
-  /// @brief header for field file IO
-  ///
-  /// Used to store the binary file haeader that precedes the data
-  /// When storing an object of class mdp_field<> in a file
+  /** @brief header for field file IO
+   *
+   * Used to store the binary file header that precedes the data
+   * when storing an object of class mdp_field<> in a file
+   */
   class mdp_field_file_header
   {
   public:
@@ -49,11 +50,12 @@ namespace MDP
       time_t time_and_date;
       time(&time_and_date);
       strcpy(creation_date, ctime(&time_and_date));
-      for (mdp_uint i = strlen(creation_date) + 1; i < sizeof(creation_date); i++)
+      for (size_t i = strlen(creation_date) + 1; i < sizeof(creation_date); i++)
         creation_date[i] = '\0';
     }
 
-    /// tries to swicth the endianess of the numerical members of the header
+    /** @brief tries to switch the endianess of the numerical members of the header
+     */
     friend bool switch_header_endianess(mdp_field_file_header &header)
     {
       if (header.endianess == mdp_local_endianess)
@@ -87,32 +89,50 @@ namespace MDP
     }
   };
 
-  /// @brief most generic field object
-  ///
-  /// Example:
-  /// @verbatim
-  ///    int box[]={10,10,10};
-  ///    mdp_lattice lattice(3,box);
-  ///    mdp_field<mdp_real> psi(lattice,10);
-  ///    mdp_site x(lattice);
-  ///    forallsites(x)
-  ///      for(int i=0; i<10; i++)
-  ///         psi(x,i)=0.0;
-  ///    psi.update(); // synchronization
-  ///    psi.save("myfield");
-  ///    psi.load("myfield");
-  /// @endverbatim
+  /** @brief most generic field object
+   *
+   * mdp_field is a vector field of n components of type T.
+   * scalar field is a special case where n = 1.
+   *
+   * Example:
+   * @verbatim
+   *    int box[]={10,10,10};
+   *    mdp_lattice lattice(3,box);
+   *    mdp_field<mdp_real> psi(lattice,10);
+   *    mdp_site x(lattice);
+   *    forallsites(x)
+   *      for(int i=0; i<10; i++)
+   *         psi(x,i)=0.0;
+   *    psi.update(); // synchronization
+   *    psi.save("myfield");
+   *    psi.load("myfield");
+   * @endverbatim
+   */
   template <class T>
   class mdp_field
   {
+  private:
+    void fill_header()
+    {
+      int i;
+      m_header.bytes_per_site = m_Tsize * m_field_components;
+      m_header.sites = lattice().size();
+      m_header.ndim = lattice().n_dimensions();
+      for (i = 0; i < lattice().n_dimensions(); i++)
+        m_header.box[i] = lattice().size(i);
+      for (; i < 10; i++)
+        m_header.box[i] = 0;
+    }
+
   protected:
     mdp_lattice *m_ptr;          /* this points to the lattice for this field  */
     std::unique_ptr<T[]> m_data; /* this is to store the main field            */
     mdp_int m_Tsize;
     mdp_int m_size;         /* this is the size of the field in sizeof(T) */
-    int m_field_components; /* this is the size of the structure per site */
+    int m_field_components; /* this is the number of field components per site */
 
-    /// the field file header, contains data only if field was read from file
+    /** @brief the field file header, contains data only if field was read from file
+     */
     mdp_field_file_header m_header;
 
   public:
@@ -184,18 +204,6 @@ namespace MDP
     }
 #endif
 
-    void fill_header()
-    {
-      int i;
-      m_header.bytes_per_site = m_Tsize * m_field_components;
-      m_header.sites = lattice().size();
-      m_header.ndim = lattice().ndim;
-      for (i = 0; i < lattice().ndim; i++)
-        m_header.box[i] = lattice().size(i);
-      for (; i < 10; i++)
-        m_header.box[i] = 0;
-    }
-
     void deallocate_memory()
     {
       // if (m_data != nullptr)
@@ -234,12 +242,15 @@ namespace MDP
       return m_data[x.idx() * m_field_components + i];
     }
 
+    /** @brief returns component i of the vector of objects T stored at site x
+     */
     T &operator()(int idx, int i = 0)
     {
       return m_data[idx * m_field_components + i];
     }
 
-    /// retruns the address of the vector of objects T stored at site x
+    /** @brief returns the address of the vector of objects T stored at site x
+     */
     T *operator[](mdp_site x)
     {
       return address(x, 0);
@@ -261,14 +272,17 @@ namespace MDP
       return m_data.get() + x.idx() * m_field_components + i;
     }
 
-    /// shifts the entire fields in direction mu of i steps
-    /// (i can be positive or negative)
-    /// note that if i=1, field(x-mu) is assigned to field(x)
-    /// function requires communication
+    /** @brief shifts the entire fields in direction mu of i steps
+     *
+     * (i can be positive or negative)
+     * note that if i=1, field(x-mu) is assigned to field(x)
+     * function requires communication
+     */
     void shift(int i, int mu)
     {
       mdp_field tmp(lattice(), m_field_components);
       mdp_site x(lattice());
+
       while (i != 0)
       {
         update();
@@ -300,8 +314,8 @@ namespace MDP
           m_size != a.m_size ||
           m_field_components != a.m_field_components)
         error("mdp_field: operator=() incompatible fields");
-      mdp_int i = 0;
-      for (; i < m_size; i++)
+
+      for (mdp_int i = 0; i < m_size; i++)
         m_data[i] = a.m_data[i];
     }
 
@@ -337,33 +351,31 @@ namespace MDP
         m_data[i] /= a;
     }
 
-    /// returns by reference the lattice this field is defined on
+    /** @brief returns by reference the lattice this field is defined on
+     */
     mdp_lattice &lattice() const
     {
       return *m_ptr;
     }
 
-    /// returns the total memory in bytes occupied by the field
+    /** @brief returns the total memory in bytes occupied by the field
+     */
     mdp_int field_size()
     {
       return lattice().size() * m_field_components * m_Tsize;
     }
 
-    /// returns the total space in bytes required to store the field
+    /** @brief returns the total space in bytes required to store the field
+     */
     mdp_int file_size()
     {
       return sizeof(mdp_field_file_header) + field_size();
     }
 
     /** @brief only used by mdp_field::load() and mdp_field::save()
-     *
-     * @todo simplify this
      */
     int where_global(mdp_int global_idx)
     {
-      // int x[10];
-      // lattice().translate_to_coordinates(global_idx, x);
-      // return (*(lattice().where()))(x, lattice().ndim, lattice().nx);
       return lattice().where_global(global_idx);
     }
 
@@ -398,17 +410,13 @@ namespace MDP
         p = (int64_t *)address(x);
         for (mdp_int i = 0; i < m_Tsize * m_field_components / 8; i++)
         {
-          std::cout << '.';
           switch_endianess_byte8(*(p + i));
         }
       }
     }
 
-    // ////////////////////////////////////
-    // functions to access member variables
-    // ////////////////////////////////////
-
-    /// lattice size in units of sizeof(T)
+    /** @brief lattice size in units of sizeof(T)
+     */
     mdp_int global_size()
     {
       return m_field_components * lattice().global_volume();
@@ -443,22 +451,28 @@ namespace MDP
       return m_data.get() + i;
     }
 
-    /// the most important communication function in MDP.
-    /// it must be called after each field variables are modified.
-    /// it restores the syncronization between parallel processes.
-    void update(int np = 2, int d = -1, int size = 1);
+    /** @brief communication function for a field object
+     *
+     * The only communication function for a field object
+     * to be invoked every time field variables are assigned and
+     * need to be synchronized between the parallel processes
+     * The most important communication function in MDP.
+     * it must be called after each field variables are modified.
+     * it restores the synchronization between parallel processes.
+     */
+    void update(int np = 2, int d = -1, int ncomp = 1);
 
-    // ////////////////////////////////////////////////////////////
-    // IO funcyions: load(filename, processIO, buffersize)
-    //               save(filename, processIO, buffersize)
-    // filename should possibly include the path.
-    // processIO is the process that physically perform the IO.
-    // buffersize if the size of the buffer associated to the
-    //   communication to each process. buffersize*Nproc
-    //   should fit in the memory of processIO.
-    //   By default buffersize=1024 and it works reasonably fast.
-    // ///////////////////////////////////////////////////////////
-
+    /** @brief Best way to load a field
+     *
+     * IO functions: load(filename, processIO, buffersize)
+     *               save(filename, processIO, buffersize)
+     * filename should possibly include the path.
+     * processIO is the process that physically perform the IO.
+     * buffersize if the size of the buffer associated to the
+     *   communication to each process. buffersize*Nproc
+     *   should fit in the memory of processIO.
+     *   By default buffersize=1024 and it works reasonably fast.
+     */
     bool load(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
@@ -467,6 +481,8 @@ namespace MDP
               bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr,
               bool try_switch_endianess = true);
 
+    /** @brief Best way to save a field
+     */
     bool save(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
@@ -474,6 +490,15 @@ namespace MDP
               mdp_int skip_bytes = 0,
               bool (*user_write)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr);
 
+    /** @brief Best way to save a field to a VTK file
+     *
+     * @param filename String giving name of file to create
+     * @param t Int that specifies which timeslice to save.  Value of -1 saves all timeslices.
+     * @param component Int specifying which component to save.  Value of -1 saves all components.
+     * @param processIO Int naming the ID of processor that should perform the save
+     * @param ASCII Bool flag to save data in ASCII when true, binary when false
+     * @return Returns true on success, throws an error for unexpected conditions.
+     */
     bool save_vtk(std::string filename,
                   int t = -1,
                   int component = -1,
