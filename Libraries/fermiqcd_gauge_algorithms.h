@@ -57,7 +57,7 @@ namespace MDP
     mdp_site x(U.lattice());
     mdp_int how_many = 0;
 
-    for (x.idx = 0; x.idx < U.lattice().enclosing_volume(); x.idx++)
+    for (x.set_local(0); x.idx() < U.lattice().enclosing_volume(); x.next()) 
       for (int mu = 0; mu < U.ndim; mu++)
         if (max(inv(U(x, mu)) - hermitian(U(x, mu))) > precision)
           how_many++;

@@ -94,7 +94,7 @@ namespace MDP
 				if (process == processIO)
 				{
 					for (int k = 0; k < m_field_components; k++)
-						*(m_data.get() + lattice().lg[idx_gl] * m_field_components + k) = short_buffer[k];
+						*(m_data.get() + lattice().local_from_global[idx_gl] * m_field_components + k) = short_buffer[k];
 				}
 			}
 			delete[] buffer_size;
@@ -112,7 +112,7 @@ namespace MDP
 				process = where_global(idx_gl);
 				if (process == ME)
 				{
-					local_index[buffer_size] = lattice().lg[idx_gl];
+					local_index[buffer_size] = lattice().local_from_global[idx_gl];
 					buffer_size++;
 				}
 				if ((buffer_size == max_buffer_size) ||
@@ -200,7 +200,7 @@ namespace MDP
 				if (process == processIO)
 				{
 					for (int k = 0; k < m_field_components; k++)
-						short_buffer[k] = *(m_data.get() + lattice().lg[idx_gl] * m_field_components + k);
+						short_buffer[k] = *(m_data.get() + lattice().local_from_global[idx_gl] * m_field_components + k);
 				}
 				if (process != NOWHERE)
 				{
@@ -231,7 +231,7 @@ namespace MDP
 				process = where_global(idx_gl);
 				if (process == ME)
 				{
-					local_index[buffer_size] = lattice().lg[idx_gl];
+					local_index[buffer_size] = lattice().local_from_global[idx_gl];
 					buffer_size++;
 				}
 				if ((buffer_size == max_buffer_size) ||

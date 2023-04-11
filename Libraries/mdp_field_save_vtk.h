@@ -60,8 +60,7 @@ namespace MDP
         buffer_ptr[process] = 0;
       std::cout << "Saving file " << filename
                 << " from process " << processIO
-                << " (buffer = " << max_buffer_size << " sites)"
-                << "\n";
+                << " (buffer = " << max_buffer_size << " sites)\n";
       fflush(stdout);
       FILE *fp = 0;
 

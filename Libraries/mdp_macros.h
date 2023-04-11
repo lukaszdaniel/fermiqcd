@@ -23,22 +23,22 @@ namespace MDP
 
 /// Loop on all local sites of this process with given parity
 /// If pofx is EVENODD=2 then loops on even and odd sites
-#define forallsitesofparity(x, pofx)                             \
-     for (x.start(), x.idx = x.lattice().start[ME][pofx % 2];    \
-          x.idx < x.lattice().stop[ME][(pofx + (pofx % 2)) / 2]; \
-          x.idx++)
+#define forallsitesofparity(x, pofx)                               \
+     for (x.start(), x.set_local(x.lattice().start[ME][pofx % 2]); \
+          x.idx() < x.lattice().stop[ME][(pofx + (pofx % 2)) / 2]; \
+          x.next())
 
 /// Loop on all sites stored by this process
 #define forallsitesandcopies(x) \
-     for (x.start(), x.idx = 0; x.idx < x.lattice().enclosing_volume(); x.idx++)
+     for (x.start(), x.set_local(0); x.idx() < x.lattice().enclosing_volume(); x.next())
 
 /// Loop on all sites stored by this process with given parity
 // if pofx is EVENODD=2 then loops on even and odd sites
-#define forallsitesandcopiesofparity(x, pofx)                                \
-     for (int __process = 0; __process < Nproc; __process++)                 \
-          for (x.start(), x.idx = x.lattice().start[__process][pofx % 2];    \
-               x.idx < x.lattice().stop[__process][(pofx + (pofx % 2)) / 2]; \
-               x.idx++)
+#define forallsitesandcopiesofparity(x, pofx)                                  \
+     for (int __process = 0; __process < Nproc; __process++)                   \
+          for (x.start(), x.set_local(x.lattice().start[__process][pofx % 2]); \
+               x.idx() < x.lattice().stop[__process][(pofx + (pofx % 2)) / 2]; \
+               x.next())
 
 /// Returns the unique id of this process
 #define ME mpi.me()

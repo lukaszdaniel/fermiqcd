@@ -303,6 +303,7 @@ namespace MDP
         return *(address(x, (mu * nc + i) * nc + j));
       if (sign == -1)
         return conj(*(address(x - mu, (mu * nc + j) * nc + i)));
+
       error("call to U(x,0,mu,i,j)");
 
       return mdp_complex(0, 0);
@@ -325,7 +326,7 @@ namespace MDP
 
       for (mu = 1; mu < x.lattice().ndim; mu++)
       {
-        block = x.block[mu];
+        block = x.block(mu);
         if (block != 0)
         {
           a = M(0, 0);
@@ -445,7 +446,7 @@ namespace MDP
 
       for (mu = 1; mu < x.lattice().ndim; mu++)
       {
-        block = x.block[mu];
+        block = x.block(mu);
         if (block != 0)
         {
           if (mu == 1 && block == 1)

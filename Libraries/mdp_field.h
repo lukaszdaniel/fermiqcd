@@ -231,7 +231,7 @@ namespace MDP
         error("You are looking for a site that is not here");
       }
 #endif
-      return m_data[x.idx * m_field_components + i];
+      return m_data[x.idx() * m_field_components + i];
     }
 
     T &operator()(int idx, int i = 0)
@@ -258,7 +258,7 @@ namespace MDP
         error("You are looking for a site that is not here");
       }
 #endif
-      return m_data.get() + x.idx * m_field_components + i;
+      return m_data.get() + x.idx() * m_field_components + i;
     }
 
     /// shifts the entire fields in direction mu of i steps
@@ -355,12 +355,16 @@ namespace MDP
       return sizeof(mdp_field_file_header) + field_size();
     }
 
-    /// only used by mdp_field::load() and mdp_field::save()
-    int where_global(mdp_int i)
+    /** @brief only used by mdp_field::load() and mdp_field::save()
+     *
+     * @todo simplify this
+     */
+    int where_global(mdp_int global_idx)
     {
-      int x[10];
-      lattice().global_coordinate(i, x);
-      return (*(lattice().where()))(x, lattice().ndim, lattice().nx);
+      // int x[10];
+      // lattice().translate_to_coordinates(global_idx, x);
+      // return (*(lattice().where()))(x, lattice().ndim, lattice().nx);
+      return lattice().where_global(global_idx);
     }
 
     void switch_endianess_4bytes()

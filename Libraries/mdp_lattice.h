@@ -37,39 +37,42 @@ namespace MDP
   class mdp_lattice
   {
   public:
-    int ndim;        /* number of dimensions       */
-    int ndir;        /* number of directions       */
-    int next_next;   /* 1 or 2 is the thikness of the boudary */
-    int *nx;         /* box containing the lattice */
-    mdp_int nvol;    /* local volume               */
-    mdp_int nvol_gl; /* global volume              */
-    mdp_int nvol_in; /* internal volume            */
-    mdp_int *gl;     /* map local to global        */
-    mdp_int *lg;     /* map global to local        */
-    FILE *lg_file;   /* temporary file to store lg if not enough memory */
-    mdp_int **up;    /* move up in local index     */
-    mdp_int **dw;    /* move dw in local index     */
-    int **co;        /* coordinate x in local idx  */
-    int *wh;         /* in which process? is idx   */
-    int *parity;     /* parity of local mdp_site idx   */
+    int ndim; /* number of dimensions       */
+    int ndir; /* number of directions       */
+  private:
+    int next_next; /* 1 or 2 is the thickness of the boudary */
+    int *nx;       /* box containing the lattice */
+  private:
+    mdp_int nvol;               /* local volume               */
+    mdp_int nvol_gl;            /* global volume              */
+    mdp_int nvol_in;            /* internal volume            */
+    mdp_int *global_from_local; /* map local to global        */
+    mdp_int *local_from_global; /* map global to local        */
+    FILE *lg_file;              /* temporary file to store local_from_global map if not enough memory */
+    mdp_int **up;               /* move up in local index     */
+    mdp_int **dw;               /* move dw in local index     */
+    int **co;                   /* coordinate x in local idx  */
+    int *wh;                    /* in which process? is idx   */
+    int *parity;                /* parity of local mdp_site idx   */
+  public:
     mdp_int start[_NprocMax_][2];
     mdp_int stop[_NprocMax_][2];
     mdp_int len_to_send[_NprocMax_][2];
     mdp_int *to_send[_NprocMax_];
 
   private:
-    bool local_random_generator;
-    mdp_prng *random_obj;
-    mdp_int random_seed;
-    // ////////////////////////////////////////////////////
-    // share information with other processors
-    // ////////////////////////////////////////////////////
+    bool m_local_random_generator;
+    std::unique_ptr<mdp_prng[]> m_random_obj;
+    mdp_int m_random_seed;
+
+    /** @brief share information with other processors
+     */
     void communicate_results_to_all_processes()
     {
       mdp_int buffer[2];
       mdp_int *dynamic_buffer;
       mdp_int length;
-      int dp, process, np, idx;
+      int process;
 #if 0
     int process2;
 #endif
@@ -80,10 +83,10 @@ namespace MDP
     if (Nproc % 2 == 1 || m_where != default_partitioning0)
     {
 #endif
-      for (dp = 1; dp < Nproc; dp++)
+      for (int dp = 1; dp < Nproc; dp++)
       {
         process = (ME + dp) % Nproc;
-        for (np = 0; np < 2; np++)
+        for (int np = 0; np < 2; np++)
           buffer[np] = stop[process][np] - start[process][np];
         mpi.put(buffer, 2, process, request);
         process = (ME - dp + Nproc) % Nproc;
@@ -92,14 +95,14 @@ namespace MDP
         process = (ME + dp) % Nproc;
         length = stop[process][1] - start[process][0];
         dynamic_buffer = new mdp_int[length];
-        for (idx = 0; idx < length; idx++)
-          dynamic_buffer[idx] = gl[start[process][0] + idx];
+        for (int idx = 0; idx < length; idx++)
+          dynamic_buffer[idx] = global_from_local[start[process][0] + idx];
         mpi.put(dynamic_buffer, length, process, request);
         process = (ME - dp + Nproc) % Nproc;
         length = len_to_send[process][0] + len_to_send[process][1];
         to_send[process] = new mdp_int[length];
         mpi.get(to_send[process], length, process);
-        for (idx = 0; idx < length; idx++)
+        for (int idx = 0; idx < length; idx++)
           to_send[process][idx] = local(to_send[process][idx]);
         mpi.wait(request);
         delete[] dynamic_buffer;
@@ -108,7 +111,7 @@ namespace MDP
     }
     else
     {
-      for (dp = 1; dp < Nproc; dp++)
+      for (int dp = 1; dp < Nproc; dp++)
       {
         for (int k = 0; k < 2; k++)
         {
@@ -118,13 +121,13 @@ namespace MDP
 
           if ((k + ME) % 2 == 0)
           {
-            for (np = 0; np < 2; np++)
+            for (int np = 0; np < 2; np++)
               buffer[np] = stop[process][np] - start[process][np];
             mpi.put(buffer, 2, process, request);
             length = stop[process][1] - start[process][0];
             dynamic_buffer = new mdp_int[length];
-            for (idx = 0; idx < length; idx++)
-              dynamic_buffer[idx] = gl[start[process][0] + idx];
+            for (int idx = 0; idx < length; idx++)
+              dynamic_buffer[idx] = global_from_local[start[process][0] + idx];
             mpi.put(dynamic_buffer, length, process, request);
           }
           else
@@ -133,7 +136,7 @@ namespace MDP
             length = len_to_send[process2][0] + len_to_send[process2][1];
             to_send[process2] = new mdp_int[length];
             mpi.get(to_send[process2], length, process);
-            for (idx = 0; idx < length; idx++)
+            for (int idx = 0; idx < length; idx++)
               to_send[process2][idx] = local(to_send[process2][idx]);
           }
         }
@@ -152,6 +155,26 @@ namespace MDP
       return m_where;
     }
 
+    /** Which process point x[] is in?
+     *
+     * @param x Point x[] to be inspected
+     * @return Process ID
+     */
+    int where(const int *x) const
+    {
+      return (*m_where)(x, ndim, nx);
+    }
+
+    mdp_int process(mdp_int local_idx) const
+    {
+      return wh[local_idx];
+    }
+
+    mdp_int coordinate(mdp_int local_idx, mdp_int mu) const
+    {
+      return co[local_idx][mu];
+    }
+
     /** @brief Calculate global coordinate
      *
      * Calculate ordinal (global) coordinate of
@@ -160,8 +183,7 @@ namespace MDP
     mdp_int global_coordinate(int *x)
     {
       mdp_int global_idx = 0;
-      int mu;
-      for (mu = 0; mu < ndim - 1; mu++)
+      for (int mu = 0; mu < ndim - 1; mu++)
         global_idx = (global_idx + x[mu]) * nx[mu + 1];
       return global_idx + x[ndim - 1];
     }
@@ -171,7 +193,7 @@ namespace MDP
      * Given the ordinal coordinate, recover
      * x = (x0, x1, ... x9) coordinates.
      */
-    void global_coordinate(mdp_int global_idx, int *x)
+    void translate_to_coordinates(mdp_int global_idx, int *x)
     {
       for (int mu = ndim - 1; mu > 0; mu--)
       {
@@ -181,11 +203,18 @@ namespace MDP
       x[0] = global_idx;
     }
 
+    mdp_int where_global(mdp_int global_idx)
+    {
+      int x[10];
+      translate_to_coordinates(global_idx, x);
+
+      return (*m_where)(x, ndim, nx);
+    }
+
     int compute_parity(int *x)
     {
-      int mu = 0;
       int p = 0;
-      for (mu = 0; mu < ndim; mu++)
+      for (int mu = 0; mu < ndim; mu++)
         p = p + x[mu];
       return (p % 2);
     }
@@ -193,7 +222,7 @@ namespace MDP
     mdp_lattice()
     {
       nvol = 0;
-      random_obj = nullptr;
+      m_random_obj = nullptr;
     }
 
     /// declares a lattice object
@@ -213,7 +242,7 @@ namespace MDP
                 bool local_random_ = true)
     {
       nvol = 0;
-      random_obj = nullptr;
+      m_random_obj = nullptr;
       allocate_lattice(ndim_, ndim_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
@@ -229,7 +258,7 @@ namespace MDP
                 bool local_random_ = true)
     {
       nvol = 0;
-      random_obj = nullptr;
+      m_random_obj = nullptr;
       allocate_lattice(ndim_, ndir_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
@@ -265,7 +294,7 @@ namespace MDP
                           bool local_random_ = true)
     {
       mpi.begin_function("allocate_lattice");
-      local_random_generator = local_random_;
+      m_local_random_generator = local_random_;
       if (ndim_ != ndir_)
         mpi << "It is getting complicated: you have ndim!=ndir\n";
       deallocate_memory();
@@ -276,9 +305,9 @@ namespace MDP
       // //////////////////////////////////////////////////////////////////
       mpi << "Initializing a mdp_lattice...\n";
 
-      int mu, nu, rho, process, np;
+      int rho;
       bool is_boundary;
-      mdp_int global_idx, old_idx, new_idx;
+      mdp_int global_idx, new_idx;
       ndim = ndim_;
       ndir = ndir_;
       m_where = where_;
@@ -288,7 +317,7 @@ namespace MDP
       nvol_gl = 1;
 
       mpi << "Lattice dimension: " << nx_[0];
-      for (mu = 1; mu < ndim; mu++)
+      for (int mu = 1; mu < ndim; mu++)
         mpi << " x " << nx_[mu];
       mpi << "\n";
 
@@ -297,7 +326,7 @@ namespace MDP
       ///////////////////////////////////////////////////////////////////
       nx = new int[ndim];
 
-      for (mu = 0; mu < ndim; mu++)
+      for (int mu = 0; mu < ndim; mu++)
         nvol_gl *= (nx[mu] = nx_[mu]);
       int x[10];
       int x_up[10], x_up_dw[10], x_up_up[10], x_up_up_dw[10], x_up_up_up[10];
@@ -326,7 +355,7 @@ namespace MDP
       //
       // ///////////////////////////////////////////////////////////////////
 
-      for (mu = 0; mu < ndim; mu++)
+      for (int mu = 0; mu < ndim; mu++)
         x[mu] = 0;
 
       do
@@ -347,7 +376,7 @@ namespace MDP
         else if (next_next >= 0)
         {
           is_boundary = false;
-          for (mu = 0; mu < ndir; mu++)
+          for (int mu = 0; mu < ndir; mu++)
           {
             (*m_neighbour)(mu, x_dw, x, x_up, ndim, nx);
             if (((*m_where)(x_up, ndim, nx) >= Nproc) ||
@@ -364,7 +393,7 @@ namespace MDP
             // One may want to optimize case 3. Is was thought for
             // improved staggered fermions.
             // ////////////////////////////////////////////////////
-            for (nu = 0; nu < ndir; nu++)
+            for (int nu = 0; nu < ndir; nu++)
               if ((nu != mu) || (next_next > 1))
               {
                 (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, ndim, nx);
@@ -411,7 +440,7 @@ namespace MDP
           }
         }
         x[0]++;
-        for (mu = 0; mu < ndim - 1; mu++)
+        for (int mu = 0; mu < ndim - 1; mu++)
           if (x[mu] >= nx[mu])
           {
             x[mu] = 0;
@@ -426,25 +455,25 @@ namespace MDP
       dw = new mdp_int *[nvol];
       up = new mdp_int *[nvol];
       co = new int *[nvol];
-      for (new_idx = 0; new_idx < nvol; new_idx++)
+      for (int new_idx = 0; new_idx < nvol; new_idx++)
       {
         dw[new_idx] = new mdp_int[ndir];
         up[new_idx] = new mdp_int[ndir];
         co[new_idx] = new int[ndir];
       }
-      gl = new mdp_int[nvol];
+      global_from_local = new mdp_int[nvol];
 #if !defined(MDP_NO_LG)
-      lg = new mdp_int[nvol_gl];
+      local_from_global = new mdp_int[nvol_gl];
 #else
       lg_file = tmpfile();
       if (lg_file == 0)
         error("mdp_lattice::mdp_lattice()\n"
-              "Unable to create temporary lg file");
+              "Unable to create temporary local_from_global file");
 #endif
       wh = new int[nvol];
-      for (global_idx = 0; global_idx < nvol_gl; global_idx++)
+      for (int global_idx = 0; global_idx < nvol_gl; global_idx++)
 #if !defined(MDP_NO_LG)
-        lg[global_idx] = NOWHERE;
+        local_from_global[global_idx] = NOWHERE;
 #else
         if (fseek(lg_file, global_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
             fwrite(&NOWHERE, sizeof(mdp_int), 1, lg_file) != 1)
@@ -454,31 +483,31 @@ namespace MDP
       parity = new int[nvol];
       // /////////////////////////////////////////////////////////////////
       start[0][0] = stop[0][0] = 0;
-      for (process = 0; process < Nproc; process++)
+      for (int process = 0; process < Nproc; process++)
       {
         if (process > 0)
           start[process][0] = stop[process][0] = stop[process - 1][1];
-        for (np = 0; np < 2; np++)
+        for (int np = 0; np < 2; np++)
         {
           if (np > 0)
             start[process][1] = stop[process][1] = stop[process][0];
-          for (old_idx = 0; old_idx < nvol; old_idx++)
+          for (int old_idx = 0; old_idx < nvol; old_idx++)
           {
 #if !defined(MDP_NO_LG)
-            global_coordinate(local_mdp_sites[old_idx], x);
+            translate_to_coordinates(local_mdp_sites[old_idx], x);
 #else
             if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
                 fread(&lms_tmp, sizeof(mdp_int), 1, lms_file) != 1)
               error("mdp_lattice::allocate_lattice()\n"
                     "Unable to read to temporary file");
-            global_coordinate(lms_tmp, x);
+            translate_to_coordinates(lms_tmp, x);
 #endif
             if (((*m_where)(x, ndim, nx) == process) && (compute_parity(x) == np))
             {
               new_idx = stop[process][np];
 #if !defined(MDP_NO_LG)
-              lg[local_mdp_sites[old_idx]] = new_idx;
-              gl[new_idx] = local_mdp_sites[old_idx];
+              local_from_global[local_mdp_sites[old_idx]] = new_idx;
+              global_from_local[new_idx] = local_mdp_sites[old_idx];
 #else
 
               if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
@@ -489,7 +518,7 @@ namespace MDP
                   fwrite(&new_idx, sizeof(mdp_int), 1, lg_file) != 1)
                 error("mdp_lattice::allocate_lattice()\n"
                       "Unable to write to temporary file");
-              gl[new_idx] = lms_tmp;
+              global_from_local[new_idx] = lms_tmp;
 #endif
               wh[new_idx] = process;
               parity[new_idx] = compute_parity(x);
@@ -505,12 +534,14 @@ namespace MDP
       fclose(lms_file);
 #endif
       // /////////////////////////
-      for (new_idx = 0; new_idx < nvol; new_idx++)
+      for (int new_idx = 0; new_idx < nvol; new_idx++)
       {
-        global_coordinate(gl[new_idx], x);
-        for (mu = 0; mu < ndim; mu++)
+        translate_to_coordinates(global_from_local[new_idx], x);
+
+        for (int mu = 0; mu < ndim; mu++)
           co[new_idx][mu] = x[mu];
-        for (mu = 0; mu < ndir; mu++)
+
+        for (int mu = 0; mu < ndir; mu++)
         {
           (*m_neighbour)(mu, x_dw, x, x_up, ndim, nx);
           if (wh[new_idx] == ME)
@@ -582,17 +613,16 @@ namespace MDP
       if (nvol == 0)
         return;
 
-      int process, new_idx;
       delete[] nx;
 
-      for (process = 0; process < Nproc; process++)
+      for (int process = 0; process < Nproc; process++)
         if (process != ME)
         {
           if (len_to_send[process][0] + len_to_send[process][1] != 0)
             delete[] to_send[process];
         }
 
-      for (new_idx = 0; new_idx < nvol; new_idx++)
+      for (int new_idx = 0; new_idx < nvol; new_idx++)
       {
         delete[] dw[new_idx];
         delete[] up[new_idx];
@@ -603,29 +633,29 @@ namespace MDP
       delete[] up;
       delete[] co;
       delete[] wh;
-      delete[] gl;
+      delete[] global_from_local;
 #ifndef MDP_NO_LG
-      delete[] lg;
+      delete[] local_from_global;
 #else
       fclose(lg_file);
 #endif
       delete[] parity;
-      delete[] random_obj;
+      // delete[] m_random_obj;
     }
 
     /** @brief initialize random number generator for each local mdp_site
      */
     void initialize_random(mdp_int random_seed_ = 0)
     {
-      random_seed = random_seed_;
-      if (local_random_generator)
+      m_random_seed = random_seed_;
+      if (m_local_random_generator)
       {
         mdp << "Using a local random generator\n";
-        if (random_obj != 0)
-          delete[] random_obj;
-        random_obj = new mdp_prng[nvol_in];
+        // if (m_random_obj != nullptr)
+        //   delete[] m_random_obj;
+        m_random_obj = std::make_unique<mdp_prng[]>(nvol_in);
         for (mdp_int idx = 0; idx < nvol_in; idx++)
-          random_obj[idx].initialize(gl[idx + start[ME][0]] + random_seed);
+          m_random_obj[idx].initialize(global_from_local[idx + start[ME][0]] + m_random_seed);
       }
     }
 
@@ -709,13 +739,13 @@ namespace MDP
       return dw[idx][mu];
     }
 
-    mdp_int local(mdp_int idx) const
+    mdp_int local(mdp_int global_idx) const
     {
 #ifndef MDP_NO_LG
-      return lg[idx];
+      return local_from_global[global_idx];
 #else
       mdp_int lg_tmp;
-      if (fseek(lg_file, idx * sizeof(mdp_int), SEEK_SET) != 0 ||
+      if (fseek(lg_file, global_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
           fread(&lg_tmp, sizeof(mdp_int), 1, lg_file) != 1)
         error("mdp_lattice::allocate_lattice()\n"
               "Unable to read to temporary file");
@@ -723,9 +753,9 @@ namespace MDP
 #endif
     }
 
-    mdp_int global(mdp_int idx) const
+    mdp_int global(mdp_int local_idx) const
     {
-      return gl[idx];
+      return global_from_local[local_idx];
     }
 
     int site_parity(const mdp_int idx) const
