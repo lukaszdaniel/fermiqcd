@@ -13,6 +13,7 @@
 #define MDP_LATTICE_
 
 #define MDP_LATTICE
+// #define MDP_NO_LG
 
 #include <string>
 
@@ -38,22 +39,23 @@ namespace MDP
   {
   public:
     int ndim; /* number of dimensions       */
-    int ndir; /* number of directions       */
   private:
-    int next_next; /* 1 or 2 is the thickness of the boudary */
-    int *nx;       /* box containing the lattice */
-  private:
+    int ndir;                   /* number of directions       */
+    int next_next;              /* 1 or 2 is the thickness of the boudary */
+    int *nx;                    /* box containing the lattice */
     mdp_int nvol;               /* local volume               */
     mdp_int nvol_gl;            /* global volume              */
     mdp_int nvol_in;            /* internal volume            */
     mdp_int *global_from_local; /* map local to global        */
     mdp_int *local_from_global; /* map global to local        */
-    FILE *lg_file;              /* temporary file to store local_from_global map if not enough memory */
-    mdp_int **up;               /* move up in local index     */
-    mdp_int **dw;               /* move dw in local index     */
-    int **co;                   /* coordinate x in local idx  */
-    int *wh;                    /* in which process? is idx   */
-    int *parity;                /* parity of local mdp_site idx   */
+#ifdef MDP_NO_LG
+    FILE *lg_file; /* temporary file to store local_from_global map if not enough memory */
+#endif
+    mdp_int **up; /* move up in local index     */
+    mdp_int **dw; /* move dw in local index     */
+    int **co;     /* coordinate x in local idx  */
+    int *wh;      /* in which process? is idx   */
+    int *parity;  /* parity of local mdp_site idx   */
   public:
     mdp_int start[_NprocMax_][2];
     mdp_int stop[_NprocMax_][2];
@@ -327,16 +329,19 @@ namespace MDP
       nx = new int[ndim];
 
       for (int mu = 0; mu < ndim; mu++)
+      {
         nvol_gl *= (nx[mu] = nx_[mu]);
+      }
+
       int x[10];
       int x_up[10], x_up_dw[10], x_up_up[10], x_up_up_dw[10], x_up_up_up[10];
       int x_dw[10], x_dw_up[10], x_dw_dw[10], x_dw_dw_dw[10], x_dw_dw_up[10];
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
       mdp_int *local_mdp_sites = new mdp_int[nvol_gl];
 #else
       mdp_int lms_tmp = 0;
       FILE *lms_file = tmpfile();
-      if (lms_file == 0)
+      if (lms_file == nullptr)
         error("mdp_lattice::mdp_lattice()\n"
               "Unable to create temporary lms file");
 #endif
@@ -363,7 +368,7 @@ namespace MDP
         global_idx = global_coordinate(x);
         if ((*m_where)(x, ndim, nx) == ME)
         {
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
           local_mdp_sites[nvol] = global_idx;
 #else
           if (fseek(lms_file, nvol * sizeof(mdp_int), SEEK_SET) != 0 ||
@@ -428,7 +433,7 @@ namespace MDP
           }
           if (is_boundary == true)
           {
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
             local_mdp_sites[nvol] = global_idx;
 #else
             if (fseek(lms_file, nvol * sizeof(mdp_int), SEEK_SET) != 0 ||
@@ -462,17 +467,17 @@ namespace MDP
         co[new_idx] = new int[ndir];
       }
       global_from_local = new mdp_int[nvol];
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
       local_from_global = new mdp_int[nvol_gl];
 #else
       lg_file = tmpfile();
-      if (lg_file == 0)
+      if (lg_file == nullptr)
         error("mdp_lattice::mdp_lattice()\n"
               "Unable to create temporary local_from_global file");
 #endif
       wh = new int[nvol];
       for (int global_idx = 0; global_idx < nvol_gl; global_idx++)
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
         local_from_global[global_idx] = NOWHERE;
 #else
         if (fseek(lg_file, global_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
@@ -493,7 +498,7 @@ namespace MDP
             start[process][1] = stop[process][1] = stop[process][0];
           for (int old_idx = 0; old_idx < nvol; old_idx++)
           {
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
             translate_to_coordinates(local_mdp_sites[old_idx], x);
 #else
             if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
@@ -505,7 +510,7 @@ namespace MDP
             if (((*m_where)(x, ndim, nx) == process) && (compute_parity(x) == np))
             {
               new_idx = stop[process][np];
-#if !defined(MDP_NO_LG)
+#ifndef MDP_NO_LG
               local_from_global[local_mdp_sites[old_idx]] = new_idx;
               global_from_local[new_idx] = local_mdp_sites[old_idx];
 #else
@@ -527,8 +532,8 @@ namespace MDP
           }
         }
       }
-      // deallcate temporary array
-#if !defined(MDP_NO_LG)
+      // deallocate temporary array
+#ifndef MDP_NO_LG
       delete[] local_mdp_sites;
 #else
       fclose(lms_file);
