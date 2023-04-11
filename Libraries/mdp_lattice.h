@@ -193,7 +193,7 @@ namespace MDP
     mdp_lattice()
     {
       nvol = 0;
-      m_random_obj = nullptr;
+      random_obj = nullptr;
     }
 
     /// declares a lattice object
@@ -213,7 +213,7 @@ namespace MDP
                 bool local_random_ = true)
     {
       nvol = 0;
-      m_random_obj = nullptr;
+      random_obj = nullptr;
       allocate_lattice(ndim_, ndim_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
@@ -229,7 +229,7 @@ namespace MDP
                 bool local_random_ = true)
     {
       nvol = 0;
-      m_random_obj = nullptr;
+      random_obj = nullptr;
       allocate_lattice(ndim_, ndir_, nx_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
     }
