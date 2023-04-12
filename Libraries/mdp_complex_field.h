@@ -102,19 +102,22 @@ namespace MDP
   {
   public:
     mdp_complex_field() {}
+
     mdp_complex_field(mdp_lattice &lattice, int n = 1)
     {
       allocate_field(lattice, n);
     }
+
     mdp_complex_field(const mdp_complex_field &other) : mdp_field<mdp_complex>(other)
     {
     }
+
     void operator=(const mdp_complex_field &psi)
     {
       if (&lattice() != &psi.lattice() ||
           m_size != psi.m_size ||
           m_field_components != psi.m_field_components)
-        error("mdp_field: operator=() impatible fields");
+        error("mdp_field: operator=() incompatible fields");
 
       mdp_int i = 0;
 
@@ -221,7 +224,7 @@ namespace MDP
     }
 
     friend mdp_real norm_square(mdp_complex_field &psi,
-                                       int parity = EVENODD)
+                                int parity = EVENODD)
     {
       double n2 = 0;
       mdp_int i_min = psi.physical_local_start(parity);
@@ -250,8 +253,8 @@ namespace MDP
     }
 
     friend mdp_complex scalar_product(mdp_complex_field &psi,
-                                             mdp_complex_field &chi,
-                                             int parity = EVENODD)
+                                      mdp_complex_field &chi,
+                                      int parity = EVENODD)
     {
       mdp_complex n2 = 0;
       mdp_int i_min = psi.physical_local_start(parity);
@@ -285,8 +288,8 @@ namespace MDP
     }
 
     friend mdp_real real_scalar_product(mdp_complex_field &psi,
-                                               mdp_complex_field &chi,
-                                               int parity = EVENODD)
+                                        mdp_complex_field &chi,
+                                        int parity = EVENODD)
     {
 
       double n2 = 0;
@@ -321,8 +324,8 @@ namespace MDP
     }
 
     friend mdp_real imag_scalar_product(mdp_complex_field &psi,
-                                               mdp_complex_field &chi,
-                                               int parity = EVENODD)
+                                        mdp_complex_field &chi,
+                                        int parity = EVENODD)
     {
       double n2 = 0;
       mdp_int i_min = psi.physical_local_start(parity);
@@ -355,9 +358,9 @@ namespace MDP
     }
 
     friend void mdp_add_scaled_field(mdp_complex_field &psi,
-                                            mdp_real alpha,
-                                            mdp_complex_field &chi,
-                                            int parity = EVENODD)
+                                     mdp_real alpha,
+                                     mdp_complex_field &chi,
+                                     int parity = EVENODD)
     {
       mdp_int i_min = psi.physical_local_start(parity);
       mdp_int i_max = psi.physical_local_stop(parity);
@@ -385,9 +388,9 @@ namespace MDP
     }
 
     friend void mdp_add_scaled_field(mdp_complex_field &psi,
-                                            mdp_complex alpha,
-                                            mdp_complex_field &chi,
-                                            int parity = EVENODD)
+                                     mdp_complex alpha,
+                                     mdp_complex_field &chi,
+                                     int parity = EVENODD)
     {
       mdp_int i_min = psi.physical_local_start(parity);
       mdp_int i_max = psi.physical_local_stop(parity);
@@ -398,14 +401,14 @@ namespace MDP
     }
 
     friend mdp_complex operator*(mdp_complex_field &psi,
-                                        mdp_complex_field &chi)
+                                 mdp_complex_field &chi)
     {
       return scalar_product(psi, chi);
     }
 
     friend mdp_real relative_residue(mdp_complex_field &p,
-                                            mdp_complex_field &q,
-                                            int parity = EVENODD)
+                                     mdp_complex_field &q,
+                                     int parity = EVENODD)
     {
       double residue = 0, num = 0, den = 0;
       mdp_int i_min = p.physical_local_start(parity);
@@ -467,7 +470,7 @@ namespace MDP
                         bool load_header = true,
                         mdp_int skip_bytes = 0)
     {
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
       m_header.bytes_per_site *= 2;
       load(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_read_float_as_double, true);
@@ -484,7 +487,7 @@ namespace MDP
                         bool load_header = true,
                         mdp_int skip_bytes = 0)
     {
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
       m_header.bytes_per_site *= 2;
       save(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_write_float_as_double);

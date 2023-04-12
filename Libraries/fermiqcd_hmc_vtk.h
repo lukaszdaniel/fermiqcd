@@ -186,7 +186,7 @@ namespace MDP
         to_V = to_U; // default
         lambda.resize(g.ngenerators);
         for (int a = 0; a < lambda.size(); a++)
-          lambda[a] = g.lambda[a];
+          lambda[a] = g.lambda(a);
       }
       else if (coeff["representation"] == SYMMETRIC)
       {
@@ -195,7 +195,7 @@ namespace MDP
         int dimrep = U.nc * (U.nc + 1) / 2;
         lambda.resize(g.ngenerators);
         for (int a = 0; a < lambda.size(); a++)
-          lambda[a] = g.lambda[a];
+          lambda[a] = g.lambda(a);
         to_V = new GaugeClass(U.lattice(), dimrep);
         mdp_matrix tmp(U.nc, U.nc);
         S.resize(g.ngenerators);
@@ -226,7 +226,7 @@ namespace MDP
         numgen = g.ngenerators;
         lambda.resize(g.ngenerators);
         for (int a = 0; a < lambda.size(); a++)
-          lambda[a] = g.lambda[a];
+          lambda[a] = g.lambda(a);
         to_V = to_U;
       }
       /*

@@ -23,15 +23,17 @@ namespace MDP
   // int main() {
   //  SU_Generators g(3);
   //  for(int a=0; a<g.ngenerators; a++)
-  //    cout << "g=" << g.lambda[a] << endl;
+  //    cout << "g=" << g.lambda(a) << endl;
   //  return 0;
   // }
   class SU_Generators
   {
   public:
-    std::vector<mdp_matrix> lambda;
-    int n;
-    int ngenerators;
+    const int n;
+    const int ngenerators;
+
+  private:
+    std::vector<mdp_matrix> m_lambda;
 
     mdp_matrix build_matrix(int a)
     {
@@ -66,14 +68,16 @@ namespace MDP
       return I * std::sqrt(2) * mat;
     }
 
-    SU_Generators(int N)
+  public:
+    SU_Generators(int N) : n(N), ngenerators(n * n - 1), m_lambda(ngenerators)
     {
-      n = N;
-      ngenerators = (n * n - 1);
-      lambda.resize(ngenerators);
-
       for (int a = 0; a < ngenerators; a++)
-        lambda[a] = build_matrix(a);
+        m_lambda[a] = build_matrix(a);
+    }
+
+    const mdp_matrix &lambda(int m) const
+    {
+      return m_lambda[m];
     }
   };
 } // namespace MDP

@@ -13,6 +13,7 @@
 #define FERMIQCD_SO_GENERATORS_
 
 #include <vector>
+#include <cmath>
 
 namespace MDP
 {
@@ -21,23 +22,23 @@ namespace MDP
   // int main() {
   //  SO_Generators g(4);
   //  for(int a=0; a<g.ngenerators; a++)
-  //    cout << "g=" << g.lambda[a] << endl;
+  //    cout << "g=" << g.lambda(a) << endl;
   //  return 0;
   // }
   class SO_Generators
   {
   public:
-    std::vector<mdp_matrix> lambda;
-    int n;
-    int ngenerators;
+    const int n;
+    const int ngenerators;
 
-    SO_Generators(int N)
+  private:
+    std::vector<mdp_matrix> m_lambda;
+
+  public:
+    SO_Generators(int N) : n(N), ngenerators(n * (n - 1) / 2), m_lambda(ngenerators)
     {
-      n = N;
-      ngenerators = n * (n - 1) / 2;
-      lambda.resize(ngenerators);
       mdp_matrix temp(n, n);
-      mdp_complex z = 1.0 / sqrt(2.0);
+      mdp_complex z = 1.0 / std::sqrt(2.0);
       int k = 0;
       for (int j = 0; j < n - 1; j++)
         for (int i = j + 1; i < n; i++)
@@ -45,8 +46,13 @@ namespace MDP
           temp = 0;
           temp(i, j) = z;
           temp(j, i) = -z;
-          lambda[k++] = temp;
+          m_lambda[k++] = temp;
         }
+    }
+
+    const mdp_matrix &lambda(int m) const
+    {
+      return m_lambda[m];
     }
   };
 } // namespace MDP
