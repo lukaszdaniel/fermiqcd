@@ -87,7 +87,7 @@ namespace MDP
         a[0] = imag(A(0, 1)) * dx;
         a[1] = real(A(0, 1)) * dx;
         a[2] = imag(A(0, 0)) * dx;
-        norm_a = sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
+        norm_a = std::sqrt(a[0] * a[0] + a[1] * a[1] + a[2] * a[2]);
         if (norm_a > precision)
           P *= std::sin(norm_a) / norm_a * (a[0] * tau[1] + a[1] * tau[2] + a[2] * tau[3]) + std::cos(norm_a) * tau[0];
         /*

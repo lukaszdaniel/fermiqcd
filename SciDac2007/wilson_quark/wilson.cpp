@@ -41,7 +41,7 @@ int main(int argc, char **argv)
       s(x3, 5) = imag(phi(x, 2, 0));
       s(x3, 6) = real(phi(x, 3, 0));
       s(x3, 7) = imag(phi(x, 3, 0));
-      s(x3, 8) = sqrt(real(phi(x, 0, 0) * conj(phi(x, 0, 0)) + phi(x, 1, 0) * conj(phi(x, 1, 0)) + phi(x, 2, 0) * conj(phi(x, 2, 0)) + phi(x, 3, 0) * conj(phi(x, 3, 0))));
+      s(x3, 8) = std::sqrt(real(phi(x, 0, 0) * conj(phi(x, 0, 0)) + phi(x, 1, 0) * conj(phi(x, 1, 0)) + phi(x, 2, 0) * conj(phi(x, 2, 0)) + phi(x, 3, 0) * conj(phi(x, 3, 0))));
     }
     snprintf(filename, 128, "wilson.s0.real.%.3i.vtk", t);
     dump(s, 0, filename);

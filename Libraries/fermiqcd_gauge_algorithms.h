@@ -477,7 +477,7 @@ namespace MDP
       d = 0;
       for (k = 0; k < nc; k++)
         d += std::pow((double)abs(C(k, i)), (double)2.0);
-      d = sqrt(d);
+      d = std::sqrt(d);
       for (k = 0; k < nc; k++)
         C(k, i) /= d;
     }
@@ -497,7 +497,7 @@ namespace MDP
           e1 = imag(B(i, j)) + imag(B(j, i));
           e2 = real(B(i, j)) - real(B(j, i));
           e3 = imag(B(i, i)) - imag(B(j, j));
-          dk = sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
+          dk = std::sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
           u0 = mdp_complex(e0, -e3) / dk;
           u1 = mdp_complex(e2, -e1) / dk;
           u2 = mdp_complex(-e2, -e1) / dk;

@@ -180,7 +180,7 @@ namespace MDP
           for (i = 0; i < nc; i++)
             norm += pow(abs(chi_out(x, x5, i)), 2);
       }
-      norm = sqrt(norm);
+      norm = std::sqrt(norm);
       forallsites(x)
       {
         for (x5 = 0; x5 < L5; x5++)

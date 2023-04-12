@@ -56,7 +56,7 @@ namespace MDP
 
         psi.update();
         q = psi;
-        double norm = sqrt(norm_square(q));
+        double norm = std::sqrt(norm_square(q));
         q /= norm;
         p = 0.0;
         r = 0.0;

@@ -190,7 +190,7 @@ int main()
     sum1 += 1;
     sum2 += 2 * c[i] - 1;
     mean = sum1 / n;
-    sd = sqrt(sum2 / n - mean * mean);
+    sd = std::sqrt(sum2 / n - mean * mean);
     std::cout << counter << "\t" << mean << "\t" << sum2 / counter << "\t" << sd / mean << std::endl;
     if (counter == 20)
       break;

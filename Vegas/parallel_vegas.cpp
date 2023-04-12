@@ -414,7 +414,7 @@ public:
         // mdp << kk << "looping\n";
         kk++;
         parallel_loop(fb, f2b);
-        f2b = sqrt(f2b * npg);
+        f2b = std::sqrt(f2b * npg);
         f2b = (f2b - fb) * (f2b + fb);
         if (f2b <= 0.0)
           f2b = TINY;
@@ -451,8 +451,8 @@ public:
         ChiSquare = (schi - si * (Integral)) / it;
       if (ChiSquare < 0.0)
         ChiSquare = 0.0;
-      StandardDeviation = sqrt(1.0 / swgt);
-      tsi = sqrt(tsi);
+      StandardDeviation = std::sqrt(1.0 / swgt);
+      tsi = std::sqrt(tsi);
       PrintOutputParameters();
 
       // ////////////////////////////////////////////

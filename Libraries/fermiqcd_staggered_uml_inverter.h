@@ -153,7 +153,7 @@ namespace MDP
         }
 
         old_residue = residue;
-        residue = sqrt(real_scalar_product(r, r, parity));
+        residue = std::sqrt(real_scalar_product(r, r, parity));
         if (residue < target_residue)
           break;
         rresidue = relative_residue(r, psi_out, parity);

@@ -58,7 +58,7 @@ namespace MDP
           for (a = 0; a < pow2b; a++)
             F[a] += omega * F[a + pow2b];
         };
-        fft_f[offset + coeff * h] = F[0] / sqrt(N);
+        fft_f[offset + coeff * h] = F[0] / std::sqrt(N);
       }
     else
     {
