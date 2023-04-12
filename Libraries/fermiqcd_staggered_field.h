@@ -36,7 +36,7 @@ namespace MDP
       // attention here that nspin_ is ignored!
       nc = nc_;
       nspin = nspin_;
-      ndim = a.ndim;
+      ndim = a.ndim();
       allocate_field(a, nc);
     }
 

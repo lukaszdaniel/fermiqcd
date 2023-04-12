@@ -146,7 +146,7 @@ namespace MDP
       ew = true;
     }
 
-    if (U.lattice().ndim != 4 ||
+    if (U.lattice().ndim() != 4 ||
         milc_header.dims[0] != U.lattice().size(1) ||
         milc_header.dims[1] != U.lattice().size(2) ||
         milc_header.dims[2] != U.lattice().size(3) ||

@@ -48,7 +48,7 @@ namespace MDP
     em_field(mdp_lattice &a, int nc_)
     {
       reset_field();
-      ndim = a.ndim;
+      ndim = a.ndim();
       nc = nc_;
       nem = (ndim * (ndim - 1)) / 2;
       allocate_field(a, nem * nc * nc);
@@ -66,7 +66,7 @@ namespace MDP
     void allocate_em_field(mdp_lattice &a, int nc_)
     {
       deallocate_field();
-      ndim = a.ndim;
+      ndim = a.ndim();
       nc = nc_;
       nem = (ndim * (ndim - 1)) / 2;
       allocate_field(a, nem * nc * nc);
@@ -180,17 +180,17 @@ namespace MDP
     gauge_field(mdp_lattice &a, int nc_)
     {
       reset_field();
-      ndim = a.ndim;
+      ndim = a.ndim();
       nc = nc_;
-      allocate_field(a, a.ndim * nc * nc);
+      allocate_field(a, a.ndim() * nc * nc);
     }
 
     void allocate_gauge_field(mdp_lattice &a, int nc_)
     {
       deallocate_field();
-      ndim = a.ndim;
+      ndim = a.n_dimensions();
       nc = nc_;
-      allocate_field(a, a.ndim * nc * nc);
+      allocate_field(a, a.ndim() * nc * nc);
     }
 
     /** @brief returns the matrix in direction \e mu stored at site x
@@ -324,7 +324,7 @@ namespace MDP
       static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
       static mdp_complex a, b, c, d, e, f, g, h, i;
 
-      for (mu = 1; mu < x.lattice().ndim; mu++)
+      for (mu = 1; mu < x.lattice().ndim(); mu++)
       {
         block = x.block(mu);
         if (block != 0)
@@ -444,7 +444,7 @@ namespace MDP
       static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
       static mdp_complex a, b, c, d, e, f, g, h, i;
 
-      for (mu = 1; mu < x.lattice().ndim; mu++)
+      for (mu = 1; mu < x.lattice().ndim(); mu++)
       {
         block = x.block(mu);
         if (block != 0)

@@ -172,7 +172,8 @@ namespace MDP
             chi_out(x, L5 - 1, i) + phase *FU_up[nc * i + j] * Fchi_up[j];
       }
 
-      /* NORMALIZE NOW
+#if 0
+      // NORMALIZE NOW
       double norm = 0;
       forallsites(x)
       {
@@ -187,7 +188,7 @@ namespace MDP
           for (i = 0; i < nc; i++)
             chi_out(x, x5, i) /= norm;
       }
-      */
+#endif
     }
   };
 } // namespace MDP

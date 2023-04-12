@@ -47,7 +47,7 @@ namespace MDP
       if (psi_in.nc != U_in.nc)
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
-      int ndim = psi_in.lattice().ndim;
+      int ndim = psi_in.lattice().ndim();
       int nspin = psi_in.nspin;
       int nc = psi_in.nc;
       int L5 = psi_in.L5;

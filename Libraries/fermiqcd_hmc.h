@@ -71,7 +71,7 @@ namespace MDP
       to_old_F = new FermiClass(F.lattice(), F.nc);
       to_old_f_F = new FermiClass(F.lattice(), F.nc);
 
-      std::cout << to_p_U->lattice().ndim << std::endl;
+      std::cout << to_p_U->lattice().ndim() << std::endl;
 
       initialize();
     }

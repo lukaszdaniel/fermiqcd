@@ -186,7 +186,7 @@ namespace MDP
     static std::map<std::string, int> counter;
     static std::map<std::string, mdp_field<mdp_real> *> fields;
     mdp_site p(field.lattice());
-    int k = 0;
+
     if (counter.find(filename) == counter.end())
     {
       fields[filename] = new mdp_field<mdp_real>(field.lattice(), field.size_per_site());
@@ -199,7 +199,7 @@ namespace MDP
     }
     else
     {
-      k = counter[filename];
+      int k = counter[filename];
       forallsites(p)
       {
         for (int i = 0; i < field.size_per_site(); i++)

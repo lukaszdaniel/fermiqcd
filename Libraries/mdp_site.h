@@ -52,7 +52,7 @@ namespace MDP
     mdp_site(const mdp_lattice &a)
     {
       m_ptr = (mdp_lattice *)&a;
-      m_idx = (*m_ptr).start[ME][0];
+      m_idx = (*m_ptr).start0(ME, 0);
 #ifdef BLOCKSITE
       for (int k = 0; k < BLOCKSITE; k++)
         m_block[k] = 0;
@@ -108,7 +108,7 @@ namespace MDP
 
     mdp_site operator=(mdp_int i)
     {
-      m_idx = lattice().start[ME][0] + i;
+      m_idx = lattice().start0(ME, 0) + i;
       return mdp_site(m_idx, m_ptr);
     }
 
@@ -150,7 +150,7 @@ namespace MDP
       for (int k = 0; k < BLOCKSITE; k++)
         m_block[k] = 0;
 #endif
-      m_idx = lattice().start[ME][np];
+      m_idx = lattice().start0(ME, np);
     }
 
     void next()
@@ -163,7 +163,7 @@ namespace MDP
      */
     bool is_in()
     {
-      return ((m_idx >= lattice().start[ME][0]) && (m_idx < lattice().stop[ME][1]));
+      return ((m_idx >= lattice().start0(ME, 0)) && (m_idx < lattice().stop0(ME, 1)));
     }
 
     /** @brief checks if the site is inside the portion of the lattice stored by
@@ -499,7 +499,7 @@ namespace MDP
     {
       if (!x.is_in())
         error("request the random generator of a non local site");
-      return m_random_obj[x.idx() - start[ME][0]];
+      return m_random_obj[x.local_index() - start0(ME, 0)];
     }
     return mdp_random;
   }

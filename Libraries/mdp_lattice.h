@@ -39,11 +39,10 @@ namespace MDP
   /// @endverbatim
   class mdp_lattice
   {
-  public:
-    int ndim; /* number of dimensions       */
   private:
+    int m_ndim;                   /* number of dimensions       */
     int m_ndir;                   /* number of directions       */
-    int m_next_next;              /* 1 or 2 is the thickness of the boudary */
+    int m_next_next;              /* 1, 2 or 3 is the thickness of the boudary */
     int *m_nx;                    /* box containing the lattice */
     mdp_int m_local_volume;       /* local volume               */
     mdp_int m_global_volume;      /* global volume              */
@@ -58,13 +57,10 @@ namespace MDP
     int **m_co;     /* coordinate x in local idx  */
     int *m_wh;      /* in which process? is idx   */
     int *m_parity;  /* parity of local mdp_site idx   */
-  public:
-    mdp_int start[_NprocMax_][2];
-    mdp_int stop[_NprocMax_][2];
-    mdp_int len_to_send[_NprocMax_][2];
-    mdp_int *to_send[_NprocMax_];
-
-  private:
+    mdp_int m_start[_NprocMax_][2];
+    mdp_int m_stop[_NprocMax_][2];
+    mdp_int m_len_to_send[_NprocMax_][2];
+    mdp_int *m_to_send[_NprocMax_];
     bool m_local_random_generator;
     std::unique_ptr<mdp_prng[]> m_random_obj;
     mdp_int m_random_seed;
@@ -91,23 +87,23 @@ namespace MDP
       {
         process = (ME + dp) % Nproc;
         for (int np = 0; np < 2; np++)
-          buffer[np] = stop[process][np] - start[process][np];
+          buffer[np] = m_stop[process][np] - m_start[process][np];
         mpi.put(buffer, 2, process, request);
         process = (ME - dp + Nproc) % Nproc;
-        mpi.get(len_to_send[process], 2, process);
+        mpi.get(m_len_to_send[process], 2, process);
         mpi.wait(request);
         process = (ME + dp) % Nproc;
-        length = stop[process][1] - start[process][0];
+        length = m_stop[process][1] - m_start[process][0];
         dynamic_buffer = new mdp_int[length];
         for (int idx = 0; idx < length; idx++)
-          dynamic_buffer[idx] = m_global_from_local[start[process][0] + idx];
+          dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
         mpi.put(dynamic_buffer, length, process, request);
         process = (ME - dp + Nproc) % Nproc;
-        length = len_to_send[process][0] + len_to_send[process][1];
-        to_send[process] = new mdp_int[length];
-        mpi.get(to_send[process], length, process);
+        length = m_len_to_send[process][0] + m_len_to_send[process][1];
+        m_to_send[process] = new mdp_int[length];
+        mpi.get(m_to_send[process], length, process);
         for (int idx = 0; idx < length; idx++)
-          to_send[process][idx] = local(to_send[process][idx]);
+          m_to_send[process][idx] = local(m_to_send[process][idx]);
         mpi.wait(request);
         delete[] dynamic_buffer;
       }
@@ -126,22 +122,22 @@ namespace MDP
           if ((k + ME) % 2 == 0)
           {
             for (int np = 0; np < 2; np++)
-              buffer[np] = stop[process][np] - start[process][np];
+              buffer[np] = m_stop[process][np] - m_start[process][np];
             mpi.put(buffer, 2, process, request);
-            length = stop[process][1] - start[process][0];
+            length = m_stop[process][1] - m_start[process][0];
             dynamic_buffer = new mdp_int[length];
             for (int idx = 0; idx < length; idx++)
-              dynamic_buffer[idx] = m_global_from_local[start[process][0] + idx];
+              dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
             mpi.put(dynamic_buffer, length, process, request);
           }
           else
           {
-            mpi.get(len_to_send[process2], 2, process2);
-            length = len_to_send[process2][0] + len_to_send[process2][1];
-            to_send[process2] = new mdp_int[length];
-            mpi.get(to_send[process2], length, process);
+            mpi.get(m_len_to_send[process2], 2, process2);
+            length = m_len_to_send[process2][0] + m_len_to_send[process2][1];
+            m_to_send[process2] = new mdp_int[length];
+            mpi.get(m_to_send[process2], length, process);
             for (int idx = 0; idx < length; idx++)
-              to_send[process2][idx] = local(to_send[process2][idx]);
+              m_to_send[process2][idx] = local(m_to_send[process2][idx]);
           }
         }
         delete[] dynamic_buffer;
@@ -154,11 +150,6 @@ namespace MDP
     void (*m_neighbour)(const int mu, int *x_dw, const int *x, int *x_up, const int ndim, const int *nx);
 
   public:
-    auto &where() const
-    {
-      return m_where;
-    }
-
     /** Which process point x[] is in?
      *
      * @param x Point x[] to be inspected
@@ -166,7 +157,7 @@ namespace MDP
      */
     int where(const int *x) const
     {
-      return (*m_where)(x, ndim, m_nx);
+      return (*m_where)(x, m_ndim, m_nx);
     }
 
     mdp_int process(mdp_int local_idx) const
@@ -187,9 +178,9 @@ namespace MDP
     mdp_int global_coordinate(const int *x)
     {
       mdp_int global_idx = 0;
-      for (int mu = 0; mu < ndim - 1; mu++)
+      for (int mu = 0; mu < m_ndim - 1; mu++)
         global_idx = (global_idx + x[mu]) * m_nx[mu + 1];
-      return global_idx + x[ndim - 1];
+      return global_idx + x[m_ndim - 1];
     }
 
     /** @brief Translate global coordinate into x[] coordinates
@@ -199,7 +190,7 @@ namespace MDP
      */
     void translate_to_coordinates(mdp_int global_idx, int *x)
     {
-      for (int mu = ndim - 1; mu > 0; mu--)
+      for (int mu = m_ndim - 1; mu > 0; mu--)
       {
         x[mu] = global_idx % m_nx[mu];
         global_idx = (global_idx - x[mu]) / m_nx[mu];
@@ -212,7 +203,7 @@ namespace MDP
       int x[MAX_DIM];
       translate_to_coordinates(global_idx, x);
 
-      return (*m_where)(x, ndim, m_nx);
+      return (*m_where)(x, m_ndim, m_nx);
     }
 
     /** @brief Calculate parity of point x[]
@@ -222,7 +213,7 @@ namespace MDP
     int compute_parity(const int *x)
     {
       int p = 0;
-      for (int mu = 0; mu < ndim; mu++)
+      for (int mu = 0; mu < m_ndim; mu++)
         p = p + x[mu];
       return (p % 2);
     }
@@ -334,7 +325,7 @@ namespace MDP
 
       bool is_boundary;
       mdp_int global_idx, new_idx;
-      ndim = ndim_;
+      m_ndim = ndim_;
       m_ndir = ndir_;
       m_where = where_;
       m_neighbour = neighbour_;
@@ -343,16 +334,16 @@ namespace MDP
       m_global_volume = 1;
 
       mpi << "Lattice dimension: " << nx_[0];
-      for (int mu = 1; mu < ndim; mu++)
+      for (int mu = 1; mu < m_ndim; mu++)
         mpi << " x " << nx_[mu];
       mpi << "\n";
 
       ///////////////////////////////////////////////////////////////////
       // Dynamically allocate some arrays
       ///////////////////////////////////////////////////////////////////
-      m_nx = new int[ndim];
+      m_nx = new int[m_ndim];
 
-      for (int mu = 0; mu < ndim; mu++)
+      for (int mu = 0; mu < m_ndim; mu++)
       {
         m_nx[mu] = nx_[mu];
         m_global_volume *= m_nx[mu];
@@ -386,13 +377,13 @@ namespace MDP
       //
       // ///////////////////////////////////////////////////////////////////
 
-      for (int mu = 0; mu < ndim; mu++)
+      for (int mu = 0; mu < m_ndim; mu++)
         x[mu] = 0;
 
       do
       {
         global_idx = global_coordinate(x);
-        if ((*m_where)(x, ndim, m_nx) == ME)
+        if ((*m_where)(x, m_ndim, m_nx) == ME)
         {
 #ifndef MDP_NO_LG
           local_mdp_sites[m_local_volume] = global_idx;
@@ -410,14 +401,14 @@ namespace MDP
           for (int mu = 0; mu < m_ndir; mu++)
           {
             // calculate up and down points in mu direction given the neighbour topology
-            (*m_neighbour)(mu, x_dw, x, x_up, ndim, m_nx);
+            (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
 
-            if (((*m_where)(x_up, ndim, m_nx) >= Nproc) ||
-                ((*m_where)(x_dw, ndim, m_nx) >= Nproc))
+            if (((*m_where)(x_up, m_ndim, m_nx) >= Nproc) ||
+                ((*m_where)(x_dw, m_ndim, m_nx) >= Nproc))
               error("Incorrect patitioning");
 
-            if (((*m_where)(x_up, ndim, m_nx) == ME) ||
-                ((*m_where)(x_dw, ndim, m_nx) == ME))
+            if (((*m_where)(x_up, m_ndim, m_nx) == ME) ||
+                ((*m_where)(x_dw, m_ndim, m_nx) == ME))
               is_boundary = true;
             // ////////////////////////////////////////////////////
             // cases:
@@ -430,37 +421,37 @@ namespace MDP
             for (int nu = 0; nu < m_ndir; nu++)
               if ((nu != mu) || (m_next_next > 1))
               {
-                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, ndim, m_nx);
-                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, ndim, m_nx);
+                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, m_ndim, m_nx);
+                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, m_ndim, m_nx);
 
-                if (((*m_where)(x_up_dw, ndim, m_nx) >= Nproc) ||
-                    ((*m_where)(x_up_up, ndim, m_nx) >= Nproc) ||
-                    ((*m_where)(x_dw_dw, ndim, m_nx) >= Nproc) ||
-                    ((*m_where)(x_dw_up, ndim, m_nx) >= Nproc))
+                if (((*m_where)(x_up_dw, m_ndim, m_nx) >= Nproc) ||
+                    ((*m_where)(x_up_up, m_ndim, m_nx) >= Nproc) ||
+                    ((*m_where)(x_dw_dw, m_ndim, m_nx) >= Nproc) ||
+                    ((*m_where)(x_dw_up, m_ndim, m_nx) >= Nproc))
                   error("Incorrect patitioning");
 
-                if (((*m_where)(x_up_dw, ndim, m_nx) == ME) ||
-                    ((*m_where)(x_up_up, ndim, m_nx) == ME) ||
-                    ((*m_where)(x_dw_dw, ndim, m_nx) == ME) ||
-                    ((*m_where)(x_dw_up, ndim, m_nx) == ME))
+                if (((*m_where)(x_up_dw, m_ndim, m_nx) == ME) ||
+                    ((*m_where)(x_up_up, m_ndim, m_nx) == ME) ||
+                    ((*m_where)(x_dw_dw, m_ndim, m_nx) == ME) ||
+                    ((*m_where)(x_dw_up, m_ndim, m_nx) == ME))
                   is_boundary = true;
 
                 if (m_next_next == 3)
                   for (mdp_int rho = 0; rho < m_ndir; rho++)
                   {
-                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, ndim, m_nx);
-                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, ndim, m_nx);
+                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, m_ndim, m_nx);
+                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, m_ndim, m_nx);
 
-                    if (((*m_where)(x_up_up_up, ndim, m_nx) >= Nproc) ||
-                        ((*m_where)(x_up_up_dw, ndim, m_nx) >= Nproc) ||
-                        ((*m_where)(x_dw_dw_up, ndim, m_nx) >= Nproc) ||
-                        ((*m_where)(x_dw_dw_dw, ndim, m_nx) >= Nproc))
+                    if (((*m_where)(x_up_up_up, m_ndim, m_nx) >= Nproc) ||
+                        ((*m_where)(x_up_up_dw, m_ndim, m_nx) >= Nproc) ||
+                        ((*m_where)(x_dw_dw_up, m_ndim, m_nx) >= Nproc) ||
+                        ((*m_where)(x_dw_dw_dw, m_ndim, m_nx) >= Nproc))
                       error("Incorrect patitioning");
 
-                    if (((*m_where)(x_up_up_up, ndim, m_nx) == ME) ||
-                        ((*m_where)(x_up_up_dw, ndim, m_nx) == ME) ||
-                        ((*m_where)(x_dw_dw_up, ndim, m_nx) == ME) ||
-                        ((*m_where)(x_dw_dw_dw, ndim, m_nx) == ME))
+                    if (((*m_where)(x_up_up_up, m_ndim, m_nx) == ME) ||
+                        ((*m_where)(x_up_up_dw, m_ndim, m_nx) == ME) ||
+                        ((*m_where)(x_dw_dw_up, m_ndim, m_nx) == ME) ||
+                        ((*m_where)(x_dw_dw_dw, m_ndim, m_nx) == ME))
                       is_boundary = true;
                   }
               }
@@ -479,13 +470,13 @@ namespace MDP
           }
         }
         x[0]++;
-        for (int mu = 0; mu < ndim - 1; mu++)
+        for (int mu = 0; mu < m_ndim - 1; mu++)
           if (x[mu] >= m_nx[mu])
           {
             x[mu] = 0;
             x[mu + 1]++;
           }
-      } while (x[ndim - 1] < m_nx[ndim - 1]);
+      } while (x[m_ndim - 1] < m_nx[m_ndim - 1]);
 
       // /////////////////////////////////////////////////////////////////
       // Dynamically allocate some other arrays
@@ -522,19 +513,19 @@ namespace MDP
 #endif
       m_parity = new int[m_local_volume];
       // /////////////////////////////////////////////////////////////////
-      start[0][0] = stop[0][0] = 0;
+      m_start[0][0] = m_stop[0][0] = 0;
       for (int process = 0; process < Nproc; process++)
       {
         if (process > 0)
         {
-          start[process][0] = stop[process][0] = stop[process - 1][1];
+          m_start[process][0] = m_stop[process][0] = m_stop[process - 1][1];
         }
 
         for (int np = 0; np < 2; np++)
         {
           if (np > 0)
           {
-            start[process][1] = stop[process][1] = stop[process][0];
+            m_start[process][1] = m_stop[process][1] = m_stop[process][0];
           }
 
           for (int old_idx = 0; old_idx < m_local_volume; old_idx++)
@@ -548,9 +539,9 @@ namespace MDP
                     "Unable to read to temporary file");
             translate_to_coordinates(lms_tmp, x);
 #endif
-            if (((*m_where)(x, ndim, m_nx) == process) && (compute_parity(x) == np))
+            if (((*m_where)(x, m_ndim, m_nx) == process) && (compute_parity(x) == np))
             {
-              new_idx = stop[process][np];
+              new_idx = m_stop[process][np];
 #ifndef MDP_NO_LG
               m_local_from_global[local_mdp_sites[old_idx]] = new_idx;
               m_global_from_local[new_idx] = local_mdp_sites[old_idx];
@@ -568,7 +559,7 @@ namespace MDP
 #endif
               m_wh[new_idx] = process;
               m_parity[new_idx] = compute_parity(x);
-              stop[process][np]++;
+              m_stop[process][np]++;
             }
           }
         }
@@ -584,12 +575,12 @@ namespace MDP
       {
         translate_to_coordinates(m_global_from_local[new_idx], x);
 
-        for (int mu = 0; mu < ndim; mu++)
+        for (int mu = 0; mu < m_ndim; mu++)
           m_co[new_idx][mu] = x[mu];
 
         for (int mu = 0; mu < m_ndir; mu++)
         {
-          (*m_neighbour)(mu, x_dw, x, x_up, ndim, m_nx);
+          (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
           if (m_wh[new_idx] == ME)
           {
             m_dw[new_idx][mu] = local(global_coordinate(x_dw));
@@ -609,7 +600,7 @@ namespace MDP
         }
       }
 
-      m_internal_volume = stop[ME][1] - start[ME][0];
+      m_internal_volume = m_stop[ME][1] - m_start[ME][0];
       mpi << "Communicating...\n";
       communicate_results_to_all_processes();
       mpi << "Initializing random per mdp_site...\n";
@@ -668,8 +659,8 @@ namespace MDP
       {
         if (process != ME)
         {
-          if (len_to_send[process][0] + len_to_send[process][1] != 0)
-            delete[] to_send[process];
+          if (m_len_to_send[process][0] + m_len_to_send[process][1] != 0)
+            delete[] m_to_send[process];
         }
       }
 
@@ -706,7 +697,7 @@ namespace MDP
         //   delete[] m_random_obj;
         m_random_obj = std::make_unique<mdp_prng[]>(m_internal_volume);
         for (mdp_int idx = 0; idx < m_internal_volume; idx++)
-          m_random_obj[idx].initialize(m_global_from_local[idx + start[ME][0]] + m_random_seed);
+          m_random_obj[idx].initialize(m_global_from_local[idx + m_start[ME][0]] + m_random_seed);
       }
     }
 
@@ -720,7 +711,12 @@ namespace MDP
      */
     int n_dimensions() const
     {
-      return ndim;
+      return m_ndim;
+    }
+
+    int ndim() const
+    {
+      return m_ndim;
     }
 
     /** @brief number of directions one can move on the lattice; usually same as ndim
@@ -814,18 +810,38 @@ namespace MDP
       return m_parity[idx];
     }
 
-    mdp_int start_index(const int process, int p = EVENODD) const
+    mdp_int start_index(const int process_id, int parity = EVENODD) const
     {
-      if (p == EVENODD)
-        p = 0;
-      return start[process][p];
+      if (parity == EVENODD)
+        parity = 0;
+      return m_start[process_id][parity];
     }
 
-    mdp_int stop_index(const int process, int p = EVENODD) const
+    mdp_int stop_index(const int process_id, int parity = EVENODD) const
     {
-      if (p == EVENODD)
-        p = 1;
-      return stop[process][p];
+      if (parity == EVENODD)
+        parity = 1;
+      return m_stop[process_id][parity];
+    }
+
+    mdp_int start0(mdp_int process_id, mdp_int parity) const
+    {
+      return m_start[process_id][parity];
+    }
+
+    mdp_int stop0(mdp_int process_id, mdp_int parity) const
+    {
+      return m_start[process_id][parity];
+    }
+
+    mdp_int len_to_send0(mdp_int process_id, mdp_int parity) const
+    {
+      return m_len_to_send[process_id][parity];
+    }
+
+    mdp_int to_send0(mdp_int process_id, mdp_int local_idx) const
+    {
+      return m_to_send[process_id][local_idx];
     }
   };
 } // namespace MDP

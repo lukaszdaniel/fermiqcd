@@ -102,7 +102,7 @@ namespace MDP
           fprintf(stderr, "mdp_field.load(): wrong ndim\n");
           return false;
         }
-        for (i = 0; i < lattice().ndim; i++)
+        for (i = 0; i < lattice().ndim(); i++)
           if (tmp_header.box[i] != m_header.box[i])
           {
             fprintf(stderr, "mdp_file.load(): wrong lattice size\n");

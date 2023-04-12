@@ -230,7 +230,8 @@ namespace MDP
       deallocate_memory();
     }
 
-    /// returns component i of the vector of objects T stored at site x
+    /** @brief returns component i of the vector of objects T stored at site x
+     */
     T &operator()(mdp_site x, int i = 0)
     {
 #ifdef CHECK_ALL
@@ -436,14 +437,14 @@ namespace MDP
     {
       if (i == 2)
         i = 0;
-      return m_field_components * lattice().start[ME][i];
+      return m_field_components * lattice().start0(ME, i);
     }
 
     mdp_int physical_local_stop(int i = 2)
     {
       if (i == 2)
         i = 1;
-      return m_field_components * lattice().stop[ME][i];
+      return m_field_components * lattice().stop0(ME, i);
     }
 
     T *physical_address(mdp_int i = 0)

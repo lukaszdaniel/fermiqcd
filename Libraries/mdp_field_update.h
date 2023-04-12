@@ -22,8 +22,8 @@ namespace MDP
   template <class T>
   void mdp_field<T>::update(int np, int d, int ncomp)
   {
-    T *dynamic_buffer = 0;
-    T *where_to = 0;
+    T *dynamic_buffer = nullptr;
+    T *where_to = nullptr;
     mpi.comm_time -= mpi.time();
     mdp_request request;
     mdp_int start_to_send = 0;
@@ -56,16 +56,16 @@ namespace MDP
 
       if (np < 2)
       {
-        length = lattice().len_to_send[process][np];
+        length = lattice().len_to_send0(process, np);
       }
       else
       {
-        length = lattice().len_to_send[process][0] + lattice().len_to_send[process][1];
+        length = lattice().len_to_send0(process, 0) + lattice().len_to_send0(process, 1);
       }
 
       if (np == 1)
       {
-        start_to_send = lattice().len_to_send[process][0];
+        start_to_send = lattice().len_to_send0(process, 0);
       }
       else
       {
@@ -79,7 +79,7 @@ namespace MDP
           for (mdp_int k = 0; k < ncomp; k++)
           {
             dynamic_buffer[idx * ncomp + k] =
-                *(m_data.get() + lattice().to_send[process][start_to_send + idx] * m_field_components + d * ncomp + k);
+                *(m_data.get() + lattice().to_send0(process, start_to_send + idx) * m_field_components + d * ncomp + k);
           }
         mpi.put(dynamic_buffer, length * ncomp, process, request);
         std::cout.flush();
@@ -90,12 +90,12 @@ namespace MDP
       }
 
       process = (ME - dp + Nproc) % Nproc;
-      length = lattice().stop[process][nf] - lattice().start[process][ni];
+      length = lattice().stop0(process, nf) - lattice().start0(process, ni);
       if (length > 0)
       {
         if (ncomp == m_field_components)
         {
-          where_to = m_data.get() + lattice().start[process][ni] * m_field_components;
+          where_to = m_data.get() + lattice().start0(process, ni) * m_field_components;
           mpi.get(where_to, length * m_field_components, process);
           where_to = nullptr;
         }
@@ -106,7 +106,7 @@ namespace MDP
           for (mdp_int idx = 0; idx < length; idx++)
             for (mdp_int k = 0; k < ncomp; k++)
             {
-              *(m_data.get() + (lattice().start[process][ni] + idx) * m_field_components +
+              *(m_data.get() + (lattice().start0(process, ni) + idx) * m_field_components +
                 d * ncomp + k) = where_to[idx * ncomp + k];
             }
           delete[] where_to;
