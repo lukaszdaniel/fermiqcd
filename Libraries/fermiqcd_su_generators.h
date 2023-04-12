@@ -63,7 +63,7 @@ namespace MDP
         {
           mat(j, j) += mult;
         }
-        mat(i + 1, i + 1) -= (1 + i) * mult;
+        mat(i + 1, i + 1) -= (1.0 + i) * mult;
       }
       return I * std::sqrt(2) * mat;
     }

@@ -173,7 +173,7 @@ namespace MDP
     }
     mdp.add(sum);
 
-    return sum * U.lattice().size(0) / (U.lattice().global_volume() * U.nc);
+    return sum * (1.0 * U.lattice().size(0) / (U.lattice().global_volume() * U.nc));
   }
 
   /// Relaxation algorithm
@@ -259,7 +259,7 @@ namespace MDP
     {
       for (mdp_suint mu = 0; mu < U.ndim; mu++)
       {
-        precision += abs(1 - det(U(x, mu)));
+        precision += abs(1.0 - det(U(x, mu)));
 
         // Gram-Schmidt's orthonormalization method for the 'U.nc' vectors (e1, e2, ..., en)
         for (mdp_suint i = 0; i < U.nc; i++)
@@ -564,7 +564,7 @@ namespace MDP
       }
     }
     forallsites(x) sum += trace(psi1(x));
-    return sum / (U.lattice().global_volume() * U.nc);
+    return sum / (1.0 * U.lattice().global_volume() * U.nc);
   }
 
   /// Takes a field U, a site x, a path d of length and compute the product

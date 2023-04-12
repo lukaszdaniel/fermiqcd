@@ -538,7 +538,7 @@ namespace MDP
 
     tmp = a;
     for (mdp_uint i = 0; i < a.cols(); i++)
-      tmp(i, i).real() += b;
+      tmp(i, i) += b;
     return tmp;
   }
 
@@ -550,7 +550,7 @@ namespace MDP
 
     tmp = a;
     for (mdp_uint i = 0; i < a.cols(); i++)
-      tmp(i, i).real() -= b;
+      tmp(i, i) -= b;
     return tmp;
   }
 

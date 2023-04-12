@@ -241,7 +241,7 @@ namespace MDP
               M += U(x, nu) - U(x - nu, nu);
               action += real(trace(U(x, nu) + U(x - nu, nu)));
             }
-          M = (M - trace(M) / U.nc);
+          M = (M - trace(M) * (1.0/ U.nc));
           M = M - hermitian(M);
           for (i = 0; i < U.nc; i++)
             for (j = 0; j < U.nc; j++)

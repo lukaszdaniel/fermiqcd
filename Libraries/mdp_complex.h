@@ -12,7 +12,11 @@
 #ifndef MDP_COMPLEX_
 #define MDP_COMPLEX_
 
-// #define DO_NOT_USE_MDP_COMPLEX
+#define DO_NOT_USE_MDP_COMPLEX
+
+#include <ostream>
+#include <cmath>
+
 #ifdef DO_NOT_USE_MDP_COMPLEX
 #include <complex>
 #endif
@@ -28,7 +32,7 @@ namespace MDP
   /// Example:
   /// @verbatim
   ///    mdp_complex x=3+5*I;
-  ///    cout << x.read() << "," << x.imag() << endl;
+  ///    cout << x.real() << "," << x.imag() << endl;
   ///    cout << sin(x) << endl;
   /// @endverbatim
   class mdp_complex
@@ -354,4 +358,5 @@ namespace MDP
     return os;
   }
 } // namespace MDP
+
 #endif /* MDP_COMPLEX_ */

@@ -28,7 +28,7 @@ namespace MDP
   void dft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
            mdp_int offset = 0, mdp_int coeff = 1)
   {
-    mdp_complex phase = exp(2.0 * Pi * I * sign / n);
+    mdp_complex phase = exp(2.0 * Pi * I * (1.0 * sign / n));
     for (int i = 0; i < n; i++)
     {
       fft_f[offset + coeff * i] = 0;

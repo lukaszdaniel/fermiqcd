@@ -238,7 +238,7 @@ namespace MDP
           {
             for (int i = 0; i < U.nc; i++)
               for (int j = 0; j < U.nc; j++)
-                S(x, a, b, i, j) = V(x, i, j) / (alpha + 8);
+                S(x, a, b, i, j) = V(x, i, j) / (8.0 + alpha);
           }
         }
     }
