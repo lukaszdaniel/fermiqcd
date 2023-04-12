@@ -66,6 +66,31 @@ namespace MDP
       return !(*this == c);
     }
 
+    mdp_complex operator+(const mdp_complex &a) const
+    {
+      return mdp_complex(m_re + a.m_re, m_im + a.m_im);
+    }
+
+    mdp_complex operator-(const mdp_complex &a) const
+    {
+      return mdp_complex(m_re - a.m_re, m_im - a.m_im);
+    }
+
+    mdp_complex operator*(const mdp_complex &c) const
+    {
+      mdp_real re = m_re * c.m_re - m_im * c.m_im;
+      mdp_real im = m_re * c.m_im + m_im * c.m_re;
+      return mdp_complex(re, im);
+    }
+
+    mdp_complex operator/(const mdp_complex &c) const
+    {
+      mdp_real norm2 = c.m_re * c.m_re + c.m_im * c.m_im;
+      mdp_real re = (m_re * c.m_re + m_im * c.m_im) / norm2;
+      mdp_real im = (m_im * c.m_re - m_re * c.m_im) / norm2;
+      return mdp_complex(re, im);
+    }
+
     void operator+=(const mdp_complex &c)
     {
       m_re += c.m_re;
@@ -80,142 +105,92 @@ namespace MDP
 
     void operator*=(const mdp_complex &c)
     {
-      mdp_real tmp_re = m_re * c.m_re - m_im * c.m_im;
-      mdp_real tmp_im = m_re * c.m_im + m_im * c.m_re;
-      m_re = tmp_re;
-      m_im = tmp_im;
+      (*this) = (*this) * c;
     }
 
     void operator/=(const mdp_complex &c)
     {
-      mdp_real norm2 = c.m_re * c.m_re + c.m_im * c.m_im;
-      mdp_real tmp_re = m_re * c.m_re + m_im * c.m_im;
-      mdp_real tmp_im = m_im * c.m_re - m_re * c.m_im;
-      m_re = tmp_re / norm2;
-      m_im = tmp_im / norm2;
-    }
-
-    void operator+=(const mdp_real c)
-    {
-      m_re += c;
-    }
-
-    void operator-=(const mdp_real c)
-    {
-      m_re -= c;
-    }
-
-    void operator*=(const mdp_real c)
-    {
-      m_re *= c;
-      m_im *= c;
-    }
-
-    void operator/=(const mdp_real c)
-    {
-      m_re /= c;
-      m_im /= c;
-    }
-
-    friend mdp_real real(const mdp_complex &c)
-    {
-      return c.real();
-    }
-
-    friend mdp_real imag(const mdp_complex &c)
-    {
-      return c.imag();
-    }
-
-    friend mdp_real abs(const mdp_complex &c)
-    {
-      return sqrt(c.real() * c.real() + c.imag() * c.imag());
-    }
-
-    friend mdp_real arg(const mdp_complex &c)
-    {
-      return phase(c);
-    }
-
-    friend mdp_complex pow(const mdp_complex &c, mdp_real z)
-    {
-      mdp_real r = std::pow((double)abs(c), (double)z), p = (mdp_real)z * phase(c);
-      return mdp_complex(r * std::cos(p), r * std::sin(p));
-    }
-
-    friend mdp_complex sqrt(const mdp_complex &c)
-    {
-      mdp_real r = sqrt(abs(c)), p = 0.5 * arg(c);
-      return mdp_complex(r * std::cos(p), r * std::sin(p));
-    }
-
-    friend mdp_complex exp(const mdp_complex &c)
-    {
-      mdp_real exp_c_re = std::exp(c.real());
-      return mdp_complex(exp_c_re * std::cos(c.imag()), exp_c_re * std::sin(c.imag()));
-    }
-
-    friend mdp_complex sin(const mdp_complex &c)
-    {
-      return mdp_complex(cosh(c.imag()) * std::sin(c.real()), sinh(c.imag()) * std::cos(c.real()));
-    }
-
-    friend mdp_complex cos(const mdp_complex &c)
-    {
-      return mdp_complex(cosh(c.imag()) * std::cos(c.real()), -sinh(c.imag()) * std::sin(c.real()));
-    }
-
-    friend mdp_complex times_i(const mdp_complex &c)
-    {
-      return mdp_complex(-c.imag(), c.real());
-    }
-
-    friend mdp_complex times_minus_i(const mdp_complex &c)
-    {
-      return mdp_complex(c.imag(), -c.real());
-    }
-
-    friend mdp_complex operator-(const mdp_complex &c)
-    {
-      return mdp_complex(-c.real(), -c.imag());
-    }
-
-    friend mdp_complex operator+(const mdp_complex &c)
-    {
-      return c;
-    }
-
-    friend mdp_real phase(const mdp_complex &c)
-    {
-      return atan2(c.imag(), c.real());
-    }
-
-    friend mdp_complex conj(const mdp_complex &a)
-    {
-      return mdp_complex(a.real(), -a.imag());
+      (*this) = (*this) / c;
     }
   };
+
+  mdp_real real(const mdp_complex &c)
+  {
+    return c.real();
+  }
+
+  mdp_real imag(const mdp_complex &c)
+  {
+    return c.imag();
+  }
+
+  mdp_real abs(const mdp_complex &c)
+  {
+    return std::sqrt(c.real() * c.real() + c.imag() * c.imag());
+  }
+
+  mdp_real phase(const mdp_complex &c)
+  {
+    return atan2(c.imag(), c.real());
+  }
+
+  mdp_real arg(const mdp_complex &c)
+  {
+    return phase(c);
+  }
+
+  mdp_complex pow(const mdp_complex &c, mdp_real z)
+  {
+    mdp_real r = std::pow((double)abs(c), (double)z), p = (mdp_real)z * phase(c);
+    return mdp_complex(r * std::cos(p), r * std::sin(p));
+  }
+
+  mdp_complex sqrt(const mdp_complex &c)
+  {
+    mdp_real r = std::sqrt(abs(c)), p = 0.5 * arg(c);
+    return mdp_complex(r * std::cos(p), r * std::sin(p));
+  }
+
+  mdp_complex exp(const mdp_complex &c)
+  {
+    mdp_real exp_c_re = std::exp(c.real());
+    return mdp_complex(exp_c_re * std::cos(c.imag()), exp_c_re * std::sin(c.imag()));
+  }
+
+  mdp_complex sin(const mdp_complex &c)
+  {
+    return mdp_complex(cosh(c.imag()) * std::sin(c.real()), sinh(c.imag()) * std::cos(c.real()));
+  }
+
+  mdp_complex cos(const mdp_complex &c)
+  {
+    return mdp_complex(cosh(c.imag()) * std::cos(c.real()), -sinh(c.imag()) * std::sin(c.real()));
+  }
+
+  mdp_complex times_i(const mdp_complex &c)
+  {
+    return mdp_complex(-c.imag(), c.real());
+  }
+
+  mdp_complex times_minus_i(const mdp_complex &c)
+  {
+    return mdp_complex(c.imag(), -c.real());
+  }
+
+  mdp_complex conj(const mdp_complex &a)
+  {
+    return mdp_complex(a.real(), -a.imag());
+  }
 #endif
 
-  mdp_complex operator+(const mdp_complex &a, const mdp_complex &b)
+  mdp_complex operator-(const mdp_complex &c)
   {
-    return mdp_complex(a.real() + b.real(), a.imag() + b.imag());
+    return mdp_complex(-c.real(), -c.imag());
   }
 
-  mdp_complex operator-(const mdp_complex &a, const mdp_complex &b)
+  mdp_complex operator+(const mdp_complex &c)
   {
-    return mdp_complex(a.real() - b.real(), a.imag() - b.imag());
-  }
-
-  mdp_complex operator*(const mdp_complex &a, const mdp_complex &b)
-  {
-    return mdp_complex(a.real() * b.real() - a.imag() * b.imag(), a.real() * b.imag() + a.imag() * b.real());
-  }
-
-  mdp_complex operator/(const mdp_complex &a, const mdp_complex &b)
-  {
-    mdp_real den = b.real() * b.real() + b.imag() * b.imag();
-    return mdp_complex((a.real() * b.real() + a.imag() * b.imag()) / den, (a.imag() * b.real() - a.real() * b.imag()) / den);
+    return c;
   }
 
   mdp_complex operator+(const mdp_complex &a, const int c)

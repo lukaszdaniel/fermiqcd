@@ -426,7 +426,7 @@ namespace MDP
         }
       }
       mpi.add(residue);
-      return sqrt(residue / p.lattice().global_volume());
+      return std::sqrt(residue / p.lattice().global_volume());
     }
 
     bool save_as_float(std::string filename,
