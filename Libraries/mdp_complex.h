@@ -12,7 +12,7 @@
 #ifndef MDP_COMPLEX_
 #define MDP_COMPLEX_
 
-#define DO_NOT_USE_MDP_COMPLEX
+// #define DO_NOT_USE_MDP_COMPLEX
 
 #include <ostream>
 #include <cmath>
@@ -37,36 +37,84 @@ namespace MDP
   /// @endverbatim
   class mdp_complex
   {
+  private:
+    mdp_real m_re;
+    mdp_real m_im;
+
   public:
-    mdp_real re;
-    mdp_real im;
+    mdp_real &real() { return m_re; }
+    mdp_real &imag() { return m_im; }
 
-    mdp_real &real() { return re; }
-    mdp_real &imag() { return im; }
+    const mdp_real &real() const { return m_re; }
+    const mdp_real &imag() const { return m_im; }
 
-    const mdp_real &real() const { return re; }
-    const mdp_real &imag() const { return im; }
-
-    mdp_complex(const mdp_real a = 0.0, const mdp_real b = 0.0)
+    mdp_complex(const mdp_real a = 0.0, const mdp_real b = 0.0) : m_re(a), m_im(b)
     {
-      re = a;
-      im = b;
     }
 
-    mdp_complex(const mdp_complex &c)
+    mdp_complex(const mdp_complex &c) : m_re(c.m_re), m_im(c.m_im)
     {
-      re = c.real();
-      im = c.imag();
     }
 
     bool operator==(const mdp_complex &c)
     {
-      return ((re == c.real()) && (im == c.imag()));
+      return ((m_re == c.m_re) && (m_im == c.m_im));
     }
 
     bool operator!=(const mdp_complex &c)
     {
-      return ((re != c.real()) || (im != c.imag()));
+      return !(*this == c);
+    }
+
+    void operator+=(const mdp_complex &c)
+    {
+      m_re += c.m_re;
+      m_im += c.m_im;
+    }
+
+    void operator-=(const mdp_complex &c)
+    {
+      m_re -= c.m_re;
+      m_im -= c.m_im;
+    }
+
+    void operator*=(const mdp_complex &c)
+    {
+      mdp_real tmp_re = m_re * c.m_re - m_im * c.m_im;
+      mdp_real tmp_im = m_re * c.m_im + m_im * c.m_re;
+      m_re = tmp_re;
+      m_im = tmp_im;
+    }
+
+    void operator/=(const mdp_complex &c)
+    {
+      mdp_real norm2 = c.m_re * c.m_re + c.m_im * c.m_im;
+      mdp_real tmp_re = m_re * c.m_re + m_im * c.m_im;
+      mdp_real tmp_im = m_im * c.m_re - m_re * c.m_im;
+      m_re = tmp_re / norm2;
+      m_im = tmp_im / norm2;
+    }
+
+    void operator+=(const mdp_real c)
+    {
+      m_re += c;
+    }
+
+    void operator-=(const mdp_real c)
+    {
+      m_re -= c;
+    }
+
+    void operator*=(const mdp_real c)
+    {
+      m_re *= c;
+      m_im *= c;
+    }
+
+    void operator/=(const mdp_real c)
+    {
+      m_re /= c;
+      m_im /= c;
     }
 
     friend mdp_real real(const mdp_complex &c)
@@ -137,22 +185,6 @@ namespace MDP
       return c;
     }
 
-    void operator+=(const mdp_complex &c)
-    {
-      re += c.real();
-      im += c.imag();
-    }
-
-    void operator-=(const mdp_complex &c)
-    {
-      re -= c.real();
-      im -= c.imag();
-    }
-
-    void operator*=(const mdp_complex &c);
-
-    void operator/=(const mdp_complex &c);
-
     friend mdp_real phase(const mdp_complex &c)
     {
       return atan2(c.imag(), c.real());
@@ -162,29 +194,8 @@ namespace MDP
     {
       return mdp_complex(a.real(), -a.imag());
     }
-
-    void operator+=(const mdp_real c)
-    {
-      re += c;
-    }
-
-    void operator-=(const mdp_real c)
-    {
-      re -= c;
-    }
-
-    void operator*=(const mdp_real c)
-    {
-      re *= c;
-      im *= c;
-    }
-
-    void operator/=(const mdp_real c)
-    {
-      re /= c;
-      im /= c;
-    }
   };
+#endif
 
   mdp_complex operator+(const mdp_complex &a, const mdp_complex &b)
   {
@@ -205,16 +216,6 @@ namespace MDP
   {
     mdp_real den = b.real() * b.real() + b.imag() * b.imag();
     return mdp_complex((a.real() * b.real() + a.imag() * b.imag()) / den, (a.imag() * b.real() - a.real() * b.imag()) / den);
-  }
-
-  void mdp_complex::operator*=(const mdp_complex &c)
-  {
-    (*this) = (*this) * c;
-  }
-
-  void mdp_complex::operator/=(const mdp_complex &c)
-  {
-    (*this) = (*this) / c;
   }
 
   mdp_complex operator+(const mdp_complex &a, const int c)
@@ -340,13 +341,11 @@ namespace MDP
     return mdp_complex((c.real()) / den, (-c.imag()) / den);
   }
 
-#endif
-
   const mdp_complex I = mdp_complex(0, 1);
 
   mdp_real abs2(const mdp_complex &a)
   {
-    return real(a) * real(a) + imag(a) * imag(a);
+    return a.real() * a.real() + a.imag() * a.imag();
   }
 
   std::ostream &operator<<(std::ostream &os, const mdp_complex &a)
