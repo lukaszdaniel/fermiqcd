@@ -15,6 +15,7 @@
 #define MDP_LATTICE
 // #define MDP_NO_LG
 
+#include <memory>
 #include <string>
 
 #define MAX_DIM 10
@@ -70,7 +71,6 @@ namespace MDP
     void communicate_results_to_all_processes()
     {
       mdp_int buffer[2];
-      mdp_int *dynamic_buffer;
       mdp_int length;
       int process;
 #if 0
@@ -87,17 +87,19 @@ namespace MDP
       {
         process = (ME + dp) % Nproc;
         for (int np = 0; np < 2; np++)
+        {
           buffer[np] = m_stop[process][np] - m_start[process][np];
+        }
         mpi.put(buffer, 2, process, request);
         process = (ME - dp + Nproc) % Nproc;
         mpi.get(m_len_to_send[process], 2, process);
         mpi.wait(request);
         process = (ME + dp) % Nproc;
         length = m_stop[process][1] - m_start[process][0];
-        dynamic_buffer = new mdp_int[length];
+        std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
         for (int idx = 0; idx < length; idx++)
           dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-        mpi.put(dynamic_buffer, length, process, request);
+        mpi.put(dynamic_buffer.get(), length, process, request);
         process = (ME - dp + Nproc) % Nproc;
         length = m_len_to_send[process][0] + m_len_to_send[process][1];
         m_to_send[process] = new mdp_int[length];
@@ -105,7 +107,6 @@ namespace MDP
         for (int idx = 0; idx < length; idx++)
           m_to_send[process][idx] = local(m_to_send[process][idx]);
         mpi.wait(request);
-        delete[] dynamic_buffer;
       }
 #if 0 // debugging code below
     }
@@ -146,7 +147,7 @@ namespace MDP
 #endif
     }
 
-    int (*m_where)(const int *, const int, const int *);
+    int (*m_where)(const int *x, const int ndim, const int *nx);
     void (*m_neighbour)(const int mu, int *x_dw, const int *x, int *x_up, const int ndim, const int *nx);
 
   public:

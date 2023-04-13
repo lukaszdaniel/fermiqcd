@@ -69,7 +69,7 @@ namespace MDP
       mdp_real kappa5 = 0.5 / (m_5 - 6.0);
       mdp_real kappaf = -m_f * kappa5;
 
-#if !defined(USE_DOUBLE_PRECISION)
+#ifndef USE_DOUBLE_PRECISION
 
       _sse_spinor *chi = (_sse_spinor *)chi_out.physical_address();
       _sse_check_alignment((void *)chi, 0xf);
