@@ -66,6 +66,16 @@ namespace MDP
       return !(*this == c);
     }
 
+    mdp_complex operator+() const
+    {
+      return (*this);
+    }
+
+    mdp_complex operator-() const
+    {
+      return mdp_complex(-m_re, -m_im);
+    }
+
     mdp_complex operator+(const mdp_complex &a) const
     {
       return mdp_complex(m_re + a.m_re, m_im + a.m_im);
@@ -182,16 +192,6 @@ namespace MDP
     return mdp_complex(a.real(), -a.imag());
   }
 #endif
-
-  mdp_complex operator-(const mdp_complex &c)
-  {
-    return mdp_complex(-c.real(), -c.imag());
-  }
-
-  mdp_complex operator+(const mdp_complex &c)
-  {
-    return c;
-  }
 
   mdp_complex operator+(const mdp_complex &a, const int c)
   {
