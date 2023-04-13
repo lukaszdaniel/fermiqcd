@@ -127,6 +127,11 @@ namespace MDP
       return m_data[i * m_cols + j];
     }
 
+    mdp_matrix operator()(mdp_uint i)
+    {
+      return mdp_matrix(m_data.get() + i * m_cols, m_cols, 1);
+    }
+
     /** @brief Begining of this matrix
      *
      * @return Pointer to the begining of this matrix
