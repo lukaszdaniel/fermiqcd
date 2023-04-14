@@ -119,17 +119,17 @@ namespace MDP
 
     mdp_complex &operator()(mdp_uint i, mdp_uint j)
     {
-      return m_data[i * cols() + j];
+      return m_data[i * m_cols + j];
     }
 
     const mdp_complex &operator()(mdp_uint i, mdp_uint j) const
     {
-      return m_data[i * cols() + j];
+      return m_data[i * m_cols + j];
     }
 
     mdp_matrix operator()(mdp_uint i)
     {
-      return mdp_matrix(m_data.get() + i * cols(), cols(), 1);
+      return mdp_matrix(m_data.get() + i * m_cols, m_cols, 1);
     }
 
     /** @brief Begining of this matrix
@@ -262,14 +262,18 @@ namespace MDP
     {
       for (mdp_uint i = 0; i < rows(); i++)
         for (mdp_uint j = 0; j < cols(); j++)
+        {
           (*this)(i, j) = (i == j) ? a : 0;
+        }
     }
 
     void operator=(mdp_real a)
     {
       for (mdp_uint i = 0; i < rows(); i++)
         for (mdp_uint j = 0; j < cols(); j++)
+        {
           (*this)(i, j) = (i == j) ? mdp_complex(a, 0) : 0;
+        }
     }
 
     friend mdp_matrix operator+(const mdp_matrix &a);
@@ -639,9 +643,13 @@ namespace MDP
   mdp_matrix mdp_identity(mdp_uint i)
   {
     mdp_matrix tmp(i, i);
+
     for (mdp_uint r = 0; r < i; r++)
       for (mdp_uint c = 0; c < i; c++)
+      {
         tmp(r, c) = (r == c) ? mdp_complex(1, 0) : mdp_complex(0, 0);
+      }
+
     return tmp;
   }
 
@@ -655,9 +663,13 @@ namespace MDP
   mdp_matrix mdp_zero(mdp_uint i, mdp_uint j)
   {
     mdp_matrix tmp(i, j);
+
     for (mdp_uint r = 0; r < i; r++)
       for (mdp_uint c = 0; c < j; c++)
+      {
         tmp(r, c) = mdp_complex(0, 0);
+      }
+
     return tmp;
   }
 
@@ -682,8 +694,13 @@ namespace MDP
   {
     double x = 0, y = 0;
     for (mdp_uint i = 0; i < a.size(); i++)
+    {
       if ((y = abs(a[i])) > x)
+      {
         x = y;
+      }
+    }
+
     return x;
   }
 
@@ -705,18 +722,31 @@ namespace MDP
       error("submatrix(...)\nWrong dimensions in submatrix");
 #endif
     mdp_matrix tmp(a.rows() - 1, a.cols() - 1);
+
     for (mdp_uint r = 0; r < i; r++)
       for (mdp_uint c = 0; c < j; c++)
+      {
         tmp(r, c) = a(r, c);
+      }
+
     for (mdp_uint r = i + 1; r < a.rows(); r++)
       for (mdp_uint c = 0; c < j; c++)
+      {
         tmp(r - 1, c) = a(r, c);
+      }
+
     for (mdp_uint r = 0; r < i; r++)
       for (mdp_uint c = j + 1; c < a.cols(); c++)
+      {
         tmp(r, c - 1) = a(r, c);
+      }
+
     for (mdp_uint r = i + 1; r < a.rows(); r++)
       for (mdp_uint c = j + 1; c < a.cols(); c++)
+      {
         tmp(r - 1, c - 1) = a(r, c);
+      }
+
     return tmp;
   }
 
@@ -728,23 +758,27 @@ namespace MDP
 #endif
     if (a.rows() == 0)
       return 0;
+
     if (a.rows() == 1)
       return a(0, 0);
-    mdp_uint i, j, k, l;
+
+    mdp_uint j;
     mdp_matrix A;
     A = a;
-    mdp_uint cols = a.cols();
-    mdp_uint rows = a.rows();
+    const mdp_uint cols = a.cols();
+    const mdp_uint rows = a.rows();
     mdp_complex tmp, pivot, x = mdp_complex(1, 0);
-    for (i = 0; i < cols; i++)
+
+    for (mdp_uint i = 0; i < cols; i++)
     {
       for (j = i; (A(i, j) == mdp_complex(0, 0)) && (j < cols); j++)
         ;
       if (j == cols)
         return 0;
+
       if (i != j)
       {
-        for (k = 0; k < rows; k++)
+        for (mdp_uint k = 0; k < rows; k++)
         {
           tmp = A(k, j);
           A(k, j) = A(k, i);
@@ -754,11 +788,13 @@ namespace MDP
       }
       else
         x *= A(i, i);
-      for (k = i + 1; k < rows; k++)
+      for (mdp_uint k = i + 1; k < rows; k++)
       {
         pivot = A(k, i) / A(i, i);
-        for (l = i; l < cols; l++)
+        for (mdp_uint l = i; l < cols; l++)
+        {
           A(k, l) -= pivot * A(i, l);
+        }
       }
     }
     return x;
@@ -817,10 +853,15 @@ namespace MDP
     mdp_matrix tmp;
     tmp = mdp_identity(a.cols());
     mdp_int j = (i < 0) ? -i : i;
+
     for (; j > 0; j--)
+    {
       tmp = tmp * a;
+    }
+
     if (i < 0)
       tmp = inv(tmp);
+
     return tmp;
   }
 
@@ -841,6 +882,7 @@ namespace MDP
       term = (1. / ++i) * term * a;
       tmp += term;
     } while (max(term) > mdp_precision);
+
     return tmp;
   }
 
@@ -863,6 +905,7 @@ namespace MDP
       t1 = ((mdp_real)(i = -i) / (j += 1)) * c;
       tmp += t1;
     } while (max(t1) > mdp_precision);
+
     return tmp;
   }
 
@@ -876,13 +919,13 @@ namespace MDP
     mdp_uint i = 1;
     t1 = a;
     tmp = t1;
-    // pruintf("\n");
     do
     {
       t1 = ((mdp_real)-1.0 / (++i)) * t1 * a * a;
       t1 *= (mdp_real)1.0 / (++i);
       tmp += t1;
     } while (max(t1) > mdp_precision);
+
     return tmp;
   }
 
@@ -902,6 +945,7 @@ namespace MDP
       t1 *= (mdp_real)1.0 / (++i);
       tmp += t1;
     } while (max(t1) > mdp_precision);
+
     return tmp;
   }
 
@@ -913,7 +957,9 @@ namespace MDP
 #endif
     mdp_complex x;
     for (mdp_uint c = 0; c < a.cols(); c++)
+    {
       x += a(c, c);
+    }
     return x;
   }
 
@@ -923,7 +969,10 @@ namespace MDP
 
     for (mdp_uint r = 0; r < a.rows(); r++)
       for (mdp_uint c = 0; c < a.cols(); c++)
+      {
         tmp(c, r) = a(r, c);
+      }
+
     return tmp;
   }
 
@@ -942,7 +991,10 @@ namespace MDP
 
     for (mdp_uint r = 0; r < a.rows(); r++)
       for (mdp_uint c = 0; c < a.cols(); c++)
+      {
         tmp(c, r) = conj(a(r, c));
+      }
+
     return tmp;
   }
 
@@ -951,7 +1003,10 @@ namespace MDP
     mdp_matrix tmp(a.rows(), a.cols());
     for (mdp_uint r = 0; r < a.rows(); r++)
       for (mdp_uint c = 0; c < a.cols(); c++)
+      {
         tmp(r, c) = conj(a(r, c));
+      }
+
     return tmp;
   }
 } // namespace MDP

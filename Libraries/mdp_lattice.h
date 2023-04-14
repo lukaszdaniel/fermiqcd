@@ -126,10 +126,10 @@ namespace MDP
               buffer[np] = m_stop[process][np] - m_start[process][np];
             mpi.put(buffer, 2, process, request);
             length = m_stop[process][1] - m_start[process][0];
-            dynamic_buffer = new mdp_int[length];
+            std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
             for (int idx = 0; idx < length; idx++)
               dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-            mpi.put(dynamic_buffer, length, process, request);
+            mpi.put(dynamic_buffer.get(), length, process, request);
           }
           else
           {
@@ -141,7 +141,6 @@ namespace MDP
               m_to_send[process2][idx] = local(m_to_send[process2][idx]);
           }
         }
-        delete[] dynamic_buffer;
       }
     }
 #endif
