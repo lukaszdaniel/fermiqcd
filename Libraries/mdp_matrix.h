@@ -276,6 +276,65 @@ namespace MDP
         }
     }
 
+    mdp_matrix inv() const
+    {
+#ifdef CHECK_ALL
+      if ((m_rows != m_cols) || (m_rows == 0))
+        error("inv(...)\nmdp_matrix is not squared");
+#endif
+
+      mdp_matrix tma((*this));
+      mdp_matrix tmp;
+      mdp_complex x, pivot;
+      mdp_uint rmax;
+
+      tmp = 0;
+      for (mdp_uint i = 0; i < m_rows; ++i)
+      {
+        tmp(i, i) = 1;
+      }
+
+      for (mdp_uint c = 0; c < m_cols; c++)
+      {
+        rmax = c;
+        pivot = tma(c, c);
+
+        for (mdp_uint r = c + 1; r < m_rows; r++)
+        {
+          if (abs(tma(r, c)) > abs(pivot))
+          {
+            rmax = r;
+            pivot = tma(r, c);
+          }
+        }
+
+        for (mdp_uint i = 0; i < m_cols; i++)
+        {
+          x = tma(rmax, i);
+          tma(rmax, i) = tma(c, i);
+          tma(c, i) = x / pivot;
+          x = tmp(rmax, i);
+          tmp(rmax, i) = tmp(c, i);
+          tmp(c, i) = x / pivot;
+        }
+
+        for (mdp_uint r = 0; r < m_rows; r++)
+        {
+          if (r != c)
+          {
+            pivot = tma(r, c);
+            for (mdp_uint i = 0; i < m_cols; i++)
+            {
+              tma(r, i) -= pivot * tma(c, i);
+              tmp(r, i) -= pivot * tmp(c, i);
+            }
+          }
+        }
+      }
+
+      return tmp;
+    }
+
     friend mdp_matrix operator+(const mdp_matrix &a);
     friend mdp_matrix operator-(const mdp_matrix &a);
 
@@ -331,11 +390,15 @@ namespace MDP
         os << "[[";
       else
         os << " [";
+
       for (mdp_uint j = 0; j < a.cols(); j++)
+      {
         if (j == 0)
           os << " " << a(i, j);
         else
           os << ", " << a(i, j) << " ";
+      }
+
       if (i == (a.rows() - 1))
         os << "]]\n";
       else
@@ -529,7 +592,7 @@ namespace MDP
 
   mdp_matrix operator/(mdp_complex b, const mdp_matrix &a)
   {
-    return b * inv(a);
+    return a.inv() * b;
   }
 
   mdp_matrix operator+(const mdp_matrix &a, mdp_real b)
@@ -631,7 +694,7 @@ namespace MDP
 
   mdp_matrix operator/(mdp_real b, const mdp_matrix &a)
   {
-    return b * inv(a);
+    return a.inv() * b;
   }
 
   /** @brief Create square identity matrix of size \e i
@@ -763,8 +826,8 @@ namespace MDP
       return a(0, 0);
 
     mdp_uint j;
-    mdp_matrix A;
-    A = a;
+    mdp_matrix A(a);
+
     const mdp_uint cols = a.cols();
     const mdp_uint rows = a.rows();
     mdp_complex tmp, pivot, x = mdp_complex(1, 0);
@@ -802,46 +865,7 @@ namespace MDP
 
   mdp_matrix inv(const mdp_matrix &a)
   {
-#ifdef CHECK_ALL
-    if ((a.rows() != a.cols()) || (a.rows() == 0))
-      error("inv(...)\nmdp_matrix is not squared");
-#endif
-    mdp_matrix tma, tmp;
-    mdp_complex x, pivot;
-    mdp_uint rmax;
-    tma = a;
-    tmp = mdp_identity(a.rows());
-    for (mdp_uint c = 0; c < a.cols(); c++)
-    {
-      rmax = c;
-      pivot = tma(c, c);
-      for (mdp_uint r = c + 1; r < a.rows(); r++)
-        if (abs(tma(r, c)) > abs(pivot))
-        {
-          rmax = r;
-          pivot = tma(r, c);
-        }
-      for (mdp_uint i = 0; i < a.cols(); i++)
-      {
-        x = tma(rmax, i);
-        tma(rmax, i) = tma(c, i);
-        tma(c, i) = x / pivot;
-        x = tmp(rmax, i);
-        tmp(rmax, i) = tmp(c, i);
-        tmp(c, i) = x / pivot;
-      }
-      for (mdp_uint r = 0; r < a.rows(); r++)
-        if (r != c)
-        {
-          pivot = tma(r, c);
-          for (mdp_uint i = 0; i < a.cols(); i++)
-          {
-            tma(r, i) -= pivot * tma(c, i);
-            tmp(r, i) -= pivot * tmp(c, i);
-          }
-        }
-    }
-    return tmp;
+    return a.inv();
   }
 
   mdp_matrix pow(const mdp_matrix &a, int i)
