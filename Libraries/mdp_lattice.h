@@ -832,7 +832,7 @@ namespace MDP
 
     mdp_int stop0(mdp_int process_id, mdp_int parity) const
     {
-      return m_start[process_id][parity];
+      return m_stop[process_id][parity];
     }
 
     mdp_int len_to_send0(mdp_int process_id, mdp_int parity) const
