@@ -186,6 +186,94 @@ namespace MDP
       return m_rows * m_cols;
     }
 
+    mdp_matrix operator+() const
+    {
+      return (*this);
+    }
+
+    mdp_matrix operator-()
+    {
+      mdp_matrix tmp(m_rows, m_cols);
+
+      for (mdp_uint i = 0; i < size(); i++)
+        tmp[i] = -m_data[i];
+
+      return tmp;
+    }
+
+    mdp_matrix operator+(const mdp_matrix &x) const
+    {
+#ifdef CHECK_ALL
+      if (m_rows != x.m_rows || m_cols != x.m_cols)
+        error("mdp_matrix::operator+()\nWrong argument size");
+#endif
+      mdp_matrix z(m_rows, m_cols);
+      for (mdp_uint i = 0; i < z.size(); i++)
+        z[i] = m_data[i] + x.m_data[i];
+      return z;
+    }
+
+    mdp_matrix operator-(const mdp_matrix &x) const
+    {
+#ifdef CHECK_ALL
+      if (m_rows != x.m_rows || m_cols != x.m_cols)
+        error("mdp_matrix::operator-()\nWrong argument size");
+#endif
+      mdp_matrix z(m_rows, m_cols);
+      for (mdp_uint i = 0; i < z.size(); i++)
+        z[i] = m_data[i] - x.m_data[i];
+      return z;
+    }
+
+    mdp_matrix operator*(const mdp_matrix &x) const
+    {
+#ifdef CHECK_ALL
+      if (m_cols != x.m_rows)
+        error("mdp_matrix::operator*()\nWrong argument size");
+#endif
+      mdp_matrix z(m_rows, x.m_cols);
+#if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
+      if (m_rows == m_cols && x.m_rows == 3)
+      {
+        _sse_su3 *u = (_sse_su3 *)x.m_data;
+        _sse_double *in = (_sse_double *)y.m_data;
+        _sse_double *out = (_sse_double *)z.m_data;
+        for (mdp_uint i = 0; i < m_cols; i++, in++, out++)
+        {
+          _sse_double_load_123(*in, *(in + m_cols), *(in + 2 * m_cols));
+          _sse_double_su3_multiply(*u);
+          _sse_double_store_up_123(*out, *(out + m_cols), *(out + 2 * m_cols));
+        }
+        return z;
+      }
+#endif
+#if defined(MATRIX_SSE2) && !defined(USE_DOUBLE_PRECISION)
+      if (m_rows == m_cols && x.size() == 3)
+      {
+        _sse_su3 *u = (_sse_su3 *)x.m_data;
+        _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
+        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
+        _sse_float_pair_load(*in, *in);
+        _sse_float_su3_multiply(*u);
+        _sse_float_pair_store_up(*out, *out);
+        return z;
+      }
+#endif
+      for (mdp_uint i = 0; i < m_rows; i++)
+        for (mdp_uint j = 0; j < x.m_cols; j++)
+        {
+          z(i, j) = (*this)(i, 0) * x(0, j);
+          for (mdp_uint k = 1; k < m_cols; k++)
+            z(i, j) += (*this)(i, k) * x(k, j);
+        }
+      return z;
+    }
+
+    mdp_matrix operator/(const mdp_matrix &a) const
+    {
+      return (*this) * a.inv();
+    }
+
     mdp_matrix operator+=(const mdp_matrix &a)
     {
       (*this) = (*this) + a;
@@ -208,6 +296,83 @@ namespace MDP
     {
       (*this) = (*this) / a;
       return *this;
+    }
+
+    mdp_matrix operator+(mdp_complex b) const
+    {
+      if (m_cols != m_rows)
+        error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
+
+      mdp_matrix tmp(m_rows, m_cols);
+
+      for (mdp_uint i = 0; i < m_rows; i++)
+        tmp(i, i) += b;
+
+      return tmp;
+    }
+
+    mdp_matrix operator-(mdp_complex b) const
+    {
+      if (m_cols != m_rows)
+        error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
+
+      mdp_matrix tmp((*this));
+
+      for (mdp_uint i = 0; i < m_rows; i++)
+        tmp(i, i) -= b;
+
+      return tmp;
+    }
+
+    mdp_matrix operator*(mdp_complex x) const
+    {
+      mdp_matrix z(m_rows, m_cols);
+#ifdef MATRIX_SSE2
+      if (m_rows == 3)
+      {
+        static _sse_float factor1 ALIGN16;
+        static _sse_float factor2 ALIGN16;
+        static _sse_double factor3 ALIGN16;
+        static _sse_double factor4 ALIGN16;
+        _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
+        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
+#ifdef USE_DOUBLE_PRECISION
+        factor3.c1 = factor3.c2 = x.imag();
+        factor4.c1 = factor4.c2 = x.real() / x.imag();
+        for (mdp_uint i = 0; i < m_cols; i++, in++, out++)
+        {
+          _sse_double_load(*in);
+          _sse_double_vector_mulc(factor3, factor4);
+          _sse_double_store(*out);
+        }
+#else
+        factor1.c1 = factor1.c2 = factor1.c3 = factor1.c4 = x.imag();
+        factor2.c1 = factor2.c2 = factor2.c3 = factor2.c4 = x.real() / x.imag();
+        mdp_uint i = 0;
+        for (i = 0; i < m_cols - 1; i += 2, in += 2, out += 2)
+        {
+          _sse_float_pair_load(*in, *(in + 1));
+          _sse_float_vector_mulc(factor1, factor2);
+          _sse_float_pair_store(*out, *(out + 1));
+        }
+        if (i == m_cols - 1)
+        {
+          _sse_float_pair_load(*in, *in);
+          _sse_float_vector_mulc(factor1, factor2);
+          _sse_float_pair_store(*out, *out);
+        }
+#endif
+        return z;
+      }
+#endif
+      for (mdp_uint i = 0; i < size(); i++)
+        z[i] = x * m_data[i];
+      return z;
+    }
+
+    mdp_matrix operator/(mdp_complex b) const
+    {
+      return (*this) * (1.0 / b);
     }
 
     mdp_matrix operator+=(mdp_complex a)
@@ -276,6 +441,87 @@ namespace MDP
         }
     }
 
+    mdp_matrix operator+(mdp_real b) const
+    {
+      if (m_cols != m_rows)
+        error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
+
+      mdp_matrix tmp((*this));
+
+      for (mdp_uint i = 0; i < m_cols; i++)
+      {
+        tmp(i, i) += b;
+      }
+
+      return tmp;
+    }
+
+    mdp_matrix operator-(mdp_real b) const
+    {
+      if (m_cols != m_rows)
+        error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
+
+      mdp_matrix tmp((*this));
+
+      for (mdp_uint i = 0; i < m_cols; i++)
+      {
+        tmp(i, i) -= b;
+      }
+
+      return tmp;
+    }
+
+    mdp_matrix operator*(mdp_real x) const
+    {
+      mdp_matrix z(m_rows, m_cols);
+#ifdef MATRIX_SSE2
+      if (m_rows == 3)
+      {
+        static _sse_float factor1 ALIGN16;
+        static _sse_double factor2 ALIGN16;
+
+        _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
+        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
+#ifdef USE_DOUBLE_PRECISION
+        factor2.c1 = factor2.c2 = x;
+        for (mdp_uint i = 0; i < m_cols; i++, in++, out++)
+        {
+          _sse_double_load(*in);
+          _sse_double_vector_mul(factor2);
+          _sse_double_store(*out);
+        }
+#else
+        factor1.c1 = factor1.c2 = factor1.c3 = factor1.c4 = x;
+        mdp_uint i = 0;
+        for (i = 0; i < m_cols - 1; i += 2, in += 2, out += 2)
+        {
+          _sse_float_pair_load(*in, *(in + 1));
+          _sse_float_vector_mul(factor1);
+          _sse_float_pair_store(*out, *(out + 1));
+        }
+        if (i == m_cols - 1)
+        {
+          _sse_float_pair_load(*in, *in);
+          _sse_float_vector_mul(factor1);
+          _sse_float_pair_store(*out, *out);
+        }
+#endif
+        return z;
+      }
+#endif
+      for (mdp_uint i = 0; i < size(); i++)
+      {
+        z[i] = x * m_data[i];
+      }
+
+      return z;
+    }
+
+    mdp_matrix operator/(mdp_real b) const
+    {
+      return (*this) * (1.0 / b);
+    }
+
     mdp_matrix inv() const
     {
 #ifdef CHECK_ALL
@@ -334,52 +580,6 @@ namespace MDP
 
       return tmp;
     }
-
-    friend mdp_matrix operator+(const mdp_matrix &a);
-    friend mdp_matrix operator-(const mdp_matrix &a);
-
-    friend mdp_matrix operator+(const mdp_matrix &a, const mdp_matrix &b);
-    friend mdp_matrix operator-(const mdp_matrix &a, const mdp_matrix &b); // sse2
-    friend mdp_matrix operator*(const mdp_matrix &a, const mdp_matrix &b); // sse2
-    friend mdp_matrix operator/(const mdp_matrix &a, const mdp_matrix &b);
-
-    friend mdp_matrix operator+(const mdp_matrix &a, mdp_complex b);
-    friend mdp_matrix operator-(const mdp_matrix &a, mdp_complex b);
-    friend mdp_matrix operator*(const mdp_matrix &a, mdp_complex b);
-    friend mdp_matrix operator/(const mdp_matrix &a, mdp_complex b);
-
-    friend mdp_matrix operator+(mdp_complex a, const mdp_matrix &b);
-    friend mdp_matrix operator-(mdp_complex a, const mdp_matrix &b);
-    friend mdp_matrix operator*(mdp_complex a, const mdp_matrix &b);
-    friend mdp_matrix operator/(mdp_complex a, const mdp_matrix &b);
-
-    friend mdp_matrix operator+(const mdp_matrix &a, mdp_real b);
-    friend mdp_matrix operator-(const mdp_matrix &a, mdp_real b);
-    friend mdp_matrix operator*(const mdp_matrix &a, mdp_real b);
-    friend mdp_matrix operator/(const mdp_matrix &a, mdp_real b);
-
-    friend mdp_matrix operator+(mdp_real a, const mdp_matrix &b);
-    friend mdp_matrix operator-(mdp_real a, const mdp_matrix &b);
-    friend mdp_matrix operator*(mdp_real a, const mdp_matrix &b);
-    friend mdp_matrix operator/(mdp_real a, const mdp_matrix &b);
-
-    friend mdp_matrix inv(const mdp_matrix &a);
-    friend mdp_matrix pow(const mdp_matrix &a, mdp_uint b);
-    friend mdp_matrix exp(const mdp_matrix &a);
-    friend mdp_matrix log(const mdp_matrix &a);
-    friend mdp_matrix sin(const mdp_matrix &a);
-    friend mdp_matrix cos(const mdp_matrix &a);
-
-    friend mdp_matrix mdp_identity();
-    friend mdp_matrix mdp_zero();
-
-    friend mdp_real max(const mdp_matrix &a);
-    friend mdp_matrix submatrix(const mdp_matrix &a, mdp_uint i, mdp_uint j);
-    friend mdp_complex det(const mdp_matrix &a);
-    friend mdp_complex trace(const mdp_matrix &a);
-    friend mdp_matrix hermitian(const mdp_matrix &a);
-    friend mdp_matrix transpose(const mdp_matrix &a);
-    friend mdp_matrix conj(const mdp_matrix &a);
   };
 
   std::ostream &operator<<(std::ostream &os, const mdp_matrix &a)
@@ -407,164 +607,6 @@ namespace MDP
     return os;
   }
 
-  mdp_matrix operator+(const mdp_matrix &a)
-  {
-    return a;
-  }
-
-  mdp_matrix operator-(const mdp_matrix &a)
-  {
-    mdp_matrix tmp(a.rows(), a.cols());
-
-    for (mdp_uint i = 0; i < a.rows(); i++)
-      for (mdp_uint j = 0; j < a.cols(); j++)
-        tmp(i, j) = -a(i, j);
-    return tmp;
-  }
-
-  mdp_matrix operator+(const mdp_matrix &x, const mdp_matrix &y)
-  {
-    mdp_matrix z(x.rows(), x.cols());
-#ifdef CHECK_ALL
-    if (x.rows() != y.rows() || x.cols() != y.cols())
-      error("mdp_matrix::operator+()\nWrong argument size");
-#endif
-    for (mdp_uint i = 0; i < z.size(); i++)
-      z[i] = x[i] + y[i];
-    return z;
-  }
-
-  mdp_matrix operator-(const mdp_matrix &x, const mdp_matrix &y)
-  {
-    if (x.rows() != y.rows() || x.cols() != y.cols())
-      error("mdp_matrix::operator-()\nwrong argument size");
-    mdp_matrix z(x.rows(), x.cols());
-    for (mdp_uint i = 0; i < z.size(); i++)
-      z[i] = x[i] - y[i];
-    return z;
-  }
-
-  mdp_matrix operator*(const mdp_matrix &x, const mdp_matrix &y)
-  {
-    if (x.cols() != y.rows())
-      error("mdp_matrix::operator*()\nwrong argument size");
-    mdp_matrix z(x.rows(), y.cols());
-#if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
-    if (x.rows() == x.cols() && y.rows() == 3)
-    {
-      _sse_su3 *u = (_sse_su3 *)x.m_data;
-      _sse_double *in = (_sse_double *)y.m_data;
-      _sse_double *out = (_sse_double *)z.m_data;
-      for (mdp_uint i = 0; i < x.cols(); i++, in++, out++)
-      {
-        _sse_double_load_123(*in, *(in + x.cols()), *(in + 2 * x.cols()));
-        _sse_double_su3_multiply(*u);
-        _sse_double_store_up_123(*out, *(out + x.cols()), *(out + 2 * x.cols()));
-      }
-      return z;
-    }
-#endif
-#if defined(MATRIX_SSE2) && !defined(USE_DOUBLE_PRECISION)
-    if (x.rows() == x.cols() && y.size() == 3)
-    {
-      _sse_su3 *u = (_sse_su3 *)x.m_data;
-      _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
-      _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
-      _sse_float_pair_load(*in, *in);
-      _sse_float_su3_multiply(*u);
-      _sse_float_pair_store_up(*out, *out);
-      return z;
-    }
-#endif
-    for (mdp_uint i = 0; i < x.rows(); i++)
-      for (mdp_uint j = 0; j < y.cols(); j++)
-      {
-        z(i, j) = x(i, 0) * y(0, j);
-        for (mdp_uint k = 1; k < x.cols(); k++)
-          z(i, j) += x(i, k) * y(k, j);
-      }
-    return z;
-  }
-
-  mdp_matrix operator/(const mdp_matrix &a, const mdp_matrix &b)
-  {
-    return a * inv(b);
-  }
-
-  mdp_matrix operator+(const mdp_matrix &a, mdp_complex b)
-  {
-    if (a.cols() != a.rows())
-      error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
-    mdp_matrix tmp;
-    tmp = a;
-    for (mdp_uint i = 0; i < a.cols(); i++)
-      tmp(i, i) += b;
-    return tmp;
-  }
-
-  mdp_matrix operator-(const mdp_matrix &a, mdp_complex b)
-  {
-    if (a.cols() != a.rows())
-      error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
-    mdp_matrix tmp;
-
-    tmp = a;
-    for (mdp_uint i = 0; i < a.cols(); i++)
-      tmp(i, i) -= b;
-    return tmp;
-  }
-
-  mdp_matrix operator*(const mdp_matrix &y, mdp_complex x)
-  {
-    mdp_matrix z(y.rows(), y.cols());
-#ifdef MATRIX_SSE2
-    if (y.rows() == 3)
-    {
-      static _sse_float factor1 ALIGN16;
-      static _sse_float factor2 ALIGN16;
-      static _sse_double factor3 ALIGN16;
-      static _sse_double factor4 ALIGN16;
-      _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
-      _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
-#ifdef USE_DOUBLE_PRECISION
-      factor3.c1 = factor3.c2 = x.imag();
-      factor4.c1 = factor4.c2 = x.real() / x.imag();
-      for (mdp_uint i = 0; i < y.cols(); i++, in++, out++)
-      {
-        _sse_double_load(*in);
-        _sse_double_vector_mulc(factor3, factor4);
-        _sse_double_store(*out);
-      }
-#else
-      factor1.c1 = factor1.c2 = factor1.c3 = factor1.c4 = x.imag();
-      factor2.c1 = factor2.c2 = factor2.c3 = factor2.c4 = x.real() / x.imag();
-      mdp_uint i = 0;
-      for (i = 0; i < y.cols() - 1; i += 2, in += 2, out += 2)
-      {
-        _sse_float_pair_load(*in, *(in + 1));
-        _sse_float_vector_mulc(factor1, factor2);
-        _sse_float_pair_store(*out, *(out + 1));
-      }
-      if (i == y.cols() - 1)
-      {
-        _sse_float_pair_load(*in, *in);
-        _sse_float_vector_mulc(factor1, factor2);
-        _sse_float_pair_store(*out, *out);
-      }
-#endif
-      return z;
-    }
-#endif
-    for (mdp_uint i = 0; i < y.size(); i++)
-      z[i] = x * y[i];
-    return z;
-  }
-
-  mdp_matrix operator/(const mdp_matrix &a, mdp_complex b)
-  {
-    return a * (1.0 / b);
-  }
-
   mdp_matrix operator+(mdp_complex b, const mdp_matrix &a)
   {
     return a + b;
@@ -572,17 +614,7 @@ namespace MDP
 
   mdp_matrix operator-(mdp_complex b, const mdp_matrix &a)
   {
-    if (a.cols() != a.rows())
-      error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
-    mdp_matrix tmp(a.rows(), a.cols());
-
-    for (mdp_uint i = 0; i < a.rows(); i++)
-    {
-      for (mdp_uint j = 0; j < a.cols(); j++)
-        tmp(i, j) = -a(i, j);
-      tmp(i, i) += b;
-    }
-    return tmp;
+    return -(a - b);
   }
 
   mdp_matrix operator*(mdp_complex x, const mdp_matrix &y)
@@ -595,78 +627,6 @@ namespace MDP
     return a.inv() * b;
   }
 
-  mdp_matrix operator+(const mdp_matrix &a, mdp_real b)
-  {
-    if (a.cols() != a.rows())
-      error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
-    mdp_matrix tmp;
-
-    tmp = a;
-    for (mdp_uint i = 0; i < a.cols(); i++)
-      tmp(i, i) += b;
-    return tmp;
-  }
-
-  mdp_matrix operator-(const mdp_matrix &a, mdp_real b)
-  {
-    if (a.cols() != a.rows())
-      error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
-    mdp_matrix tmp;
-
-    tmp = a;
-    for (mdp_uint i = 0; i < a.cols(); i++)
-      tmp(i, i) -= b;
-    return tmp;
-  }
-
-  mdp_matrix operator*(const mdp_matrix &y, mdp_real x)
-  {
-    mdp_matrix z(y.rows(), y.cols());
-#ifdef MATRIX_SSE2
-    if (y.rows() == 3)
-    {
-      static _sse_float factor1 ALIGN16;
-      static _sse_double factor2 ALIGN16;
-
-      _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
-      _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
-#ifdef USE_DOUBLE_PRECISION
-      factor2.c1 = factor2.c2 = x;
-      for (mdp_uint i = 0; i < y.cols(); i++, in++, out++)
-      {
-        _sse_double_load(*in);
-        _sse_double_vector_mul(factor2);
-        _sse_double_store(*out);
-      }
-#else
-      factor1.c1 = factor1.c2 = factor1.c3 = factor1.c4 = x;
-      mdp_uint i = 0;
-      for (i = 0; i < y.cols() - 1; i += 2, in += 2, out += 2)
-      {
-        _sse_float_pair_load(*in, *(in + 1));
-        _sse_float_vector_mul(factor1);
-        _sse_float_pair_store(*out, *(out + 1));
-      }
-      if (i == y.cols() - 1)
-      {
-        _sse_float_pair_load(*in, *in);
-        _sse_float_vector_mul(factor1);
-        _sse_float_pair_store(*out, *out);
-      }
-#endif
-      return z;
-    }
-#endif
-    for (mdp_uint i = 0; i < y.size(); i++)
-      z[i] = x * y[i];
-    return z;
-  }
-
-  mdp_matrix operator/(const mdp_matrix &a, mdp_real b)
-  {
-    return a * (1.0 / b);
-  }
-
   mdp_matrix operator+(mdp_real b, const mdp_matrix &a)
   {
     return a + b;
@@ -674,17 +634,7 @@ namespace MDP
 
   mdp_matrix operator-(mdp_real b, const mdp_matrix &a)
   {
-    if (a.cols() != a.rows())
-      error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
-    mdp_matrix tmp(a.rows(), a.cols());
-
-    for (mdp_uint i = 0; i < a.rows(); i++)
-    {
-      for (mdp_uint j = 0; j < a.cols(); j++)
-        tmp(i, j) = -a(i, j);
-      tmp(i, i) += b;
-    }
-    return tmp;
+    return -(a - b);
   }
 
   mdp_matrix operator*(mdp_real a, const mdp_matrix &b)
