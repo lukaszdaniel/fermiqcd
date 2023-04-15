@@ -284,7 +284,7 @@ namespace MDP
 #endif
 
       mdp_matrix tma((*this));
-      mdp_matrix tmp;
+      mdp_matrix tmp(m_rows, m_cols);
       mdp_complex x, pivot;
       mdp_uint rmax;
 
