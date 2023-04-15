@@ -28,65 +28,65 @@ namespace MDP
   /// @endverbatim
   class mdp_nmatrix_field : public mdp_field<mdp_complex>
   {
+  private:
+    mdp_uint m_matrices;
+    mdp_uint m_rows;
+    mdp_uint m_columns;
+    mdp_uint m_imax;
+    mdp_uint m_imax2;
+
   public:
-    mdp_uint rows, columns, matrices, imax, imax2;
-
-    mdp_nmatrix_field()
+    mdp_nmatrix_field() : m_matrices(0), m_rows(0), m_columns(0), m_imax(0), m_imax2(0)
     {
-      rows = columns = matrices = imax = imax2 = 0;
-      mdp_field<mdp_complex>::reset_field();
+      reset_field();
     }
 
-    mdp_nmatrix_field(mdp_nmatrix_field &field)
-    {
-      mdp_field<mdp_complex>::reset_field();
-      rows = field.rows;
-      columns = field.columns;
-      matrices = field.matrices;
-      imax = field.imax;
-      imax2 = field.imax2;
-      allocate_field(field.lattice(), field.imax);
-    }
-
-    /// declares a field object that at each site as vector of n ixj matrices
-    mdp_nmatrix_field(mdp_lattice &a, int n, int i, int j)
-    {
-      mdp_field<mdp_complex>::reset_field();
-      rows = i;
-      columns = j;
-      matrices = n;
-      imax = i * j * n;
-      imax2 = i * j;
-      allocate_field(a, imax);
-    }
-
-    /// dynamically allocates a field object that at each site as vector of n ixj matrices
-    void allocate_mdp_nmatrix_field(mdp_lattice &a, int n, int i, int j)
+    mdp_nmatrix_field(mdp_nmatrix_field &field) : m_matrices(field.m_matrices), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax), m_imax2(field.m_imax2)
     {
       deallocate_field();
-      rows = i;
-      columns = j;
-      matrices = n;
-      imax = i * j * n;
-      imax2 = i * j;
-      allocate_field(a, imax);
+      allocate_field(field.lattice(), field.m_imax);
     }
 
-    /// returns the n-th matrix stored at site x
-    mdp_matrix operator()(mdp_site x, int n)
+    /** @brief declares a n-component vector field of ixj matrices at each site
+     */
+    mdp_nmatrix_field(mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j) : m_matrices(n), m_rows(i), m_columns(j), m_imax(i * j * n), m_imax2(i * j)
     {
-      return mdp_matrix(address(x, n * imax2), rows, columns);
+      deallocate_field();
+      allocate_field(a, m_imax);
     }
 
-    /// returns the (i,j) component of the n-th matrix stored at site x
-    mdp_complex &operator()(mdp_site x, int n, int i, int j)
+    /** @brief dynamically allocates a n-component vector field of ixj matrices at each site
+     */
+    void allocate_mdp_nmatrix_field(mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j)
     {
-      return address(x, n * imax2)[i * columns + j];
+      deallocate_field();
+      m_rows = i;
+      m_columns = j;
+      m_matrices = n;
+      m_imax = i * j * n;
+      m_imax2 = i * j;
+      allocate_field(a, m_imax);
     }
 
-    const mdp_complex &operator()(mdp_site x, int n, int i, int j) const
+    /** @brief returns the n-th matrix stored at site x
+     */
+    mdp_matrix operator()(mdp_site x, mdp_uint n)
     {
-      return address(x, n * imax2)[i * columns + j];
+      return mdp_matrix(address(x, n * m_imax2), m_rows, m_columns);
+    }
+
+    /** @brief returns the (i,j) component of the n-th matrix stored at site x
+     */
+    mdp_complex &operator()(mdp_site x, mdp_uint n, mdp_uint i, mdp_uint j)
+    {
+      return address(x, n * m_imax2)[i * m_columns + j];
+    }
+
+    /** @brief returns the (i,j) const component of the n-th matrix stored at site x
+     */
+    const mdp_complex &operator()(mdp_site x, mdp_uint n, mdp_uint i, mdp_uint j) const
+    {
+      return address(x, n * m_imax2)[i * m_columns + j];
     }
   };
 } // namespace MDP

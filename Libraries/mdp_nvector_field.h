@@ -17,69 +17,62 @@ namespace MDP
   /// @brief field of vectors of vectors (DEPRECATED)
   class mdp_nvector_field : public mdp_field<mdp_complex>
   {
-  public:
-    mdp_uint rows;
-    mdp_uint columns;
-    mdp_uint imax;
-    mdp_uint imax2;
+  private:
+    mdp_uint m_rows;
+    mdp_uint m_imax;
+    mdp_uint m_imax2;
 
-    mdp_nvector_field()
+  public:
+    mdp_nvector_field() : m_rows(0), m_imax(0), m_imax2(0)
     {
-      rows = columns = imax = imax2 = 0;
       reset_field();
     }
 
-    mdp_nvector_field(mdp_nvector_field &field)
+    mdp_nvector_field(mdp_nvector_field &field) : m_rows(field.m_rows), m_imax(field.m_imax), m_imax2(field.m_imax2)
     {
-      rows = field.rows;
-      columns = field.columns;
-      imax = field.imax;
-      imax2 = field.imax2;
-      allocate_field(field.lattice(), field.imax);
+      allocate_field(field.lattice(), field.m_imax);
     }
 
     /** @brief declares a n-component vector field of i-component vectors at each site
      */
-    mdp_nvector_field(mdp_lattice &a, int n, int i)
+    mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i)
     {
-      rows = i;
-      columns = 1;
-      imax = i * n;
-      imax2 = i;
-      allocate_field(a, imax);
+      m_rows = i;
+      m_imax = i * n;
+      m_imax2 = i;
+      allocate_field(a, m_imax);
     }
 
     /** @brief dynamically allocates a n-component vector field of i-component vectors at each site
      */
-    void allocate_mdp_nvector_field(mdp_lattice &a, int n, int i)
+    void allocate_mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i)
     {
       deallocate_field();
-      rows = i;
-      columns = 1;
-      imax = i * n;
-      imax2 = i;
-      allocate_field(a, imax);
+      m_rows = i;
+      m_imax = i * n;
+      m_imax2 = i;
+      allocate_field(a, m_imax);
     }
 
     /** @brief returns the n-th vector stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int n)
+    mdp_matrix operator()(mdp_site x, mdp_uint n)
     {
-      return mdp_matrix(address(x, n * imax2), rows, columns);
+      return mdp_matrix(address(x, n * m_imax2), m_rows, 1);
     }
 
     /** @brief returns the i-th component of the n-th vector stored at site x
      */
-    mdp_complex &operator()(mdp_site x, int n, int i)
+    mdp_complex &operator()(mdp_site x, mdp_uint n, mdp_uint i)
     {
-      return address(x, n * imax2)[i];
+      return address(x, n * m_imax2)[i];
     }
 
     /** @brief returns the i-th const component of the n-th vector stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, int n, int i) const
+    const mdp_complex &operator()(mdp_site x, mdp_uint n, mdp_uint i) const
     {
-      return address(x, n * imax2)[i];
+      return address(x, n * m_imax2)[i];
     }
   };
 } // namespace MDP
