@@ -22,8 +22,6 @@
 
 namespace MDP
 {
-  const mdp_int NOWHERE = INT_MAX;
-
   class mdp_site;
 
   /// @brief distributed lattice object

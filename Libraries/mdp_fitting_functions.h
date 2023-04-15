@@ -64,7 +64,8 @@ namespace MDP
     for (iter = 0; iter < niter; iter++)
     {
       xm = 0.5 * (a + b);
-      tol2 = 2.0 * (tol1 = tol * fabs(x) + PRECISION);
+      tol1 = tol * fabs(x) + PRECISION;
+      tol2 = 2.0 * tol1;
       if (fabs(x - xm) <= (tol2 - 0.5 * (b - a)))
       {
         xmin = x;
