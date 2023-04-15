@@ -27,55 +27,61 @@ namespace MDP
   /// @endverbatim
   class mdp_matrix_field : public mdp_field<mdp_complex>
   {
+  private:
+    mdp_uint m_rows;
+    mdp_uint m_columns;
+    mdp_uint m_imax;
+
   public:
-    int rows, columns, imax;
-
-    mdp_matrix_field()
+    mdp_matrix_field() : m_rows(0), m_columns(0), m_imax(0)
     {
-      rows = columns = imax = 0;
-      mdp_field<mdp_complex>::reset_field();
+      reset_field();
     }
 
-    mdp_matrix_field(mdp_matrix_field &field)
-    {
-      mdp_field<mdp_complex>::reset_field();
-      rows = field.rows;
-      columns = field.columns;
-      imax = field.imax;
-      allocate_field(field.lattice(), field.imax);
-    }
-
-    mdp_matrix_field(mdp_lattice &a, int i, int j)
-    {
-      mdp_field<mdp_complex>::reset_field();
-      rows = i;
-      columns = j;
-      imax = i * j;
-      allocate_field(a, imax);
-    }
-
-    void allocate_mdp_matrix_field(mdp_lattice &a, int i, int j)
+    mdp_matrix_field(mdp_matrix_field &field) : m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
     {
       deallocate_field();
-      rows = i;
-      columns = j;
-      imax = i * j;
-      allocate_field(a, imax);
+      allocate_field(field.lattice(), field.m_imax);
     }
 
+    /** @brief declares a field of ixj matrices at each site
+     */
+    mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j) : m_rows(i), m_columns(j), m_imax(i * j)
+    {
+      deallocate_field();
+      allocate_field(a, m_imax);
+    }
+
+    /** @brief dynamically allocates a field of ixj matrices at each site
+     */
+    void allocate_mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j)
+    {
+      deallocate_field();
+      m_rows = i;
+      m_columns = j;
+      m_imax = i * j;
+      allocate_field(a, m_imax);
+    }
+
+    /** @brief returns the matrix stored at site x
+     */
     mdp_matrix operator()(mdp_site x)
     {
-      return mdp_matrix(address(x), rows, columns);
+      return mdp_matrix(address(x), m_rows, m_columns);
     }
 
-    mdp_complex &operator()(mdp_site x, int i, int j)
+    /** @brief returns the (i,j) component of the matrix stored at site x
+     */
+    mdp_complex &operator()(mdp_site x, mdp_uint i, mdp_uint j)
     {
-      return address(x)[i * columns + j];
+      return address(x)[i * m_columns + j];
     }
 
-    const mdp_complex &operator()(mdp_site x, int i, int j) const
+    /** @brief returns the (i,j) const component of the matrix stored at site x
+     */
+    const mdp_complex &operator()(mdp_site x, mdp_uint i, mdp_uint j) const
     {
-      return address(x)[i * columns + j];
+      return address(x)[i * m_columns + j];
     }
   };
 } // namespace MDP
