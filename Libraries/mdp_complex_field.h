@@ -119,7 +119,7 @@ namespace MDP
           m_field_components != psi.m_field_components)
         error("mdp_field: operator=() incompatible fields");
 
-      mdp_int i = 0;
+      mdp_uint i = 0;
 
 #if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
       _sse_double *r = (_sse_double *)m_data;

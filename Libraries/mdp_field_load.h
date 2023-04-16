@@ -46,7 +46,7 @@ namespace MDP
       return false;
     mdp_int header_size = 0;
     size_t idx_gl, nvol_gl = lattice().global_volume();
-    size_t psize = m_field_components * m_Tsize;
+    size_t psize = m_field_components * sizeof(T);
     double mytime = mpi.time();
     bool reversed_header_endianess = false;
     struct stat statbuf;
@@ -134,7 +134,7 @@ namespace MDP
           if (user_read)
           {
             if (!user_read(fp, short_buffer,
-                           m_field_components * m_Tsize,
+                           m_field_components * sizeof(T),
                            skip_bytes,
                            idx_gl, lattice()))
               error("unexpected end of file");
@@ -159,7 +159,7 @@ namespace MDP
         }
         if ((process != NOWHERE) && (process != processIO))
         {
-          for (int k = 0; k < m_field_components; k++)
+          for (mdp_uint k = 0; k < m_field_components; k++)
             large_buffer(process, buffer_size[process], k) = short_buffer[k];
           buffer_size[process]++;
           if (buffer_size[process] == max_buffer_size)
@@ -183,7 +183,7 @@ namespace MDP
         }
         if (process == processIO)
         {
-          for (int k = 0; k < m_field_components; k++)
+          for (mdp_uint k = 0; k < m_field_components; k++)
             *(m_data.get() + lattice().local(idx_gl) * m_field_components + k) = short_buffer[k];
         }
       }
@@ -210,7 +210,7 @@ namespace MDP
         {
           mpi.get(&(local_buffer(0, 0)), buffer_size * m_field_components, processIO);
           for (idx = 0; idx < buffer_size; idx++)
-            for (int k = 0; k < m_field_components; k++)
+            for (mdp_uint k = 0; k < m_field_components; k++)
               *(m_data.get() + local_index[idx] * m_field_components + k) = local_buffer(idx, k);
           buffer_size = 0;
         }

@@ -346,7 +346,7 @@ namespace MDP
     int nc = U.nc;
     mdp_site x(U.lattice());
     // It is fine to use Nmdp_matrix even if there is twist .. how lucky!
-    U.em.deallocate_memory();
+    U.em.deallocate_field();
     U.em.allocate_em_field(U.lattice(), U.nc);
     mdp_matrix A(nc, nc);
     mdp_matrix b1(nc, nc), b2(nc, nc);
@@ -395,7 +395,7 @@ namespace MDP
     if (V.lattice().boundary_thickness() < length)
       error("fermiqcd_gauge_auxiliary_functions/compute_long_links: boundary thickness is not big enough");
 
-    U.long_links.deallocate_memory();
+    U.long_links.deallocate_field();
     U.long_links.allocate_mdp_nmatrix_field(V.lattice(), U.ndim, U.nc, U.nc);
     mdp_site x(U.lattice());
     int mu;

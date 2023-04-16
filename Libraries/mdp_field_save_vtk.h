@@ -91,7 +91,7 @@ namespace MDP
             mpi.get(&(large_buffer(process, 0, 0)),
                     buffer_size[process] * m_field_components, process);
           }
-          for (int k = 0; k < m_field_components; k++)
+          for (mdp_uint k = 0; k < m_field_components; k++)
             short_buffer[k] = large_buffer(process, buffer_ptr[process], k);
           buffer_ptr[process]++;
           if (buffer_ptr[process] == buffer_size[process])
@@ -99,7 +99,7 @@ namespace MDP
         }
         if (process == processIO)
         {
-          for (int k = 0; k < m_field_components; k++)
+          for (mdp_uint k = 0; k < m_field_components; k++)
             short_buffer[k] = *(m_data.get() + lattice().local(idx_gl) * m_field_components + k);
         }
         if (process != NOWHERE)
@@ -112,8 +112,8 @@ namespace MDP
           }
           if (t < 0 || timeslice == t || lattice().n_dimensions() == 3)
           {
-            for (mdp_int fc = 0; fc < m_field_components; fc++)
-              if (component == -1 || fc == component)
+            for (mdp_uint fc = 0; fc < m_field_components; fc++)
+              if (component == -1 || fc == mdp_uint(component))
               {
                 fval = (float)short_buffer[fc];
                 if (!ASCII)
@@ -161,7 +161,7 @@ namespace MDP
             ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
         {
           for (mdp_int idx = 0; idx < buffer_size; idx++)
-            for (int k = 0; k < m_field_components; k++)
+            for (mdp_uint k = 0; k < m_field_components; k++)
               local_buffer(idx, k) = *(m_data.get() + local_index[idx] * m_field_components + k);
           mpi.put(buffer_size, processIO, request);
           mpi.wait(request);

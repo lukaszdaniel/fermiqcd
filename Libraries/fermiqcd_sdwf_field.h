@@ -66,7 +66,7 @@ namespace MDP
 
     void operator=(mdp_complex a)
     {
-      for (mdp_int i = 0; i < m_size; i++)
+      for (mdp_uint i = 0; i < m_size; i++)
         m_data[i] = a;
     }
 

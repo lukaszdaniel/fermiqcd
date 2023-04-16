@@ -20,7 +20,7 @@ namespace MDP
    * need to be synchronized between the parallel processes
    */
   template <class T>
-  void mdp_field<T>::update(int np, int d, int ncomp)
+  void mdp_field<T>::update(int np, int d, mdp_uint ncomp)
   {
     T *dynamic_buffer = nullptr;
     T *where_to = nullptr;
@@ -76,7 +76,7 @@ namespace MDP
       {
         dynamic_buffer = new T[length * ncomp];
         for (mdp_int idx = 0; idx < length; idx++)
-          for (mdp_int k = 0; k < ncomp; k++)
+          for (mdp_uint k = 0; k < ncomp; k++)
           {
             dynamic_buffer[idx * ncomp + k] =
                 *(m_data.get() + lattice().to_send0(process, start_to_send + idx) * m_field_components + d * ncomp + k);
@@ -104,7 +104,7 @@ namespace MDP
           where_to = new T[length * ncomp];
           mpi.get(where_to, length * ncomp, process);
           for (mdp_int idx = 0; idx < length; idx++)
-            for (mdp_int k = 0; k < ncomp; k++)
+            for (mdp_uint k = 0; k < ncomp; k++)
             {
               *(m_data.get() + (lattice().start0(process, ni) + idx) * m_field_components +
                 d * ncomp + k) = where_to[idx * ncomp + k];

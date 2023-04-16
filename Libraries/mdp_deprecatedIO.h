@@ -61,15 +61,15 @@ namespace MDP
 				if (process != NOWHERE)
 				{
 					if (sort_x != 0)
-						if (fseek(fp, sort_x(lattice(), idx_gl) * m_Tsize * m_field_components + header_size, SEEK_SET) < 0)
+						if (fseek(fp, sort_x(lattice(), idx_gl) * sizeof(T) * m_field_components + header_size, SEEK_SET) < 0)
 							error("unexpected end of file");
-					if ((fread(short_buffer, m_Tsize, m_field_components, fp) -
+					if ((fread(short_buffer, sizeof(T), m_field_components, fp) -
 						 m_field_components) != 0)
 						error("unexpected end of file");
 				}
 				if ((process != NOWHERE) && (process != processIO))
 				{
-					for (int k = 0; k < m_field_components; k++)
+					for (mdp_uint k = 0; k < m_field_components; k++)
 						large_buffer(process, buffer_size[process], k) = short_buffer[k];
 					buffer_size[process]++;
 					if (buffer_size[process] == max_buffer_size)
@@ -93,7 +93,7 @@ namespace MDP
 				}
 				if (process == processIO)
 				{
-					for (int k = 0; k < m_field_components; k++)
+					for (mdp_uint k = 0; k < m_field_components; k++)
 						*(m_data.get() + lattice().local(idx_gl) * m_field_components + k) = short_buffer[k];
 				}
 			}
@@ -120,7 +120,7 @@ namespace MDP
 				{
 					mpi.get(&(local_buffer(0, 0)), buffer_size * m_field_components, processIO);
 					for (idx = 0; idx < buffer_size; idx++)
-						for (int k = 0; k < m_field_components; k++)
+						for (mdp_uint k = 0; k < m_field_components; k++)
 							*(m_data.get() + local_index[idx] * m_field_components + k) = local_buffer(idx, k);
 					buffer_size = 0;
 				}
@@ -191,7 +191,7 @@ namespace MDP
 						mpi.get(&(large_buffer(process, 0, 0)),
 								buffer_size[process] * m_field_components, process);
 					}
-					for (int k = 0; k < m_field_components; k++)
+					for (mdp_uint k = 0; k < m_field_components; k++)
 						short_buffer[k] = large_buffer(process, buffer_ptr[process], k);
 					buffer_ptr[process]++;
 					if (buffer_ptr[process] == buffer_size[process])
@@ -199,15 +199,15 @@ namespace MDP
 				}
 				if (process == processIO)
 				{
-					for (int k = 0; k < m_field_components; k++)
+					for (mdp_uint k = 0; k < m_field_components; k++)
 						short_buffer[k] = *(m_data.get() + lattice().local(idx_gl) * m_field_components + k);
 				}
 				if (process != NOWHERE)
 				{
 					if (sort_x != 0)
-						if (fseek(fp, sort_x(lattice(), idx_gl) * m_Tsize * m_field_components + header_size, SEEK_SET) < 0)
+						if (fseek(fp, sort_x(lattice(), idx_gl) * sizeof(T) * m_field_components + header_size, SEEK_SET) < 0)
 							error("unexpected end of file");
-					if ((fwrite(short_buffer, m_Tsize, m_field_components, fp) -
+					if ((fwrite(short_buffer, sizeof(T), m_field_components, fp) -
 						 m_field_components) != 0)
 						error("I cannot write on the file. I am confused !?!?");
 				}
@@ -238,7 +238,7 @@ namespace MDP
 					((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
 				{
 					for (idx = 0; idx < buffer_size; idx++)
-						for (int k = 0; k < m_field_components; k++)
+						for (mdp_uint k = 0; k < m_field_components; k++)
 							local_buffer(idx, k) = *(m_data.get() + local_index[idx] * m_field_components + k);
 					mpi.put(buffer_size, processIO, request);
 					mpi.wait(request);

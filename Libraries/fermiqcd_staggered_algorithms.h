@@ -373,9 +373,9 @@ namespace MDP
     std::cout << "Freeing temporary vectors...";
 
     for (imn = 0; imn < (ndim - 1); imn++)
-      Delta1[imn].deallocate_memory();
+      Delta1[imn].deallocate_field();
     for (im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
-      Delta2[im2].deallocate_memory();
+      Delta2[im2].deallocate_field();
 
     std::cout << "done.\n";
 
