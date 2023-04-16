@@ -12,9 +12,6 @@
 #ifndef MDP_MACROS_
 #define MDP_MACROS_
 
-#define CHECK_ALL
-#define INCLUDE_DEPRECATED_IO
-
 namespace MDP
 {
 /// Loop on all local sites of this process

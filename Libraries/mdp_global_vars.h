@@ -20,6 +20,7 @@ namespace MDP
 {
     // #define USE_DOUBLE_PRECISION
     // #define CHECK_ALL
+    // #define INCLUDE_DEPRECATED_IO
     // #define MDP_MPI
     // #define PARALLEL
     // #define NO_POSIX
