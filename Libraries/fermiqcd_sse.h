@@ -16,7 +16,7 @@ namespace MDP
 {
 #ifdef SSE2
 
-#pragma fPIC
+  // #pragma fPIC
 
 #define ALIGN16 __attribute__((aligned(16)))
 #define ALIGN64 __attribute__((aligned(64)))
@@ -63,8 +63,8 @@ namespace MDP
   static _sse_float _sse_float_sgn23 __attribute__((unused)) = {1.0f, -1.0f, -1.0f, 1.0f};
   static _sse_float _sse_float_sgn24 __attribute__((unused)) = {1.0f, -1.0f, 1.0f, -1.0f};
   static _sse_float _sse_float_sgn34 __attribute__((unused)) = {1.0f, 1.0f, -1.0f, -1.0f};
-  static _sse_int _sse_double_sgn __attribute__((unused)) = {0x0, 0x80000000, 0x0, 0x0};
-  static _sse_int _sse_double_sgn2 __attribute__((unused)) = {0x0, 0x0, 0x0, 0x80000000};
+  static _sse_int _sse_double_sgn __attribute__((unused)) = {0x0, -1 /*was 0x80000000 */, 0x0, 0x0};
+  static _sse_int _sse_double_sgn2 __attribute__((unused)) = {0x0, 0x0, 0x0, -1 /*was 0x80000000 */};
 
   // //////////////////////////////////////////////////////////////////////////
   // Cache manipulation macros (float)
@@ -816,35 +816,34 @@ namespace MDP
        :                          \
        : "m"(c))
 
-  // //////////////////////////////////////////////////////////////////////////
-  // multiplies xmm0, xmm1, xmm2 for complex=a*(b+I)
-  // //////////////////////////////////////////////////////////////////////////
-  /* deprecated
-  #define _sse_double_vector_mulc(a,b) \
-  _ASM ("mulpd %0, %%xmm0 \n\t" \
-        "mulpd %0, %%xmm1 \n\t" \
-        "mulpd %0, %%xmm2 \n\t" \
-        "movapd %%xmm0, %%xmm3 \n\t" \
-        "movapd %%xmm1, %%xmm4 \n\t" \
-        "movapd %%xmm2, %%xmm5 \n\t" \
-        "mulpd %1, %%xmm0 \n\t" \
-        "mulpd %1, %%xmm1 \n\t" \
-        "mulpd %1, %%xmm2 \n\t" \
-        "shufpd $0x1, %%xmm3, %%xmm3 \n\t" \
-        "shufpd $0x1, %%xmm4, %%xmm4 \n\t" \
-        "shufpd $0x1, %%xmm5, %%xmm5 \n\t" \
-        "xorpd %2, %%xmm3 \n\t" \
-        "xorpd %2, %%xmm4 \n\t" \
-        "xorpd %2, %%xmm5 \n\t" \
-        "addpd %%xmm3, %%xmm0 \n\t" \
-        "addpd %%xmm4, %%xmm1 \n\t" \
-        "addpd %%xmm5, %%xmm2" \
-        : \
-        : \
-        "m" (a), \
-        "m" (b), \
-        "m" (_sse_double_sgn))
-  */
+// //////////////////////////////////////////////////////////////////////////
+// multiplies xmm0, xmm1, xmm2 for complex=a*(b+I)
+// //////////////////////////////////////////////////////////////////////////
+#if 1 // deprecated
+#define _sse_double_vector_mulc(a, b)     \
+  _ASM("mulpd %0, %%xmm0 \n\t"            \
+       "mulpd %0, %%xmm1 \n\t"            \
+       "mulpd %0, %%xmm2 \n\t"            \
+       "movapd %%xmm0, %%xmm3 \n\t"       \
+       "movapd %%xmm1, %%xmm4 \n\t"       \
+       "movapd %%xmm2, %%xmm5 \n\t"       \
+       "mulpd %1, %%xmm0 \n\t"            \
+       "mulpd %1, %%xmm1 \n\t"            \
+       "mulpd %1, %%xmm2 \n\t"            \
+       "shufpd $0x1, %%xmm3, %%xmm3 \n\t" \
+       "shufpd $0x1, %%xmm4, %%xmm4 \n\t" \
+       "shufpd $0x1, %%xmm5, %%xmm5 \n\t" \
+       "xorpd %2, %%xmm3 \n\t"            \
+       "xorpd %2, %%xmm4 \n\t"            \
+       "xorpd %2, %%xmm5 \n\t"            \
+       "addpd %%xmm3, %%xmm0 \n\t"        \
+       "addpd %%xmm4, %%xmm1 \n\t"        \
+       "addpd %%xmm5, %%xmm2"             \
+       :                                  \
+       : "m"(a),                          \
+         "m"(b),                          \
+         "m"(_sse_double_sgn))
+#endif
   // //////////////////////////////////////////////////////////////////////////
   // multiplies xmm0, xmm1, xmm2 for complex=x+I*y
   // //////////////////////////////////////////////////////////////////////////
@@ -1667,7 +1666,7 @@ namespace MDP
 
   static void _sse_check_alignment(void *var, unsigned int base)
   {
-    unsigned int af1 = (unsigned int)var;
+    uintptr_t af1 = reinterpret_cast<uintptr_t>(var);
     if (af1 != (af1 & ~base))
     {
       error("_sse_check_alignment()\nVariable not aligned properly");

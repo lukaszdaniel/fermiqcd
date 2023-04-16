@@ -159,7 +159,7 @@ namespace MDP
      *
      * @return Pointer to the begining of this matrix
      */
-    mdp_complex *address()
+    mdp_complex *address() const
     {
       return m_data.get();
     }
@@ -255,12 +255,13 @@ namespace MDP
         error("mdp_matrix::operator*()\nWrong argument size");
 #endif
       mdp_matrix z(m_rows, x.m_cols);
-#if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
+#ifdef MATRIX_SSE2
+#ifdef USE_DOUBLE_PRECISION
       if (m_rows == m_cols && x.m_rows == 3)
       {
-        _sse_su3 *u = (_sse_su3 *)x.m_data;
-        _sse_double *in = (_sse_double *)y.m_data;
-        _sse_double *out = (_sse_double *)z.m_data;
+        _sse_su3 *u = (_sse_su3 *)m_data.get();
+        _sse_double *in = (_sse_double *)x.m_data.get();
+        _sse_double *out = (_sse_double *)z.m_data.get();
         for (mdp_uint i = 0; i < m_cols; i++, in++, out++)
         {
           _sse_double_load_123(*in, *(in + m_cols), *(in + 2 * m_cols));
@@ -269,19 +270,20 @@ namespace MDP
         }
         return z;
       }
-#endif
-#if defined(MATRIX_SSE2) && !defined(USE_DOUBLE_PRECISION)
+#else
       if (m_rows == m_cols && x.size() == 3)
       {
-        _sse_su3 *u = (_sse_su3 *)x.m_data;
-        _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
-        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
+        _sse_su3 *u = (_sse_su3 *)m_data.get();
+        _sse_su3_vector *in = (_sse_su3_vector *)x.m_data.get();
+        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data.get();
         _sse_float_pair_load(*in, *in);
         _sse_float_su3_multiply(*u);
         _sse_float_pair_store_up(*out, *out);
         return z;
       }
 #endif
+#endif
+
       for (mdp_uint i = 0; i < m_rows; i++)
         for (mdp_uint j = 0; j < x.m_cols; j++)
         {
@@ -353,12 +355,12 @@ namespace MDP
 #ifdef MATRIX_SSE2
       if (m_rows == 3)
       {
-        static _sse_float factor1 ALIGN16;
-        static _sse_float factor2 ALIGN16;
+        // static _sse_float factor1 ALIGN16;
+        // static _sse_float factor2 ALIGN16;
         static _sse_double factor3 ALIGN16;
         static _sse_double factor4 ALIGN16;
-        _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
-        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
+        _sse_su3_vector *in = (_sse_su3_vector *)m_data.get();
+        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data.get();
 #ifdef USE_DOUBLE_PRECISION
         factor3.c1 = factor3.c2 = x.imag();
         factor4.c1 = factor4.c2 = x.real() / x.imag();
@@ -500,11 +502,11 @@ namespace MDP
 #ifdef MATRIX_SSE2
       if (m_rows == 3)
       {
-        static _sse_float factor1 ALIGN16;
+        // static _sse_float factor1 ALIGN16;
         static _sse_double factor2 ALIGN16;
 
-        _sse_su3_vector *in = (_sse_su3_vector *)y.m_data;
-        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data;
+        _sse_su3_vector *in = (_sse_su3_vector *)m_data.get();
+        _sse_su3_vector *out = (_sse_su3_vector *)z.m_data.get();
 #ifdef USE_DOUBLE_PRECISION
         factor2.c1 = factor2.c2 = x;
         for (mdp_uint i = 0; i < m_cols; i++, in++, out++)

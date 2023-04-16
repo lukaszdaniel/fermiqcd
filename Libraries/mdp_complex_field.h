@@ -122,8 +122,8 @@ namespace MDP
       mdp_uint i = 0;
 
 #if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      _sse_double *r = (_sse_double *)m_data;
-      _sse_double *s = (_sse_double *)psi.m_data;
+      _sse_double *r = (_sse_double *)m_data.get();
+      _sse_double *s = (_sse_double *)psi.m_data.get();
 
       for (; i < m_size - 7; i += 8, r += 8, s += 8)
       {

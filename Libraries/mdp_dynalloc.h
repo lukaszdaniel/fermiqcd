@@ -18,8 +18,6 @@
 #include <cstdlib>
 #endif
 
-namespace MDP
-{
 #if defined(SSE2) && !defined(__APPLE__)
   void *operator new(size_t size)
   {
@@ -43,6 +41,5 @@ namespace MDP
     free(pointer);
   }
 #endif
-} // namespace MDP
 
 #endif /* MDP_DYNALLOC_ */
