@@ -66,7 +66,7 @@ int main(int argc, char **argv)
       deltaJ += u(x - 1) * r(x - 1, 1);
       deltaR += r(x - 1, 1);
       u(x) = deltaJ / deltaR;
-      precision += pow(u(x) - old_u, 2);
+      precision += std::pow(u(x) - old_u, 2);
     }
     u.update();
     mdp.add(precision);

@@ -24,7 +24,7 @@ void compute_energy(int nt, int nx, std::string filename)
       q(x) = 0;
       for (int mu = 0; mu < 4; mu++)
         for (int nu = mu + 1; nu < 4; nu++)
-          q(x) += pow(abs(trace(U.em(x, mu, nu))), 2);
+          q(x) += std::pow(abs(trace(U.em(x, mu, nu))), 2);
     }
   }
 

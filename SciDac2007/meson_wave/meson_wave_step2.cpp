@@ -32,6 +32,7 @@ int main(int argc, char **argv)
     std::cout << k << std::endl;
     snprintf(filename, 128, "wave.%.3i.mdp", k);
     s.load(filename);
+
     forallsites(x)
     {
       z = 0;
@@ -55,7 +56,12 @@ int main(int argc, char **argv)
       y.set(L[1] - x(0), L[2] - x(1), L[3] - x(2));
       sum(y) += z;
     }
-    forallsites(x) Q(x) = pow(abs(sum(x)), 2) / (k + 1) + 1e-12;
+
+    forallsites(x)
+    {
+      Q(x) = std::pow(abs(sum(x)), 2) / (k + 1) + 1e-12;
+    }
+
     snprintf(filename, 128, "meson_wave_plus.%.3i.vtk", k);
     dump(Q, 0, filename);
   }

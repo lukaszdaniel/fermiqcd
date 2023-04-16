@@ -490,7 +490,7 @@ namespace MDP
           {
             if (d[i][j] < TINY)
               d[i][j] = TINY;
-            r[i] = pow((1.0 - d[i][j] / dt[j]) / (log(dt[j]) - log(d[i][j])), ALPHA);
+            r[i] = std::pow((1.0 - d[i][j] / dt[j]) / (log(dt[j]) - log(d[i][j])), ALPHA);
             rc += r[i];
           }
           rebin(rc / xnd, nd, r, xin, xi[j]);

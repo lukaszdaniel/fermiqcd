@@ -435,7 +435,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         for (int b = 0; b < 4; b++)
           if (G1(a, b) != 0)
             for (int i = 0; i < U.nc; i++)
-              Q(x) += pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
+              Q(x) += std::pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
     }
     // smear_propagator(S,U,smear_steps);
     Q.save_vtk(prefix + std::string(".") + source_gamma + ".wave.vtk");

@@ -369,7 +369,7 @@ public:
       dxg = 1.0 / ng;
       for (dv2g = 1, i = 0; i < NumberOfDimensions; i++)
         dv2g *= dxg;
-      dv2g = pow(calls * dv2g / npg, 2.0) / (npg - 1.0);
+      dv2g = std::pow(calls * dv2g / npg, 2.0) / (npg - 1.0);
       xnd = nd;
       dxg *= xnd;
       xjac = 1.0 / calls;
@@ -484,7 +484,7 @@ public:
         {
           if (d[i][j] < TINY)
             d[i][j] = TINY;
-          r[i] = pow((1.0 - d[i][j] / dt[j]) / (log(dt[j]) - log(d[i][j])), ALPHA);
+          r[i] = std::pow((1.0 - d[i][j] / dt[j]) / (log(dt[j]) - log(d[i][j])), ALPHA);
           rc += r[i];
         }
         rebin(rc / xnd, nd, r, xin, xi[j]);

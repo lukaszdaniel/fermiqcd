@@ -60,7 +60,7 @@ int main(int argc, char **argv)
         snprintf(s, 256, "/home/mdp/data/gauge_improved_b7.4_u0.8629/gauge24x08_b7.4_u0.8629_n%.6i", conf + 1);
         U.save(s);
 
-        pU = pow(u0, 4);
+        pU = std::pow(u0, 4);
         c = lepage_coefficients(pU, "Full");
         set_antiperiodic_phases(U, 0, true);
         lepage_improved_links(V, U, c);

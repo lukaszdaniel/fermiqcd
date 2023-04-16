@@ -39,7 +39,7 @@ int main(int argc, char **argv)
       {
         old_u = u(x);
         u(x) = (q(x) + u(x + 0) + u(x - 0) + u(x + 1) + u(x - 1) + u(x + 2) + u(x - 2)) / 6;
-        precision += pow(u(x) - old_u, 2);
+        precision += std::pow(u(x) - old_u, 2);
       }
     }
     u.update();
