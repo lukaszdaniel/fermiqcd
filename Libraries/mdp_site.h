@@ -200,11 +200,6 @@ namespace MDP
       return m_idx;
     }
 
-    mdp_int idx() const
-    {
-      return m_idx;
-    }
-
     /** @brief returns the global (unique) index of the site
      */
     mdp_int global_index()
