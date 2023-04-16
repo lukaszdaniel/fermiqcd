@@ -326,7 +326,7 @@ namespace MDP
       if (m_cols != m_rows)
         error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
 
-      mdp_matrix tmp(m_rows, m_cols);
+      mdp_matrix tmp((*this));
 
       for (mdp_uint i = 0; i < m_rows; i++)
         tmp(i, i) += b;

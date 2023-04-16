@@ -20,6 +20,7 @@ bool mdp_matrix_test()
 {
   mdp_matrix a(3, 3), b, c;
 
+  a = Random.SU(3);
   b = a;
   a = a + b; // Random.SU(3);
 
