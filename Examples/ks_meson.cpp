@@ -148,7 +148,7 @@ int main(int argc, char **argv)
   U.load(input);
   mdp << "average plaquette = " << average_plaquette(U) << "\n";
   if (u0 > 0)
-    lepage_improved_links(V, U, lepage_coefficients(pow(u0, 4), "Full"));
+    lepage_improved_links(V, U, lepage_coefficients(std::pow(u0, 4), "Full"));
   else
     V = U;
 

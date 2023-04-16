@@ -66,11 +66,20 @@ namespace MDP
     }
 
   public:
+    /** @brief Create a matrix
+     *
+     * @param r Number of rows. Default is 3.
+     * @param c Number of columns. Default is 3.
+     */
     mdp_matrix(mdp_uint r = 3, mdp_uint c = 3) : m_shared(false), m_rows(r), m_cols(c), m_data(nullptr)
     {
       allocate();
     }
 
+    /** @brief Copy constructor
+     *
+     * @param a Matrix to be copied.
+     */
     mdp_matrix(const mdp_matrix &a) : m_shared(false), m_rows(a.m_rows), m_cols(a.m_cols), m_data(nullptr)
     {
       allocate();
@@ -78,6 +87,14 @@ namespace MDP
         m_data[i] = a[i];
     }
 
+    /** @brief Special constructor used to format array of complex numbers
+     *
+     * @param z Pointer to the array of complex number
+     * @param r Number of rows array needs to be split into.
+     * @param c Number of columns array needs to be split into.
+     *
+     * @note Length of \e z array needs to be equal to \e rc.
+     */
     mdp_matrix(mdp_complex *z, mdp_uint r, mdp_uint c) : m_shared(true), m_rows(r), m_cols(c), m_data(z)
     {
 #if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
@@ -90,6 +107,11 @@ namespace MDP
       deallocate();
     }
 
+    /** @brief Set matrix size
+     *
+     * @param r Number of rows for the matrix.
+     * @param c Number of columns for the matrix.
+     */
     void dimension(mdp_uint r, mdp_uint c)
     {
       m_shared = false;
@@ -112,16 +134,22 @@ namespace MDP
       return *this;
     }
 
+    /** @brief returns the (i,j) element of the matrix
+     */
     mdp_complex &operator()(mdp_uint i, mdp_uint j)
     {
       return m_data[i * m_cols + j];
     }
 
+    /** @brief returns the (i,j) const element of the matrix
+     */
     const mdp_complex &operator()(mdp_uint i, mdp_uint j) const
     {
       return m_data[i * m_cols + j];
     }
 
+    /** @brief returns the i-th row of the matrix aligned as column vector
+     */
     mdp_matrix operator()(mdp_uint i)
     {
       return mdp_matrix(m_data.get() + i * m_cols, m_cols, 1);
