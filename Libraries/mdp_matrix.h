@@ -66,7 +66,7 @@ namespace MDP
     }
 
   public:
-    mdp_matrix() : m_shared(false), m_rows(0), m_cols(0), m_data(nullptr)
+    mdp_matrix(mdp_uint r = 3, mdp_uint c = 3) : m_shared(false), m_rows(r), m_cols(c), m_data(nullptr)
     {
       allocate();
     }
@@ -76,11 +76,6 @@ namespace MDP
       allocate();
       for (mdp_uint i = 0; i < size(); i++)
         m_data[i] = a[i];
-    }
-
-    mdp_matrix(mdp_uint r, mdp_uint c) : m_shared(false), m_rows(r), m_cols(c), m_data(nullptr)
-    {
-      allocate();
     }
 
     mdp_matrix(mdp_complex *z, mdp_uint r, mdp_uint c) : m_shared(true), m_rows(r), m_cols(c), m_data(z)
@@ -522,6 +517,66 @@ namespace MDP
       return (*this) * (1.0 / b);
     }
 
+    mdp_complex det() const
+    {
+#ifdef CHECK_ALL
+      if (m_rows != m_cols)
+        error("det(...)\nmdp_matrix is not squared");
+#endif
+      // Handle most common cases quickly here.
+      if (m_rows == 0)
+        return 0;
+
+      if (m_rows == 1)
+        return m_data[0];
+
+      if (m_rows == 2)
+        return m_data[0] * m_data[3] - m_data[1] * m_data[2];
+
+      if (m_rows == 3)
+        return (m_data[0] * m_data[4] * m_data[8] +
+                m_data[1] * m_data[5] * m_data[6] +
+                m_data[2] * m_data[3] * m_data[7] -
+                m_data[0] * m_data[5] * m_data[7] -
+                m_data[1] * m_data[3] * m_data[8] -
+                m_data[2] * m_data[4] * m_data[6]);
+
+      mdp_uint j;
+      mdp_matrix A((*this));
+
+      mdp_complex tmp, pivot, x = mdp_complex(1, 0);
+
+      for (mdp_uint i = 0; i < m_cols; i++)
+      {
+        for (j = i; (A(i, j) == mdp_complex(0, 0)) && (j < m_cols); j++)
+          ;
+        if (j == m_cols)
+          return 0;
+
+        if (i != j)
+        {
+          for (mdp_uint k = 0; k < m_rows; k++)
+          {
+            tmp = A(k, j);
+            A(k, j) = A(k, i);
+            A(k, i) = tmp;
+          }
+          x *= -A(i, i);
+        }
+        else
+          x *= A(i, i);
+        for (mdp_uint k = i + 1; k < m_rows; k++)
+        {
+          pivot = A(k, i) / A(i, i);
+          for (mdp_uint l = i; l < m_cols; l++)
+          {
+            A(k, l) -= pivot * A(i, l);
+          }
+        }
+      }
+      return x;
+    }
+
     mdp_matrix inv() const
     {
 #ifdef CHECK_ALL
@@ -529,15 +584,53 @@ namespace MDP
         error("inv(...)\nmdp_matrix is not squared");
 #endif
 
+      mdp_matrix ans(m_rows, m_cols);
+      // Handle most common cases quickly here.
+      if (m_rows == 1)
+      {
+        if (m_data[0] == mdp_complex(0, 0))
+          error("inv(...)\ndeterminant is zero");
+        ans.m_data[0] = 1.0 / m_data[0];
+        return ans;
+      }
+
+      if (m_rows == 2)
+      {
+        mdp_complex div = det();
+        if (div == mdp_complex(0, 0))
+          error("inv(...)\ndeterminant is zero");
+        ans.m_data[0] = m_data[3] / div;
+        ans.m_data[1] = -m_data[1] / div;
+        ans.m_data[2] = -m_data[2] / div;
+        ans.m_data[3] = m_data[0] / div;
+        return ans;
+      }
+
+      if (m_rows == 3)
+      {
+        mdp_complex div = det();
+        if (div == mdp_complex(0, 0))
+          error("inv(...)\ndeterminant is zero");
+        ans.m_data[0] = (m_data[4] * m_data[8] - m_data[5] * m_data[7]) / div;
+        ans.m_data[1] = -(m_data[1] * m_data[8] - m_data[2] * m_data[7]) / div;
+        ans.m_data[2] = (m_data[1] * m_data[5] - m_data[2] * m_data[4]) / div;
+        ans.m_data[3] = -(m_data[3] * m_data[8] - m_data[5] * m_data[6]) / div;
+        ans.m_data[4] = (m_data[0] * m_data[8] - m_data[2] * m_data[6]) / div;
+        ans.m_data[5] = -(m_data[0] * m_data[5] - m_data[2] * m_data[3]) / div;
+        ans.m_data[6] = (m_data[3] * m_data[7] - m_data[4] * m_data[6]) / div;
+        ans.m_data[7] = -(m_data[0] * m_data[7] - m_data[1] * m_data[6]) / div;
+        ans.m_data[8] = (m_data[0] * m_data[4] - m_data[1] * m_data[3]) / div;
+        return ans;
+      }
+
       mdp_matrix tma((*this));
-      mdp_matrix tmp(m_rows, m_cols);
       mdp_complex x, pivot;
       mdp_uint rmax;
 
-      tmp = 0;
+      ans = 0;
       for (mdp_uint i = 0; i < m_rows; ++i)
       {
-        tmp(i, i) = 1;
+        ans(i, i) = 1;
       }
 
       for (mdp_uint c = 0; c < m_cols; c++)
@@ -559,9 +652,9 @@ namespace MDP
           x = tma(rmax, i);
           tma(rmax, i) = tma(c, i);
           tma(c, i) = x / pivot;
-          x = tmp(rmax, i);
-          tmp(rmax, i) = tmp(c, i);
-          tmp(c, i) = x / pivot;
+          x = ans(rmax, i);
+          ans(rmax, i) = ans(c, i);
+          ans(c, i) = x / pivot;
         }
 
         for (mdp_uint r = 0; r < m_rows; r++)
@@ -572,13 +665,13 @@ namespace MDP
             for (mdp_uint i = 0; i < m_cols; i++)
             {
               tma(r, i) -= pivot * tma(c, i);
-              tmp(r, i) -= pivot * tmp(c, i);
+              ans(r, i) -= pivot * ans(c, i);
             }
           }
         }
       }
 
-      return tmp;
+      return ans;
     }
   };
 
@@ -765,52 +858,7 @@ namespace MDP
 
   mdp_complex det(const mdp_matrix &a)
   {
-#ifdef CHECK_ALL
-    if (a.rows() != a.cols())
-      error("det(...)\nmdp_matrix is not squared");
-#endif
-    if (a.rows() == 0)
-      return 0;
-
-    if (a.rows() == 1)
-      return a(0, 0);
-
-    mdp_uint j;
-    mdp_matrix A(a);
-
-    const mdp_uint cols = a.cols();
-    const mdp_uint rows = a.rows();
-    mdp_complex tmp, pivot, x = mdp_complex(1, 0);
-
-    for (mdp_uint i = 0; i < cols; i++)
-    {
-      for (j = i; (A(i, j) == mdp_complex(0, 0)) && (j < cols); j++)
-        ;
-      if (j == cols)
-        return 0;
-
-      if (i != j)
-      {
-        for (mdp_uint k = 0; k < rows; k++)
-        {
-          tmp = A(k, j);
-          A(k, j) = A(k, i);
-          A(k, i) = tmp;
-        }
-        x *= -A(i, i);
-      }
-      else
-        x *= A(i, i);
-      for (mdp_uint k = i + 1; k < rows; k++)
-      {
-        pivot = A(k, i) / A(i, i);
-        for (mdp_uint l = i; l < cols; l++)
-        {
-          A(k, l) -= pivot * A(i, l);
-        }
-      }
-    }
-    return x;
+    return a.det();
   }
 
   mdp_matrix inv(const mdp_matrix &a)
@@ -876,7 +924,9 @@ namespace MDP
     do
     {
       c = c * b;
-      t1 = ((mdp_real)(i = -i) / (j += 1)) * c;
+      i = -i;
+      ++j;
+      t1 = ((1.0 * i) / (j)) * c;
       tmp += t1;
     } while (max(t1) > mdp_precision);
 
@@ -895,8 +945,10 @@ namespace MDP
     tmp = t1;
     do
     {
-      t1 = ((mdp_real)-1.0 / (++i)) * t1 * a * a;
-      t1 *= (mdp_real)1.0 / (++i);
+      ++i;
+      t1 = (-1.0 / (i)) * t1 * a * a;
+      ++i;
+      t1 *= 1.0 / i;
       tmp += t1;
     } while (max(t1) > mdp_precision);
 
@@ -915,8 +967,10 @@ namespace MDP
     tmp = t1;
     do
     {
-      t1 = ((mdp_real)-1.0 / (++i)) * t1 * a * a;
-      t1 *= (mdp_real)1.0 / (++i);
+      ++i;
+      t1 = (-1.0 / (i)) * t1 * a * a;
+      ++i;
+      t1 *= 1.0 / i;
       tmp += t1;
     } while (max(t1) > mdp_precision);
 
