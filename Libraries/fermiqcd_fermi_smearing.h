@@ -51,7 +51,7 @@ namespace MDP
         forallsites(x)
         {
           for (a = 0; a < psi.nspin; a++)
-            for (mu = 1; mu < U.ndim; mu++)
+            for (mu = 1; mu < U.ndim(); mu++)
               psi(x, a) += factor * (U(x, mu) * chi(x + mu, a) + U(x, -1, mu) * chi(x - mu, a));
         }
       }
@@ -72,19 +72,19 @@ namespace MDP
     mdp_site x(psi.lattice());
     int a, b, i, j;
     for (b = 0; b < S.nspin; b++)
-      for (j = 0; j < U.nc; j++)
+      for (j = 0; j < U.nc(); j++)
       {
         forallsitesandcopies(x)
         {
           for (a = 0; a < S.nspin; a++)
-            for (i = 0; i < U.nc; i++)
+            for (i = 0; i < U.nc(); i++)
               psi(x, a, i) = S(x, a, b, i, j);
         }
         (*smf)(psi, U, coeff);
         forallsitesandcopies(x)
         {
           for (a = 0; a < S.nspin; a++)
-            for (i = 0; i < U.nc; i++)
+            for (i = 0; i < U.nc(); i++)
               S(x, a, b, i, j) = psi(x, a, i);
         }
       }

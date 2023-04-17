@@ -26,8 +26,8 @@ namespace MDP
 
     forallsites(x)
     {
-      for (int mu = 0; mu < U.ndim; mu++)
-        U(x, mu) = mdp_identity(U.nc);
+      for (int mu = 0; mu < U.ndim(); mu++)
+        U(x, mu) = mdp_identity(U.nc());
     }
     U.update();
     end_function("set_cold");
@@ -43,8 +43,8 @@ namespace MDP
 
     forallsites(x)
     {
-      for (int mu = 0; mu < U.ndim; mu++)
-        U(x, mu) = U.lattice().random(x).SU(U.nc);
+      for (int mu = 0; mu < U.ndim(); mu++)
+        U(x, mu) = U.lattice().random(x).SU(U.nc());
     }
     U.update();
     end_function("set_hot");
@@ -58,7 +58,7 @@ namespace MDP
     mdp_int how_many = 0;
 
     forallsitesandcopies(x)
-      for (int mu = 0; mu < U.ndim; mu++)
+      for (int mu = 0; mu < U.ndim(); mu++)
         if (max(inv(U(x, mu)) - hermitian(U(x, mu))) > precision)
           how_many++;
     mdp.add(how_many);
@@ -77,7 +77,7 @@ namespace MDP
       tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
-    return tmp / (U.lattice().global_volume() * U.nc);
+    return tmp / (U.lattice().global_volume() * U.nc());
   }
 
   /// Compute average plaquette (all planes)
@@ -89,12 +89,12 @@ namespace MDP
     int mu, nu;
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim - 1; mu++)
-        for (nu = mu + 1; nu < U.ndim; nu++)
+      for (mu = 0; mu < U.ndim() - 1; mu++)
+        for (nu = mu + 1; nu < U.ndim(); nu++)
           tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
-    return 2.0 * tmp / (U.ndim * (U.ndim - 1) * U.lattice().global_volume() * U.nc);
+    return 2.0 * tmp / (U.ndim() * (U.ndim() - 1) * U.lattice().global_volume() * U.nc());
   }
 
   /** @brief Compute average Time plaquette
@@ -107,11 +107,11 @@ namespace MDP
     mdp_suint mu = 0;
     forallsites(x)
     {
-      for (mdp_suint nu = mu + 1; nu < U.ndim; nu++)
+      for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
         tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
-    return tmp / (U.lattice().global_volume() * (U.ndim - 1));
+    return tmp / (U.lattice().global_volume() * (U.ndim() - 1));
   }
 
   /** @brief Compute average Space plaquette
@@ -124,12 +124,12 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_suint mu = 1; mu < U.ndim - 1; mu++)
-        for (mdp_suint nu = mu + 1; nu < U.ndim; nu++)
+      for (mdp_suint mu = 1; mu < U.ndim() - 1; mu++)
+        for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
           tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
-    return 2 * tmp / (U.lattice().global_volume() * (U.ndim - 2) * (U.ndim - 1));
+    return 2 * tmp / (U.lattice().global_volume() * (U.ndim() - 2) * (U.ndim() - 1));
   }
 
   /** @brief Polyakov field L(vec(x))
@@ -137,7 +137,7 @@ namespace MDP
   mdp_matrix_field PolyakovField(gauge_field &U)
   {
     mdp_site x(U.lattice()), y(U.lattice());
-    mdp_matrix_field L(U.lattice(), U.nc, U.nc);
+    mdp_matrix_field L(U.lattice(), U.nc(), U.nc());
 
     forallsites(x)
     {
@@ -163,7 +163,7 @@ namespace MDP
 
     mdp_site x(U.lattice());
     mdp_complex sum = 0;
-    mdp_matrix_field L(U.lattice(), U.nc, U.nc);
+    mdp_matrix_field L(U.lattice(), U.nc(), U.nc());
 
     L = PolyakovField(U);
     forallsites(x)
@@ -173,7 +173,7 @@ namespace MDP
     }
     mdp.add(sum);
 
-    return sum * (1.0 * U.lattice().size(0) / (U.lattice().global_volume() * U.nc));
+    return sum * (1.0 * U.lattice().size(0) / (U.lattice().global_volume() * U.nc()));
   }
 
   /// Relaxation algorithm
@@ -181,7 +181,7 @@ namespace MDP
    */
   void relaxation(gauge_field &U, mdp_uint n_iter = 1)
   {
-    if (U.nc == 1)
+    if (U.nc() == 1)
       error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
 
     mdp_matrix M;
@@ -192,12 +192,12 @@ namespace MDP
 
     for (mdp_uint iter = 0; iter < n_iter; iter++)
       for (mdp_suint parity = 0; parity < 2; parity++)
-        for (mdp_suint mu = 0; mu < U.ndim; mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           forallsitesofparity(x, parity)
           {
-            for (mdp_suint i = 0; i < U.nc - 1; i++)
-              for (mdp_suint j = i + 1; j < U.nc; j++)
+            for (mdp_suint i = 0; i < U.nc() - 1; i++)
+              for (mdp_suint j = i + 1; j < U.nc(); j++)
               {
                 M = U(x, mu) * staple_H(U, x, mu);
 
@@ -222,7 +222,7 @@ namespace MDP
                 a[2] = mdp_complex(e[2], -e[1]);
                 a[3] = mdp_complex(e[0], e[3]);
 
-                for (mdp_suint k = 0; k < U.nc; k++)
+                for (mdp_suint k = 0; k < U.nc(); k++)
                 {
                   tmpUik = (a[0] * a[0] + a[2] * a[1]) * U(x, mu, i, k) + (a[1] * (a[0] + a[3])) * U(x, mu, j, k);
                   U(x, mu, j, k) = (a[2] * (a[0] + a[3])) * U(x, mu, i, k) + (a[1] * a[2] + a[3] * a[3]) * U(x, mu, j, k);
@@ -230,7 +230,7 @@ namespace MDP
                 }
               }
           }
-          U.update(parity, mu, U.nc * U.nc);
+          U.update(parity, mu, U.nc() * U.nc());
         }
   }
 
@@ -249,48 +249,48 @@ namespace MDP
     mdp_suint mu = 0;
     mdp_site x(U.lattice());
     mdp_real precision = 0;
-    mdp_matrix e(U.nc, U.nc);
-    mdp_matrix m(U.nc - 1, U.nc - 1);
+    mdp_matrix e(U.nc(), U.nc());
+    mdp_matrix m(U.nc() - 1, U.nc() - 1);
     mdp_real quadnorm;
     mdp_complex scalar;
     e = U(x, mu);
 
     forallsites(x)
     {
-      for (mdp_suint mu = 0; mu < U.ndim; mu++)
+      for (mdp_suint mu = 0; mu < U.ndim(); mu++)
       {
         precision += abs(1.0 - det(U(x, mu)));
 
         // Gram-Schmidt's orthonormalization method for the 'U.nc' vectors (e1, e2, ..., en)
-        for (mdp_suint i = 0; i < U.nc; i++)
+        for (mdp_suint i = 0; i < U.nc(); i++)
         {
           for (mdp_suint k = 0; k < i; k++)
           {
             scalar = 0;
-            for (mdp_suint j = 0; j < U.nc; j++)
+            for (mdp_suint j = 0; j < U.nc(); j++)
             {
               scalar += conj(e(k, j)) * e(i, j);
             } //<ek|ei>
-            for (mdp_suint j = 0; j < U.nc; j++)
+            for (mdp_suint j = 0; j < U.nc(); j++)
             {
               e(i, j) -= e(k, j) * scalar;
             } // ei = ei - ek<ek|ei>
           }
           quadnorm = 0;
-          for (mdp_suint j = 0; j < U.nc; j++)
+          for (mdp_suint j = 0; j < U.nc(); j++)
             quadnorm += abs2(e(i, j)); // quadnorm = ||ei||^2
 
-          for (mdp_suint j = 0; j < U.nc; j++)
+          for (mdp_suint j = 0; j < U.nc(); j++)
             e(i, j) /= std::sqrt(quadnorm); // ei = ei/||ei||
         }
 
         // The last vector is calculated as the cross product: ek = ei x ej
-        mdp_suint i = U.nc - 1;
-        for (mdp_suint j = 0; j < U.nc; j++)
+        mdp_suint i = U.nc() - 1;
+        for (mdp_suint j = 0; j < U.nc(); j++)
         {
-          for (mdp_suint s = 0; s < U.nc - 1; s++)
+          for (mdp_suint s = 0; s < U.nc() - 1; s++)
           {
-            for (mdp_suint k = 0; k < U.nc - 1; k++)
+            for (mdp_suint k = 0; k < U.nc() - 1; k++)
             {
               if (k < j)
                 m(s, k) = e(s, k);
@@ -306,7 +306,7 @@ namespace MDP
       }
     }
     mdp.add(precision);
-    stats = precision / (U.ndim * U.lattice().global_volume());
+    stats = precision / (U.ndim() * U.lattice().global_volume());
 
     return stats;
   }
@@ -316,11 +316,11 @@ namespace MDP
   mdp_matrix PolyCor(gauge_field &U)
   {
     mdp_site x(U.lattice());
-    mdp_matrix proj(U.ndim - 1, U.lattice().size(1));
-    mdp_matrix_field L(U.lattice(), U.nc, U.nc);
+    mdp_matrix proj(U.ndim() - 1, U.lattice().size(1));
+    mdp_matrix_field L(U.lattice(), U.nc(), U.nc());
 
     L = PolyakovField(U);
-    for (mdp_suint mu = 1; mu < U.ndim; mu++)
+    for (mdp_suint mu = 1; mu < U.ndim(); mu++)
     {
       for (mdp_int i = 0; i < U.lattice().size(1); i++)
       {
@@ -343,11 +343,11 @@ namespace MDP
   /// Given a field U compute the chromo-eletro-magntic field U.em
   void compute_em_field(gauge_field &U)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_site x(U.lattice());
     // It is fine to use Nmdp_matrix even if there is twist .. how lucky!
     U.em.deallocate_field();
-    U.em.allocate_em_field(U.lattice(), U.nc);
+    U.em.allocate_em_field(U.lattice(), U.nc());
     mdp_matrix A(nc, nc);
     mdp_matrix b1(nc, nc), b2(nc, nc);
     /*
@@ -357,8 +357,8 @@ namespace MDP
     int mu, nu;
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim - 1; mu++)
-        for (nu = mu + 1; nu < U.ndim; nu++)
+      for (mu = 0; mu < U.ndim() - 1; mu++)
+        for (nu = mu + 1; nu < U.ndim(); nu++)
         {
 
           A =
@@ -390,25 +390,25 @@ namespace MDP
   /// @endverbatim
   void compute_long_links(gauge_field &U, gauge_field &V, int length = 2)
   {
-    if ((&(U.lattice()) != &(V.lattice())) || (U.nc != V.nc) || (U.ndim != V.ndim))
+    if ((&(U.lattice()) != &(V.lattice())) || (U.nc() != V.nc()) || (U.ndim() != V.ndim()))
       error("fermiqcd_gauge_auxiliary_functions/compute_long_links: U and V are not compatible lattices");
     if (V.lattice().boundary_thickness() < length)
       error("fermiqcd_gauge_auxiliary_functions/compute_long_links: boundary thickness is not big enough");
 
     U.long_links.deallocate_field();
-    U.long_links.allocate_mdp_nmatrix_field(V.lattice(), U.ndim, U.nc, U.nc);
+    U.long_links.allocate_mdp_nmatrix_field(V.lattice(), U.ndim(), U.nc(), U.nc());
     mdp_site x(U.lattice());
     int mu;
     if (length == 2)
       forallsites(x)
       {
-        for (mu = 0; mu < V.ndim; mu++)
+        for (mu = 0; mu < V.ndim(); mu++)
           U.long_links(x, mu) = V(x, mu) * V(x + mu, mu);
       }
     if (length == 3)
       forallsites(x)
       {
-        for (mu = 0; mu < V.ndim; mu++)
+        for (mu = 0; mu < V.ndim(); mu++)
           U.long_links(x, mu) = V(x, mu) * V(x + mu, mu) * V((x + mu) + mu, mu);
       }
     U.long_links.update();
@@ -441,8 +441,8 @@ namespace MDP
     {
       if (x(mu) == U.lattice().size(mu) - 1)
       {
-        for (i = 0; i < U.nc; i++)
-          for (j = 0; j < U.nc; j++)
+        for (i = 0; i < U.nc(); i++)
+          for (j = 0; j < U.nc(); j++)
             U(x, mu, i, j) *= -1;
       }
     }
@@ -540,8 +540,8 @@ namespace MDP
   /// @endverbatim
   mdp_complex average_path(gauge_field &U, int length, int d[][2])
   {
-    mdp_matrix_field psi1(U.lattice(), U.nc, U.nc);
-    mdp_matrix_field psi2(U.lattice(), U.nc, U.nc);
+    mdp_matrix_field psi1(U.lattice(), U.nc(), U.nc());
+    mdp_matrix_field psi2(U.lattice(), U.nc(), U.nc());
     mdp_site x(U.lattice());
     mdp_complex sum = 0;
     for (int i = 0; i < length; i++)
@@ -564,7 +564,7 @@ namespace MDP
       }
     }
     forallsites(x) sum += trace(psi1(x));
-    return sum / (1.0 * U.lattice().global_volume() * U.nc);
+    return sum / (1.0 * U.lattice().global_volume() * U.nc());
   }
 
   /// Takes a field U, a site x, a path d of length and compute the product
@@ -581,7 +581,7 @@ namespace MDP
   /// @endverbatim
   mdp_matrix build_path(gauge_field &U, mdp_site x, int length, int d[][2])
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_site y(U.lattice());
     mdp_matrix tmp(nc, nc);
     tmp = U(x, d[0][0], d[0][1]);

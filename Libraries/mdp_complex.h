@@ -48,10 +48,17 @@ namespace MDP
     const mdp_real &real() const { return m_re; }
     const mdp_real &imag() const { return m_im; }
 
+    /** @brief Create a complex number
+     *
+     * @param a Real part of the complex number
+     * @param b Imaginary part of the complex number
+     */
     mdp_complex(const mdp_real a = 0.0, const mdp_real b = 0.0) : m_re(a), m_im(b)
     {
     }
 
+    /** @brief Copy constructor
+     */
     mdp_complex(const mdp_complex &c) : m_re(c.m_re), m_im(c.m_im)
     {
     }

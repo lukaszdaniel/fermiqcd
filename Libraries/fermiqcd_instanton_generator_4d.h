@@ -104,11 +104,11 @@ namespace MDP
       lattice = &U.lattice();
       mdp_site x(U.lattice());
       mdp_matrix A;
-      if (U.ndim != 4)
+      if (U.ndim() != 4)
         throw std::string("instantons only in 4D");
       forallsites(x)
       {
-        for (int mu = 0; mu < U.ndim; mu++)
+        for (int mu = 0; mu < U.ndim(); mu++)
         {
           A = make_su2_link(x, mu, instantons);
           U(x, mu) = 1;

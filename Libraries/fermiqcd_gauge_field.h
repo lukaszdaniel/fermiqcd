@@ -28,49 +28,18 @@ namespace MDP
   ///    U.load("myfield");
   ///    compute_em_field(U);
   ///    forallsites(x)
-  ///      for(int mu=0; mu<U.ndim; mu++)
-  ///        for(int nu=mu+1; nu<U.ndim; nu++)
+  ///      for(int mu=0; mu<U.ndim(); mu++)
+  ///        for(int nu=mu+1; nu<U.ndim(); nu++)
   ///          cout << U.em(x,mu,nu) << endl;
   /// @endverbatim
   /// Note that U.em(x,mu,nu) is \f$ a^2 G_{\mu\nu} \f$ and
   /// it is a color matrix in SU(nc). \f$a\f$ is the lattice spacing.
   class em_field : public mdp_complex_field
   {
-  public:
-    int ndim, nc, nem;
-
-    em_field()
-    {
-      ndim = nc = nem = 0;
-      reset_field();
-    }
-
-    em_field(mdp_lattice &a, int nc_)
-    {
-      reset_field();
-      ndim = a.ndim();
-      nc = nc_;
-      nem = (ndim * (ndim - 1)) / 2;
-      allocate_field(a, nem * nc * nc);
-    }
-
-    em_field(em_field &em)
-    {
-      reset_field();
-      ndim = em.ndim;
-      nc = em.nc;
-      nem = (ndim * (ndim - 1)) / 2;
-      allocate_field(em.lattice(), nem * nc * nc);
-    }
-
-    void allocate_em_field(mdp_lattice &a, int nc_)
-    {
-      deallocate_field();
-      ndim = a.ndim();
-      nc = nc_;
-      nem = (ndim * (ndim - 1)) / 2;
-      allocate_field(a, nem * nc * nc);
-    }
+  private:
+    mdp_int m_ndim;
+    mdp_int m_nc;
+    mdp_int m_nem;
 
     int ordered_index(int mu, int nu) const
     {
@@ -85,11 +54,48 @@ namespace MDP
       // It works for any ndim //
       // ////////////////////////
       if (mu < nu)
-        return nu + (mu * (2 * ndim - mu - 3)) / 2 - 1;
+        return nu + (mu * (2 * m_ndim - mu - 3)) / 2 - 1;
       if (mu > nu)
-        return mu + (nu * (2 * ndim - nu - 3)) / 2 - 1 + nem;
+      {
+        return mu + (nu * (2 * m_ndim - nu - 3)) / 2 - 1 + m_nem;
+      }
       // error("wrong call to ordered_index() with mu>=nu");
       return -1; // error in this case!
+    }
+
+  public:
+    em_field() : m_ndim(0), m_nc(0), m_nem(0)
+    {
+    }
+
+    em_field(mdp_lattice &a, int nc_) : m_ndim(a.ndim()), m_nc(nc_), m_nem((m_ndim * (m_ndim - 1)) / 2)
+    {
+      allocate_field(a, m_nem * m_nc * m_nc);
+    }
+
+    em_field(em_field &em) : m_ndim(em.m_ndim), m_nc(em.m_nc), m_nem(em.m_nem)
+    {
+      allocate_field(em.lattice(), m_nem * m_nc * m_nc);
+    }
+
+    void allocate_em_field(mdp_lattice &a, int nc_)
+    {
+      deallocate_field();
+      m_ndim = a.ndim();
+      m_nc = nc_;
+      m_nem = (m_ndim * (m_ndim - 1)) / 2;
+      allocate_field(a, m_nem * m_nc * m_nc);
+    }
+
+    mdp_int ndim() const
+    {
+      // return m_ndim;
+      return m_ptr->ndim();
+    }
+
+    mdp_int nc() const
+    {
+      return m_nc;
     }
 
     /** @brief returns the matrix in directions \e mu, \e nu stored at site x
@@ -101,7 +107,7 @@ namespace MDP
         error("em(x,mu,nu) for mu>=nu is not defined");
 #endif
       int k = ordered_index(mu, nu);
-      return mdp_matrix(address(x, k * nc * nc), nc, nc);
+      return mdp_matrix(address(x, k * m_nc * m_nc), m_nc, m_nc);
     }
 
     /** @brief returns the (i,j) component of the matrix in directions \e mu, \e nu stored at site x
@@ -113,20 +119,20 @@ namespace MDP
         error("em(x,mu,nu) for mu>=nu is not defined");
 #endif
       int k = ordered_index(mu, nu);
-      return *(address(x, (k * nc + i) * nc + j));
+      return *(address(x, (k * m_nc + i) * m_nc + j));
     }
 
     /** @brief returns the (i,j) const component of the matrix in directions \e mu, \e nu stored at site x
      */
     const mdp_complex &operator()(mdp_site x, int mu, int nu,
-                                         int i, int j) const
+                                  int i, int j) const
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
         error("em(x,mu,nu) for mu>=nu is not defined");
 #endif
       int k = ordered_index(mu, nu);
-      return *(address(x, (k * nc + i) * nc + j));
+      return *(address(x, (k * m_nc + i) * m_nc + j));
     }
   };
 
@@ -141,7 +147,7 @@ namespace MDP
   ///    mdp_site x(lattice);
   ///    // set_cold(U);
   ///    forallsites(x)
-  ///       for(int mu=0; mu<U.ndim; mu++)
+  ///       for(int mu=0; mu<U.ndim(); mu++)
   ///          U(x,mu)=1;
   ///    U.update(); // synchronization
   ///    U.save("myfield");
@@ -151,13 +157,15 @@ namespace MDP
   /// it is a color matrix in SU(nc). \f$a\f$ is the lattice spacing.
   class gauge_field : public mdp_complex_field
   {
+  private:
+    int m_ndim;
+    int m_nc;
+
   public:
     em_field em;
     mdp_nmatrix_field long_links;
     mdp_int_scalar_field i_jump;
     mdp_matrix_field swirls;
-
-    int ndim, nc;
 
     gauge_field()
     {
@@ -166,31 +174,41 @@ namespace MDP
 
     gauge_field(const gauge_field &U) : mdp_complex_field(U)
     {
-      ndim = U.ndim;
-      nc = U.nc;
+      m_ndim = U.m_ndim;
+      m_nc = U.m_nc;
     }
 
     void operator=(const gauge_field &U)
     {
-      ndim = U.ndim;
-      nc = U.nc;
+      m_ndim = U.m_ndim;
+      m_nc = U.m_nc;
       mdp_complex_field::operator=(U);
     }
 
     gauge_field(mdp_lattice &a, int nc_)
     {
       reset_field();
-      ndim = a.ndim();
-      nc = nc_;
-      allocate_field(a, a.ndim() * nc * nc);
+      m_ndim = a.ndim();
+      m_nc = nc_;
+      allocate_field(a, a.ndim() * m_nc * m_nc);
     }
 
     void allocate_gauge_field(mdp_lattice &a, int nc_)
     {
       deallocate_field();
-      ndim = a.n_dimensions();
-      nc = nc_;
-      allocate_field(a, a.ndim() * nc * nc);
+      m_ndim = a.n_dimensions();
+      m_nc = nc_;
+      allocate_field(a, a.ndim() * m_nc * m_nc);
+    }
+
+    mdp_int ndim() const
+    {
+      return m_ndim;
+    }
+
+    mdp_int nc() const
+    {
+      return m_nc;
     }
 
     /** @brief returns the matrix in direction \e mu stored at site x
@@ -198,9 +216,9 @@ namespace MDP
     mdp_matrix operator()(mdp_site x, int mu)
     {
 #ifndef TWIST_BOUNDARY
-      return mdp_matrix(address(x, mu * nc * nc), nc, nc);
+      return mdp_matrix(address(x, mu * m_nc * m_nc), m_nc, m_nc);
 #else
-      mdp_matrix tmp(address(x, mu * nc * nc), nc, nc);
+      mdp_matrix tmp(address(x, mu * m_nc * m_nc), m_nc, m_nc);
       if (!in_block(x))
       {
         mdp_matrix a;
@@ -221,9 +239,9 @@ namespace MDP
     const mdp_matrix operator()(mdp_site x, int mu) const
     {
 #ifndef TWISTED_BOUNDARY
-      return mdp_matrix(address(x, mu * nc * nc), nc, nc);
+      return mdp_matrix(address(x, mu * m_nc * m_nc), m_nc, m_nc);
 #else
-      mdp_matrix tmp(address(x, mu * nc * nc), nc, nc);
+      mdp_matrix tmp(address(x, mu * m_nc * m_nc), m_nc, m_nc);
       if (!in_block(x))
       {
         mdp_matrix a;
@@ -247,7 +265,7 @@ namespace MDP
       if (!in_block(x))
         error("call to &operator=(mdp_site x) per x out of block");
 #endif
-      return *(address(x, (mu * nc + i) * nc + j));
+      return *(address(x, (mu * m_nc + i) * m_nc + j));
     }
 
     /** @brief returns the (i,j) const component of the matrix in direction \e mu stored at site x
@@ -258,7 +276,7 @@ namespace MDP
       if (!in_block(x))
         error("call to &operator=(mdp_site x) per x out of block");
 #endif
-      return *(address(x, (mu * nc + i) * nc + j));
+      return *(address(x, (mu * m_nc + i) * m_nc + j));
     }
 
     /** @brief returns the matrix in direction \e mu stored at site x
@@ -297,12 +315,12 @@ namespace MDP
      * @note if \e sign is negative returned element is conjugated
      */
     const mdp_complex operator()(mdp_site x, int sign, int mu,
-                                        int i, int j) const
+                                 int i, int j) const
     {
       if (sign == +1)
-        return *(address(x, (mu * nc + i) * nc + j));
+        return *(address(x, (mu * m_nc + i) * m_nc + j));
       if (sign == -1)
-        return conj(*(address(x - mu, (mu * nc + j) * nc + i)));
+        return conj(*(address(x - mu, (mu * m_nc + j) * m_nc + i)));
 
       error("call to U(x,0,mu,i,j)");
 
@@ -437,7 +455,7 @@ namespace MDP
     }
 
     friend void twist_eat_fields(mdp_matrix &M, mdp_site &x,
-                                        gauge_field &omega)
+                                 gauge_field &omega)
     {
       begin_function("gauge_field__twist_eat_matrices");
       static int mu, block;

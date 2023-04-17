@@ -22,7 +22,7 @@ namespace MDP
     mdp_site x(psi.lattice());
     forallsites(x)
     {
-      for (int mu = 1; mu < U.ndim; mu++)
+      for (int mu = 1; mu < U.ndim(); mu++)
         for (int a = 0; a < psi.nspin; a++)
           for (int b = 0; b < psi.nspin; b++)
           {

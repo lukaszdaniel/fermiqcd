@@ -77,9 +77,9 @@ int main(int argc, char **argv)
   gauge_field U(lattice, param.nc);
   int dimrep = 1;
   if (param.representation == "SYMMETRIC")
-    dimrep = U.nc * (U.nc + 1) / 2;
+    dimrep = U.nc() * (U.nc() + 1) / 2;
   else if (param.representation == "FUNDAMENTAL")
-    dimrep = U.nc;
+    dimrep = U.nc();
   fermi_field psi(lattice, dimrep, param.nspin);
 
   coefficients coeff;

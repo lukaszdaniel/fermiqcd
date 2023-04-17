@@ -24,7 +24,7 @@ int main(int argc, char **argv)
         p[1] = 30.0 - 0.25 * k;
         Instanton4D A2(3, 0, 1, 1.0, 3, p);
 
-        forallsites(x) for (int mu = 0; mu < U.ndim; mu++)
+        forallsites(x) for (int mu = 0; mu < U.ndim(); mu++)
             U(x, mu) = exp(-I * (A1(x, mu) + A2(x, mu)));
 
         mdp << "k=" << k << "\n";

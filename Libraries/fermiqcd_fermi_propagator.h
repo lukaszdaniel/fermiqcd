@@ -220,7 +220,7 @@ namespace MDP
 
   void smear_propagator(fermi_propagator &S, gauge_field &U, int smear_steps = 10, float alpha = 1.0)
   {
-    mdp_matrix_field V(U.lattice(), U.nc, U.nc);
+    mdp_matrix_field V(U.lattice(), U.nc(), U.nc());
     mdp_site x(U.lattice());
     for (int n = 0; n < smear_steps; n++)
     {
@@ -236,8 +236,8 @@ namespace MDP
           V.update();
           forallsites(x)
           {
-            for (int i = 0; i < U.nc; i++)
-              for (int j = 0; j < U.nc; j++)
+            for (int i = 0; i < U.nc(); i++)
+              for (int j = 0; j < U.nc(); j++)
                 S(x, a, b, i, j) = V(x, i, j) / (8.0 + alpha);
           }
         }

@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 
   forallsites(x)
   {
-    for (int mu = 0; mu < U.ndim; mu++)
+    for (int mu = 0; mu < U.ndim(); mu++)
       U(x, mu) = exp(-I * A(x, mu));
   }
 

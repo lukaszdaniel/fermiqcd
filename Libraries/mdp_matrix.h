@@ -97,7 +97,7 @@ namespace MDP
      */
     mdp_matrix(mdp_complex *z, mdp_uint r, mdp_uint c) : m_shared(true), m_rows(r), m_cols(c), m_data(z)
     {
-#if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION)
       _sse_check_alignment((void *)m_data.get(), 0xf);
 #endif
     }
@@ -255,7 +255,7 @@ namespace MDP
         error("mdp_matrix::operator*()\nWrong argument size");
 #endif
       mdp_matrix z(m_rows, x.m_cols);
-#ifdef MATRIX_SSE2
+#ifdef SSE2
 #ifdef USE_DOUBLE_PRECISION
       if (m_rows == m_cols && x.m_rows == 3)
       {
@@ -352,7 +352,7 @@ namespace MDP
     mdp_matrix operator*(mdp_complex x) const
     {
       mdp_matrix z(m_rows, m_cols);
-#ifdef MATRIX_SSE2
+#ifdef SSE2
       if (m_rows == 3)
       {
         // static _sse_float factor1 ALIGN16;
@@ -499,7 +499,7 @@ namespace MDP
     mdp_matrix operator*(mdp_real x) const
     {
       mdp_matrix z(m_rows, m_cols);
-#ifdef MATRIX_SSE2
+#ifdef SSE2
       if (m_rows == 3)
       {
         // static _sse_float factor1 ALIGN16;
@@ -1038,7 +1038,7 @@ namespace MDP
   {
     mdp_matrix tmp(a.cols(), a.rows());
 
-#if defined(MATRIX_SSE2) && defined(USE_DOUBLE_PRECISION)
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION)
     if (a.cols() == 3 && a.rows() == 3)
     {
       _sse_double_hermitian_su3((_sse_double *)tmp.address(),

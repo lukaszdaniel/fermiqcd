@@ -26,8 +26,8 @@ namespace MDP
                       coefficients &coeff,
                       int parity = EVENODD)
     {
-      int nc = U.nc;
-      int ndim = U.ndim;
+      int nc = U.nc();
+      int ndim = U.ndim();
       int L5 = chi_in.L5;
       int x5;
 

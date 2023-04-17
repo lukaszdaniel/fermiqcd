@@ -48,7 +48,7 @@ namespace MDP
 
       if (psi_in.nspin != 4)
         error("fermiqcd_fermi_algorithms/mul_Q_ONE: nspin!=4");
-      if (psi_in.nc != U.nc)
+      if (psi_in.nc != U.nc())
         error("fermiqcd_fermi_algorithms/mul_Q_ONE: gauge and spinor have different nc");
       if (parity != EVENODD)
         error("parity must be EVENODD here");
@@ -185,7 +185,7 @@ namespace MDP
 
       if (psi_in.nspin != 4)
         error("fermiqcd_fermi_algorithms/mul_Q_TWO: nspin!=4");
-      if (psi_in.nc != U.nc)
+      if (psi_in.nc != U.nc())
         error("fermiqcd_fermi_algorithms/mul_Q_TWO: gauge and spinor have different nc");
       if (parity != EVENODD)
         error("parity must be EVENODD here");

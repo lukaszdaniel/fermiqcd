@@ -108,7 +108,7 @@ namespace MDP
 
   void compute_swirls_field(gauge_field &U)
   {
-    int i, j, k, nc = U.nc;
+    int i, j, k, nc = U.nc();
     mdp_matrix A;
     U.swirls.allocate_mdp_matrix_field(U.lattice(), nc, nc);
     mdp_site x(U.lattice()), y(U.lattice());
@@ -123,7 +123,7 @@ namespace MDP
         for (k = 0; k < 1; k++)
         {
           //  k=(int) ((float) mdp_permutations(4)*Random.plain());
-          for (i = 0; i < U.ndim; i++)
+          for (i = 0; i < U.ndim(); i++)
           {
             j = mdp_permutation(4, k, i);
             if (y(j) % 2 == 0)
@@ -147,7 +147,7 @@ namespace MDP
       if (x(0) % 2 == 1)
       {
         y = x;
-        for (i = 0; i < U.ndim; i++)
+        for (i = 0; i < U.ndim(); i++)
           if (y(i) % 2 == 0)
             y = y + i;
           else

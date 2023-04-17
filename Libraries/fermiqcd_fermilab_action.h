@@ -34,7 +34,7 @@ namespace MDP
 
       if (psi_in.nspin != 4)
         error("FermiFermilabAction::mul_Q\ndoes not work for nspin!=4");
-      if (psi_in.nc != U.nc)
+      if (psi_in.nc != U.nc())
         error("FermiFermilabAction::mul_Q\nincompatible number of colors");
 
       mdp_real sign, kappa, kappat, kappas, zeta, rs, rt, cSW, cE, cB;

@@ -182,7 +182,7 @@ namespace MDP
 
     begin_function("lepage_improved_links");
 
-    if (U.ndim != 4)
+    if (U.ndim() != 4)
       error("fermiqcd_staggered_auxiliary_functions/lepage_improved_links: ndim!=4 (contact <mdp@fnal.gov>)");
 
     // this is a list of permitations of 0,1,2,3
@@ -190,8 +190,8 @@ namespace MDP
     const int epsilon[24][5] = {{0, 1, 2, 3, 0}, {0, 1, 3, 2, 3}, {0, 2, 1, 3, 1}, {0, 2, 3, 1, 4}, {0, 3, 1, 2, 2}, {0, 3, 2, 1, 5}, {1, 0, 2, 3, 0}, {1, 0, 3, 2, 3}, {1, 2, 0, 3, 1}, {1, 2, 3, 0, 4}, {1, 3, 0, 2, 2}, {1, 3, 2, 0, 5}, {2, 0, 1, 3, 0}, {2, 0, 3, 1, 3}, {2, 1, 0, 3, 1}, {2, 1, 3, 0, 4}, {2, 3, 0, 1, 2}, {2, 3, 1, 0, 5}, {3, 0, 1, 2, 0}, {3, 0, 2, 1, 3}, {3, 1, 0, 2, 1}, {3, 1, 2, 0, 4}, {3, 2, 0, 1, 2}, {3, 2, 1, 0, 5}};
     // mu, nu, rho, sig, im2
 
-    int nc = U.nc;
-    int ndim = U.ndim;
+    int nc = U.nc();
+    int ndim = U.ndim();
     int mu, nu, rho, idx, imn, im2, i, j;
     mdp_site x(U.lattice());
     mdp_site y(U.lattice());
@@ -363,9 +363,9 @@ namespace MDP
 
       forallsitesandcopies(x)
       {
-        for (mu = 0; mu < U.ndim; mu++)
-          for (i = 0; i < U.nc; i++)
-            for (j = 0; j < U.nc; j++)
+        for (mu = 0; mu < U.ndim(); mu++)
+          for (i = 0; i < U.nc(); i++)
+            for (j = 0; j < U.nc(); j++)
               V.long_links(x, mu, i, j) *= c[5];
       }
     }
@@ -391,17 +391,17 @@ namespace MDP
     int mu, i, j;
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim; mu++)
+      for (mu = 0; mu < U.ndim(); mu++)
       {
-        for (i = 0; i < U.nc; i++)
-          for (j = 0; j < U.nc; j++)
+        for (i = 0; i < U.nc(); i++)
+          for (j = 0; j < U.nc(); j++)
             U(x, mu, i, j) = U(x, mu, i, j) * chi.eta(x, mu);
       }
       // this takes car of antiperiodic bc
       if (x(0) == U.lattice().size(0) - 1)
       {
-        for (i = 0; i < U.nc; i++)
-          for (j = 0; j < U.nc; j++)
+        for (i = 0; i < U.nc(); i++)
+          for (j = 0; j < U.nc(); j++)
             U(x, 0, i, j) *= -1;
       }
     }

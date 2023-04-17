@@ -199,7 +199,7 @@ namespace MDP
 
       mdp_site x(U.lattice());
       int i;
-      staggered_field r(psi_in.lattice(), U.nc);
+      staggered_field r(psi_in.lattice(), U.nc());
       mdp_real mass = 1.0;
       inversion_stats stats;
       if (coeff.has_key("mass"))
@@ -214,7 +214,7 @@ namespace MDP
       // because staggered_BiCG_QQh uses it.
       forallsites(x)
       {
-        for (i = 0; i < U.nc; i++)
+        for (i = 0; i < U.nc(); i++)
           psi_out(x, i) = 0;
       }
       psi_out.update();
@@ -223,7 +223,7 @@ namespace MDP
 
       forallsitesofparity(x, EVEN)
       {
-        for (i = 0; i < U.nc; i++)
+        for (i = 0; i < U.nc(); i++)
           r(x, i) = -r(x, i) + 2.0 * mass * psi_in(x, i);
       }
 
@@ -232,7 +232,7 @@ namespace MDP
       mul_Q(r, psi_out, U, coeff, ODD);
       forallsitesofparity(x, ODD)
       {
-        for (i = 0; i < U.nc; i++)
+        for (i = 0; i < U.nc(); i++)
           psi_out(x, i) = 1.0 / (2.0 * mass) * (psi_in(x, i) - r(x, i));
       }
 

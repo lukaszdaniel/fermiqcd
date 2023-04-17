@@ -113,11 +113,11 @@ namespace MDP
     /*
     static void contract_staples(mdp_matrix &M, gauge_field &U, mdp_site &U, int mu)
     {
-      int nc = U.nc;
+      int nc = U.nc();
       mdp_matrix B(nc, nc);
       mdp_site y = x + mu;
       mdp_site z;
-      for (int nu = 0; nu < U.ndim; nu++)
+      for (int nu = 0; nu < U.ndim(); nu++)
         if (nu != mu)
         {
           z = y + nu;
@@ -131,7 +131,7 @@ namespace MDP
                                 int n_iter = 1)
     {
       begin_function("WilsonGaugeAction__heatbath");
-      if (U.nc == 1)
+      if (U.nc() == 1)
         error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
       gauge_stats stats;
       mdp_real beta = 0.0, zeta = 0.0;
@@ -145,7 +145,7 @@ namespace MDP
         zeta = 1;
 
       int i, j, k, iter, mu, parity;
-      mdp_matrix M(U.nc, U.nc);
+      mdp_matrix M(U.nc(), U.nc());
       mdp_complex a[4], tmpUik;
       mdp_site x(U.lattice());
       double time = mpi.time();
@@ -154,12 +154,12 @@ namespace MDP
 
       for (iter = 0; iter < n_iter; iter++)
         for (parity = 0; parity < 2; parity++)
-          for (mu = 0; mu < U.ndim; mu++)
+          for (mu = 0; mu < U.ndim(); mu++)
           {
             forallsitesofparity(x, parity)
             {
-              for (i = 0; i < U.nc - 1; i++)
-                for (j = i + 1; j < U.nc; j++)
+              for (i = 0; i < U.nc() - 1; i++)
+                for (j = i + 1; j < U.nc(); j++)
                 {
                   if (zeta == 1)
                     M = U(x, mu) * staple_H(U, x, mu);
@@ -169,8 +169,8 @@ namespace MDP
                   a[1] = M(i, j);
                   a[2] = M(j, i);
                   a[3] = M(j, j);
-                  heatbath_SU2(U.lattice().random(x), beta / U.nc, a);
-                  for (k = 0; k < U.nc; k++)
+                  heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
+                  for (k = 0; k < U.nc(); k++)
                   {
                     tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                     U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
@@ -179,7 +179,7 @@ namespace MDP
                 }
             }
             // The next command does all the communications!
-            U.update(parity, mu, U.nc * U.nc);
+            U.update(parity, mu, U.nc() * U.nc());
           }
       mdp << "\t<stats>\n\t\t<time>" << mpi.time() - time << "</time>\n\t</stats>\n";
       end_function("WilsonGaugeAction__heatbath");
@@ -220,10 +220,10 @@ namespace MDP
   private:
     static mdp_matrix rectangles_0i_H(gauge_field &U, mdp_site x, int mu)
     {
-      mdp_matrix tmp(U.nc, U.nc);
-      mdp_matrix b1(U.nc, U.nc);
-      mdp_matrix b2(U.nc, U.nc);
-      mdp_matrix b3(U.nc, U.nc);
+      mdp_matrix tmp(U.nc(), U.nc());
+      mdp_matrix b1(U.nc(), U.nc());
+      mdp_matrix b2(U.nc(), U.nc());
+      mdp_matrix b3(U.nc(), U.nc());
       mdp_site y0(U.lattice());
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
@@ -231,7 +231,7 @@ namespace MDP
       tmp = 0;
       if (mu == 0)
       {
-        for (nu = 1; nu < U.ndim; nu++)
+        for (nu = 1; nu < U.ndim(); nu++)
         {
           y0 = x + mu;
           y1 = y0 + nu;
@@ -268,15 +268,15 @@ namespace MDP
 
     static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
     {
-      mdp_matrix tmp(U.nc, U.nc);
-      mdp_matrix b1(U.nc, U.nc);
-      mdp_matrix b2(U.nc, U.nc);
-      mdp_matrix b3(U.nc, U.nc);
+      mdp_matrix tmp(U.nc(), U.nc());
+      mdp_matrix b1(U.nc(), U.nc());
+      mdp_matrix b2(U.nc(), U.nc());
+      mdp_matrix b3(U.nc(), U.nc());
       mdp_site y0(U.lattice());
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
       int nu;
-      for (nu = min_nu; nu < U.ndim; nu++)
+      for (nu = min_nu; nu < U.ndim(); nu++)
         if (nu != mu)
         {
           y0 = x + mu;
@@ -317,12 +317,12 @@ namespace MDP
 
     static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
     {
-      int ndim = U.ndim;
+      int ndim = U.ndim();
       int nu, rho;
-      mdp_matrix tmp(U.nc, U.nc);
-      mdp_matrix b1(U.nc, U.nc);
-      mdp_matrix b2(U.nc, U.nc);
-      mdp_matrix b3(U.nc, U.nc);
+      mdp_matrix tmp(U.nc(), U.nc());
+      mdp_matrix b1(U.nc(), U.nc());
+      mdp_matrix b2(U.nc(), U.nc());
+      mdp_matrix b3(U.nc(), U.nc());
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
       mdp_site y3(U.lattice());
@@ -414,7 +414,7 @@ namespace MDP
       // if (Nproc != 1)
       //   error("improved_heatbath() does not work in parallel!");
 
-      if (U.ndim != 4)
+      if (U.ndim() != 4)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): ndim!=4 (use heatbath instead)");
 
       /*
@@ -423,10 +423,10 @@ namespace MDP
         error("lattice is not divisible by 3");
       */
 
-      if (U.nc == 1)
+      if (U.nc() == 1)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): U(1)? (use metropolis instead)");
-      int nc = U.nc;
-      int ndim = U.ndim;
+      int nc = U.nc();
+      int ndim = U.ndim();
       int i, j, k, iter, mu, type;
       mdp_matrix M;
       mdp_site x(U.lattice());
@@ -469,7 +469,7 @@ namespace MDP
       mdp << coeff;
 
       for (iter = 0; iter < n_iter; iter++)
-        for (type = 0; type < (int)std::pow((float)iGauge_min, U.ndim); type++)
+        for (type = 0; type < (int)std::pow((float)iGauge_min, U.ndim()); type++)
         {
           forallsites(x)
           {
@@ -508,8 +508,8 @@ namespace MDP
                     a[1] = M(i, j);
                     a[2] = M(j, i);
                     a[3] = M(j, j);
-                    heatbath_SU2(U.lattice().random(x), beta / U.nc, a);
-                    for (k = 0; k < U.nc; k++)
+                    heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
+                    for (k = 0; k < U.nc(); k++)
                     {
                       tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                       U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);

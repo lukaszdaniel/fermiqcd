@@ -14,7 +14,8 @@
 
 namespace MDP
 {
-  /// @brief field of vectors of vectors (DEPRECATED)
+  /** @brief field of vectors of vectors (DEPRECATED)
+   */
   class mdp_nvector_field : public mdp_field<mdp_complex>
   {
   private:

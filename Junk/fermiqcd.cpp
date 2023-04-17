@@ -67,7 +67,7 @@ void polyakov_vtk(gauge_field &U, std::string filename)
                     default_partitioning<0>,
                     torus_topology,
                     0, 1, false);
-  mdp_matrix_field V(space, U.nc, U.nc);
+  mdp_matrix_field V(space, U.nc(), U.nc());
   mdp_real_scalar_field q(space, 2);
   mdp_site x(U.lattice());
   mdp_site y(space);
@@ -117,7 +117,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   if (gauge["c_{SW}"] != 0)
     compute_em_field(U);
 
-  int nc = U.nc;
+  int nc = U.nc();
   fermi_field psi(U.lattice(), nc);
   fermi_field phi(U.lattice(), nc);
   mdp_site x(U.lattice());
@@ -147,7 +147,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       arguments.have("-baryon");
   if (use_propagator)
   {
-    S = fermi_propagator(U.lattice(), U.nc);
+    S = fermi_propagator(U.lattice(), U.nc());
   }
 
   int t0 = arguments.get("-quark", "source_t", 0);
@@ -180,7 +180,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       {
         forallsites(x)
         {
-          forspincolor(b, j, U.nc)
+          forspincolor(b, j, U.nc())
           {
             psi(x, b, j) = (x(TIME) == t0 && b == a && j == i) ? 1 : 0;
           }
@@ -262,9 +262,9 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       meson[t] = 0;
     G1 = Gamma5 * parse_gamma(arguments.get("-meson", "source_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I"));
     G2 = parse_gamma(arguments.get("-meson", "sink_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I")) * Gamma5;
-    forspincolor(a, i, U.nc)
+    forspincolor(a, i, U.nc())
     {
-      forspincolor(b, j, U.nc)
+      forspincolor(b, j, U.nc())
       {
         forallsites(x)
         {
@@ -293,7 +293,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     G2 = parse_gamma(arguments.get("-current_static", "sink_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I"));
     G3 = Gamma5 * parse_gamma(arguments.get("-current_static", "current_gamma", "I|0|1|2|3|5|01|02|03|12|13|05|15|25|35"));
     G4 = G2 * (1 - Gamma[0]) / 2 * G1;
-    mdp_matrix_field Sh(U.lattice(), U.nc, U.nc);
+    mdp_matrix_field Sh(U.lattice(), U.nc(), U.nc());
     for (int t = 0; t < NT; t++)
       meson[t] = 0;
     for (int t = 0; t < U.lattice().size(TIME) / 2; t++)
@@ -321,15 +321,15 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       if (x(TIME) >= 0)
       {
         z.set((NT + 2 * t0 - x(TIME)) % NT, x(1), x(2), x(3));
-        forspincolor(a, i, U.nc)
+        forspincolor(a, i, U.nc())
         {
-          forspincolor(b, j, U.nc)
+          forspincolor(b, j, U.nc())
           {
             s1 = s2 = 0;
             for (int c = 0; c < 4; c++)
             {
               s1 += conj(S(z, c, a, j, i)) * G3(c, b);
-              for (int k = 0; k < U.nc; k++)
+              for (int k = 0; k < U.nc(); k++)
                 s2 += S(x, b, c, j, k) * G4(c, a) * conj(Sh(x, i, k));
             }
             tmp = real(s1 * s2);
@@ -348,9 +348,9 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   {
     mdp_matrix G =
         parse_gamma(arguments.get("-4quark", "source", "5|I|0|1|2|3|05|15|25|35|01|02|03|12|13|23")) * Gamma5;
-    forspincolor(a, i, U.nc)
+    forspincolor(a, i, U.nc())
     {
-      forspincolor(b, j, U.nc)
+      forspincolor(b, j, U.nc())
       {
         for (int t = 0; t < U.lattice().size(TIME); t++)
           open_prop[a][b][i][j][t] = 0.0;
@@ -359,7 +359,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
             if (G(c, d) != 0)
               forallsites(x)
               {
-                for (int k = 0; k < U.nc; k++)
+                for (int k = 0; k < U.nc(); k++)
                   open_prop[a][b][i][j][(x(TIME) - t0 + NT) % NT] +=
                       S(x, a, c, i, k) * conj(S(x, b, d, j, k)) * G(c, d);
               }
@@ -390,8 +390,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                 mdp_complex g2 = G2(d, c);
                 if (g1 != 0 && g2 != 0)
                 {
-                  for (int i = 0; i < U.nc; i++)
-                    for (int j = 0; j < U.nc; j++)
+                  for (int i = 0; i < U.nc(); i++)
+                    for (int j = 0; j < U.nc(); j++)
                       if (!rotate)
                       {
                         c3a += real(open_prop[a][b][i][i][t1s] * g1 *
@@ -401,8 +401,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                       }
                       else
                         for (int z = 1; z < 9; z++)
-                          for (int k1 = 0; k1 < U.nc; k1++)
-                            for (int k2 = 0; k2 < U.nc; k2++)
+                          for (int k1 = 0; k1 < U.nc(); k1++)
+                            for (int k2 = 0; k2 < U.nc(); k2++)
                             {
                               c3a += real(open_prop[a][b][i][k1][t1s] * g1 *
                                           Lambda[z](k1, i) *
@@ -434,7 +434,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       for (int a = 0; a < 4; a++)
         for (int b = 0; b < 4; b++)
           if (G1(a, b) != 0)
-            for (int i = 0; i < U.nc; i++)
+            for (int i = 0; i < U.nc(); i++)
               Q(x) += std::pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
     }
     // smear_propagator(S,U,smear_steps);

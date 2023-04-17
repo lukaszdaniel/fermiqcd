@@ -18,6 +18,8 @@
 #define forspincolor(a, i, nc)  \
     for (int a = 0; a < 4; a++) \
         for (int i = 0; i < nc; i++)
+
+#include "fermiqcd_sse.h"
 #include "mdp.h"
 
 #include "fermiqcd_su_generators.h"

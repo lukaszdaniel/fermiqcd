@@ -91,13 +91,13 @@ namespace MDP
     int i, c, mu, A[KS_NDIM], B[KS_NDIM], P[4][2];
     int d, i0, i1, i2, i3;
     mdp_matrix paths, path;
-    path = mdp_identity(U.nc);
-    paths.dimension(U.nc, U.nc);
+    path = mdp_identity(U.nc());
+    paths.dimension(U.nc(), U.nc());
     paths = 0;
 
     forallsites(x)
     {
-      for (c = 0; c < U.nc; c++)
+      for (c = 0; c < U.nc(); c++)
         out(x, c) = 0;
       for (mu = 0; mu < KS_NDIM; mu++)
         A[mu] = x(mu) % 2;
@@ -120,7 +120,7 @@ namespace MDP
                 d++;
               }
             if (d == 0)
-              paths = mdp_identity(U.nc);
+              paths = mdp_identity(U.nc());
             if (d == 1)
               paths = U(x, P[0][0], P[0][1]);
             if (d == 2)
@@ -194,7 +194,7 @@ namespace MDP
 
     int t, t_source, nsources = 1, sourcestep = 1;
     int i, j, nt = U.lattice().size(0);
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_complex c;
     mdp_site x(U.lattice());
     staggered_field tmp(U.lattice(), nc);
@@ -213,11 +213,11 @@ namespace MDP
 
     for (t_source = 0; t_source < nsources * sourcestep; t_source += sourcestep)
     {
-      for (i = 0; i < U.nc; i++)
+      for (i = 0; i < U.nc(); i++)
       {
         forallsites(x)
         {
-          for (j = 0; j < U.nc; j++)
+          for (j = 0; j < U.nc(); j++)
           {
             if (i == j &&
                 (x(0) == t_source || x(0) == (t_source + 1)) &&
@@ -243,7 +243,7 @@ namespace MDP
         operator_staggered_meson(tmp, quark_prop, phases, U);
         forallsites(x)
         {
-          for (j = 0, c = mdp_complex(0, 0); j < U.nc; j++)
+          for (j = 0, c = mdp_complex(0, 0); j < U.nc(); j++)
             c += conj(anti_prop(x, j)) * tmp(x, j);
           t = (x(0) - t_source + nt) % nt;
           if (t % 2 == 1)
@@ -265,14 +265,14 @@ namespace MDP
     unsigned int t_source = 0;             // location of the source (timeslice)
     unsigned int t, nt                     // number of timeslices
                     = U.lattice().size(0); //
-    mdp_matrix tmp(nt, U.nc);              // auxiliary var
+    mdp_matrix tmp(nt, U.nc());              // auxiliary var
     mdp_matrix prop(2, nt);                // output vector
     mdp_site x(U.lattice());               //
     // ///////////////////////////////
 
     // // Local fields ////////////////////////////////
-    staggered_field quark_source(U.lattice(), U.nc); //
-    staggered_field quark_prop(U.lattice(), U.nc);   //
+    staggered_field quark_source(U.lattice(), U.nc()); //
+    staggered_field quark_prop(U.lattice(), U.nc());   //
     // ////////////////////////////////////////////////
 
     // // Initialization of parameters ////////////////
@@ -280,12 +280,12 @@ namespace MDP
     // ////////////////////////////////////////////////
 
     printf("Starting to make 5x5 pion...\n");
-    for (i = 0; i < U.nc; i++)
+    for (i = 0; i < U.nc(); i++)
     {
       // // Make wall source /////////////////////////////
       forallsites(x) //
       {
-        for (j = 0; j < U.nc; j++) //
+        for (j = 0; j < U.nc(); j++) //
         {
           if (i == j && x(0) - t_source == 0)       //
             quark_source(x, j) = mdp_complex(1, 0); //
@@ -305,12 +305,12 @@ namespace MDP
       forallsites(x)
       {                                  //
         t = (x(0) - t_source + nt) % nt; //
-        for (j = 0; j < U.nc; j++)       //
+        for (j = 0; j < U.nc(); j++)       //
           tmp(t, j) += conj(quark_prop(x, j)) * quark_prop(x, j);
       }                            //
       mpi.add(tmp);                //
       for (t = 0; t < nt; t++)     //
-        for (j = 0; j < U.nc; j++) //
+        for (j = 0; j < U.nc(); j++) //
           prop(0, t) += tmp(t, j); //
       // /////////////////////////////////////////////////
 
@@ -319,12 +319,12 @@ namespace MDP
       forallsites(x)
       {                                              //
         t = (x(0) - t_source + nt) % nt;             //
-        for (j = 0; j < U.nc; j++)                   //
+        for (j = 0; j < U.nc(); j++)                   //
           tmp(t, j) += quark_prop(x, j);             //
       }                                              //
       mpi.add(tmp);                                  //
       for (t = 0; t < nt; t++)                       //
-        for (j = 0; j < U.nc; j++)                   //
+        for (j = 0; j < U.nc(); j++)                   //
           prop(1, t) += conj(tmp(t, j)) * tmp(t, j); //
                                                      //
     }
@@ -334,8 +334,8 @@ namespace MDP
                  U.lattice().size(3);
     for (t = 0; t < nt; t++)
     {
-      prop(0, t) /= U.nc * volume;
-      prop(1, t) /= U.nc * volume * volume;
+      prop(0, t) /= U.nc() * volume;
+      prop(1, t) /= U.nc() * volume * volume;
     }
 
     return prop;

@@ -13,7 +13,7 @@ public:
                               int n_iter = 1)
   {
     begin_function("WilsonGaugeAction__heatbath");
-    if (U.nc == 1)
+    if (U.nc() == 1)
       error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
     gauge_stats stats;
     mdp_real beta, zeta;
@@ -35,7 +35,7 @@ public:
 
     for (int iter = 0; iter < n_iter; iter++)
       for (int parity = 0; parity < 2; parity++)
-        for (int mu = 0; mu < U.ndim; mu++)
+        for (int mu = 0; mu < U.ndim(); mu++)
         {
           forallsitesofparity(x, parity)
           {
@@ -47,8 +47,8 @@ public:
                     x(3) == sites[q](3))
                   continue;
               }
-            for (int i = 0; i < U.nc - 1; i++)
-              for (int j = i + 1; j < U.nc; j++)
+            for (int i = 0; i < U.nc() - 1; i++)
+              for (int j = i + 1; j < U.nc(); j++)
               {
                 if (zeta == 1)
                   M = U(x, mu) * staple_H(U, x, mu);
@@ -60,8 +60,8 @@ public:
                 a[1] = M(i, j);
                 a[2] = M(j, i);
                 a[3] = M(j, j);
-                heatbath_SU2(U.lattice().random(x), beta / U.nc, a);
-                for (int k = 0; k < U.nc; k++)
+                heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
+                for (int k = 0; k < U.nc(); k++)
                 {
                   tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                   U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
@@ -70,7 +70,7 @@ public:
               }
           }
           // The next command does all the communications!
-          U.update(parity, mu, U.nc * U.nc);
+          U.update(parity, mu, U.nc() * U.nc());
         }
     mdp << "\t<stats>\n\t\t<time>" << mpi.time() - time << "</time>\n\t</stats>\n";
     end_function("WilsonGaugeAction__heatbath");
@@ -84,7 +84,7 @@ void punched_ape_smearing(gauge_field &U,
                           int iterations = 20,
                           int cooling_steps = 10)
 {
-  gauge_field V(U.lattice(), U.nc);
+  gauge_field V(U.lattice(), U.nc());
   mdp_site x(U.lattice());
   for (int iter = 0; iter < iterations; iter++)
   {
@@ -103,7 +103,7 @@ void punched_ape_smearing(gauge_field &U,
               continue;
           }
         U(x, mu) = (1.0 - alpha) * V(x, mu);
-        for (int nu = 0; nu < U.ndim; nu++)
+        for (int nu = 0; nu < U.ndim(); nu++)
           if (nu != mu)
             U(x, mu) += (1.0 - alpha) / 6 *
                         (V(x, nu) * V(x + nu, mu) * hermitian(V(x + mu, nu)) +

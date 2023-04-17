@@ -39,50 +39,50 @@ namespace MDP
     {
       mdp_site x(U.lattice());
       mdp_site y(U.lattice());
-      mdp_matrix A(U.nc, U.nc)
+      mdp_matrix A(U.nc(), U.nc())
           mdp_matrix
-          staples(U.nc, U.nc) for (int m = 0; m < U.ndim - 1; m++)
+          staples(U.nc(), U.nc()) for (int m = 0; m < U.ndim() - 1; m++)
       {
         forallsites(x)
         {
-          for (int mu = 0; mu < U.ndim; mu++)
+          for (int mu = 0; mu < U.ndim(); mu++)
           {
-            for (int i = 0; i < U.nc; i++)
-              for (int j = 0; j < U.nc; j++)
+            for (int i = 0; i < U.nc(); i++)
+              for (int j = 0; j < U.nc(); j++)
                 staples(i, j) = 0;
-            for (int nu = 0; nu < U.nc; nu++)
+            for (int nu = 0; nu < U.nc(); nu++)
               y = x + nu;
-            for (int i = 0; i < U.nc; i++)
-              for (int j = 0; j < U.nc; j++)
+            for (int i = 0; i < U.nc(); i++)
+              for (int j = 0; j < U.nc(); j++)
               {
                 A(i, j) = 0;
-                for (int k = 0; k < U.nc; k++)
+                for (int k = 0; k < U.nc(); k++)
                   A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
               }
-            for (int i = 0; i < U.nc; i++)
-              for (int j = 0; j < U.nc; j++)
+            for (int i = 0; i < U.nc(); i++)
+              for (int j = 0; j < U.nc(); j++)
               {
-                for (int k = 0; k < U.nc; k++)
+                for (int k = 0; k < U.nc(); k++)
                   staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
               }
             y = x - nu;
-            for (int i = 0; i < U.nc; i++)
-              for (int j = 0; j < U.nc; j++)
+            for (int i = 0; i < U.nc(); i++)
+              for (int j = 0; j < U.nc(); j++)
               {
                 A(i, j) = 0;
-                for (int k = 0; k < U.nc; k++)
+                for (int k = 0; k < U.nc(); k++)
                   A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
               }
-            for (int i = 0; i < U.nc; i++)
-              for (int j = 0; j < U.nc; j++)
+            for (int i = 0; i < U.nc(); i++)
+              for (int j = 0; j < U.nc(); j++)
               {
-                for (int k = 0; k < U.nc; k++)
+                for (int k = 0; k < U.nc(); k++)
                   staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
               }
           }
         }
-        for (int i = 0; i < U.nc; i++)
-          for (int j = 0; j < U.nc; j++)
+        for (int i = 0; i < U.nc(); i++)
+          for (int j = 0; j < U.nc(); j++)
             U(x, mu, i, j) = (1.0 - alpha[m]) * U(x, mu, i, j) + alpha[m] * staples(i, j);
         U(x, mu) = ProjectSUN(U(x, mu));
       }
@@ -100,7 +100,7 @@ namespace MDP
                       int iterations = 20,
                       int cooling_steps = 10)
     {
-      gauge_field V(U.lattice(), U.nc);
+      gauge_field V(U.lattice(), U.nc());
       mdp_site x(U.lattice());
       for (int iter = 0; iter < iterations; iter++)
       {
@@ -111,7 +111,7 @@ namespace MDP
           forallsites(x)
           {
             U(x, mu) = (1.0 - alpha) * V(x, mu);
-            for (int nu = 0; nu < U.ndim; nu++)
+            for (int nu = 0; nu < U.ndim(); nu++)
             {
               if (nu != mu)
                 U(x, mu) += (1.0 - alpha) / 6 *
@@ -132,8 +132,8 @@ namespace MDP
     mdp_site x(U.lattice());
     forallsitesandcopies(x)
     {
-      for (int mu = 0; mu < U.ndim - 1; mu++)
-        for (int nu = mu + 1; nu < U.ndim; nu++)
+      for (int mu = 0; mu < U.ndim() - 1; mu++)
+        for (int nu = mu + 1; nu < U.ndim(); nu++)
           U.em(x, mu, nu) -= 8.0 / 3.0 * I * trace(U.em(x, mu, nu));
     }
   }
@@ -145,8 +145,8 @@ namespace MDP
     forallsitesandcopies(x)
     {
       Q(x) = 0;
-      for (int i = 0; i < U.nc; i++)
-        for (int j = 0; j < U.nc; j++)
+      for (int i = 0; i < U.nc(); i++)
+        for (int j = 0; j < U.nc(); j++)
           Q(x) += real(U.em(x, 0, 1, i, j) * U.em(x, 2, 3, j, i) -
                        U.em(x, 0, 2, i, j) * U.em(x, 1, 3, j, i) +
                        U.em(x, 0, 3, i, j) * U.em(x, 1, 2, j, i));

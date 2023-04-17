@@ -63,7 +63,7 @@ namespace MDP
       tmp = 0;
       if (mu == 0)
       {
-        for (nu = 1; nu < U.ndim; nu++)
+        for (nu = 1; nu < U.ndim(); nu++)
         {
           y0 = x + mu;
           y1 = y0 + nu;
@@ -108,7 +108,7 @@ namespace MDP
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
       int nu;
-      for (nu = min_nu; nu < U.ndim; nu++)
+      for (nu = min_nu; nu < U.ndim(); nu++)
         if (nu != mu)
         {
           y0 = x + mu;
@@ -148,7 +148,7 @@ namespace MDP
 
     static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
     {
-      int ndim = U.ndim;
+      int ndim = U.ndim();
       int nu, rho;
       mdp_matrix tmp(3, 3);
       mdp_matrix b1(3, 3);
@@ -211,7 +211,7 @@ namespace MDP
       tmp = 0;
       if (mu == 0)
       {
-        for (nu = 1; nu < U.ndim; nu++)
+        for (nu = 1; nu < U.ndim(); nu++)
         {
           y0 = x + mu;
           y1 = y0 + nu;
@@ -274,7 +274,7 @@ namespace MDP
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
       int nu;
-      for (nu = min_nu; nu < U.ndim; nu++)
+      for (nu = min_nu; nu < U.ndim(); nu++)
         if (nu != mu)
         {
           y0 = x + mu;
@@ -328,7 +328,7 @@ namespace MDP
     static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
     {
       int nc = 3;
-      int ndim = U.ndim;
+      int ndim = U.ndim();
       int nu, rho;
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
@@ -398,7 +398,7 @@ namespace MDP
       tmp = 0;
       b1 = 0;
       b2 = 0;
-      for (nu = 0; nu < U.ndim; nu++)
+      for (nu = 0; nu < U.ndim(); nu++)
         if (nu != mu)
         {
 
@@ -537,7 +537,7 @@ namespace MDP
       // if (Nproc != 1)
       //   error("improved_heatbath() does not work in parallel!");
 
-      if (U.ndim != 4)
+      if (U.ndim() != 4)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): ndim!=4 (use heatbath instead)");
 
 #if 0
@@ -546,10 +546,10 @@ namespace MDP
         error("lattice is not divisible by 3");
 #endif
 
-      if (U.nc == 1)
+      if (U.nc() == 1)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): U(1)? (use metropolis instead)");
-      int nc = U.nc;
-      int ndim = U.ndim;
+      int nc = U.nc();
+      int ndim = U.ndim();
       int i, j, k, iter, mu, type;
       mdp_matrix M;
       mdp_site x(U.lattice());
@@ -592,7 +592,7 @@ namespace MDP
       mdp << coeff;
 
       for (iter = 0; iter < n_iter; iter++)
-        for (type = 0; type < (int)std::pow((float)iGauge_min, U.ndim); type++)
+        for (type = 0; type < (int)std::pow((float)iGauge_min, U.ndim()); type++)
         {
           forallsites(x)
           {
@@ -631,8 +631,8 @@ namespace MDP
                     a[1] = M(i, j);
                     a[2] = M(j, i);
                     a[3] = M(j, j);
-                    heatbath_SU2(U.lattice().random(x), beta / U.nc, a);
-                    for (k = 0; k < U.nc; k++)
+                    heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
+                    for (k = 0; k < U.nc(); k++)
                     {
                       tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                       U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);

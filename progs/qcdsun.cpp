@@ -141,9 +141,9 @@ int main(int argc, char **argv)
 
 	mdp_real Pt, Ps;
 	mdp_real S;
-	mdp_real D = 1.0 * U.ndim * (U.ndim - 1) / 2;
-	mdp_real as = 1.0 * (U.ndim - 2) * (U.ndim - 1) / 2;
-	mdp_real at = 1.0 * U.ndim - 1;
+	mdp_real D = 1.0 * U.ndim() * (U.ndim() - 1) / 2;
+	mdp_real as = 1.0 * (U.ndim() - 2) * (U.ndim() - 1) / 2;
+	mdp_real at = 1.0 * U.ndim() - 1;
 
 	// mdp_real c1 = -1.0 / 12; // Symanzik
 	//  mdp_real c1=-0.331; //Iwasaki
@@ -164,7 +164,7 @@ int main(int argc, char **argv)
 
 		Pt = TimePlaquette(U);
 		Ps = SpacePlaquette(U);
-		S = (D - (as * Ps + at * Pt) / U.nc);
+		S = (D - (as * Ps + at * Pt) / U.nc());
 
 		plaqfile << Pt << " " << Ps << " " << S << "\n";
 
@@ -179,7 +179,7 @@ int main(int argc, char **argv)
 
 			std::unique_ptr<double[]> cor = std::make_unique<double[]>(U.lattice().size(1));
 
-			mdp_matrix a(U.ndim - 1, U.lattice().size(1));
+			mdp_matrix a(U.ndim() - 1, U.lattice().size(1));
 			a = PolyCor(U);
 
 			mdp_complex average = 0;
@@ -197,7 +197,7 @@ int main(int argc, char **argv)
 			for (mdp_int k = 0; k < U.lattice().size(1); k++)
 			{
 				cor[k] = 0;
-				for (mdp_int mu = 1; mu < U.ndim; mu++)
+				for (mdp_int mu = 1; mu < U.ndim(); mu++)
 				{
 					for (mdp_int j = 0; j < U.lattice().size(1); j++)
 					{

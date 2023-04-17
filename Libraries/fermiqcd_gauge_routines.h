@@ -22,7 +22,7 @@ namespace MDP
   mdp_matrix staple(gauge_field &U, mdp_site x,
                            int mu, int s1, int nu)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     if (s1 == +1)
     {
       tmp = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
@@ -38,11 +38,11 @@ namespace MDP
 
   mdp_matrix staple(gauge_field &U, mdp_site x, int mu)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
 
     tmp = 0;
-    for (int nu = 0; nu < U.ndim; nu++)
+    for (int nu = 0; nu < U.ndim(); nu++)
       if (nu != mu)
       {
         tmp += U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
@@ -55,7 +55,7 @@ namespace MDP
   mdp_matrix staple_H(gauge_field &U, mdp_site x,
                              int mu, int s1, int nu)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     if (s1 == +1)
     {
       tmp = U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
@@ -71,11 +71,11 @@ namespace MDP
 
   mdp_matrix staple_H(gauge_field &U, mdp_site x, int mu)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
     int nu;
     tmp = 0;
-    for (nu = 0; nu < U.ndim; nu++)
+    for (nu = 0; nu < U.ndim(); nu++)
       if (nu != mu)
       {
         tmp += U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
@@ -87,12 +87,12 @@ namespace MDP
 
   mdp_matrix staple_H_unisotropic(gauge_field &U, mdp_site x, int mu, mdp_real zeta)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
     int nu;
     mdp_real param;
     tmp = 0;
-    for (nu = 0; nu < U.ndim; nu++)
+    for (nu = 0; nu < U.ndim(); nu++)
       if (nu != mu)
       {
         if (nu * mu == 0)
@@ -112,13 +112,13 @@ namespace MDP
 
   mdp_matrix staple_0i_H(gauge_field &U, mdp_site x, int mu)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
     int nu;
     if (mu == 0)
     {
       tmp = 0;
-      for (nu = 1; nu < U.ndim; nu++)
+      for (nu = 1; nu < U.ndim(); nu++)
       {
         tmp += U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
         y = x - nu;
@@ -138,12 +138,12 @@ namespace MDP
 
   mdp_matrix staple_ij_H(gauge_field &U, mdp_site x, int mu)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
     int nu;
     tmp = 0;
     if (mu != 0)
-      for (nu = 1; nu < U.ndim; nu++)
+      for (nu = 1; nu < U.ndim(); nu++)
         if (nu != mu)
         {
           tmp += U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
@@ -158,7 +158,7 @@ namespace MDP
   // //////////////////////////
   mdp_matrix plaquette(gauge_field &U, mdp_site x, int mu, int nu)
   {
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     tmp = U(x, mu) * U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
     return tmp;
   }
@@ -175,12 +175,12 @@ namespace MDP
 
     forallsites(x)
     {
-      for (int mu = 0; mu < U.ndim - 1; mu++)
+      for (int mu = 0; mu < U.ndim() - 1; mu++)
       {
-        for (int nu = mu + 1; nu < U.ndim; nu++)
+        for (int nu = mu + 1; nu < U.ndim(); nu++)
         {
-          tmp += (1 - 8 * c1) * (1 - real(trace(plaquette(U, x, mu, nu))) / U.nc) +
-                 c1 * (2 - 1.0 / U.nc * real(trace(U(x, mu) * (U(x + mu, mu) * U((x + mu) + mu, nu) * hermitian(U((x + mu) + nu, mu)) * hermitian(U(x + nu, mu)) * +U(x + mu, nu) * U((x + mu) + nu, nu) * hermitian(U((x + nu) + nu, mu)) * hermitian(U(x + nu, nu))) * hermitian(U(x, nu)))));
+          tmp += (1 - 8 * c1) * (1 - real(trace(plaquette(U, x, mu, nu))) / U.nc()) +
+                 c1 * (2 - 1.0 / U.nc() * real(trace(U(x, mu) * (U(x + mu, mu) * U((x + mu) + mu, nu) * hermitian(U((x + mu) + nu, mu)) * hermitian(U(x + nu, mu)) * +U(x + mu, nu) * U((x + mu) + nu, nu) * hermitian(U((x + nu) + nu, mu)) * hermitian(U(x + nu, nu))) * hermitian(U(x, nu)))));
         }
       }
     }
@@ -451,7 +451,7 @@ namespace MDP
   mdp_matrix staple(gauge_field &U, mdp_site x,
                            int mu, int s1, int nu)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_matrix b1(nc, nc);
     mdp_site y(U.lattice());
     mdp_matrix tmp(nc, nc);
@@ -471,13 +471,13 @@ namespace MDP
 
   mdp_matrix staple(gauge_field &U, mdp_site x, int mu)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_matrix b1(nc, nc);
     mdp_matrix tmp(nc, nc);
     mdp_site y(U.lattice());
     int nu;
     tmp = 0;
-    for (nu = 0; nu < U.ndim; nu++)
+    for (nu = 0; nu < U.ndim(); nu++)
       if (nu != mu)
       {
         fast_mul_AB_to_C(&U(x, nu, 0, 0), &U(x + nu, mu, 0, 0), &b1(0, 0), nc);
@@ -492,7 +492,7 @@ namespace MDP
   mdp_matrix staple_H(gauge_field &U, mdp_site x,
                              int mu, int s1, int nu)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_matrix b1(nc, nc);
     mdp_matrix tmp(nc, nc);
     mdp_site y(U.lattice());
@@ -512,13 +512,13 @@ namespace MDP
 
   mdp_matrix staple_H(gauge_field &U, mdp_site x, int mu)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_matrix b1(nc, nc);
     mdp_matrix tmp(nc, nc);
     mdp_site y(U.lattice());
     int nu;
     tmp = 0;
-    for (nu = 0; nu < U.ndim; nu++)
+    for (nu = 0; nu < U.ndim(); nu++)
       if (nu != mu)
       {
         fast_mul_ABH_to_C(&U(x + mu, nu, 0, 0), &U(x + nu, mu, 0, 0), &b1(0, 0), nc);
@@ -532,15 +532,15 @@ namespace MDP
 
   mdp_matrix staple_0i_H(gauge_field &U, mdp_site x, int mu)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_matrix b1(nc, nc);
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
     int nu;
     if (mu == 0)
     {
       tmp = 0;
-      for (nu = 1; nu < U.ndim; nu++)
+      for (nu = 1; nu < U.ndim(); nu++)
       {
         fast_mul_ABH_to_C(&U(x + mu, nu, 0, 0), &U(x + nu, mu, 0, 0), &b1(0, 0), nc);
         fast_mul_ABH_addto_C(&b1(0, 0), &U(x, nu, 0, 0), &tmp(0, 0), nc);
@@ -563,14 +563,14 @@ namespace MDP
 
   mdp_matrix staple_ij_H(gauge_field &U, mdp_site x, int mu)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_matrix b1(nc, nc);
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
     int nu;
     tmp = 0;
     if (mu != 0)
-      for (nu = 1; nu < U.ndim; nu++)
+      for (nu = 1; nu < U.ndim(); nu++)
         if (nu != mu)
         {
           fast_mul_ABH_to_C(&U(x + mu, nu, 0, 0), &U(x + nu, mu, 0, 0), &b1(0, 0), nc);
@@ -587,10 +587,10 @@ namespace MDP
   // //////////////////////////
   mdp_matrix plaquette(gauge_field &U, mdp_site x, int mu, int nu)
   {
-    int nc = U.nc;
+    int nc = U.nc();
     mdp_matrix b1(nc, nc);
     mdp_matrix b2(nc, nc);
-    mdp_matrix tmp(U.nc, U.nc);
+    mdp_matrix tmp(U.nc(), U.nc());
     fast_mul_AB_to_C(&U(x, mu, 0, 0), &U(x + mu, nu, 0, 0), &b1(0, 0), nc);
     fast_mul_ABH_to_C(&b1(0, 0), &U(x + nu, mu, 0, 0), &b2(0, 0), nc);
     fast_mul_ABH_to_C(&b2(0, 0), &U(x, nu, 0, 0), &tmp(0, 0), nc);

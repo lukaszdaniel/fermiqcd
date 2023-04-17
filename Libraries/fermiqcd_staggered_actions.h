@@ -39,7 +39,7 @@ namespace MDP
 						  int parity = EVENODD)
 		{
 
-			int ndim = U.ndim;
+			int ndim = U.ndim();
 			mdp_real sign = 1, two_mass = 1;
 			if (coeff.has_key("mass"))
 				two_mass = 2.0 * coeff["mass"];
@@ -124,8 +124,8 @@ namespace MDP
 						  coefficients &coeff,
 						  int parity = EVENODD)
 		{
-			int nc = U.nc;
-			int ndim = U.ndim;
+			int nc = U.nc();
+			int ndim = U.ndim();
 			mdp_real sign = 1, two_mass = 1;
 			if (coeff.has_key("mass"))
 				two_mass = 2.0 * coeff["mass"];

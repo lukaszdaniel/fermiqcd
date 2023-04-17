@@ -55,7 +55,7 @@ namespace MDP
       static mdp_real a0, a1, a2, a3, b, c, d;
       static mdp_real a0_sq, ai_sq;
       static mdp_complex x0, x1;
-      int k, nu, nc = U.nc;
+      int k, nu, nc = U.nc();
       int opposite_parity = EVENODD;
       mdp_complex_vector_field W(U.lattice(), 4);
       mdp_matrix U_up(nc, nc), U_dw(nc, nc);
@@ -74,7 +74,7 @@ namespace MDP
       forallsitesofparity(x, parity)
       {
         a0 = a1 = a2 = a3 = 0;
-        for (nu = 0; nu < U.ndim; nu++)
+        for (nu = 0; nu < U.ndim(); nu++)
           if (nu != mu)
           {
             U_up = U(x, nu);
@@ -105,8 +105,8 @@ namespace MDP
       W.update();
       forallsitesofparity(x, parity)
       {
-        for (nu = 0; nu < U.ndim; nu++)
-          for (k = 0; k < U.nc; k++)
+        for (nu = 0; nu < U.ndim(); nu++)
+          for (k = 0; k < U.nc(); k++)
           {
             x0 = U(x, nu, i, k);
             x1 = U(x, nu, j, k);
@@ -116,11 +116,11 @@ namespace MDP
       }
       forallsitesofparity(x, opposite_parity)
       {
-        for (nu = 0; nu < U.ndim; nu++)
+        for (nu = 0; nu < U.ndim(); nu++)
         {
           y = x + nu;
 #ifndef TWISTED_BOUNDARY
-          for (k = 0; k < U.nc; k++)
+          for (k = 0; k < U.nc(); k++)
           {
             x0 = U(x, nu, k, i);
             x1 = U(x, nu, k, j);
@@ -129,7 +129,7 @@ namespace MDP
           }
 #else
           if (in_block(y))
-            for (k = 0; k < U.nc; k++)
+            for (k = 0; k < U.nc(); k++)
             {
               x0 = U(x, nu, k, i);
               x1 = U(x, nu, k, j);
@@ -163,7 +163,7 @@ namespace MDP
       mdp_real alpha[3];
       for (t = 0; t < U.lattice().size(mu) - 1; t++)
       {
-        A = mdp_zero(U.nc);
+        A = mdp_zero(U.nc());
         forallsites(x)
         {
           if (x(mu) == t)
@@ -211,7 +211,7 @@ namespace MDP
       mdp_site x(U.lattice());
       double action = 0;
       double precision = 0;
-      mdp_matrix M(U.nc, U.nc);
+      mdp_matrix M(U.nc(), U.nc());
 
       stats.max_steps = max_steps;
       stats.target_precision = target_precision;
@@ -223,8 +223,8 @@ namespace MDP
 
         for (parity = EVEN; parity <= ODD; parity++)
         {
-          for (i = 0; i < U.nc - 1; i++)
-            for (j = i + 1; j < U.nc; j++)
+          for (i = 0; i < U.nc() - 1; i++)
+            for (j = i + 1; j < U.nc(); j++)
             {
               hit(U, mu, parity, i, j, overrelaxation_boost);
             }
@@ -235,23 +235,23 @@ namespace MDP
         forallsites(x)
         {
           M = 0;
-          for (nu = 0; nu < U.ndim; nu++)
+          for (nu = 0; nu < U.ndim(); nu++)
             if (nu != mu)
             {
               M += U(x, nu) - U(x - nu, nu);
               action += real(trace(U(x, nu) + U(x - nu, nu)));
             }
-          M = (M - trace(M) * (1.0/ U.nc));
+          M = (M - trace(M) * (1.0/ U.nc()));
           M = M - hermitian(M);
-          for (i = 0; i < U.nc; i++)
-            for (j = 0; j < U.nc; j++)
+          for (i = 0; i < U.nc(); i++)
+            for (j = 0; j < U.nc(); j++)
               precision += (double)std::pow(abs(M(i, j)), 2);
         }
         mpi.add(precision);
         mpi.add(action);
 
-        precision = std::sqrt(precision / (U.nc * U.nc * U.lattice().global_volume()));
-        action = action / (2.0 * U.nc * U.lattice().global_volume());
+        precision = std::sqrt(precision / (U.nc() * U.nc() * U.lattice().global_volume()));
+        action = action / (2.0 * U.nc() * U.lattice().global_volume());
 
         mdp << step << "\t" << action << "\t" << precision << "\n";
 

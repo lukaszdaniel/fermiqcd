@@ -61,10 +61,10 @@ namespace MDP
       to_U = &U;
       to_V = &U; // initialize should change this
 
-      to_f_U = new GaugeClass(U.lattice(), U.nc);
-      to_p_U = new GaugeClass(U.lattice(), U.nc);
-      to_old_U = new GaugeClass(U.lattice(), U.nc);
-      to_old_f_U = new GaugeClass(U.lattice(), U.nc);
+      to_f_U = new GaugeClass(U.lattice(), U.nc());
+      to_p_U = new GaugeClass(U.lattice(), U.nc());
+      to_old_U = new GaugeClass(U.lattice(), U.nc());
+      to_old_f_U = new GaugeClass(U.lattice(), U.nc());
 
       to_f_F = new FermiClass(F.lattice(), F.nc);
       to_p_F = new FermiClass(F.lattice(), F.nc);
@@ -178,7 +178,7 @@ namespace MDP
       GaugeClass &U = *to_U;
       if (coeff["representation"] == FUNDAMENTAL)
       {
-        SU_Generators g(U.nc);
+        SU_Generators g(U.nc());
         numgen = g.ngenerators;
         to_V = to_U; // default
         lambda.resize(g.ngenerators);
@@ -187,14 +187,14 @@ namespace MDP
       }
       else if (coeff["representation"] == SYMMETRIC)
       {
-        SU_Generators g(U.nc);
+        SU_Generators g(U.nc());
         numgen = g.ngenerators;
-        int dimrep = U.nc * (U.nc + 1) / 2;
+        int dimrep = U.nc() * (U.nc() + 1) / 2;
         lambda.resize(g.ngenerators);
         for (size_t a = 0; a < lambda.size(); a++)
           lambda[a] = g.lambda(a);
         to_V = new GaugeClass(U.lattice(), dimrep);
-        mdp_matrix tmp(U.nc, U.nc);
+        mdp_matrix tmp(U.nc(), U.nc());
         S.resize(g.ngenerators);
 
         tmp(0, 0) = 1.0 / sqrt(2.0) * mdp_complex(1.0, 0.0);
@@ -253,7 +253,7 @@ namespace MDP
       // mdp_real im;
       forallsites(x)
       {
-        for (int mu = 0; mu < U.ndim; mu++)
+        for (int mu = 0; mu < U.ndim(); mu++)
         {
           U(x, mu) = 0;
           for (int a = 0; a < numgen; a++)
@@ -310,11 +310,11 @@ namespace MDP
         mdp_site x(U.lattice());
         forallsitesandcopies(x)
         {
-          for (int mu = 0; mu < U.ndim; mu++)
+          for (int mu = 0; mu < U.ndim(); mu++)
           {
-            for (int a = 0; a < V.nc; a++)
+            for (int a = 0; a < V.nc(); a++)
             {
-              for (int b = 0; b < V.nc; b++)
+              for (int b = 0; b < V.nc(); b++)
               {
                 V(x, mu, a, b) = trace(S[a] * U(x, mu) * S[b] * transpose(U(x, mu)));
               }
@@ -337,7 +337,7 @@ namespace MDP
       double action_gauge = 0.0, action_fermi = 0.0;
       mdp_site x(U.lattice());
       FermiClass inverse_F(F);
-      double c = coeff["beta"] * (U.ndim * (U.ndim - 1) * U.lattice().global_volume()) / 2;
+      double c = coeff["beta"] * (U.ndim() * (U.ndim() - 1) * U.lattice().global_volume()) / 2;
       action_gauge = -c * average_plaquette(U);
       if (coeff["dynamical_fermions"] > 0)
       {
@@ -376,7 +376,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (int mu = 0; mu < U.ndim; mu++)
+        for (int mu = 0; mu < U.ndim(); mu++)
           U(x, mu) = exp(dt * p_U(x, mu) + 0.5 * dt * dt * f_U(x, mu)) * U(x, mu);
       }
       U.update();
@@ -421,30 +421,30 @@ namespace MDP
 
       // int dynamical_fermions = coeff["dynamical_fermions"];
       mdp_site x(U.lattice());
-      mdp_matrix staple(U.nc, U.nc);
-      GaugeClass Udag(U.lattice(), U.nc), utmp(U.lattice(), U.nc);
+      mdp_matrix staple(U.nc(), U.nc());
+      GaugeClass Udag(U.lattice(), U.nc()), utmp(U.lattice(), U.nc());
       FermiClass sol(F.lattice(), F.nc, F.nspin);
       FermiClass psol(F.lattice(), F.nc, F.nspin);
       GaugeClass &V = *to_V;
 
       forallsitesandcopies(x)
       {
-        for (int mu = 0; mu < U.ndim; mu++)
+        for (int mu = 0; mu < U.ndim(); mu++)
           Udag(x, mu) = hermitian(U(x, mu));
       }
 
       forallsites(x)
       {
-        for (int mu = 0; mu < U.ndim; mu++)
+        for (int mu = 0; mu < U.ndim(); mu++)
         {
           staple = 0;
-          for (int nu = 0; nu < U.ndim; nu++)
+          for (int nu = 0; nu < U.ndim(); nu++)
             if (nu != mu)
               staple = staple + U(x + mu, nu) * Udag(x + nu, mu) * Udag(x, nu) +
                        Udag(x + mu - nu, nu) * Udag(x - nu, mu) * U(x - nu, nu);
           staple = U(x, mu) * staple - hermitian(U(x, mu) * staple);
-          staple -= trace(staple) * mdp_identity(U.nc) / U.nc; // is this right?
-          f_U(x, mu) = -coeff["beta"] / (2.0 * U.nc) * staple;
+          staple -= trace(staple) * mdp_identity(U.nc()) / U.nc(); // is this right?
+          f_U(x, mu) = -coeff["beta"] / (2.0 * U.nc()) * staple;
         }
       }
       f_U.update();
@@ -467,7 +467,7 @@ namespace MDP
         f_F.update();
         forallsites(x)
         {
-          for (int mu = 0; mu < U.ndim; mu++)
+          for (int mu = 0; mu < U.ndim(); mu++)
             f_U(x, mu) -= utmp(x, mu);
         }
         f_U.update();
@@ -480,10 +480,10 @@ namespace MDP
     {
 
       mdp_site x(U.lattice());
-      int fnc = U.nc * (U.nc + 1) / 2;
-      mdp_matrix dum(U.nc, U.nc);
-      mdp_matrix tmp1(U.nc, U.nc);
-      mdp_matrix tmp2(U.nc, U.nc);
+      int fnc = U.nc() * (U.nc() + 1) / 2;
+      mdp_matrix dum(U.nc(), U.nc());
+      mdp_matrix tmp1(U.nc(), U.nc());
+      mdp_matrix tmp2(U.nc(), U.nc());
       mdp_matrix stemp;
       GaugeClass Utr(U);
       GaugeClass Udag(U);
@@ -491,7 +491,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (int mu = 0; mu < U.ndim; mu++)
+        for (int mu = 0; mu < U.ndim(); mu++)
         {
           Udag(x, mu) = hermitian(U(x, mu));
           Utr(x, mu) = transpose(U(x, mu));
@@ -506,12 +506,12 @@ namespace MDP
       {
         forallsites(x)
         {
-          for (int mu = 0; mu < U.ndim; mu++)
+          for (int mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
-            for (int a = 0; a < U.nc; a++)
+            for (int a = 0; a < U.nc(); a++)
             {
-              for (int b = 0; b < U.nc; b++)
+              for (int b = 0; b < U.nc(); b++)
               {
                 stemp = 0.5 * hermitian(spinor(psol, x, a)) * ((1 - Gamma[mu]) * spinor(sol, x + mu, b));
                 tmp1(b, a) = stemp(0, 0);
@@ -521,7 +521,7 @@ namespace MDP
             }
             dum = tmp2 * Udag(x, mu) - U(x, mu) * tmp1;
             dum -= hermitian(dum);
-            dum -= trace(dum) * mdp_identity(U.nc) / U.nc;
+            dum -= trace(dum) * mdp_identity(U.nc()) / U.nc();
             f_U(x, mu) = dum;
           }
         }
@@ -530,7 +530,7 @@ namespace MDP
       {
         forallsites(x)
         {
-          for (int mu = 0; mu < U.ndim; mu++)
+          for (int mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
             for (int a = 0; a < fnc; a++)
@@ -544,7 +544,7 @@ namespace MDP
               }
             }
             dum -= hermitian(dum);
-            dum -= trace(dum) * mdp_identity(U.nc) / U.nc;
+            dum -= trace(dum) * mdp_identity(U.nc()) / U.nc();
             f_U(x, mu) = dum;
           }
         }
@@ -554,7 +554,7 @@ namespace MDP
         mdp_real f;
         forallsites(x)
         {
-          for (int mu = 0; mu < U.ndim; mu++)
+          for (int mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
             for (int g = 0; g < numgen; g++)
