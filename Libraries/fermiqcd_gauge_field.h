@@ -37,9 +37,7 @@ namespace MDP
   class em_field : public mdp_complex_field
   {
   private:
-    mdp_int m_ndim;
     mdp_int m_nc;
-    mdp_int m_nem;
 
     int ordered_index(int mu, int nu) const
     {
@@ -54,42 +52,44 @@ namespace MDP
       // It works for any ndim //
       // ////////////////////////
       if (mu < nu)
-        return nu + (mu * (2 * m_ndim - mu - 3)) / 2 - 1;
+        return nu + (mu * (2 * ndim() - mu - 3)) / 2 - 1;
+
       if (mu > nu)
       {
-        return mu + (nu * (2 * m_ndim - nu - 3)) / 2 - 1 + m_nem;
+        mdp_int num_of_elements = ((ndim() * (ndim() - 1)) / 2);
+        return mu + (nu * (2 * ndim() - nu - 3)) / 2 - 1 + num_of_elements;
       }
       // error("wrong call to ordered_index() with mu>=nu");
       return -1; // error in this case!
     }
 
   public:
-    em_field() : m_ndim(0), m_nc(0), m_nem(0)
+    em_field() : m_nc(0)
     {
     }
 
-    em_field(mdp_lattice &a, int nc_) : m_ndim(a.ndim()), m_nc(nc_), m_nem((m_ndim * (m_ndim - 1)) / 2)
+    em_field(mdp_lattice &a, int nc_) : m_nc(nc_)
     {
-      allocate_field(a, m_nem * m_nc * m_nc);
+      mdp_int num_of_elements = ((a.ndim() * (a.ndim() - 1)) / 2);
+      allocate_field(a, num_of_elements * m_nc * m_nc);
     }
 
-    em_field(em_field &em) : m_ndim(em.m_ndim), m_nc(em.m_nc), m_nem(em.m_nem)
+    em_field(em_field &em) : m_nc(em.m_nc)
     {
-      allocate_field(em.lattice(), m_nem * m_nc * m_nc);
+      mdp_int num_of_elements = ((em.ndim() * (em.ndim() - 1)) / 2);
+      allocate_field(em.lattice(), num_of_elements * m_nc * m_nc);
     }
 
     void allocate_em_field(mdp_lattice &a, int nc_)
     {
       deallocate_field();
-      m_ndim = a.ndim();
       m_nc = nc_;
-      m_nem = (m_ndim * (m_ndim - 1)) / 2;
-      allocate_field(a, m_nem * m_nc * m_nc);
+      mdp_int num_of_elements = ((a.ndim() * (a.ndim() - 1)) / 2);
+      allocate_field(a, num_of_elements * m_nc * m_nc);
     }
 
     mdp_int ndim() const
     {
-      // return m_ndim;
       return m_ptr->ndim();
     }
 
