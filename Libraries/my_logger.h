@@ -45,8 +45,7 @@ namespace MDP
     char time_string[128];
 
     if ((current_time = time(NULL)) != -1)
-      strftime(time_string, 64, "%d.%m.%y %H:%M:%S",
-               localtime(&current_time));
+      strftime(time_string, 64, "%d.%m.%y %H:%M:%S", localtime(&current_time));
     else
     {
       time_ok = false;
@@ -62,14 +61,12 @@ namespace MDP
 
     if (CPU_ok)
     {
-      fprintf(stdlog, "# CPU time %12li   sec\n",
-              (CPU_finish - CPU_start) / CLOCKS_PER_SEC);
+      fprintf(stdlog, "# CPU time %12li   sec\n", (CPU_finish - CPU_start) / CLOCKS_PER_SEC);
     }
 
     if (time_ok)
     {
-      fprintf(stdlog, "# user time %13.1f sec\n",
-              difftime(time_finish, time_start));
+      fprintf(stdlog, "# user time %13.1f sec\n", difftime(time_finish, time_start));
     }
     fprintf(stdlog, "# time stop  %s\n", time_string);
 

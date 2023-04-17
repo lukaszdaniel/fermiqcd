@@ -83,7 +83,7 @@ namespace MDP
    * with weights of paths required to build fat links for the action
    * @see lepage_improved_links()
    */
-  mdp_array<mdp_real, 1> lepage_coefficients(mdp_real plaquette, const char type[])
+  mdp_array<mdp_real, 1> lepage_coefficients(mdp_real plaquette, const std::string &type)
   {
     begin_function("lepage_coefficients");
 
@@ -91,22 +91,22 @@ namespace MDP
     mdp_array<mdp_real, 1> c(6);
 
     c[0] = c[1] = c[2] = c[3] = c[4] = c[5] = 0.0;
-    if (strcmp(type, "None") == 0)
+    if (type == "None")
     {
       c[0] = 1;
     }
-    if (strcmp(type, "Staple+Naik") == 0)
+    if (type == "Staple+Naik")
     {
       c[0] = 9.0 / (8 * 4);
       c[1] = 9.0 / (8 * 8) * std::pow(u0, -2);
       c[2] = c[3] = c[4] = 0;
       c[5] = -9.0 / (8 * 27);
     }
-    if (strcmp(type, "Fat3") == 0)
+    if (type == "Fat3")
     {
       error("Not implemented");
     }
-    if (strcmp(type, "Fat5") == 0)
+    if (type == "Fat5")
     {
       c[0] = 1.0 / 7;
       c[1] = 1.0 / (7 * 2) * std::pow(u0, -2);
@@ -114,7 +114,7 @@ namespace MDP
       c[3] = c[4] = 0;
       c[5] = 0;
     }
-    if (strcmp(type, "Fat7") == 0)
+    if (type == "Fat7")
     {
       c[0] = 1.0 / 8;
       c[1] = 1.0 / (8 * 2) * std::pow(u0, -2);
@@ -123,7 +123,7 @@ namespace MDP
       c[4] = 0;
       c[5] = 0;
     }
-    if (strcmp(type, "Full") == 0)
+    if (type == "Full")
     {
       c[0] = 5.0 / 8.0;
       c[1] = 1.0 / 16.0 * std::pow(u0, -2);
@@ -192,7 +192,7 @@ namespace MDP
 
     int nc = U.nc();
     int ndim = U.ndim();
-    int mu, nu, rho, idx, imn, im2, i, j;
+    int rho, imn, im2;
     mdp_site x(U.lattice());
     mdp_site y(U.lattice());
     mdp_matrix b1(nc, nc), b2(nc, nc);
@@ -204,9 +204,9 @@ namespace MDP
 
     mdp << "done.\n";
 
-    for (imn = 0; imn < (ndim - 1); imn++)
+    for (mdp_int imn = 0; imn < (ndim - 1); imn++)
       Delta1[imn].allocate_gauge_field(U.lattice(), nc);
-    for (im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
+    for (mdp_int im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
       Delta2[im2].allocate_gauge_field(U.lattice(), nc);
 
     // ////////////////////////////////////////////////////////////////////
@@ -222,7 +222,7 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mu = 0; mu < ndim; mu++)
+      for (mdp_int mu = 0; mu < ndim; mu++)
         V(x, mu) = c[0] * U(x, mu);
     }
 
@@ -231,8 +231,8 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mu = 0; mu < ndim; mu++)
-        for (nu = 0; nu < ndim; nu++)
+      for (mdp_int mu = 0; mu < ndim; mu++)
+        for (mdp_int nu = 0; nu < ndim; nu++)
           if (nu != mu)
           {
             imn = (nu < mu) ? nu : (nu - 1);
@@ -243,7 +243,7 @@ namespace MDP
           }
     }
 
-    for (imn = 0; imn < (ndim - 1); imn++)
+    for (mdp_int imn = 0; imn < (ndim - 1); imn++)
       Delta1[imn].update();
 
     // 5 STAPLE
@@ -251,10 +251,10 @@ namespace MDP
 
     forallsites(x)
     {
-      for (idx = 0; idx < 24; idx++)
+      for (mdp_int idx = 0; idx < 24; idx++)
       {
-        mu = epsilon[idx][0];
-        nu = epsilon[idx][1];
+        mdp_int mu = epsilon[idx][0];
+        mdp_int nu = epsilon[idx][1];
         rho = epsilon[idx][2];
         im2 = epsilon[idx][4];
         imn = (nu < mu) ? nu : (nu - 1);
@@ -264,7 +264,7 @@ namespace MDP
         V(x, mu) += c[2] * Delta2[im2](x, mu);
       }
     }
-    for (im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
+    for (mdp_int im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
       Delta2[im2].update();
 
     // 7 STAPLE
@@ -273,9 +273,9 @@ namespace MDP
     if (c[3] != 0)
       forallsites(x)
       {
-        for (idx = 0; idx < 24; idx++)
+        for (mdp_int idx = 0; idx < 24; idx++)
         {
-          mu = epsilon[idx][0];
+          mdp_int mu = epsilon[idx][0];
           rho = epsilon[idx][3];
           im2 = epsilon[idx][4];
           b2 = U(x, rho) * Delta2[im2](x + rho, mu) * hermitian(U(x + mu, rho));
@@ -292,21 +292,21 @@ namespace MDP
     {
       forallsites(x)
       {
-        for (mu = 0; mu < ndim; mu++)
-          for (nu = 0; nu < ndim; nu++)
+        for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
               imn = (nu < mu) ? nu : (nu - 1);
               Delta1[imn](x, mu) = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
             }
       }
-      for (imn = 0; imn < (ndim - 1); imn++)
+      for (mdp_int imn = 0; imn < (ndim - 1); imn++)
         Delta1[imn].update();
 
       forallsites(x)
       {
-        for (mu = 0; mu < ndim; mu++)
-          for (nu = 0; nu < ndim; nu++)
+        for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
               imn = (nu < mu) ? nu : (nu - 1);
@@ -318,8 +318,8 @@ namespace MDP
       // LEPAGE TERM DOWN
       forallsites(x)
       {
-        for (mu = 0; mu < ndim; mu++)
-          for (nu = 0; nu < ndim; nu++)
+        for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
               imn = (nu < mu) ? nu : (nu - 1);
@@ -332,8 +332,8 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mu = 0; mu < ndim; mu++)
-          for (nu = 0; nu < ndim; nu++)
+        for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
               imn = (nu < mu) ? nu : (nu - 1);
@@ -349,7 +349,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mu = 0; mu < 4; mu++)
+        for (mdp_int mu = 0; mu < 4; mu++)
           V(x, mu) = project_SU(V(x, mu));
       }
     }
@@ -363,18 +363,18 @@ namespace MDP
 
       forallsitesandcopies(x)
       {
-        for (mu = 0; mu < U.ndim(); mu++)
-          for (i = 0; i < U.nc(); i++)
-            for (j = 0; j < U.nc(); j++)
+        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_int i = 0; i < U.nc(); i++)
+            for (mdp_int j = 0; j < U.nc(); j++)
               V.long_links(x, mu, i, j) *= c[5];
       }
     }
 
     std::cout << "Freeing temporary vectors...";
 
-    for (imn = 0; imn < (ndim - 1); imn++)
+    for (mdp_int imn = 0; imn < (ndim - 1); imn++)
       Delta1[imn].deallocate_field();
-    for (im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
+    for (mdp_int im2 = 0; im2 < (ndim - 1) * (ndim - 2); im2++)
       Delta2[im2].deallocate_field();
 
     std::cout << "done.\n";
@@ -388,20 +388,20 @@ namespace MDP
     begin_function("staggered_rephase");
 
     mdp_site x(U.lattice());
-    int mu, i, j;
+
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim(); mu++)
+      for (mdp_int mu = 0; mu < U.ndim(); mu++)
       {
-        for (i = 0; i < U.nc(); i++)
-          for (j = 0; j < U.nc(); j++)
+        for (mdp_int i = 0; i < U.nc(); i++)
+          for (mdp_int j = 0; j < U.nc(); j++)
             U(x, mu, i, j) = U(x, mu, i, j) * chi.eta(x, mu);
       }
       // this takes car of antiperiodic bc
       if (x(0) == U.lattice().size(0) - 1)
       {
-        for (i = 0; i < U.nc(); i++)
-          for (j = 0; j < U.nc(); j++)
+        for (mdp_int i = 0; i < U.nc(); i++)
+          for (mdp_int j = 0; j < U.nc(); j++)
             U(x, 0, i, j) *= -1;
       }
     }
