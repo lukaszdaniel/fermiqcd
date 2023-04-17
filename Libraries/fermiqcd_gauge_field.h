@@ -158,7 +158,6 @@ namespace MDP
   class gauge_field : public mdp_complex_field
   {
   private:
-    int m_ndim;
     int m_nc;
 
   public:
@@ -167,43 +166,35 @@ namespace MDP
     mdp_int_scalar_field i_jump;
     mdp_matrix_field swirls;
 
-    gauge_field()
+    gauge_field() : m_nc(0)
     {
-      reset_field();
     }
 
-    gauge_field(const gauge_field &U) : mdp_complex_field(U)
+    gauge_field(const gauge_field &U) : mdp_complex_field(U), m_nc(U.m_nc)
     {
-      m_ndim = U.m_ndim;
-      m_nc = U.m_nc;
     }
 
     void operator=(const gauge_field &U)
     {
-      m_ndim = U.m_ndim;
       m_nc = U.m_nc;
       mdp_complex_field::operator=(U);
     }
 
-    gauge_field(mdp_lattice &a, int nc_)
+    gauge_field(mdp_lattice &a, int nc_) : m_nc(nc_)
     {
-      reset_field();
-      m_ndim = a.ndim();
-      m_nc = nc_;
       allocate_field(a, a.ndim() * m_nc * m_nc);
     }
 
     void allocate_gauge_field(mdp_lattice &a, int nc_)
     {
       deallocate_field();
-      m_ndim = a.n_dimensions();
       m_nc = nc_;
       allocate_field(a, a.ndim() * m_nc * m_nc);
     }
 
     mdp_int ndim() const
     {
-      return m_ndim;
+      return m_ptr->ndim();
     }
 
     mdp_int nc() const
@@ -215,7 +206,7 @@ namespace MDP
      */
     mdp_matrix operator()(mdp_site x, int mu)
     {
-#ifndef TWIST_BOUNDARY
+#ifndef TWISTED_BOUNDARY
       return mdp_matrix(address(x, mu * m_nc * m_nc), m_nc, m_nc);
 #else
       mdp_matrix tmp(address(x, mu * m_nc * m_nc), m_nc, m_nc);
@@ -338,11 +329,11 @@ namespace MDP
 #ifdef TWISTED_BOUNDARY
     friend void twist_boundary(mdp_matrix &M, mdp_site &x)
     {
-      static int mu, block;
+      static int block;
       static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
       static mdp_complex a, b, c, d, e, f, g, h, i;
 
-      for (mu = 1; mu < x.lattice().ndim(); mu++)
+      for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
       {
         block = x.block(mu);
         if (block != 0)
@@ -438,16 +429,16 @@ namespace MDP
     {
       begin_function("gauge_field__define_twist_matrices");
       mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
-      OmegaTwist[0] = identity(3);
-      OmegaTwist[1] = zero(3);
+      OmegaTwist[0] = mdp_identity(3);
+      OmegaTwist[1] = mdp_zero(3);
       OmegaTwist[1](0, 1) = 1;
       OmegaTwist[1](1, 2) = 1;
       OmegaTwist[1](2, 0) = 1;
-      OmegaTwist[2] = zero(3);
+      OmegaTwist[2] = mdp_zero(3);
       OmegaTwist[2](0, 0) = 1.0 / z;
       OmegaTwist[2](1, 1) = 1;
       OmegaTwist[2](2, 2) = z;
-      OmegaTwist[3] = zero(3);
+      OmegaTwist[3] = mdp_zero(3);
       OmegaTwist[3](0, 2) = 1.0 / z;
       OmegaTwist[3](1, 0) = 1;
       OmegaTwist[3](2, 1) = z;

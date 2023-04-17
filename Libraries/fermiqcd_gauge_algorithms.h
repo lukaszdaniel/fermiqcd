@@ -26,7 +26,7 @@ namespace MDP
 
     forallsites(x)
     {
-      for (int mu = 0; mu < U.ndim(); mu++)
+      for (mdp_int mu = 0; mu < U.ndim(); mu++)
         U(x, mu) = mdp_identity(U.nc());
     }
     U.update();
@@ -43,7 +43,7 @@ namespace MDP
 
     forallsites(x)
     {
-      for (int mu = 0; mu < U.ndim(); mu++)
+      for (mdp_int mu = 0; mu < U.ndim(); mu++)
         U(x, mu) = U.lattice().random(x).SU(U.nc());
     }
     U.update();
@@ -58,9 +58,11 @@ namespace MDP
     mdp_int how_many = 0;
 
     forallsitesandcopies(x)
-      for (int mu = 0; mu < U.ndim(); mu++)
+    {
+      for (mdp_int mu = 0; mu < U.ndim(); mu++)
         if (max(inv(U(x, mu)) - hermitian(U(x, mu))) > precision)
           how_many++;
+    }
     mdp.add(how_many);
     mdp << "Non unitary links found=" << how_many << "\n";
     end_function("check_unitarity");
@@ -86,11 +88,11 @@ namespace MDP
     double tmp = 0;
     mdp_site x(U.lattice());
     // U.update();
-    int mu, nu;
+
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim() - 1; mu++)
-        for (nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_int mu = 0; mu < U.ndim() - 1; mu++)
+        for (mdp_int nu = mu + 1; nu < U.ndim(); nu++)
           tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
@@ -176,7 +178,6 @@ namespace MDP
     return sum * (1.0 * U.lattice().size(0) / (U.lattice().global_volume() * U.nc()));
   }
 
-  /// Relaxation algorithm
   /** @brief Relaxation algorithm
    */
   void relaxation(gauge_field &U, mdp_uint n_iter = 1)
@@ -354,11 +355,10 @@ namespace MDP
        Fast version of code for the clover term.
        A are the four clover leafs
     */
-    int mu, nu;
     forallsites(x)
     {
-      for (mu = 0; mu < U.ndim() - 1; mu++)
-        for (nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_int mu = 0; mu < U.ndim() - 1; mu++)
+        for (mdp_int nu = mu + 1; nu < U.ndim(); nu++)
         {
 
           A =
@@ -368,7 +368,7 @@ namespace MDP
               hermitian(U((x - mu) - nu, nu) * U(x - mu, mu)) * U((x - mu) - nu, mu) * U(x - nu, nu) +
               U(x, nu) * hermitian(U(x - mu, nu) * U((x + nu) - mu, mu)) * U(x - mu, mu);
 
-          U.em(x, mu, nu) = ((mdp_real)0.125) * (A - hermitian(A));
+          U.em(x, mu, nu) = (0.125) * (A - hermitian(A));
         }
     }
     U.em.update();
@@ -398,17 +398,17 @@ namespace MDP
     U.long_links.deallocate_field();
     U.long_links.allocate_mdp_nmatrix_field(V.lattice(), U.ndim(), U.nc(), U.nc());
     mdp_site x(U.lattice());
-    int mu;
+
     if (length == 2)
       forallsites(x)
       {
-        for (mu = 0; mu < V.ndim(); mu++)
+        for (mdp_int mu = 0; mu < V.ndim(); mu++)
           U.long_links(x, mu) = V(x, mu) * V(x + mu, mu);
       }
     if (length == 3)
       forallsites(x)
       {
-        for (mu = 0; mu < V.ndim(); mu++)
+        for (mdp_int mu = 0; mu < V.ndim(); mu++)
           U.long_links(x, mu) = V(x, mu) * V(x + mu, mu) * V((x + mu) + mu, mu);
       }
     U.long_links.update();
@@ -416,7 +416,7 @@ namespace MDP
 
   // ////////////////////////////////////////////////////////////
   // ////////////////////////////////////////////////////////////
-  // set phases for antiperiodic boundari conditions
+  // set phases for antiperiodic boundary conditions
   // ////////////////////////////////////////////////////////////
   // ////////////////////////////////////////////////////////////
 
@@ -432,7 +432,7 @@ namespace MDP
   {
     begin_function("set_antiperiodic_phases");
     mdp_site x(U.lattice());
-    int i, j;
+
     if (check)
       mdp << "Setting antiperiodic boundary conditions on mu=" << mu << "\n";
     else
@@ -441,8 +441,8 @@ namespace MDP
     {
       if (x(mu) == U.lattice().size(mu) - 1)
       {
-        for (i = 0; i < U.nc(); i++)
-          for (j = 0; j < U.nc(); j++)
+        for (mdp_int i = 0; i < U.nc(); i++)
+          for (mdp_int j = 0; j < U.nc(); j++)
             U(x, mu, i, j) *= -1;
       }
     }

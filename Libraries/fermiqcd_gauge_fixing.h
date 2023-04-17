@@ -138,7 +138,7 @@ namespace MDP
             }
           else
           {
-            A = identity(nc);
+            A = mdp_identity(nc);
             A(i, i) = W(y, 0);
             A(i, j) = W(y, 1);
             A(j, i) = W(y, 2);
