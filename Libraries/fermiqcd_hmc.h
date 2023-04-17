@@ -395,7 +395,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (int mu = 0; mu < U_temp.ndim; mu++)
+        for (int mu = 0; mu < U_temp.ndim(); mu++)
           U_temp(x, mu) = 0;
       }
       // U_temp.update();
