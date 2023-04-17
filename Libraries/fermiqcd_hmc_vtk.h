@@ -296,7 +296,7 @@ namespace MDP
       mdp_site x(p_U.lattice());
       forallsites(x)
       {
-        for (int mu = 0; mu < p_U.ndim; mu++)
+        for (int mu = 0; mu < p_U.ndim(); mu++)
           tmp -= 0.5 * trace(p_U(x, mu) * p_U(x, mu));
       }
       mdp.add(tmp);
