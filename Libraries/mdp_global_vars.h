@@ -34,6 +34,12 @@ namespace MDP
     // #define BLOCKSITE 100
     // #define TWISTED_BOUNDARY
 
+#ifdef TWISTED_BOUNDARY
+#ifndef BLOCKSITE
+#error BLOCKSITE is required if TWISTED_BOUNDARY is defined
+#endif
+#endif
+
     /** @brief Integer value
      *
      * Suitable for large integer values

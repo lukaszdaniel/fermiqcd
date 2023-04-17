@@ -13,7 +13,9 @@ int main(int argc, char **argv)
     mpi.open_wormholes(argc, argv);
     define_base_matrices("FERMILAB");
 
-    //  define_twist_matrices();
+#ifdef TWISTED_BOUNDARY
+    define_twist_matrices();
+#endif
 
     printf("COMPUTING C2(t) FOR STAGGERED MESON: %s\n", argv[1]);
 

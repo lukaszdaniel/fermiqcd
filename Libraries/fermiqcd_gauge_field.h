@@ -64,17 +64,28 @@ namespace MDP
     }
 
   public:
+    /** @brief Create a default em field
+     */
     em_field() : m_nc(0)
     {
     }
 
+    /** @brief Create an em field on \e nc_ colours
+     *
+     * @param a Lattice where the field needs to reside.
+     * @param nc_ Number of colours.
+     */
     em_field(mdp_lattice &a, int nc_) : m_nc(nc_)
     {
       mdp_int num_of_elements = ((a.ndim() * (a.ndim() - 1)) / 2);
       allocate_field(a, num_of_elements * m_nc * m_nc);
     }
 
-    em_field(em_field &em) : m_nc(em.m_nc)
+    /** @brief Copy constructor
+     *
+     * @param em em field to be copied.
+     */
+    em_field(const em_field &em) : m_nc(em.m_nc)
     {
       mdp_int num_of_elements = ((em.ndim() * (em.ndim() - 1)) / 2);
       allocate_field(em.lattice(), num_of_elements * m_nc * m_nc);
@@ -136,6 +147,10 @@ namespace MDP
     }
   };
 
+#ifdef TWISTED_BOUNDARY
+  void twist_boundary(mdp_matrix &M, mdp_site &x);
+#endif
+
   /// @brief the gauge field for any SU(n)
   ///
   /// Example:
@@ -166,10 +181,26 @@ namespace MDP
     mdp_int_scalar_field i_jump;
     mdp_matrix_field swirls;
 
+    /** @brief Create a default gauge field
+     */
     gauge_field() : m_nc(0)
     {
     }
 
+    /** @brief Create a gauge field on \e nc_ colours
+     *
+     * @param a Lattice where the field needs to reside.
+     * @param nc_ Number of colours.
+     */
+    gauge_field(mdp_lattice &a, int nc_) : m_nc(nc_)
+    {
+      allocate_field(a, a.ndim() * m_nc * m_nc);
+    }
+
+    /** @brief Copy constructor
+     *
+     * @param U Gauge field to be copied.
+     */
     gauge_field(const gauge_field &U) : mdp_complex_field(U), m_nc(U.m_nc)
     {
     }
@@ -178,11 +209,6 @@ namespace MDP
     {
       m_nc = U.m_nc;
       mdp_complex_field::operator=(U);
-    }
-
-    gauge_field(mdp_lattice &a, int nc_) : m_nc(nc_)
-    {
-      allocate_field(a, a.ndim() * m_nc * m_nc);
     }
 
     void allocate_gauge_field(mdp_lattice &a, int nc_)
@@ -449,11 +475,11 @@ namespace MDP
                                  gauge_field &omega)
     {
       begin_function("gauge_field__twist_eat_matrices");
-      static int mu, block;
-      static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
+      static int block;
+      // static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
       static mdp_complex a, b, c, d, e, f, g, h, i;
 
-      for (mu = 1; mu < x.lattice().ndim(); mu++)
+      for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
       {
         block = x.block(mu);
         if (block != 0)

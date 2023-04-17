@@ -76,7 +76,15 @@ namespace MDP
       m_ptr = ptr2;
       for (int k = 0; k < BLOCKSITE; k++)
         m_block[k] = b[k];
-      m_block[mu] += sign;
+
+      if (mu < BLOCKSITE)
+      {
+        m_block[mu] += sign;
+      }
+      else
+      {
+        error("BLOCKSITE < lattice dimension");
+      }
     }
 #endif
 
@@ -100,9 +108,16 @@ namespace MDP
     }
 
 #ifdef BLOCKSITE
-    int block(int i) const
+    int block(mdp_int mu) const
     {
-      return m_block[i];
+      if (mu < BLOCKSITE)
+      {
+        return m_block[mu];
+      }
+      else
+      {
+        error("BLOCKSITE < lattice dimension");
+      }
     }
 #endif
 
@@ -236,7 +251,7 @@ namespace MDP
         error("You cannot exit from your portion of the lattice");
       }
 #ifdef BLOCKSITE
-      if ((mu < BLOCKSITE) && (lattice().coordinate(m_idx, mu) == lattice().nx[mu] - 1))
+      if ((mu < BLOCKSITE) && (lattice().coordinate(m_idx, mu) == lattice().size(mu) - 1))
       {
         return mdp_site(idx2, m_ptr, m_block, 1, mu);
       }
@@ -503,12 +518,12 @@ namespace MDP
 
   /// When compiled with TWISTED_BOUNDARY the mdp_site class keeps track of
   /// sites that moved around the boundary of the torus topology. this function
-  /// Returns false if this is one such site, true otherwise.
+  /// returns false if this is one such site, true otherwise.
   int in_block(mdp_site x)
   {
 #ifdef TWISTED_BOUNDARY
-    for (int mu = 0; mu < x.lattice().n_dimensions(); mu++)
-      if (x.m_block[mu] != 0)
+    for (int mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)
+      if (x.block(mu) != 0)
         return false;
 #endif
     return true;
