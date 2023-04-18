@@ -340,6 +340,13 @@ namespace MDP
       return *m_ptr;
     }
 
+    /** Dimension of the field
+     */
+    mdp_int ndim() const
+    {
+      return m_ptr->n_dimensions();
+    }
+
     /** @brief returns the total memory in bytes occupied by the field
      */
     mdp_int field_size()

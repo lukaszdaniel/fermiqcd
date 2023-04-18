@@ -99,11 +99,6 @@ namespace MDP
       allocate_field(a, num_of_elements * m_nc * m_nc);
     }
 
-    mdp_int ndim() const
-    {
-      return m_ptr->ndim();
-    }
-
     mdp_int nc() const
     {
       return m_nc;
@@ -216,11 +211,6 @@ namespace MDP
       deallocate_field();
       m_nc = nc_;
       allocate_field(a, a.ndim() * m_nc * m_nc);
-    }
-
-    mdp_int ndim() const
-    {
-      return m_ptr->ndim();
     }
 
     mdp_int nc() const

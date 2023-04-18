@@ -30,7 +30,6 @@ namespace MDP
   {
   private:
     mdp_int m_nc;
-    mdp_int m_ndim;
     mdp_int m_nspin;
 
   public:
@@ -39,14 +38,12 @@ namespace MDP
       // attention here that nspin_ is ignored!
       m_nc = nc_;
       m_nspin = nspin_;
-      m_ndim = a.ndim();
       allocate_field(a, m_nc);
     }
 
     staggered_field(const staggered_field &chi) : mdp_complex_field(chi)
     {
       m_nc = chi.m_nc;
-      m_ndim = chi.m_ndim;
       m_nspin = chi.m_nspin;
     }
 
@@ -63,7 +60,6 @@ namespace MDP
     void operator=(const staggered_field &chi)
     {
       m_nc = chi.m_nc;
-      m_ndim = chi.m_ndim;
       m_nspin = chi.m_nspin;
       mdp_complex_field::operator=(chi);
     }
@@ -103,13 +99,13 @@ namespace MDP
     mdp_real eta(mdp_site x, int mu)
     {
 #ifdef USE_GOLTERMAN
-      int i_max = (mu + m_ndim - 1) % m_ndim;
+      mdp_int i_max = (mu + ndim() - 1) % ndim();
       int tmp = 0;
-      for (int i = 1; i <= i_max; i++)
+      for (mdp_int i = 1; i <= i_max; i++)
         tmp += x(i);
 #else
       int tmp = 0;
-      for (int i = 0; i < mu; i++)
+      for (mdp_int i = 0; i < mu; i++)
         tmp += x(i);
 #endif
       return mdp_mod2sign(tmp);
@@ -118,7 +114,7 @@ namespace MDP
     mdp_real eps(mdp_site x)
     {
       int tmp = x(0);
-      for (int i = 1; i < m_ndim; i++)
+      for (mdp_int i = 1; i < ndim(); i++)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }
@@ -126,7 +122,7 @@ namespace MDP
     mdp_real type(mdp_site x)
     {
       mdp_real tmp = x(0) % 2;
-      for (int i = 1; i < m_ndim; i++)
+      for (mdp_int i = 1; i < ndim(); i++)
         tmp += (x(i) % 2) * std::pow(2.0, i);
       return tmp;
     }
