@@ -71,8 +71,8 @@ namespace MDP
       sigma_rot3[1] = std::cos(gamma) * sigma_rot2[1] + std::sin(gamma) * sigma_rot2[2];
       sigma_rot3[2] = -std::sin(gamma) * sigma_rot2[1] + std::cos(gamma) * sigma_rot2[2];
 
-      for (int mu = 0; mu < 4; mu++)
-        for (int nu = 0; nu < 4; nu++)
+      for (mdp_int mu = 0; mu < 4; mu++)
+        for (mdp_int nu = 0; nu < 4; nu++)
         {
           eta[mu][nu].dimension(nc, nc);
           eta[mu][nu] = 0;
@@ -98,12 +98,12 @@ namespace MDP
           }
         }
       /*
-      for (int mu = 0; mu < 4; mu++)
-        for (int nu = 0; nu < 4; nu++)
+      for (mdp_int mu = 0; mu < 4; mu++)
+        for (mdp_int nu = 0; nu < 4; nu++)
         {
           eta[mu][nu].dimension(nc, nc);
-          for (int i = 0; i < nc; i++)
-            for (int j = 0; j < nc; j++)
+          for (mdp_int i = 0; i < nc; i++)
+            for (mdp_int j = 0; j < nc; j++)
               if (i == j && (i != sub_i && i != sub_j))
               {
                 eta[mu][nu](i, j) = 1;

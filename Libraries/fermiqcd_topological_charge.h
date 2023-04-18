@@ -45,7 +45,7 @@ namespace MDP
       {
         forallsites(x)
         {
-          for (int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_int mu = 0; mu < U.ndim(); mu++)
           {
             for (int i = 0; i < U.nc(); i++)
               for (int j = 0; j < U.nc(); j++)
@@ -106,12 +106,12 @@ namespace MDP
       {
         std::cout << "smearing step " << iter << "/" << iterations << std::endl;
         V = U;
-        for (int mu = 0; mu < 4; mu++)
+        for (mdp_int mu = 0; mu < 4; mu++)
         {
           forallsites(x)
           {
             U(x, mu) = (1.0 - alpha) * V(x, mu);
-            for (int nu = 0; nu < U.ndim(); nu++)
+            for (mdp_int nu = 0; nu < U.ndim(); nu++)
             {
               if (nu != mu)
                 U(x, mu) += (1.0 - alpha) / 6 *
@@ -132,8 +132,8 @@ namespace MDP
     mdp_site x(U.lattice());
     forallsitesandcopies(x)
     {
-      for (int mu = 0; mu < U.ndim() - 1; mu++)
-        for (int nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_int mu = 0; mu < U.ndim() - 1; mu++)
+        for (mdp_int nu = mu + 1; nu < U.ndim(); nu++)
           U.em(x, mu, nu) -= 8.0 / 3.0 * I * trace(U.em(x, mu, nu));
     }
   }
@@ -145,8 +145,8 @@ namespace MDP
     forallsitesandcopies(x)
     {
       Q(x) = 0;
-      for (int i = 0; i < U.nc(); i++)
-        for (int j = 0; j < U.nc(); j++)
+      for (mdp_int i = 0; i < U.nc(); i++)
+        for (mdp_int j = 0; j < U.nc(); j++)
           Q(x) += real(U.em(x, 0, 1, i, j) * U.em(x, 2, 3, j, i) -
                        U.em(x, 0, 2, i, j) * U.em(x, 1, 3, j, i) +
                        U.em(x, 0, 3, i, j) * U.em(x, 1, 2, j, i));

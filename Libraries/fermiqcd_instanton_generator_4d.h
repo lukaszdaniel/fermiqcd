@@ -109,7 +109,7 @@ namespace MDP
         throw std::string("instantons only in 4D");
       forallsites(x)
       {
-        for (int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_int mu = 0; mu < U.ndim(); mu++)
         {
           A = make_su2_link(x, mu, instantons);
           U(x, mu) = 1;

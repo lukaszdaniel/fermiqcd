@@ -176,7 +176,7 @@ namespace MDP
     mdp_int global_coordinate(const int *x)
     {
       mdp_int global_idx = 0;
-      for (int mu = 0; mu < m_ndim - 1; mu++)
+      for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
         global_idx = (global_idx + x[mu]) * m_nx[mu + 1];
       return global_idx + x[m_ndim - 1];
     }
@@ -341,7 +341,7 @@ namespace MDP
       ///////////////////////////////////////////////////////////////////
       m_nx = new int[m_ndim];
 
-      for (int mu = 0; mu < m_ndim; mu++)
+      for (mdp_int mu = 0; mu < m_ndim; mu++)
       {
         m_nx[mu] = nx_[mu];
         m_global_volume *= m_nx[mu];
@@ -375,7 +375,7 @@ namespace MDP
       //
       // ///////////////////////////////////////////////////////////////////
 
-      for (int mu = 0; mu < m_ndim; mu++)
+      for (mdp_int mu = 0; mu < m_ndim; mu++)
         x[mu] = 0;
 
       do
@@ -396,7 +396,7 @@ namespace MDP
         else if (m_next_next >= 0)
         {
           is_boundary = false;
-          for (int mu = 0; mu < m_ndir; mu++)
+          for (mdp_int mu = 0; mu < m_ndir; mu++)
           {
             // calculate up and down points in mu direction given the neighbour topology
             (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
@@ -468,7 +468,7 @@ namespace MDP
           }
         }
         x[0]++;
-        for (int mu = 0; mu < m_ndim - 1; mu++)
+        for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
           if (x[mu] >= m_nx[mu])
           {
             x[mu] = 0;
@@ -573,10 +573,10 @@ namespace MDP
       {
         translate_to_coordinates(m_global_from_local[new_idx], x);
 
-        for (int mu = 0; mu < m_ndim; mu++)
+        for (mdp_int mu = 0; mu < m_ndim; mu++)
           m_co[new_idx][mu] = x[mu];
 
-        for (int mu = 0; mu < m_ndir; mu++)
+        for (mdp_int mu = 0; mu < m_ndir; mu++)
         {
           (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
           if (m_wh[new_idx] == ME)

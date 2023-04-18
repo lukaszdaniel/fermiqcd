@@ -316,13 +316,13 @@ namespace MDP
     mdp_site operator+(mdp_vector v)
     {
       mdp_site y = *this;
-      for (int mu = 0; mu < lattice().n_dimensions(); mu++)
+      for (mdp_int mu = 0; mu < lattice().n_dimensions(); mu++)
       {
         if (v[mu] > 0)
-          for (int step = 0; step < v[mu]; step++)
+          for (mdp_int step = 0; step < v[mu]; step++)
             y = y + mu;
         else
-          for (int step = 0; step < -v[mu]; step++)
+          for (mdp_int step = 0; step < -v[mu]; step++)
             y = y - mu;
       }
       return y;
@@ -334,13 +334,13 @@ namespace MDP
     mdp_site operator-(mdp_vector v)
     {
       mdp_site y = *this;
-      for (int mu = 0; mu < lattice().n_dimensions(); mu++)
+      for (mdp_int mu = 0; mu < lattice().n_dimensions(); mu++)
       {
         if (v[mu] > 0)
-          for (int step = 0; step < v[mu]; step++)
+          for (mdp_int step = 0; step < v[mu]; step++)
             y = y - mu;
         else
-          for (int step = 0; step < -v[mu]; step++)
+          for (mdp_int step = 0; step < -v[mu]; step++)
             y = y + mu;
       }
       return y;
@@ -410,9 +410,9 @@ namespace MDP
 
     bool operator==(const int *x)
     {
-      int ndim = lattice().n_dimensions();
+      mdp_int ndim = lattice().n_dimensions();
       bool is_it = true;
-      for (int mu = 0; mu < ndim; mu++)
+      for (mdp_int mu = 0; mu < ndim; mu++)
         if (x[mu] != lattice().coordinate(m_idx, mu))
           is_it = false;
       return is_it;
@@ -459,7 +459,7 @@ namespace MDP
     friend mdp_int site2binary(mdp_site x)
     {
       int a = 0;
-      for (int mu = 0; mu < x.lattice().n_dimensions(); mu++)
+      for (mdp_int mu = 0; mu < x.lattice().n_dimensions(); mu++)
       {
 #ifdef CHECK_ALL
         if (fabs(0.5 - x(mu)) > 1)
@@ -522,7 +522,7 @@ namespace MDP
   int in_block(mdp_site x)
   {
 #ifdef TWISTED_BOUNDARY
-    for (int mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)
+    for (mdp_int mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)
       if (x.block(mu) != 0)
         return false;
 #endif
@@ -531,7 +531,7 @@ namespace MDP
 
   std::ostream &operator<<(std::ostream &os, mdp_site &x)
   {
-    for (int i = 0; i < x.lattice().n_dimensions(); i++)
+    for (mdp_int i = 0; i < x.lattice().n_dimensions(); i++)
     {
       if (i == 0)
         os << "(" << x(i);

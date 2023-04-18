@@ -277,8 +277,8 @@ namespace MDP
 
     /* Filling arrays for fast Gamma multiplication */
 
-    for (int a = 0; a < 4; a++)
-      for (int b = 0; b < 4; b++)
+    for (mdp_int a = 0; a < 4; a++)
+      for (mdp_int b = 0; b < 4; b++)
       {
         if (Gamma5(a, b) != mdp_complex(0, 0))
         {
@@ -289,11 +289,11 @@ namespace MDP
         }
       }
 
-    for (int mu = 0; mu < 4; mu++)
+    for (mdp_int mu = 0; mu < 4; mu++)
     {
       tmp = Gamma[mu] * Gamma5;
-      for (int a = 0; a < 4; a++)
-        for (int b = 0; b < 4; b++)
+      for (mdp_int a = 0; a < 4; a++)
+        for (mdp_int b = 0; b < 4; b++)
         {
           if (Gamma[mu](a, b) != mdp_complex(0, 0))
           {
@@ -314,10 +314,10 @@ namespace MDP
 
     /* Filling arrays for fast Sigma multiplication */
 
-    for (int mu = 0; mu < 4; mu++)
-      for (int nu = 0; nu < 4; nu++)
-        for (int a = 0; a < 4; a++)
-          for (int b = 0; b < 4; b++)
+    for (mdp_int mu = 0; mu < 4; mu++)
+      for (mdp_int nu = 0; nu < 4; nu++)
+        for (mdp_int a = 0; a < 4; a++)
+          for (mdp_int b = 0; b < 4; b++)
           {
             if (Sigma[mu][nu](a, b) != mdp_complex(0, 0))
             {
@@ -330,20 +330,20 @@ namespace MDP
 
     // Filling G16;
 
-    for (int a = 0; a < 4; a++)
+    for (mdp_int a = 0; a < 4; a++)
     {
       G16_idx[0][a] = a;
       G16_val[0][a] = 1;
       G16_idx[1][a] = Gamma5_idx[a];
       G16_val[1][a] = Gamma5_val[a];
-      for (int mu = 0; mu < 4; mu++)
+      for (mdp_int mu = 0; mu < 4; mu++)
       {
         G16_idx[2 + mu][a] = Gamma_idx[mu][a];
         G16_val[2 + mu][a] = Gamma_val[mu][a];
         G16_idx[6 + mu][a] = Gamma_idx[mu][Gamma5_idx[a]];
         G16_val[6 + mu][a] = Gamma_val[mu][Gamma5_idx[a]] * Gamma5_val[a];
       }
-      for (int mu = 1; mu < 4; mu++)
+      for (mdp_int mu = 1; mu < 4; mu++)
       {
         G16_idx[9 + mu][a] = Gamma_idx[0][Gamma_idx[mu][a]];
         G16_val[9 + mu][a] = Gamma_val[0][Gamma_idx[mu][a]] * Gamma_val[mu][a];

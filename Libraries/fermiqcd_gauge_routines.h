@@ -175,9 +175,9 @@ namespace MDP
 
     forallsites(x)
     {
-      for (int mu = 0; mu < U.ndim() - 1; mu++)
+      for (mdp_int mu = 0; mu < U.ndim() - 1; mu++)
       {
-        for (int nu = mu + 1; nu < U.ndim(); nu++)
+        for (mdp_int nu = mu + 1; nu < U.ndim(); nu++)
         {
           tmp += (1 - 8 * c1) * (1 - real(trace(plaquette(U, x, mu, nu))) / U.nc()) +
                  c1 * (2 - 1.0 / U.nc() * real(trace(U(x, mu) * (U(x + mu, mu) * U((x + mu) + mu, nu) * hermitian(U((x + mu) + nu, mu)) * hermitian(U(x + nu, mu)) * +U(x + mu, nu) * U((x + mu) + nu, nu) * hermitian(U((x + nu) + nu, mu)) * hermitian(U(x + nu, nu))) * hermitian(U(x, nu)))));
@@ -195,15 +195,15 @@ namespace MDP
   void fast_mul_AB_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                         int &ni)
   {
-    int i, j, k, ink, inj;
-    for (i = 0; i < ni; i++)
+    int ink, inj;
+    for (int i = 0; i < ni; i++)
     {
       ink = i * ni;
       inj = i * ni;
-      for (k = 0; k < ni; k++)
+      for (int k = 0; k < ni; k++)
       {
         c[ink + k] = a[inj] * b[k];
-        for (j = 1; j < ni; j++)
+        for (int j = 1; j < ni; j++)
           c[ink + k] += a[inj + j] * b[j * ni + k];
       }
     }
@@ -212,15 +212,15 @@ namespace MDP
   void fast_mul_ABH_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                          int &ni)
   {
-    int i, j, k, ink, inj;
-    for (i = 0; i < ni; i++)
+    int ink, inj;
+    for (int i = 0; i < ni; i++)
     {
       ink = i * ni;
       inj = i * ni;
-      for (k = 0; k < ni; k++)
+      for (int k = 0; k < ni; k++)
       {
         c[ink + k] = a[inj] * conj(b[k * ni]);
-        for (j = 1; j < ni; j++)
+        for (int j = 1; j < ni; j++)
           c[ink + k] += a[inj + j] * conj(b[k * ni + j]);
       }
     }
@@ -229,14 +229,14 @@ namespace MDP
   void fast_mul_AHB_to_C(mdp_complex *a, mdp_complex *b, mdp_complex *c,
                          int &ni)
   {
-    int i, j, k, ink;
-    for (i = 0; i < ni; i++)
+    int ink;
+    for (int i = 0; i < ni; i++)
     {
       ink = i * ni;
-      for (k = 0; k < ni; k++)
+      for (int k = 0; k < ni; k++)
       {
         c[ink + k] = conj(a[i]) * b[k];
-        for (j = 1; j < ni; j++)
+        for (int j = 1; j < ni; j++)
           c[ink + k] += conj(a[j * ni + i]) * b[j * ni + k];
       }
     }

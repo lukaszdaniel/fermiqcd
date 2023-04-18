@@ -491,7 +491,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_int mu = 0; mu < U.ndim(); mu++)
         {
           Udag(x, mu) = hermitian(U(x, mu));
           Utr(x, mu) = transpose(U(x, mu));
