@@ -1,18 +1,16 @@
-FermiQCD requires gcc 2.95.3 or 3.x.x
+FermiQCD compiles under gcc and clang
 
 FermiQCD files and MDP libraries are in Libraries/
 Documentation and licenses are in Documentation/
 Examples are in, guess what, Examples/
 Conversion programs for gauge configurations are in Converters/
-Other contains work in progress
+Other folders contain work in progress
 
 Compile with 
 
    g++ -O3 -I[path to *.h files] [filename.cpp] -o [filename.exe]
 
 [path to *.h files] refers to the path where the mdp_*.h and fermiqcd_*.h files are located. It should be in Libraries/
-
-Under linux compile with -DLINUX
 
 To use SSE2 compile with -O3 -DSSE2
 
