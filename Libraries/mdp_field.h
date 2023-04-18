@@ -125,7 +125,7 @@ namespace MDP
     }
 
   protected:
-    mdp_lattice *m_ptr;          /* this points to the lattice for this field  */
+    mdp_lattice *m_lattice;      /* this points to the lattice for this field  */
     std::unique_ptr<T[]> m_data; /* this is to store the main field            */
     mdp_uint m_size;             /* this is the size of the field in sizeof(T) */
     mdp_uint m_field_components; /* this is the number of field components per site */
@@ -152,7 +152,7 @@ namespace MDP
       m_data = std::make_unique<T[]>(m_size);
       if (m_data == nullptr)
         error("OUT OF MEMORY !!!!");
-      m_ptr = &a;
+      m_lattice = &a;
       fill_header();
     }
 
@@ -165,7 +165,7 @@ namespace MDP
   public:
     /** @brief declare empty field (zero size)
      */
-    mdp_field() : m_ptr(nullptr), m_data(nullptr), m_size(0), m_field_components(0)
+    mdp_field() : m_lattice(nullptr), m_data(nullptr), m_size(0), m_field_components(0)
     {
     }
 
@@ -243,7 +243,7 @@ namespace MDP
       return m_data[i];
     }
 
-    T *address(mdp_site x, int i = 0) const
+    T *address(mdp_site x, mdp_int i = 0) const
     {
 #ifdef CHECK_ALL
       if (!(x.is_here()))
@@ -260,7 +260,7 @@ namespace MDP
      * note that if i=1, field(x-mu) is assigned to field(x)
      * function requires communication
      */
-    void shift(int i, int mu)
+    void shift(int i, mdp_int mu)
     {
       mdp_field tmp(lattice(), m_field_components);
       mdp_site x(lattice());
@@ -337,14 +337,14 @@ namespace MDP
      */
     mdp_lattice &lattice() const
     {
-      return *m_ptr;
+      return *m_lattice;
     }
 
     /** Dimension of the field
      */
     mdp_int ndim() const
     {
-      return m_ptr->n_dimensions();
+      return m_lattice->n_dimensions();
     }
 
     /** @brief returns the total memory in bytes occupied by the field

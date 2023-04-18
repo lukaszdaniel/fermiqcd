@@ -211,7 +211,7 @@ namespace MDP
     int compute_parity(const int *x)
     {
       int p = 0;
-      for (int mu = 0; mu < m_ndim; mu++)
+      for (mdp_int mu = 0; mu < m_ndim; mu++)
         p = p + x[mu];
       return (p % 2);
     }
