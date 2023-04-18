@@ -29,10 +29,10 @@ void meson_prop_from_slice(int nt, int nx, const char *filename)
   {
     y.set(x(1), x(2), x(3));
     Q(y) = 0;
-    for (int a = 0; a < S.nspin; a++)
-      for (int b = 0; b < S.nspin; b++)
-        for (int c = 0; c < S.nspin; c++)
-          for (int d = 0; d < S.nspin; d++)
+    for (int a = 0; a < S.nspin(); a++)
+      for (int b = 0; b < S.nspin(); b++)
+        for (int c = 0; c < S.nspin(); c++)
+          for (int d = 0; d < S.nspin(); d++)
           {
             w = A(b, c) * A(d, a);
             if (w != 0)

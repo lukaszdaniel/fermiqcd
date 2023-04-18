@@ -40,15 +40,15 @@ namespace MDP
                       coefficients &coeff)
     {
 
-      if (psi_in.nspin != 4)
+      if (psi_in.nspin() != 4)
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: nspin!=4");
-      if (psi_in.nc != U.nc())
+      if (psi_in.nc() != U.nc())
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
       int ndim = psi_in.lattice().ndim();
-      int nspin = psi_in.nspin;
-      int nc = psi_in.nc;
-      int L5 = psi_in.L5;
+      int nspin = psi_in.nspin();
+      int nc = psi_in.nc();
+      int L5 = psi_in.L5();
       mdp_real m_5 = 0, m_f = 0, sign = 0;
       if (coeff.has_key("m_5"))
         m_5 = coeff["m_5"];
@@ -68,7 +68,6 @@ namespace MDP
       mdp_real kappaf = -m_f * kappa5;
 
       mdp_site x(psi_in.lattice());
-      int l, a, mu;
 
       mdp_matrix psi_up(nspin, nc);
       mdp_matrix psi_dw(nspin, nc);
@@ -83,11 +82,11 @@ namespace MDP
       psi_out = psi_in;
       forallsites(x)
       {
-        for (l = 0; l < L5; l++)
+        for (mdp_int l = 0; l < L5; l++)
         {
-          for (mu = 0; mu < ndim; mu++)
+          for (mdp_int mu = 0; mu < ndim; mu++)
           {
-            for (a = 0; a < nspin; a++)
+            for (mdp_int a = 0; a < nspin; a++)
             {
               psi_up(a) = U(x, mu) * psi_in(x + mu, l, a);
               psi_dw(a) = hermitian(U(x - mu, mu)) * psi_in(x - mu, l, a);
@@ -133,15 +132,15 @@ namespace MDP
                       coefficients &coeff)
     {
 
-      if (psi_in.nspin != 4)
+      if (psi_in.nspin() != 4)
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: nspin!=4");
-      if (psi_in.nc != U.nc())
+      if (psi_in.nc() != U.nc())
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
       int ndim = psi_in.lattice().ndim();
-      int nspin = psi_in.nspin;
-      int nc = psi_in.nc;
-      int L5 = psi_in.L5;
+      int nspin = psi_in.nspin();
+      int nc = psi_in.nc();
+      int L5 = psi_in.L5();
       mdp_real m_5 = 0, m_f = 0, sign = 0;
       if (coeff.has_key("m_5"))
         m_5 = coeff["m_5"];

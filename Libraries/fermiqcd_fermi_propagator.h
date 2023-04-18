@@ -37,37 +37,46 @@ namespace MDP
   /// \f$ \left<0|\bar q^i_\alpha(x), q^j_\beta(0)|\right> \f$
   class fermi_propagator : public mdp_complex_field
   {
-  public:
-    int nspin;
-    int nc;
+  private:
+    mdp_int m_nspin;
+    mdp_int m_nc;
 
+  public:
     fermi_propagator()
     {
-      reset_field();
     }
 
     fermi_propagator(mdp_lattice &mylattice, int nc_, int nspin_ = 4)
     {
-      reset_field();
-      nspin = nspin_;
-      nc = nc_;
-      allocate_field(mylattice, nspin * nspin * nc * nc);
+      m_nspin = nspin_;
+      m_nc = nc_;
+      allocate_field(mylattice, m_nspin * m_nspin * m_nc * m_nc);
     }
 
     void allocate_fermi_propagator(mdp_lattice &mylattice,
                                    int nc_, int nspin_ = 4)
     {
       deallocate_field();
-      nspin = nspin_;
-      nc = nc_;
-      allocate_field(mylattice, nspin * nspin * nc * nc);
+      m_nspin = nspin_;
+      m_nc = nc_;
+      allocate_field(mylattice, m_nspin * m_nspin * m_nc * m_nc);
+    }
+
+    mdp_int nspin() const
+    {
+      return m_nspin;
+    }
+
+    mdp_int nc() const
+    {
+      return m_nc;
     }
 
     /** @brief returns the matrix \e alpha, \e beta stored at site x
      */
     mdp_matrix operator()(mdp_site x, int a, int b)
     {
-      mdp_matrix tmp(address(x, (a * nspin + b) * nc * nc), nc, nc);
+      mdp_matrix tmp(address(x, (a * m_nspin + b) * m_nc * m_nc), m_nc, m_nc);
       return tmp;
     }
 
@@ -75,7 +84,7 @@ namespace MDP
      */
     mdp_complex &operator()(mdp_site x, int a, int b, int i, int j)
     {
-      return *(address(x, ((a * nspin + b) * nc + i) * nc + j));
+      return *(address(x, ((a * m_nspin + b) * m_nc + i) * m_nc + j));
     }
 
     /// makes the quark propagator
@@ -98,25 +107,25 @@ namespace MDP
                                      coefficients &) = nullptr,
                          coefficients smear_coeff = coefficients())
     {
-      fermi_field psi(S.lattice(), S.nc, S.nspin);
-      fermi_field chi(S.lattice(), S.nc, S.nspin);
+      fermi_field psi(S.lattice(), S.nc(), S.nspin());
+      fermi_field chi(S.lattice(), S.nc(), S.nspin());
       mdp_site x(S.lattice());
-      int i, j, a, b;
+
       double time = mpi.time();
       inversion_stats stats;
       begin_function("generate");
       mdp << "BEGIN Generating ordinary propagator\n";
 
-      for (b = 0; b < psi.nspin; b++)
-        for (j = 0; j < psi.nc; j++)
+      for (mdp_int b = 0; b < psi.nspin(); b++)
+        for (mdp_int j = 0; j < psi.nc(); j++)
         {
 
           mdp << "Source: spin=" << b << ", color=" << j << "\n";
 
           forallsitesandcopies(x)
           {
-            for (a = 0; a < psi.nspin; a++)
-              for (i = 0; i < psi.nc; i++)
+            for (mdp_int a = 0; a < psi.nspin(); a++)
+              for (mdp_int i = 0; i < psi.nc(); i++)
               {
                 if ((x.is_equal(0)) && (a == b) && (i == j))
                   psi(x, a, i) = 1;
@@ -136,8 +145,8 @@ namespace MDP
 
           forallsites(x)
           {
-            for (a = 0; a < psi.nspin; a++)
-              for (i = 0; i < psi.nc; i++)
+            for (mdp_int a = 0; a < psi.nspin(); a++)
+              for (mdp_int i = 0; i < psi.nc(); i++)
               {
                 S(x, a, b, i, j) = chi(x, a, i);
               }
@@ -162,11 +171,9 @@ namespace MDP
     begin_function("print_propagator");
     int x0, x1, x2, x3;
     mdp_site x(S.lattice());
-    int spin_source, spin_sink;
-    int color_source, color_sink;
     mdp_complex tmp;
     int do_exit = false;
-    int nc = S.nc;
+    int nc = S.nc();
     do
     {
       mdp << "\nCheck point!\n";
@@ -194,15 +201,15 @@ namespace MDP
       if (on_which_process(S.lattice(), x0, x1, x2, x3) == ME)
       {
         x.set(x0, x1, x2, x3);
-        for (color_source = 0; color_source < nc; color_source++)
-          for (spin_source = 0; spin_source < 4; spin_source++)
+        for (mdp_int color_source = 0; color_source < nc; color_source++)
+          for (mdp_int spin_source = 0; spin_source < 4; spin_source++)
           {
             mdp << "Source: spin=" << spin_source
                 << ", color=" << color_source << "\n";
-            for (spin_sink = 0; spin_sink < 4; spin_sink++)
+            for (mdp_int spin_sink = 0; spin_sink < 4; spin_sink++)
             {
               mdp << "[ ";
-              for (color_sink = 0; color_sink < nc; color_sink++)
+              for (mdp_int color_sink = 0; color_sink < nc; color_sink++)
               {
                 tmp = S(x, spin_sink, spin_source, color_sink, color_source);
                 mdp << tmp;
@@ -222,22 +229,22 @@ namespace MDP
   {
     mdp_matrix_field V(U.lattice(), U.nc(), U.nc());
     mdp_site x(U.lattice());
-    for (int n = 0; n < smear_steps; n++)
+    for (mdp_int n = 0; n < smear_steps; n++)
     {
-      for (int a = 0; a < 4; a++)
-        for (int b = 0; b < 4; b++)
+      for (mdp_int a = 0; a < 4; a++)
+        for (mdp_int b = 0; b < 4; b++)
         {
           forallsites(x)
           {
             V(x) = alpha * S(x, a, b);
-            for (int mu = 0; mu < 4; mu++)
+            for (mdp_int mu = 0; mu < 4; mu++)
               V(x) += U(x, mu) * S(x + mu, a, b) + hermitian(U(x - mu, mu)) * S(x - mu, a, b);
           }
           V.update();
           forallsites(x)
           {
-            for (int i = 0; i < U.nc(); i++)
-              for (int j = 0; j < U.nc(); j++)
+            for (mdp_int i = 0; i < U.nc(); i++)
+              for (mdp_int j = 0; j < U.nc(); j++)
                 S(x, a, b, i, j) = V(x, i, j) / (8.0 + alpha);
           }
         }

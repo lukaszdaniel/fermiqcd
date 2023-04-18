@@ -47,8 +47,8 @@ namespace MDP
     {
 
       int ndim = psi_in.lattice().n_dimensions();
-      int nspin = psi_in.nspin;
-      int nc = psi_in.nc;
+      int nspin = psi_in.nspin();
+      int nc = psi_in.nc();
       mdp_real kappa_t = 0;
       mdp_real kappa_s = 0;
       mdp_real r_t;

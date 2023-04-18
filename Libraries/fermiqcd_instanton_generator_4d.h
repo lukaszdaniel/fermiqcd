@@ -21,6 +21,7 @@ namespace MDP
     float x[4];
     float rho;
     int charge; // +1 or -1;
+
     SingleInstanton4D(float x0, float x1, float x2, float x3, float rho, int charge)
     {
       x[0] = x0;

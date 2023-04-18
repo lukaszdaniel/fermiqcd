@@ -48,9 +48,9 @@ namespace MDP
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
       int ndim = psi_in.lattice().ndim();
-      int nspin = psi_in.nspin;
-      int nc = psi_in.nc;
-      int L5 = psi_in.L5;
+      int nspin = psi_in.nspin();
+      int nc = psi_in.nc();
+      int L5 = psi_in.L5();
       mdp_real m_5 = 0, m_f = 0, sign = 0;
       if (coeff.has_key("m_5"))
         m_5 = coeff["m_5"];

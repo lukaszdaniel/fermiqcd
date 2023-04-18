@@ -126,12 +126,12 @@ namespace MDP
         rresidue = relative_residue(r, psi_out);
 
         // make VTK files
-        for (int a = 0; a < 4; a++)
+        for (mdp_int a = 0; a < 4; a++)
         {
           forallsites(x)
           {
             sv(x) = 0.0;
-            for (int k = 0; k < psi_in.nc; k++)
+            for (mdp_int k = 0; k < psi_in.nc(); k++)
               sv(x) += std::sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
           }
           filename1 = filename_prefix + ".field" + std::to_string(a) + "." + std::to_string(step) + ".vtk";
@@ -139,10 +139,10 @@ namespace MDP
         }
         forallsites(x)
         {
-          for (int a = 0; a < 4; a++)
+          for (mdp_int a = 0; a < 4; a++)
           {
             sv(x) = 0.0;
-            for (int k = 0; k < psi_in.nc; k++)
+            for (mdp_int k = 0; k < psi_in.nc(); k++)
               sv(x) += std::log(real(r(x, a, k) * conj(r(x, a, k))) + PRECISION);
           }
         }

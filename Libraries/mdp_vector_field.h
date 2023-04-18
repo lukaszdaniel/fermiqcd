@@ -27,38 +27,41 @@ namespace MDP
   /// @endverbatim
   class mdp_vector_field : public mdp_field<mdp_complex>
   {
+  private:
+    mdp_int m_rows;
+    mdp_int m_columns;
+    mdp_int m_imax;
+
   public:
-    int rows, columns, imax;
     mdp_vector_field()
     {
-      rows = columns = imax = 0;
-      mdp_field<mdp_complex>::reset_field();
+      m_rows = m_columns = m_imax = 0;
     }
     mdp_vector_field(mdp_vector_field &field)
     {
-      rows = field.rows;
-      columns = field.columns;
-      imax = field.imax;
-      allocate_field(field.lattice(), field.imax);
+      m_rows = field.m_rows;
+      m_columns = field.m_columns;
+      m_imax = field.m_imax;
+      allocate_field(field.lattice(), field.m_imax);
     }
     mdp_vector_field(mdp_lattice &a, int i)
     {
-      rows = i;
-      columns = 1;
-      imax = i;
-      allocate_field(a, imax);
+      m_rows = i;
+      m_columns = 1;
+      m_imax = i;
+      allocate_field(a, m_imax);
     }
     void allocate_mdp_vector_field(mdp_lattice &a, int i)
     {
       deallocate_field();
-      rows = i;
-      columns = 1;
-      imax = i;
-      allocate_field(a, imax);
+      m_rows = i;
+      m_columns = 1;
+      m_imax = i;
+      allocate_field(a, m_imax);
     }
     mdp_matrix operator()(mdp_site x)
     {
-      return mdp_matrix(address(x), rows, columns);
+      return mdp_matrix(address(x), m_rows, m_columns);
     }
     mdp_complex &operator()(mdp_site x, int i)
     {

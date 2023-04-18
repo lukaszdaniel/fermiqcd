@@ -22,7 +22,7 @@ namespace MDP
 		mdp_site x(chi.lattice());
 		forallsites(x)
 		{
-			psi(x) = Pleft * chi(x, 0) + Pright * chi(x, chi.L5 - 1);
+			psi(x) = Pleft * chi(x, 0) + Pright * chi(x, chi.L5() - 1);
 		}
 	}
 
@@ -33,7 +33,7 @@ namespace MDP
 		forallsites(x)
 		{
 			chi(x, 0) = Pleft * psi(x);
-			chi(x, chi.L5 - 1) = Pright * psi(x);
+			chi(x, chi.L5() - 1) = Pright * psi(x);
 		}
 	}
 

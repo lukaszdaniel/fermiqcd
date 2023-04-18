@@ -31,41 +31,50 @@ namespace MDP
   /// @endverbatim
   class fermi_field : public mdp_complex_field
   {
-  public:
-    int nspin;
-    int nc;
+  private:
+    int m_nspin;
+    int m_nc;
 
+  public:
     fermi_field()
     {
-      reset_field();
     }
 
     fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4)
     {
-      deallocate_field();
-      nc = nc_;
-      nspin = nspin_;
-      allocate_field(a, nspin * nc);
+      m_nc = nc_;
+      m_nspin = nspin_;
+      allocate_field(a, m_nspin * m_nc);
+    }
+
+    fermi_field(const fermi_field &chi) : mdp_complex_field(chi)
+    {
+      m_nc = chi.m_nc;
+      m_nspin = chi.m_nspin;
     }
 
     void allocate_fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4)
     {
       deallocate_field();
-      nc = nc_;
-      nspin = nspin_;
-      allocate_field(a, nspin * nc);
+      m_nc = nc_;
+      m_nspin = nspin_;
+      allocate_field(a, m_nspin * m_nc);
     }
 
-    fermi_field(const fermi_field &chi) : mdp_complex_field(chi)
+    mdp_int nspin() const
     {
-      nc = chi.nc;
-      nspin = chi.nspin;
+      return m_nspin;
+    }
+
+    mdp_int nc() const
+    {
+      return m_nc;
     }
 
     void operator=(const fermi_field &chi)
     {
-      nc = chi.nc;
-      nspin = chi.nspin;
+      m_nc = chi.m_nc;
+      m_nspin = chi.m_nspin;
       mdp_complex_field::operator=(chi);
     }
 
@@ -73,28 +82,28 @@ namespace MDP
      */
     mdp_matrix operator()(mdp_site x)
     {
-      return mdp_matrix(address(x), nspin, nc);
+      return mdp_matrix(address(x), m_nspin, m_nc);
     }
 
     /** @brief returns the vector of spin \e a stored at site x
      */
     mdp_matrix operator()(mdp_site x, int a)
     {
-      return mdp_matrix(address(x, a * nc), nc, 1);
+      return mdp_matrix(address(x, a * m_nc), m_nc, 1);
     }
 
     /** @brief returns the (a,i) component of the matrix stored at site x
      */
     mdp_complex &operator()(mdp_site x, int a, int i)
     {
-      return *(address(x, a * nc + i));
+      return *(address(x, a * m_nc + i));
     }
 
     /** @brief returns the (a,i) const component of the matrix stored at site x
      */
     const mdp_complex &operator()(mdp_site x, int a, int i) const
     {
-      return *(address(x, a * nc + i));
+      return *(address(x, a * m_nc + i));
     }
 
     void operator=(mdp_complex a)

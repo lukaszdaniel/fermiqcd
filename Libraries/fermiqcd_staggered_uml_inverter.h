@@ -63,7 +63,7 @@ namespace MDP
     {
 
       int i, opposite_parity = EVENODD, step = 0;
-      int nc = psi_in.nc;
+      int nc = psi_in.nc();
       double beta, norm, four_mass_sq;
       double pMMp, alpha, residue, rresidue = -1, target_residue, old_residue;
       inversion_stats stats;

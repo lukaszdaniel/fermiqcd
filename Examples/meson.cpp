@@ -18,8 +18,8 @@ void accumulate_c2(mdp_array<mdp_complex, 1> &c2,
       for (int b = 0; b < 4; b++)
         for (int c = 0; c < 4; c++)
           for (int d = 0; d < 4; d++)
-            for (int i = 0; i < Sl.nc; i++)
-              for (int j = 0; j < Sl.nc; j++)
+            for (int i = 0; i < Sl.nc(); i++)
+              for (int j = 0; j < Sl.nc(); j++)
               {
                 c2(x(0)) += real(Sl(x, a, b, i, j) * G1(b, c) * conj(Sh(x, d, c, i, j)) * G2(d, a));
               }

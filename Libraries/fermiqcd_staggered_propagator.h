@@ -39,21 +39,27 @@ namespace MDP
   /// @endverbatim
   class staggered_propagator : public mdp_field<mdp_complex>
   {
-  public:
-    int nc;
+  private:
+    int m_nc;
 
+  public:
     staggered_propagator(mdp_lattice &mylattice, int nc_)
     {
-      nc = nc_;
+      m_nc = nc_;
       int ndim = mylattice.n_dimensions();
-      allocate_field(mylattice, ndim * ndim * nc * nc);
+      allocate_field(mylattice, ndim * ndim * m_nc * m_nc);
+    }
+
+    mdp_int nc() const
+    {
+      return m_nc;
     }
 
     /** @brief returns the matrix of colour \e a stored at site x
      */
     mdp_matrix operator()(mdp_site x, int a)
     {
-      mdp_matrix tmp(address(x, a * nc * nc), nc, nc);
+      mdp_matrix tmp(address(x, a * m_nc * m_nc), m_nc, m_nc);
       return tmp;
     }
 
@@ -61,7 +67,7 @@ namespace MDP
      */
     mdp_complex &operator()(mdp_site x, int a, int i, int j)
     {
-      return *(address(x) + a * nc * nc + i * nc + j);
+      return *(address(x) + a * m_nc * m_nc + i * m_nc + j);
     }
 
     friend void generate(staggered_propagator &S, gauge_field &U,
@@ -72,11 +78,11 @@ namespace MDP
                          void (*smf)(staggered_field &, gauge_field &) = 0,
                          int comp = 0)
     {
-      staggered_field psi(S.lattice(), S.nc);
-      staggered_field chi(S.lattice(), S.nc);
+      staggered_field psi(S.lattice(), S.nc());
+      staggered_field chi(S.lattice(), S.nc());
       mdp_site x(S.lattice());
       int ndim = S.lattice().n_dimensions();
-      int nc = S.nc;
+      int nc = S.nc();
       int i, j, mu, a;
 
       double time = mpi.time();

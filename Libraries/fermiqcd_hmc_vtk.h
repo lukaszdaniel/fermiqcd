@@ -279,7 +279,7 @@ namespace MDP
       {
         for (int alpha = 0; alpha < F.nspin; alpha++)
         {
-          for (int i = 0; i < F.nc; i++)
+          for (int i = 0; i < F.nc(); i++)
           {
             re = F.lattice().random(x).gaussian();
             im = F.lattice().random(x).gaussian();

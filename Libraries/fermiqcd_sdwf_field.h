@@ -20,48 +20,67 @@ namespace MDP
    */
   class sdwf_field : public mdp_complex_field
   {
-  public:
-    int nc, ndim, nspin, L5;
+  private:
+    mdp_int m_nc;
+    mdp_int m_ndim;
+    mdp_int m_nspin;
+    mdp_int m_L5;
 
+  public:
     sdwf_field(mdp_lattice &a, int L5_, int nc_, int nspin_ = 4)
     {
       // attention here that nspin_ is ignored!
-      L5 = L5_;
-      nc = nc_;
-      nspin = nspin_;
-      ndim = a.n_dimensions();
-      allocate_field(a, L5 * nc);
+      m_L5 = L5_;
+      m_nc = nc_;
+      m_nspin = nspin_;
+      m_ndim = a.n_dimensions();
+      allocate_field(a, m_L5 * m_nc);
     }
 
     sdwf_field(sdwf_field &chi)
     {
       // attention here that nspin_ is ignored!
-      nc = chi.nc;
-      nspin = chi.nspin;
-      L5 = chi.L5;
-      ndim = chi.lattice().n_dimensions();
-      allocate_field(chi.lattice(), L5 * nc);
+      m_nc = chi.m_nc;
+      m_nspin = chi.m_nspin;
+      m_L5 = chi.m_L5;
+      m_ndim = chi.lattice().n_dimensions();
+      allocate_field(chi.lattice(), m_L5 * m_nc);
+    }
+
+    mdp_int nspin() const
+    {
+      return m_nspin;
+    }
+
+    mdp_int nc() const
+    {
+      return m_nc;
+    }
+
+    mdp_int L5() const
+    {
+      return m_L5;
     }
 
     /** @brief returns the \e x5 component of the vector stored at site x
      */
     mdp_matrix operator()(mdp_site x, int x5)
     {
-      return mdp_matrix(address(x, x5 * nc), nc, 1);
+      return mdp_matrix(address(x, x5 * m_nc), m_nc, 1);
     }
 
     /** @brief returns the \e x5 component of the vector of colour \e i stored at site x
      */
     mdp_complex &operator()(mdp_site x, int x5, int i)
     {
-      return *(address(x, x5 * nc + i));
+      return *(address(x, x5 * m_nc + i));
     }
 
     /** @brief returns the \e x5 const component of the vector of colour \e i stored at site x
      */
     const mdp_complex &operator()(mdp_site x, int x5, int i) const
     {
-      return *(address(x, x5 * nc + i));
+      return *(address(x, x5 * m_nc + i));
     }
 
     void operator=(mdp_complex a)
@@ -78,7 +97,7 @@ namespace MDP
     mdp_real eta(mdp_site x, int mu)
     {
       int tmp;
-      int i_max = (mu + ndim - 1) % ndim;
+      int i_max = (mu + m_ndim - 1) % m_ndim;
       tmp = 0;
       for (int i = 1; i <= i_max; i++)
         tmp += x(i);
@@ -89,7 +108,7 @@ namespace MDP
     {
       int tmp;
       tmp = x(0);
-      for (int i = 1; i < ndim; i++)
+      for (int i = 1; i < m_ndim; i++)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }
@@ -98,14 +117,14 @@ namespace MDP
     {
       mdp_real tmp;
       tmp = x(0) % 2;
-      for (int i = 1; i < ndim; i++)
+      for (int i = 1; i < m_ndim; i++)
         tmp += (x(i) % 2) * std::pow(2.0, i);
       return tmp;
     }
 
     mdp_site chiral_shift(mdp_site x)
     {
-      for (int i = 0; i < ndim; i++)
+      for (int i = 0; i < m_ndim; i++)
         if (x(i) % 2 == 1)
           x = x - i;
         else
@@ -115,8 +134,8 @@ namespace MDP
 
     mdp_real chiral_phase(mdp_site x)
     { // (Gamma5 (x) 1)
-      int tmp = ndim / 2;
-      for (int i = 1; i < ndim; i += 2)
+      int tmp = m_ndim / 2;
+      for (int i = 1; i < m_ndim; i += 2)
         tmp += x(i);
       return (mdp_real)mdp_mod2sign(tmp);
     }
@@ -124,7 +143,7 @@ namespace MDP
     mdp_real chiral_phase2(mdp_site x)
     { // (Gamma5 (x) Gamma5)
       int tmp = 0;
-      for (int i = 0; i < ndim; i++)
+      for (int i = 0; i < m_ndim; i++)
         tmp += x(i);
       return (mdp_real)mdp_mod2sign(tmp);
     }

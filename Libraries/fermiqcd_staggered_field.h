@@ -28,30 +28,43 @@ namespace MDP
   /// @endverbatim
   class staggered_field : public mdp_complex_field
   {
-  public:
-    int nc, ndim, nspin;
+  private:
+    mdp_int m_nc;
+    mdp_int m_ndim;
+    mdp_int m_nspin;
 
+  public:
     staggered_field(mdp_lattice &a, int nc_, int nspin_ = 4)
     {
       // attention here that nspin_ is ignored!
-      nc = nc_;
-      nspin = nspin_;
-      ndim = a.ndim();
-      allocate_field(a, nc);
+      m_nc = nc_;
+      m_nspin = nspin_;
+      m_ndim = a.ndim();
+      allocate_field(a, m_nc);
     }
 
     staggered_field(const staggered_field &chi) : mdp_complex_field(chi)
     {
-      nc = chi.nc;
-      ndim = chi.ndim;
-      nspin = chi.nspin;
+      m_nc = chi.m_nc;
+      m_ndim = chi.m_ndim;
+      m_nspin = chi.m_nspin;
+    }
+
+    mdp_int nspin() const
+    {
+      return m_nspin;
+    }
+
+    mdp_int nc() const
+    {
+      return m_nc;
     }
 
     void operator=(const staggered_field &chi)
     {
-      nc = chi.nc;
-      ndim = chi.ndim;
-      nspin = chi.nspin;
+      m_nc = chi.m_nc;
+      m_ndim = chi.m_ndim;
+      m_nspin = chi.m_nspin;
       mdp_complex_field::operator=(chi);
     }
 
@@ -59,7 +72,7 @@ namespace MDP
      */
     mdp_matrix operator()(mdp_site x)
     {
-      return mdp_matrix(address(x), nc, 1);
+      return mdp_matrix(address(x), m_nc, 1);
     }
 
     /** @brief returns the i-th component of the vector stored at site x
@@ -90,7 +103,7 @@ namespace MDP
     mdp_real eta(mdp_site x, int mu)
     {
 #ifdef USE_GOLTERMAN
-      int i_max = (mu + ndim - 1) % ndim;
+      int i_max = (mu + m_ndim - 1) % m_ndim;
       int tmp = 0;
       for (int i = 1; i <= i_max; i++)
         tmp += x(i);
@@ -105,7 +118,7 @@ namespace MDP
     mdp_real eps(mdp_site x)
     {
       int tmp = x(0);
-      for (int i = 1; i < ndim; i++)
+      for (int i = 1; i < m_ndim; i++)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }
@@ -113,7 +126,7 @@ namespace MDP
     mdp_real type(mdp_site x)
     {
       mdp_real tmp = x(0) % 2;
-      for (int i = 1; i < ndim; i++)
+      for (int i = 1; i < m_ndim; i++)
         tmp += (x(i) % 2) * std::pow(2.0, i);
       return tmp;
     }

@@ -28,7 +28,7 @@ namespace MDP
     {
       int nc = U.nc();
       int ndim = U.ndim();
-      int L5 = chi_in.L5;
+      int L5 = chi_in.L5();
       int x5;
 
       mdp_real mass;

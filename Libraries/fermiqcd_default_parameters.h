@@ -25,10 +25,10 @@ namespace MDP
 #define DAGGER -1
 #endif
 
-    mdp_real fermi_inversion_precision = 1e-6;
-    mdp_real staggered_inversion_precision = 1e-6;
-    mdp_real dwfermi_inversion_precision = 1e-6;
-    mdp_real sdwf_inversion_precision = 1e-6;
+    constexpr mdp_real fermi_inversion_precision = 1e-6;
+    constexpr mdp_real staggered_inversion_precision = 1e-6;
+    constexpr mdp_real dwfermi_inversion_precision = 1e-6;
+    constexpr mdp_real sdwf_inversion_precision = 1e-6;
 
     /// Set this to true to run BuCGStab with restart
     bool BiCGStabRestart = false;

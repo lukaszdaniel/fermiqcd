@@ -22,7 +22,7 @@ namespace MDP
   {
     mdp_site x(chi.lattice());
     mdp_site y(chi.lattice());
-    int L5 = chi.L5;
+    int L5 = chi.L5();
     mdp_real phase;
     forallsites(x)
     {
@@ -60,7 +60,7 @@ namespace MDP
       y = chi.chiral_shift(x);
       chi(x, 0) =
           0.5 * psi(x) - (MDP_SDWF_SGN * 0.5 * phase) * (U.swirls(x) * psi(y));
-      chi(x, chi.L5 - 1) =
+      chi(x, chi.L5() - 1) =
           0.5 * psi(x) + (MDP_SDWF_SGN * 0.5 * phase) * (U.swirls(x) * psi(y));
     }
   }
@@ -108,7 +108,7 @@ namespace MDP
 
   void compute_swirls_field(gauge_field &U)
   {
-    int i, j, k, nc = U.nc();
+    int j, nc = U.nc();
     mdp_matrix A;
     U.swirls.allocate_mdp_matrix_field(U.lattice(), nc, nc);
     mdp_site x(U.lattice()), y(U.lattice());
@@ -120,10 +120,10 @@ namespace MDP
         // for(k=0; k<mdp_permutations(4); k++) { this gave some problems
         y = x;
         A = mdp_identity(nc);
-        for (k = 0; k < 1; k++)
+        for (mdp_int k = 0; k < 1; k++)
         {
           //  k=(int) ((float) mdp_permutations(4)*Random.plain());
-          for (i = 0; i < U.ndim(); i++)
+          for (mdp_int i = 0; i < U.ndim(); i++)
           {
             j = mdp_permutation(4, k, i);
             if (y(j) % 2 == 0)
@@ -147,7 +147,7 @@ namespace MDP
       if (x(0) % 2 == 1)
       {
         y = x;
-        for (i = 0; i < U.ndim(); i++)
+        for (mdp_int i = 0; i < U.ndim(); i++)
           if (y(i) % 2 == 0)
             y = y + i;
           else

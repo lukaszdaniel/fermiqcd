@@ -130,22 +130,22 @@ namespace MDP
                            coefficients &coeff)
   {
     begin_function("check_inversion");
-    fermi_field psi(phi.lattice(), phi.nc, phi.nspin);
-    fermi_field chi(phi.lattice(), phi.nc, phi.nspin);
+    fermi_field psi(phi.lattice(), phi.nc(), phi.nspin());
+    fermi_field chi(phi.lattice(), phi.nc(), phi.nspin());
     mdp_site x(phi.lattice());
-    int a, i;
+
     mdp_real precision = 0;
     mul_Q(psi, phi, U, coeff);
     psi.update();
     mul_invQ(chi, psi, U, coeff);
     forallsites(x)
     {
-      for (a = 0; a < phi.nspin; a++)
-        for (i = 0; i < phi.nc; i++)
+      for (mdp_int a = 0; a < phi.nspin(); a++)
+        for (mdp_int i = 0; i < phi.nc(); i++)
           precision += real(pow(phi(x, a, i) - chi(x, a, i), 2));
     }
     mpi.add(precision);
-    precision /= phi.lattice().global_volume() * phi.nc * phi.nspin;
+    precision /= phi.lattice().global_volume() * phi.nc() * phi.nspin();
     mdp << "Inversion precision=" << precision << "\n";
     begin_function("end_inversion");
     return precision;

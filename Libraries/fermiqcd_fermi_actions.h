@@ -46,16 +46,16 @@ namespace MDP
                       int parity = EVENODD)
     {
 
-      if (psi_in.nspin != 4)
+      if (psi_in.nspin() != 4)
         error("fermiqcd_fermi_algorithms/mul_Q_ONE: nspin!=4");
-      if (psi_in.nc != U.nc())
+      if (psi_in.nc() != U.nc())
         error("fermiqcd_fermi_algorithms/mul_Q_ONE: gauge and spinor have different nc");
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
       int ndim = psi_in.lattice().n_dimensions();
-      int nspin = psi_in.nspin;
-      int nc = psi_in.nc;
+      int nspin = psi_in.nspin();
+      int nc = psi_in.nc();
       mdp_real kappa_t = 0;
       mdp_real kappa_s = 0;
       mdp_real r_t;
@@ -101,7 +101,6 @@ namespace MDP
         rsign = +1;
 
       mdp_site x(psi_in.lattice());
-      int a, mu, nu;
 
       mdp_matrix psi_up(nspin, nc);
       mdp_matrix psi_dw(nspin, nc);
@@ -120,9 +119,9 @@ namespace MDP
       psi_out = psi_in;
       forallsites(x)
       {
-        for (mu = 0; mu < ndim; mu++)
+        for (mdp_int mu = 0; mu < ndim; mu++)
         {
-          for (a = 0; a < nspin; a++)
+          for (mdp_int a = 0; a < nspin; a++)
           {
             psi_up(a) = U(x, mu) * psi_in(x + mu, a);
             psi_dw(a) = hermitian(U(x - mu, mu)) * psi_in(x - mu, a);
@@ -136,10 +135,10 @@ namespace MDP
         }
 
         if (cSW != 0)
-          for (mu = 0; mu < ndim - 1; mu++)
-            for (nu = mu + 1; nu < ndim; nu++)
+          for (mdp_int mu = 0; mu < ndim - 1; mu++)
+            for (mdp_int nu = mu + 1; nu < ndim; nu++)
             {
-              for (a = 0; a < nspin; a++)
+              for (mdp_int a = 0; a < nspin; a++)
                 psi_lo(a) = U.em(x, mu, nu) * psi_in(x, a);
               if (mu == 0)
               {
@@ -183,16 +182,16 @@ namespace MDP
                       int parity = EVENODD)
     {
 
-      if (psi_in.nspin != 4)
+      if (psi_in.nspin() != 4)
         error("fermiqcd_fermi_algorithms/mul_Q_TWO: nspin!=4");
-      if (psi_in.nc != U.nc())
+      if (psi_in.nc() != U.nc())
         error("fermiqcd_fermi_algorithms/mul_Q_TWO: gauge and spinor have different nc");
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
       int ndim = psi_in.lattice().n_dimensions();
-      int nspin = psi_in.nspin;
-      int nc = psi_in.nc;
+      int nspin = psi_in.nspin();
+      int nc = psi_in.nc();
       mdp_real kappa_t = 0;
       mdp_real kappa_s = 0;
       mdp_real r_t;
@@ -238,7 +237,7 @@ namespace MDP
         rsign = +1;
 
       mdp_site x(psi_in.lattice());
-      int i, j, a, mu, nu, inc, anc, bnc;
+      int inc, anc, bnc;
       mdp_real coeff_kappa = 0;
       mdp_real coeff_sum = 0;
       mdp_complex coeff_dif = 0;
@@ -265,12 +264,12 @@ namespace MDP
 
       forallsites(x)
       {
-        for (a = 0; a < nspin; a++)
-          for (i = 0; i < nc; i++)
+        for (mdp_int a = 0; a < nspin; a++)
+          for (mdp_int i = 0; i < nc; i++)
           {
             psi_tmp[anc = a * nc + i] = 0;
           }
-        for (mu = 0; mu < ndim; mu++)
+        for (mdp_int mu = 0; mu < ndim; mu++)
         {
           if (mu == 0)
           {
@@ -284,22 +283,22 @@ namespace MDP
           }
           FU_up = &U(x, mu, 0, 0);
           FU_dw = &U(x - mu, mu, 0, 0);
-          for (i = 0; i < nc; i++)
-            for (j = 0; j < nc; j++)
+          for (mdp_int i = 0; i < nc; i++)
+            for (mdp_int j = 0; j < nc; j++)
               FHU_dw[i * nc + j] = conj(FU_dw[j * nc + i]);
-          for (a = 0; a < nspin; a++)
+          for (mdp_int a = 0; a < nspin; a++)
           {
             anc = a * nc;
             Fpsi_in_up = &psi_in(x + mu, a, 0);
             Fpsi_in_dw = &psi_in(x - mu, a, 0);
             bnc = Gamma_idx[mu][a] * nc;
             coeff_dif = coeff_kappa * Gamma_val[mu][a] * rsign;
-            for (i = 0; i < nc; i++)
+            for (mdp_int i = 0; i < nc; i++)
             {
               inc = i * nc;
               psi_up = FU_up[inc] * Fpsi_in_up[0];
               psi_dw = FHU_dw[inc] * Fpsi_in_dw[0];
-              for (j = 1; j < nc; j++)
+              for (mdp_int j = 1; j < nc; j++)
               {
                 psi_up += FU_up[inc + j] * Fpsi_in_up[j];
                 psi_dw += FHU_dw[inc + j] * Fpsi_in_dw[j];
@@ -311,9 +310,9 @@ namespace MDP
         }
         if (cSW != 0)
         {
-          for (mu = 0; mu < ndim - 1; mu++)
-            for (nu = mu + 1; nu < ndim; nu++)
-              for (a = 0; a < nspin; a++)
+          for (mdp_int mu = 0; mu < ndim - 1; mu++)
+            for (mdp_int nu = mu + 1; nu < ndim; nu++)
+              for (mdp_int a = 0; a < nspin; a++)
               {
                 Fem = &(U.em(x, mu, nu, 0, 0));
                 bnc = Sigma_idx[mu][nu][a] * nc;
@@ -322,18 +321,18 @@ namespace MDP
                   coeff_clover = (kappa_s * cSW * c_E * I) * Sigma_val[mu][nu][a];
                 else
                   coeff_clover = (kappa_s * cSW * c_B * I) * Sigma_val[mu][nu][a];
-                for (i = 0; i < nc; i++)
+                for (mdp_int i = 0; i < nc; i++)
                 {
                   inc = i * nc;
                   psi_loc = Fem[inc] * Fpsi_in[0];
-                  for (j = 1; j < nc; j++)
+                  for (mdp_int j = 1; j < nc; j++)
                     psi_loc += Fem[inc + j] * Fpsi_in[j];
                   psi_tmp[bnc + i] += coeff_clover * psi_loc;
                 }
               }
         }
-        for (a = 0; a < nspin; a++)
-          for (i = 0; i < nc; i++)
+        for (mdp_int a = 0; a < nspin; a++)
+          for (mdp_int i = 0; i < nc; i++)
             psi_out(x, a, i) += psi_tmp[anc = a * nc + i];
       }
       delete[] psi_tmp;

@@ -27,10 +27,10 @@ void pion_prop_from_slice(int nt, int nx, const char *filename)
   {
     y.set(x(1), x(2), x(3));
     Q(y) = 0;
-    for (int a = 0; a < S.nspin; a++)
-      for (int b = 0; b < S.nspin; b++)
-        for (int i = 0; i < S.nc; i++)
-          for (int j = 0; j < S.nc; j++)
+    for (int a = 0; a < S.nspin(); a++)
+      for (int b = 0; b < S.nspin(); b++)
+        for (int i = 0; i < S.nc(); i++)
+          for (int j = 0; j < S.nc(); j++)
             Q(y) += std::pow(abs(S(x, a, b, i, j)), 2);
   }
   snprintf(filename2, 128, "%s.pion.vtk", filename);

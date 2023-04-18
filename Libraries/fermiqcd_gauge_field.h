@@ -173,7 +173,7 @@ namespace MDP
   class gauge_field : public mdp_complex_field
   {
   private:
-    int m_nc;
+    mdp_int m_nc;
 
   public:
     em_field em;
