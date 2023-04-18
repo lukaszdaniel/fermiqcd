@@ -68,10 +68,10 @@ namespace MDP
       to_old_U = new GaugeClass(U.lattice(), U.nc());
       to_old_f_U = new GaugeClass(U.lattice(), U.nc());
 
-      to_f_F = new FermiClass(F.lattice(), F.nc);
-      to_p_F = new FermiClass(F.lattice(), F.nc);
-      to_old_F = new FermiClass(F.lattice(), F.nc);
-      to_old_f_F = new FermiClass(F.lattice(), F.nc);
+      to_f_F = new FermiClass(F.lattice(), F.nc());
+      to_p_F = new FermiClass(F.lattice(), F.nc());
+      to_old_F = new FermiClass(F.lattice(), F.nc());
+      to_old_f_F = new FermiClass(F.lattice(), F.nc());
 
       std::cout << to_p_U->lattice().ndim() << std::endl;
 
@@ -277,7 +277,7 @@ namespace MDP
       mdp_real re, im;
       forallsites(x)
       {
-        for (int alpha = 0; alpha < F.nspin; alpha++)
+        for (int alpha = 0; alpha < F.nspin(); alpha++)
         {
           for (int i = 0; i < F.nc(); i++)
           {
@@ -435,8 +435,8 @@ namespace MDP
       mdp_site x(U.lattice());
       mdp_matrix staple(U.nc(), U.nc());
       GaugeClass Udag(U.lattice(), U.nc()), utmp(U.lattice(), U.nc());
-      FermiClass sol(F.lattice(), F.nc, F.nspin);
-      FermiClass psol(F.lattice(), F.nc, F.nspin);
+      FermiClass sol(F.lattice(), F.nc(), F.nspin());
+      FermiClass psol(F.lattice(), F.nc(), F.nspin());
       GaugeClass &V = *to_V;
 
       forallsitesandcopies(x)
