@@ -188,7 +188,7 @@ namespace MDP
      */
     void translate_to_coordinates(mdp_int global_idx, int *x)
     {
-      for (int mu = m_ndim - 1; mu > 0; mu--)
+      for (mdp_int mu = m_ndim - 1; mu > 0; mu--)
       {
         x[mu] = global_idx % m_nx[mu];
         global_idx = (global_idx - x[mu]) / m_nx[mu];
@@ -332,7 +332,7 @@ namespace MDP
       m_global_volume = 1;
 
       mpi << "Lattice dimension: " << nx_[0];
-      for (int mu = 1; mu < m_ndim; mu++)
+      for (mdp_int mu = 1; mu < m_ndim; mu++)
         mpi << " x " << nx_[mu];
       mpi << "\n";
 
@@ -416,7 +416,7 @@ namespace MDP
             // One may want to optimize case 3. It was thought for
             // improved staggered fermions.
             // ////////////////////////////////////////////////////
-            for (int nu = 0; nu < m_ndir; nu++)
+            for (mdp_int nu = 0; nu < m_ndir; nu++)
               if ((nu != mu) || (m_next_next > 1))
               {
                 (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, m_ndim, m_nx);
@@ -482,13 +482,13 @@ namespace MDP
 
       m_dw = new mdp_int *[m_local_volume];
       m_up = new mdp_int *[m_local_volume];
-      m_co = new int *[m_local_volume];
+      m_co = new mdp_int *[m_local_volume];
 
-      for (int new_idx = 0; new_idx < m_local_volume; new_idx++)
+      for (mdp_int new_idx = 0; new_idx < m_local_volume; new_idx++)
       {
         m_dw[new_idx] = new mdp_int[m_ndir];
         m_up[new_idx] = new mdp_int[m_ndir];
-        m_co[new_idx] = new int[m_ndir];
+        m_co[new_idx] = new mdp_int[m_ndir];
       }
       m_global_from_local = new mdp_int[m_local_volume];
 #ifndef MDP_NO_LG
@@ -499,7 +499,7 @@ namespace MDP
         error("mdp_lattice::mdp_lattice()\n"
               "Unable to create temporary m_local_from_global file");
 #endif
-      m_wh = new int[m_local_volume];
+      m_wh = new mdp_int[m_local_volume];
       for (int global_idx = 0; global_idx < m_global_volume; global_idx++)
 #ifndef MDP_NO_LG
         m_local_from_global[global_idx] = NOWHERE;
@@ -707,19 +707,19 @@ namespace MDP
 
     /** @brief number of dimensions of the lattice
      */
-    int n_dimensions() const
+    mdp_int n_dimensions() const
     {
       return m_ndim;
     }
 
-    int ndim() const
+    mdp_int ndim() const
     {
       return m_ndim;
     }
 
     /** @brief number of directions one can move on the lattice; usually same as ndim
      */
-    int n_directions() const
+    mdp_int n_directions() const
     {
       return m_ndir;
     }

@@ -70,7 +70,7 @@ namespace MDP
       if (fp == 0)
         error("Unable to open file");
 
-      int i;
+      mdp_int i;
       if (load_header)
       {
         mdp_field_file_header tmp_header;
@@ -92,7 +92,7 @@ namespace MDP
 
         // UGLY BUT FIXES INCOMPATIBIITY
         int actual_size = tmp_header.box[0];
-        for (int d = 1; d < tmp_header.ndim; d++)
+        for (mdp_int d = 1; d < tmp_header.ndim; d++)
           actual_size *= tmp_header.box[d];
         tmp_header.sites = actual_size;
         header_size += total_size - (tmp_header.bytes_per_site * actual_size + header_size);

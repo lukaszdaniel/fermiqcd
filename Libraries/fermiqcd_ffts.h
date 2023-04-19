@@ -77,7 +77,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    int size = psi_in.lattice().size(1);
+    mdp_int size = psi_in.lattice().size(1);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)
@@ -154,7 +154,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    int size = psi_in.lattice().size(0);
+    mdp_int size = psi_in.lattice().size(0);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)
@@ -200,7 +200,7 @@ namespace MDP
                        fermi_field &psi_in,
                        int sign, bool ttime = false)
   {
-    for (int t = 0; t < psi_in.lattice().size(0); t++)
+    for (mdp_int t = 0; t < psi_in.lattice().size(0); t++)
       fermi_field_fft(t, psi_out, psi_in, sign);
 
     if (ttime)
@@ -216,7 +216,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    int size = psi_in.lattice().size(1);
+    mdp_int size = psi_in.lattice().size(1);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)
@@ -293,7 +293,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    int size = psi_in.lattice().size(0);
+    mdp_int size = psi_in.lattice().size(0);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)

@@ -376,8 +376,8 @@ namespace MDP
 
     static int strange_mapping(mdp_site &x)
     {
-      int mu, type = 0;
-      for (mu = 0; mu < x.lattice().n_dimensions(); mu++)
+      int type = 0;
+      for (mdp_int mu = 0; mu < x.lattice().n_dimensions(); mu++)
         type += (int)std::pow((float)iGauge_min, mu) * (x(mu) % iGauge_min);
       return type;
     }

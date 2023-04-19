@@ -159,10 +159,10 @@ namespace MDP
       return !(*this == x);
     }
 
-    void start(int np = 0)
+    void start(mdp_int np = 0)
     {
 #ifdef BLOCKSITE
-      for (int k = 0; k < BLOCKSITE; k++)
+      for (mdp_int k = 0; k < BLOCKSITE; k++)
         m_block[k] = 0;
 #endif
       m_idx = lattice().start0(ME, np);
@@ -192,7 +192,7 @@ namespace MDP
 
     /** @brief returns the parity EVEN or ODD of the site
      */
-    int parity()
+    mdp_int parity()
     {
       return lattice().site_parity(m_idx);
     }
@@ -200,7 +200,7 @@ namespace MDP
     /** @brief true if the site is stored locally as a copy of a site local
      * in another process
      */
-    int is_in_boundary()
+    bool is_in_boundary()
     {
       return (lattice().process(m_idx) != ME);
     }
@@ -241,7 +241,7 @@ namespace MDP
 
     /** @brief returns the site shifted forward in direction mu=(0...ndim-1)
      */
-    mdp_site operator+(int mu)
+    mdp_site operator+(mdp_int mu)
     {
       mdp_int idx2 = lattice().move_up(m_idx, mu);
       if (idx2 == NOWHERE)
@@ -282,7 +282,7 @@ namespace MDP
     /** @brief returns a site shifted i position (backwards if i<0 or forward if i>0)
      * in direction mu=(0...mdim-1)
      */
-    mdp_site hop(int i, int mu)
+    mdp_site hop(int i, mdp_int mu)
     {
       mdp_site y(lattice());
       y = (*this);
@@ -347,16 +347,16 @@ namespace MDP
     }
 
     /// returns mu coordinate of the site
-    int operator()(int mu)
+    mdp_int operator()(mdp_int mu)
     {
       return lattice().coordinate(m_idx, mu);
     }
 
     void operator=(int *x)
     {
-      int ndim = lattice().n_dimensions();
+      mdp_int ndim = lattice().n_dimensions();
       m_idx = x[0];
-      for (int mu = 1; mu < ndim; mu++)
+      for (mdp_int mu = 1; mu < ndim; mu++)
         m_idx = m_idx * lattice().size(mu) + x[mu];
       m_idx = lattice().local(m_idx);
       if (m_idx == NOWHERE)
@@ -375,7 +375,7 @@ namespace MDP
     void set(int x0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
              int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
     {
-      int ndim = lattice().n_dimensions();
+      mdp_int ndim = lattice().n_dimensions();
       m_idx = x0;
       if (ndim > 1)
         m_idx = m_idx * lattice().size(1) + x1;
@@ -428,7 +428,7 @@ namespace MDP
     int is_equal(int x0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
                  int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
     {
-      int ndim = lattice().n_dimensions();
+      mdp_int ndim = lattice().n_dimensions();
 
       if ((ndim > 0) && (x0 != lattice().coordinate(m_idx, 0)))
         return false;

@@ -81,9 +81,9 @@ namespace MDP
       staggered_field psi(S.lattice(), S.nc());
       staggered_field chi(S.lattice(), S.nc());
       mdp_site x(S.lattice());
-      int ndim = S.lattice().n_dimensions();
+      mdp_int ndim = S.lattice().n_dimensions();
       int nc = S.nc();
-      int i, j, mu, a;
+      int i, j;
 
       double time = mpi.time();
 
@@ -93,7 +93,7 @@ namespace MDP
         fflush(stdout);
       }
 
-      for (a = 0; a < (1 << ndim); a++)
+      for (mdp_int a = 0; a < (1 << ndim); a++)
         for (j = 0; j < nc; j++)
         {
           forallsitesandcopies(x)
@@ -106,7 +106,7 @@ namespace MDP
           if (ME == 0 && shutup == false)
           {
             printf("(source at (");
-            for (mu = 0; mu < ndim; mu++)
+            for (mdp_int mu = 0; mu < ndim; mu++)
               printf("%i ", x(mu));
             printf("), Color: %i\n", j);
             fflush(stdout);

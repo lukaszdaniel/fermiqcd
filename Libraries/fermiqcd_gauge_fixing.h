@@ -154,14 +154,14 @@ namespace MDP
 
     static void z3_fix(gauge_field &U, int mu)
     {
-      int i = 0, t;
+      int i = 0;
       mdp_site x(U.lattice());
       mdp_matrix A;
       mdp_complex phase[3] = {mdp_complex(1, 0),
                               exp(2.0 * Pi * I / 3.0),
                               exp(4.0 * Pi * I / 3.0)};
       mdp_real alpha[3];
-      for (t = 0; t < U.lattice().size(mu) - 1; t++)
+      for (mdp_int t = 0; t < U.lattice().size(mu) - 1; t++)
       {
         A = mdp_zero(U.nc());
         forallsites(x)
