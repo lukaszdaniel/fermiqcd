@@ -32,8 +32,8 @@ namespace MDP
   class fermi_field : public mdp_complex_field
   {
   private:
-    int m_nspin;
-    int m_nc;
+    mdp_int m_nspin;
+    mdp_int m_nc;
 
   public:
     fermi_field()

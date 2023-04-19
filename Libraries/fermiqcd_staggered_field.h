@@ -29,8 +29,8 @@ namespace MDP
   class staggered_field : public mdp_complex_field
   {
   private:
-    mdp_int m_nc;
     mdp_int m_nspin;
+    mdp_int m_nc;
 
   public:
     staggered_field(mdp_lattice &a, int nc_, int nspin_ = 4)

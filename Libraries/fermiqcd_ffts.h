@@ -43,26 +43,28 @@ namespace MDP
   void fft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
            mdp_int offset = 0, mdp_int coeff = 1)
   {
-    mdp_int a, b, h, pow2b, N = i2pow(n);
+    mdp_int pow2b, N = i2pow(n);
     mdp_complex alpha, omega, F[N];
     if (sign != 0)
-      for (h = 0; h < N; h++)
+      for (mdp_int h = 0; h < N; h++)
       {
         alpha = 2.0 * sign * Pi * I / N * h;
-        for (a = 0; a < N; a++)
+        for (mdp_int a = 0; a < N; a++)
           F[a] = f[offset + coeff * a];
-        for (b = n - 1; b >= 0; b--)
+
+        for (mdp_int b = n - 1; b >= 0; b--)
         {
           pow2b = i2pow(b);
           omega = exp(alpha * pow2b);
-          for (a = 0; a < pow2b; a++)
+          for (mdp_int a = 0; a < pow2b; a++)
             F[a] += omega * F[a + pow2b];
-        };
+        }
+
         fft_f[offset + coeff * h] = F[0] / std::sqrt(N);
       }
     else
     {
-      for (a = 0; a < N; a++)
+      for (mdp_int a = 0; a < N; a++)
         fft_f[offset + coeff * a] = f[offset + coeff * a];
     }
   }

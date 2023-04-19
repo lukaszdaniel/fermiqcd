@@ -32,9 +32,9 @@ namespace MDP
   class dwfermi_field : public mdp_complex_field
   {
   private:
-    int m_nspin;
-    int m_nc;
-    int m_L5;
+    mdp_int m_nspin;
+    mdp_int m_nc;
+    mdp_int m_L5;
 
   public:
     dwfermi_field()

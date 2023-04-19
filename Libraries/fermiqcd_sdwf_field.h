@@ -21,8 +21,8 @@ namespace MDP
   class sdwf_field : public mdp_complex_field
   {
   private:
-    mdp_int m_nc;
     mdp_int m_nspin;
+    mdp_int m_nc;
     mdp_int m_L5;
 
   public:
