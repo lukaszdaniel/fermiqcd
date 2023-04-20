@@ -101,11 +101,12 @@ namespace MDP
   class mdp_complex_field : public mdp_field<mdp_complex>
   {
   public:
-    mdp_complex_field() {}
-
-    mdp_complex_field(mdp_lattice &lattice, int n = 1)
+    mdp_complex_field() : mdp_field<mdp_complex>()
     {
-      allocate_field(lattice, n);
+    }
+
+    mdp_complex_field(mdp_lattice &lattice, int n = 1) : mdp_field<mdp_complex>(lattice, n)
+    {
     }
 
     mdp_complex_field(const mdp_complex_field &other) : mdp_field<mdp_complex>(other)
@@ -394,9 +395,9 @@ namespace MDP
     {
       mdp_int i_min = psi.physical_local_start(parity);
       mdp_int i_max = psi.physical_local_stop(parity);
-      mdp_int i = i_min;
+
       //    this needs optimization.
-      for (; i < i_max; i++)
+      for (mdp_int i = i_min; i < i_max; i++)
         psi[i] += alpha * chi[i];
     }
 
@@ -413,9 +414,9 @@ namespace MDP
       double residue = 0, num = 0, den = 0;
       mdp_int i_min = p.physical_local_start(parity);
       mdp_int i_max = q.physical_local_stop(parity);
-      mdp_int i = i_min;
+
       //    this needs optimization.
-      for (; i < i_max;)
+      for (mdp_int i = i_min; i < i_max;)
       {
         num += abs2(p[i]);
         den += abs2(q[i]);

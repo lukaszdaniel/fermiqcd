@@ -66,7 +66,7 @@ namespace MDP
   public:
     /** @brief Create a default em field
      */
-    em_field() : m_nc(0)
+    em_field() : mdp_complex_field(), m_nc(0)
     {
     }
 
@@ -75,20 +75,16 @@ namespace MDP
      * @param a Lattice where the field needs to reside.
      * @param nc_ Number of colours.
      */
-    em_field(mdp_lattice &a, int nc_) : m_nc(nc_)
+    em_field(mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * ((a.ndim() * (a.ndim() - 1)) / 2))), m_nc(nc_)
     {
-      mdp_int num_of_elements = ((a.ndim() * (a.ndim() - 1)) / 2);
-      allocate_field(a, num_of_elements * m_nc * m_nc);
     }
 
     /** @brief Copy constructor
      *
      * @param em em field to be copied.
      */
-    em_field(const em_field &em) : m_nc(em.m_nc)
+    em_field(const em_field &em) : mdp_complex_field(em), m_nc(em.m_nc)
     {
-      mdp_int num_of_elements = ((em.ndim() * (em.ndim() - 1)) / 2);
-      allocate_field(em.lattice(), num_of_elements * m_nc * m_nc);
     }
 
     void allocate_em_field(mdp_lattice &a, int nc_)
@@ -178,7 +174,7 @@ namespace MDP
 
     /** @brief Create a default gauge field
      */
-    gauge_field() : m_nc(0)
+    gauge_field() : mdp_complex_field(), m_nc(0)
     {
     }
 
@@ -187,9 +183,8 @@ namespace MDP
      * @param a Lattice where the field needs to reside.
      * @param nc_ Number of colours.
      */
-    gauge_field(mdp_lattice &a, int nc_) : m_nc(nc_)
+    gauge_field(mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * a.ndim())), m_nc(nc_)
     {
-      allocate_field(a, a.ndim() * m_nc * m_nc);
     }
 
     /** @brief Copy constructor

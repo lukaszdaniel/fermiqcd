@@ -42,24 +42,24 @@ namespace MDP
     mdp_int m_nc;
 
   public:
-    fermi_propagator()
+    fermi_propagator() : mdp_complex_field(), m_nspin(0), m_nc(0)
     {
     }
 
-    fermi_propagator(mdp_lattice &mylattice, int nc_, int nspin_ = 4)
+    fermi_propagator(mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_ * nc_ * nspin_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
     {
-      m_nspin = nspin_;
-      m_nc = nc_;
-      allocate_field(mylattice, m_nspin * m_nspin * m_nc * m_nc);
     }
 
-    void allocate_fermi_propagator(mdp_lattice &mylattice,
-                                   int nc_, int nspin_ = 4)
+    fermi_propagator(const fermi_propagator &chi) : mdp_complex_field(chi), m_nspin(chi.m_nspin), m_nc(chi.m_nc)
+    {
+    }
+
+    void allocate_fermi_propagator(mdp_lattice &a, int nc_, int nspin_ = 4)
     {
       deallocate_field();
       m_nspin = nspin_;
       m_nc = nc_;
-      allocate_field(mylattice, m_nspin * m_nspin * m_nc * m_nc);
+      allocate_field(a, m_nspin * m_nspin * m_nc * m_nc);
     }
 
     mdp_int nspin() const

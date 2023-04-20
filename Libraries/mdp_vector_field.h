@@ -33,24 +33,18 @@ namespace MDP
     mdp_int m_imax;
 
   public:
-    mdp_vector_field()
+    mdp_vector_field() : mdp_field<mdp_complex>(), m_rows(0), m_columns(0), m_imax(0)
     {
-      m_rows = m_columns = m_imax = 0;
     }
-    mdp_vector_field(mdp_vector_field &field)
+
+    mdp_vector_field(mdp_lattice &a, int i) : mdp_field<mdp_complex>(a, i), m_rows(i), m_columns(1), m_imax(i)
     {
-      m_rows = field.m_rows;
-      m_columns = field.m_columns;
-      m_imax = field.m_imax;
-      allocate_field(field.lattice(), field.m_imax);
     }
-    mdp_vector_field(mdp_lattice &a, int i)
+
+    mdp_vector_field(mdp_vector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
     {
-      m_rows = i;
-      m_columns = 1;
-      m_imax = i;
-      allocate_field(a, m_imax);
     }
+
     void allocate_mdp_vector_field(mdp_lattice &a, int i)
     {
       deallocate_field();
@@ -59,14 +53,17 @@ namespace MDP
       m_imax = i;
       allocate_field(a, m_imax);
     }
+
     mdp_matrix operator()(mdp_site x)
     {
       return mdp_matrix(address(x), m_rows, m_columns);
     }
+
     mdp_complex &operator()(mdp_site x, int i)
     {
       return address(x)[i];
     }
+
     const mdp_complex &operator()(mdp_site x, int i) const
     {
       return address(x)[i];

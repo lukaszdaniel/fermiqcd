@@ -37,17 +37,22 @@ namespace MDP
   ///    forallsites(y) cout << S(x,a) << endl;
   /// }
   /// @endverbatim
-  class staggered_propagator : public mdp_field<mdp_complex>
+  class staggered_propagator : public mdp_complex_field
   {
   private:
-    int m_nc;
+    mdp_int m_nc;
 
   public:
-    staggered_propagator(mdp_lattice &mylattice, int nc_)
+    staggered_propagator() : mdp_complex_field()
     {
-      m_nc = nc_;
-      int ndim = mylattice.n_dimensions();
-      allocate_field(mylattice, ndim * ndim * m_nc * m_nc);
+    }
+
+    staggered_propagator(mdp_lattice &a, int nc_) : mdp_complex_field(a, a.ndim() * a.ndim() * nc_ * nc_), m_nc(nc_)
+    {
+    }
+
+    staggered_propagator(const staggered_propagator &S) : mdp_complex_field(S), m_nc(S.m_nc)
+    {
     }
 
     mdp_int nc() const
@@ -75,15 +80,14 @@ namespace MDP
                          mdp_real absolute_precision = fermi_inversion_precision,
                          mdp_real relative_precision = 0,
                          int max_steps = 2000,
-                         void (*smf)(staggered_field &, gauge_field &) = 0,
+                         void (*smf)(staggered_field &, gauge_field &) = nullptr,
                          int comp = 0)
     {
       staggered_field psi(S.lattice(), S.nc());
       staggered_field chi(S.lattice(), S.nc());
       mdp_site x(S.lattice());
       mdp_int ndim = S.lattice().n_dimensions();
-      int nc = S.nc();
-      int i, j;
+      mdp_int nc = S.nc();
 
       double time = mpi.time();
 
@@ -94,11 +98,11 @@ namespace MDP
       }
 
       for (mdp_int a = 0; a < (1 << ndim); a++)
-        for (j = 0; j < nc; j++)
+        for (mdp_int j = 0; j < nc; j++)
         {
           forallsitesandcopies(x)
           {
-            for (i = 0; i < nc; i++)
+            for (mdp_int i = 0; i < nc; i++)
               psi(x, i) = 0;
           }
 
@@ -106,8 +110,10 @@ namespace MDP
           if (ME == 0 && shutup == false)
           {
             printf("(source at (");
+
             for (mdp_int mu = 0; mu < ndim; mu++)
               printf("%i ", x(mu));
+
             printf("), Color: %i\n", j);
             fflush(stdout);
           }
@@ -121,11 +127,12 @@ namespace MDP
           */
           if (smf != nullptr)
             (*smf)(psi, U);
+
           mul_invQ(chi, psi, U, coeff, absolute_precision, relative_precision, max_steps);
 
           forallsites(x)
           {
-            for (i = 0; i < nc; i++)
+            for (mdp_int i = 0; i < nc; i++)
               S(x, a, i, j) = chi(x, i);
           }
         }

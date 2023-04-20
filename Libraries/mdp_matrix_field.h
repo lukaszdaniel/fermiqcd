@@ -33,23 +33,18 @@ namespace MDP
     mdp_uint m_imax;
 
   public:
-    mdp_matrix_field() : m_rows(0), m_columns(0), m_imax(0)
+    mdp_matrix_field() : mdp_field<mdp_complex>(), m_rows(0), m_columns(0), m_imax(0)
     {
-      reset_field();
     }
 
-    mdp_matrix_field(mdp_matrix_field &field) : m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
+    mdp_matrix_field(mdp_matrix_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
     {
-      deallocate_field();
-      allocate_field(field.lattice(), field.m_imax);
     }
 
     /** @brief declares a field of ixj matrices at each site
      */
-    mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j) : m_rows(i), m_columns(j), m_imax(i * j)
+    mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j) : mdp_field<mdp_complex>(a, i * j), m_rows(i), m_columns(j), m_imax(i * j)
     {
-      deallocate_field();
-      allocate_field(a, m_imax);
     }
 
     /** @brief dynamically allocates a field of ixj matrices at each site

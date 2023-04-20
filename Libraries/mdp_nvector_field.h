@@ -24,24 +24,18 @@ namespace MDP
     mdp_uint m_imax2;
 
   public:
-    mdp_nvector_field() : m_rows(0), m_imax(0), m_imax2(0)
+    mdp_nvector_field() : mdp_field<mdp_complex>(), m_rows(0), m_imax(0), m_imax2(0)
     {
-      reset_field();
-    }
-
-    mdp_nvector_field(mdp_nvector_field &field) : m_rows(field.m_rows), m_imax(field.m_imax), m_imax2(field.m_imax2)
-    {
-      allocate_field(field.lattice(), field.m_imax);
     }
 
     /** @brief declares a n-component vector field of i-component vectors at each site
      */
-    mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i)
+    mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i) : mdp_field<mdp_complex>(a, i * n), m_rows(i), m_imax(i * n), m_imax2(i)
     {
-      m_rows = i;
-      m_imax = i * n;
-      m_imax2 = i;
-      allocate_field(a, m_imax);
+    }
+
+    mdp_nvector_field(mdp_nvector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_imax(field.m_imax), m_imax2(field.m_imax2)
+    {
     }
 
     /** @brief dynamically allocates a n-component vector field of i-component vectors at each site

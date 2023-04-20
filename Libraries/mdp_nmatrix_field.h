@@ -36,23 +36,18 @@ namespace MDP
     mdp_uint m_imax2;
 
   public:
-    mdp_nmatrix_field() : m_matrices(0), m_rows(0), m_columns(0), m_imax(0), m_imax2(0)
+    mdp_nmatrix_field() : mdp_field<mdp_complex>(), m_matrices(0), m_rows(0), m_columns(0), m_imax(0), m_imax2(0)
     {
-      reset_field();
-    }
-
-    mdp_nmatrix_field(mdp_nmatrix_field &field) : m_matrices(field.m_matrices), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax), m_imax2(field.m_imax2)
-    {
-      deallocate_field();
-      allocate_field(field.lattice(), field.m_imax);
     }
 
     /** @brief declares a n-component vector field of ixj matrices at each site
      */
-    mdp_nmatrix_field(mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j) : m_matrices(n), m_rows(i), m_columns(j), m_imax(i * j * n), m_imax2(i * j)
+    mdp_nmatrix_field(mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j) : mdp_field<mdp_complex>(a, i * j * n), m_matrices(n), m_rows(i), m_columns(j), m_imax(i * j * n), m_imax2(i * j)
     {
-      deallocate_field();
-      allocate_field(a, m_imax);
+    }
+
+    mdp_nmatrix_field(mdp_nmatrix_field &field) : mdp_field<mdp_complex>(field), m_matrices(field.m_matrices), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax), m_imax2(field.m_imax2)
+    {
     }
 
     /** @brief dynamically allocates a n-component vector field of ixj matrices at each site

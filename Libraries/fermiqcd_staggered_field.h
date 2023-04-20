@@ -33,18 +33,17 @@ namespace MDP
     mdp_int m_nc;
 
   public:
-    staggered_field(mdp_lattice &a, int nc_, int nspin_ = 4)
+    staggered_field() : mdp_complex_field(), m_nspin(0), m_nc(0)
     {
-      // attention here that nspin_ is ignored!
-      m_nc = nc_;
-      m_nspin = nspin_;
-      allocate_field(a, m_nc);
     }
 
-    staggered_field(const staggered_field &chi) : mdp_complex_field(chi)
+    staggered_field(mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_)), m_nspin(nspin_), m_nc(nc_)
     {
-      m_nc = chi.m_nc;
-      m_nspin = chi.m_nspin;
+      // attention here that nspin_ is ignored in field allocation!
+    }
+
+    staggered_field(const staggered_field &chi) : mdp_complex_field(chi), m_nspin(chi.m_nspin), m_nc(chi.m_nc)
+    {
     }
 
     mdp_int nspin() const

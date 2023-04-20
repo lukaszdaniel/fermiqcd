@@ -36,21 +36,16 @@ namespace MDP
     mdp_int m_nc;
 
   public:
-    fermi_field()
+    fermi_field() : mdp_complex_field(), m_nspin(0), m_nc(0)
     {
     }
 
-    fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4)
+    fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
     {
-      m_nc = nc_;
-      m_nspin = nspin_;
-      allocate_field(a, m_nspin * m_nc);
     }
 
-    fermi_field(const fermi_field &chi) : mdp_complex_field(chi)
+    fermi_field(const fermi_field &chi) : mdp_complex_field(chi), m_nspin(chi.m_nspin), m_nc(chi.m_nc)
     {
-      m_nc = chi.m_nc;
-      m_nspin = chi.m_nspin;
     }
 
     void allocate_fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4)

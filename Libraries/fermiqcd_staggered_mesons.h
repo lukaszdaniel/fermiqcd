@@ -23,17 +23,24 @@ namespace MDP
   class phase_field : public mdp_int_scalar_field
   {
   public:
-    phase_field(mdp_lattice &a)
+    phase_field() : mdp_int_scalar_field()
+    {
+    }
+
+    phase_field(mdp_lattice &a) : mdp_int_scalar_field(a, 16)
     {
       if (a.n_dimensions() != 4)
         error("fermiqcd_staggered_mesons/phase_field: ndim!=4");
-      allocate_field(a, 16);
+    }
+
+    phase_field(const phase_field &phi) : mdp_int_scalar_field(phi)
+    {
     }
 
     int component(mdp_site x, mdp_site y)
     {
-      int i = 0, mu;
-      for (mu = 0; mu < KS_NDIM; mu++)
+      int i = 0;
+      for (int mu = 0; mu < KS_NDIM; mu++)
       {
         if (x(mu) / 2 != y(mu) / 2)
           return 0;
@@ -265,7 +272,7 @@ namespace MDP
     unsigned int t_source = 0;             // location of the source (timeslice)
     unsigned int t, nt                     // number of timeslices
                     = U.lattice().size(0); //
-    mdp_matrix tmp(nt, U.nc());              // auxiliary var
+    mdp_matrix tmp(nt, U.nc());            // auxiliary var
     mdp_matrix prop(2, nt);                // output vector
     mdp_site x(U.lattice());               //
     // ///////////////////////////////
@@ -305,13 +312,13 @@ namespace MDP
       forallsites(x)
       {                                  //
         t = (x(0) - t_source + nt) % nt; //
-        for (j = 0; j < U.nc(); j++)       //
+        for (j = 0; j < U.nc(); j++)     //
           tmp(t, j) += conj(quark_prop(x, j)) * quark_prop(x, j);
-      }                            //
-      mpi.add(tmp);                //
-      for (t = 0; t < nt; t++)     //
+      }                              //
+      mpi.add(tmp);                  //
+      for (t = 0; t < nt; t++)       //
         for (j = 0; j < U.nc(); j++) //
-          prop(0, t) += tmp(t, j); //
+          prop(0, t) += tmp(t, j);   //
       // /////////////////////////////////////////////////
 
       // // trace with wall sink /////////////////////////
@@ -319,12 +326,12 @@ namespace MDP
       forallsites(x)
       {                                              //
         t = (x(0) - t_source + nt) % nt;             //
-        for (j = 0; j < U.nc(); j++)                   //
+        for (j = 0; j < U.nc(); j++)                 //
           tmp(t, j) += quark_prop(x, j);             //
       }                                              //
       mpi.add(tmp);                                  //
       for (t = 0; t < nt; t++)                       //
-        for (j = 0; j < U.nc(); j++)                   //
+        for (j = 0; j < U.nc(); j++)                 //
           prop(1, t) += conj(tmp(t, j)) * tmp(t, j); //
                                                      //
     }
