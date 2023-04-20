@@ -1,13 +1,14 @@
 from optparse import *
 from rpy import *
-import re, urllib.request, urllib.parse, urllib.error, csv
+import re
+from Tk import *
 
 usage = "python iplot.py\n"
-version = ("iplotv1.0\n"
-           "  Copyright (c) 2007 Massimo Di Pierro\n"
-           "  All rights reserved\n"
-           "  License: GPL 2.0\n\n"
-           "  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>\n")
+version = ("iplotv1.0"
+           "\n  Copyright (c) 2007 Massimo Di Pierro"
+           "\n  All rights reserved"
+           "\n  License: GPL 3.0"
+           "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>")
 
 description = "plot the output of ibootstrap.py"
 
@@ -15,7 +16,7 @@ r.library("Hmisc")
 
 
 def clean(text):
-    return re.sub("\s+", "", text.replace("/", "_div_"))
+    return re.sub("\W", "", text)
 
 
 class IPlot:
@@ -25,7 +26,6 @@ class IPlot:
         if self.type == "quartz":
             r.quartz()
         self.plot_raw_data(filename + "_raw_data.csv")
-        self.plot_autocorrelations(filename + "_autocorrelations.csv")
         self.plot_trails(filename + "_trails.csv")
         self.plot_samples(filename + "_samples.csv")
         self.plot_min_mean_max(filename + "_min_mean_max.csv", items)
@@ -40,14 +40,13 @@ class IPlot:
         if self.type == "ps":
             r.dev_off()
         else:
-            eval(input("press enter to continue"))
+            input("press enter to continue")
 
     def plot_raw_data(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
+        for line in open(filename, "r"):
+            items = line.split(",")
+            tag = items[0][1:-1]
+            data = [float(x) for x in items[1:]]
             self.begin(filename[:-4] + "_%s" % clean(tag))
             r.plot(x=list(range(len(data))),
                    y=data,
@@ -84,26 +83,11 @@ class IPlot:
             )
             self.end()
 
-    def plot_autocorrelations(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
-            self.begin(filename[:-4] + "_%s" % clean(tag))
-            r.plot(x=list(range(len(data))),
-                   y=data,
-                   xlab="step",
-                   ylab=tag,
-                   main="")
-            self.end()
-
     def plot_trails(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
+        for line in open(filename, "r"):
+            items = line.split(",")
+            tag = items[0][1:-1]
+            data = [float(x) for x in items[1:]]
             self.begin(filename[:-4] + "_%s" % clean(tag))
             r.plot(
                 x=list(range(len(data))),
@@ -116,11 +100,10 @@ class IPlot:
             self.end()
 
     def plot_samples(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
+        for line in open(filename, "r"):
+            items = line.split(",")
+            tag = items[0][1:-1]
+            data = [float(x) for x in items[1:]]
             self.begin(filename[:-4] + "_%s_hist" % clean(tag))
             r.hist(data,
                    n=len(data) / 10,
@@ -136,21 +119,22 @@ class IPlot:
             # self.end()
 
     def plot_min_mean_max(self, filename, xlab=["t"]):
-        lines = list(
-            csv.reader(open(filename, "r"),
-                       delimiter=",",
-                       quoting=csv.QUOTE_NONNUMERIC))
-        tags = lines[0]
+        lines = open(filename, "r").readlines()
+        tags = [x[1:-1] for x in re.compile('"[^"]*"').findall(lines[0])]
         if not xlab or xlab[0] == "":
             xlab = [tags[1]]
-        index = 0
-        for tag in tags:
-            if tag[0] == "[":
-                break
+        index = -1
+        for i in range(1, len(tags) - 3):
+            if tags[i] == xlab[0]:
+                index = i - 1
+        if index < 0:
+            print("error", xlab)
+            raise Exception
         sets = {}
-        for items in lines[1:]:
-            tag = items[0]
-            data = items[1:]
+        for line in lines[1:]:
+            items = line.split(",")
+            tag = items[0][1:-1]
+            data = [float(p) for p in items[1:]]
             legend = ""
             for i in range(1, len(tags) - 3):
                 if not tags[i] in xlab:
@@ -184,10 +168,10 @@ def shell_iplot():
     parser = OptionParser(usage, None, Option, version)
     parser.description = description
     parser.add_option(
-        "-i",
-        "--input_prefix",
+        "-o",
+        "--origin_prefix",
         default="ibootstrap",
-        dest="input_prefix",
+        dest="origin_prefix",
         help="the prefix used to build input filenames",
     )
     parser.add_option("-p",
@@ -202,18 +186,8 @@ def shell_iplot():
         dest="plot_variables",
         help="plotting variables",
     )
-    parser.add_option(
-        "-f",
-        "--fit",
-        default=[],
-        dest="fits",
-        action="append",
-        help="fits to be performs on results",
-    )
     (options, args) = parser.parse_args()
-    if options.fits:
-        print("sorry -f not implemented yet!")
-    plot = IPlot(options.input_prefix, options.plot_type,
+    plot = IPlot(options.origin_prefix, options.plot_type,
                  options.plot_variables.split(","))
 
 

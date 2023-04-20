@@ -1,26 +1,28 @@
 import os
 
-sin=input('pattern to replace: ')
-sout=input('replace with: ')
-for filename in os.listdir('./'):
-    if filename=='mdp_compatibility_macros.h': continue
-    if filename[-2:]!='.h': continue
-    print('file ', filename)
-    choice='y' #raw_input(' replace (y/n)? ')
-    if choice.upper() in ['Y', 'YES']:
-        os.system ('cp %s %s.bak' % (filename,filename))
+sin = input("pattern to replace: ")
+sout = input("replace with: ")
+for filename in os.listdir("./"):
+    if filename == "mdp_compatibility_macros.h":
+        continue
+    if filename[-2:] != ".h":
+        continue
+    print("file ", filename)
+    choice = "y"  # raw_input(' replace (y/n)? ')
+    if choice.upper() in ["Y", "YES"]:
+        os.system("cp %s %s.bak" % (filename, filename))
         try:
-            file=open(filename,'r')
+            file = open(filename, "r")
         except:
             continue
-        s=''
+        s = ""
         for line in file.readlines():
-            if line.find(sin)>=0:
-                print('< ', line)
-                line=line.replace(sin,sout)
-                print('> ', line)
-            s=s+line
+            if line.find(sin) >= 0:
+                print("< ", line)
+                line = line.replace(sin, sout)
+                print("> ", line)
+            s = s + line
             pass
         file.close()
-        file=open(filename,'w')
+        file = open(filename, "w")
         file.write(s)
