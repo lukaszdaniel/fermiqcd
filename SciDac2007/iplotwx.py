@@ -82,12 +82,12 @@ class IPlot:
             self.plot_trails(filename+'_trails.csv')
 	    self.plot_samples(filename+'_samples.csv')
 	    self.plot_min_mean_max(filename+'_min_mean_max.csv',items)
-        except Exception, e: print e
+        except Exception as e: print(e)
         self.figure.clear()
 
     def print_all(self):
         def print_dict(d):
-            for name, val in d.items():
+            for name, val in list(d.items()):
                 if isinstance(val, dict):
                     print_dict(val)
                 else:
@@ -141,7 +141,7 @@ class IPlot:
 
            data=items[1:]
            name = prefix + ' %s' % clean(tag)
-           plots[name] = self.make_plot, (name, range(len(data)), data, \
+           plots[name] = self.make_plot, (name, list(range(len(data))), data, \
                    'step', tag)
            name = prefix +' %s hist' % clean(tag)
            plots[name] = \
@@ -152,7 +152,7 @@ class IPlot:
 	   sd=numpy.std(data)
            probs=[min(x,1-x) for x in [stats.norm.cdf((x-mu)/sd) for x in data]]
            name = prefix + ' %s probability' % clean(tag)
-           plots[name] = self.make_plot, (name, range(len(probs)), probs, \
+           plots[name] = self.make_plot, (name, list(range(len(probs))), probs, \
                    "step", "probability "+tag)
 
     def plot_trails(self,filename):
@@ -163,7 +163,7 @@ class IPlot:
 	   tag=items[0]
 	   data=items[1:]
            name = prefix + ' %s' % clean(tag)
-           quants[name] = self.make_plot, (name, range(len(data)), data, \
+           quants[name] = self.make_plot, (name, list(range(len(data))), data, \
                    'step', tag)
 
     def plot_samples(self,filename):
@@ -190,7 +190,7 @@ class IPlot:
 	for i in range(1,len(tags)-3):
 	    if tags[i]==xlab[0]: index=i-1
 	if index<0:
-	    print 'error',xlab
+	    print('error',xlab)
 	    raise Exception
 	sets={}
 	for items in lines[1:]:
@@ -199,7 +199,7 @@ class IPlot:
 	   legend=""
 	   for i in range(1,len(tags)-3):
 	       if not tags[i] in xlab: legend+="%s=%g " % (tags[i],data[i-1])
-	   if not sets.has_key(legend):
+	   if legend not in sets:
 	       x,y,yminus,yplus=[],[],[],[]
 	       sets[legend]=(x,y,yminus,yplus)
 	   else:
@@ -213,7 +213,7 @@ class IPlot:
         quants = {}
         prefix = get_name(filename, self.filename)        
         self.plots[prefix] = quants
-	for legend in sets.keys():
+	for legend in list(sets.keys()):
 	   x,y,yminus,yplus=sets[legend]
            # matplotlib takes offsets for errors, not absolute y positions
            error_low = numpy.subtract(y, yminus)
@@ -364,7 +364,7 @@ def make_gui():
                         if fit.scatter_points:
                            fit.iterative_fit(default_output_prefix \
                               + '_scatter.csv', **variables)
-                        for key,value in variables.items():
+                        for key,value in list(variables.items()):
                            log_msg('%s = %g' % (key, value))
                         log_msg('least_squares=%s'%least_squares)
                         log_msg('hessian=%s' % str(hessian))
@@ -402,7 +402,7 @@ def make_gui():
                             plot[0].plot(new_xdata, high, color='#bb0000')
                         else:
                             plot[0].plot(new_xdata, new_ydata, color='r')
-                    except Exception, e:
+                    except Exception as e:
                         log_msg(e)
                         log_msg('NO FIT')
                 plot[0].set_xlabel(xlabel_entry.GetValue())
@@ -411,7 +411,7 @@ def make_gui():
                 plot[0].set_axis_bgcolor(background_entry.GetValue())
                 figure.set_facecolor(background_entry.GetValue())
                 canvas.draw()
-            except Exception, e:
+            except Exception as e:
                 traceback.print_tb(sys.exc_info()[2])
                 dlg = wx.MessageDialog(None, 'Error setting preferences:\t' + \
                         str(e), style=wx.ICON_ERROR | wx.OK)
@@ -463,7 +463,7 @@ def make_gui():
         root.Bind(wx.EVT_MENU, lambda e: show_plot(name, value), id=id)        
 
     def sorted(d):
-        items = d.items()
+        items = list(d.items())
         items.sort()
         return items
 
@@ -479,7 +479,7 @@ def make_gui():
 
     def make_dict_menu(d):
         items = {}
-        for name, val in d.items():
+        for name, val in list(d.items()):
             if isinstance(val, dict):
                 submenu_items = make_dict_menu(val)
                 submenu = wx.Menu(style=wx.MENU_TEAROFF)
@@ -538,8 +538,8 @@ def make_gui():
                     param_dict[pname] = ptype(entries[index].GetValue())
             param_dict['output_prefix'] = default_output_prefix
             try:
-                print param_dict
-                if param_dict.has_key('indices'):
+                print(param_dict)
+                if 'indices' in param_dict:
                     IPlot.indices=param_dict['indices']
                 else: IPlot.indices='t'
                 bootstrap = ibootstrap.IBootstrap(**param_dict)
@@ -548,7 +548,7 @@ def make_gui():
                 log_msg('IBootstrap status:\t' + bootstrap.status)
                 load_iplot(default_output_prefix)
                 frame.Destroy()
-            except Exception, e:
+            except Exception as e:
                 log_msg(str(e))
                 traceback.print_exc(file=sys.stdout)
 
@@ -577,7 +577,7 @@ def make_gui():
     def setup_data_dir():
         try:
             os.mkdir('.data')
-        except Exception, e:
+        except Exception as e:
             log_msg(str(e))
 
     def load_iplot(path_prefix):

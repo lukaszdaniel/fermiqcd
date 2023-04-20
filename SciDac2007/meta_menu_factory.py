@@ -1,13 +1,13 @@
-from Tkinter import *
-import tkSimpleDialog
+from tkinter import *
+import tkinter.simpledialog
 
-class EntryDialog(tkSimpleDialog.Dialog):
+class EntryDialog(tkinter.simpledialog.Dialog):
     def __init__(self, root, title,label, variable):
         self.root=root
         self.title_=title
         self.label=label
         self.textvariable=variable
-        tkSimpleDialog.Dialog.__init__(self,root)
+        tkinter.simpledialog.Dialog.__init__(self,root)
     def body(self,root):
         self.title(self.title_)
         Label(root, text=self.label).grid(row=0)
@@ -15,7 +15,7 @@ class EntryDialog(tkSimpleDialog.Dialog):
         self.e1.grid(row=1)
         return self.e1 # initial focus
 
-class ScrollDialog(tkSimpleDialog.Dialog):
+class ScrollDialog(tkinter.simpledialog.Dialog):
     def __init__(self, root, title, label, variable, from_=0, to=100, resolution=1):
         self.root=root
         self.title_=title        
@@ -24,7 +24,7 @@ class ScrollDialog(tkSimpleDialog.Dialog):
         self.from_=from_
         self.to=to
         self.resolution=resolution
-        tkSimpleDialog.Dialog.__init__(self,root)
+        tkinter.simpledialog.Dialog.__init__(self,root)
     def body(self,root):
         self.title(self.title_)
         Label(root, text=self.label).grid(row=0)

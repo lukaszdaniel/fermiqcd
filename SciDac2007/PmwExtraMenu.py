@@ -1,6 +1,6 @@
 # $Id: xmenu.py,v 1.20 2005/10/31 18:03:22 jes Exp jes $
 # Copyright 2005 Jim Segrave < jes@jes-2.demon.nl>
-from Tkinter import *
+from tkinter import *
 import re
 
 EMPTY = """
@@ -883,14 +883,14 @@ class ExtraMenu :
 
         # deal with options meant for this menu
         for key in [ 'auto_post', 'pre_pack_command', 'widget_object' ] :
-            if kw.has_key( key ) :
+            if key in kw :
                val = kw.pop( key )
                if val is None:
                    wdict.pop( key )
                else:
                    wdict[ key ] = val
         # then deal with options meant for the widget
-        for ky in kw.keys() :
+        for ky in list(kw.keys()) :
             val = kw[ ky ]
             if val is None :
                 wdict[ 'kw' ].pop( ky )
@@ -1259,22 +1259,22 @@ if __name__ == '__main__' :
     def add_button_5() :
         global emr, r_menu_items, button5
 
-        print "add_button5 ",
+        print("add_button5 ", end=' ')
         # put it after the 'Four' button, before the separator
         ind = r_menu_items[ 6 ][ 0 ]
         if button5 > 0 :
-            print "failed"
+            print("failed")
             return
 
         button5 = emr.add_command( text = 'Five', relief = RAISED,
                                    borderwidth = 0, insert_before = ind )
-        print button5
+        print(button5)
     # button to delete the extra button from right menu
     def del_button_5() :
         global emr, button5
 
         if button5 <= 0 :
-            print "not there"
+            print("not there")
             return
 
         if emr.delete_widget( button5 ) :

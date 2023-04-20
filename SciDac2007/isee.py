@@ -98,13 +98,13 @@ class MayaViShow(Mayavi):
         self.stop=True
 
     def AnimLoop(self,evt):
-        print 'AnimLoop', self.stop
+        print('AnimLoop', self.stop)
         self.stop=False
         self.timestep=0
         mayavi.watcher=Watcher(1000,self.AnimLoopRec)
     
     def AnimLoopRec(self):
-        print 'AnimLoopRec'
+        print('AnimLoopRec')
         if self.stop: 
 	    self.watcher=None
             return
@@ -119,13 +119,13 @@ class MayaViShow(Mayavi):
         if self.timestep>=len(filelist): self.watcher=None
 
     def AnimWatch(self,evt):
-        print 'AnimLoop', self.stop
+        print('AnimLoop', self.stop)
         self.stop=False
         self.frame=0
         mayavi.watcher=Watcher(1000,self.AnimWatchRec)
 
     def AnimWatchRec(self):
-        print 'AnimLoopRec'
+        print('AnimLoopRec')
         if self.stop: 
 	    self.watcher=None
             return

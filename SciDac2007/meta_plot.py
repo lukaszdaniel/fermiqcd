@@ -2,10 +2,10 @@ from math import *
 from random import *
 import datetime
 import sys
-import thread
+import _thread
 try: 
-    from Tkinter import *
-    import tkFileDialog
+    from tkinter import *
+    import tkinter.filedialog
     import Pmw
 except: pass
 
@@ -387,7 +387,7 @@ class Plot:
 
     def save(self,file=None):
         if not file:
-            file= tkFileDialog.asksaveasfile(parent=self.root,mode='w',
+            file= tkinter.filedialog.asksaveasfile(parent=self.root,mode='w',
                                              title='Save as PostScript',
                                              filetypes=[("all files","*.ps")])
         if file == None: return
@@ -457,7 +457,7 @@ def test_gauss():
     data2=[]
     f=lambda x: 1.0/sqrt(2.0*3.1415)/sigma*exp(-((x-mu)**2)/2.0/sigma**2)
     for x,y in data1: data2.append((x,f(x)))
-    print chi_squared(data1,data2)
+    print(chi_squared(data1,data2))
     root=Tk()
     p=Plot(root,xlabel='# BIN')
     p.hist(data1,legend='experiment')

@@ -90,18 +90,18 @@ def parse(argv=sys.argv[2:]):
         errors.append('the first algorithm must be -cold, -hot, or -load')
     for s in commands:
         if s.command=='loop':
-            if not s.args.has_key('end'):
+            if 'end' not in s.args:
                 errors.append('+loop error: missing }')
-	    if not s.args.has_key('n'):
+	    if 'n' not in s.args:
 	        errors.append('+loop error: missing n=... argument')
-        elif not allowed_commands.has_key(s.command):
+        elif s.command not in allowed_commands:
             errors.append('+%s error: unkown algorithm' % s.command)
         else:
             d={}
             arguments=allowed_commands[s.command]
             for a,b,c in arguments:                
                 d[a]=1
-                if not s.args.has_key(a):
+                if a not in s.args:
                     if c==None:
                         errors.append('+%s error: missing %s=... argument' % (s.command,a))
                     else:
@@ -110,7 +110,7 @@ def parse(argv=sys.argv[2:]):
                 elif re.sub(b,'',s.args[a])!='':  #fix this line
                     errors.append('+%s error: invalid argument %s=%s' % (s.command,a,s.args[a]))            
             for a in s.args:
-                if not d.has_key(a):
+                if a not in d:
                     errors.append('+%s error: unkown argument %s=...' % (s.command,a))
         if s.command in ['cold', 'hot'] and k>0:
             errors.append('+%s error: must be the first algorithm!' % (s.command)) 
@@ -119,11 +119,11 @@ def parse(argv=sys.argv[2:]):
 
 def report(errors, warnings):
     if errors:
-        print 'YOU HAVE THE FOLLLOWING ERRORS:'
-        for e in errors: print e
+        print('YOU HAVE THE FOLLLOWING ERRORS:')
+        for e in errors: print(e)
     if warnings:
-        print 'OK BUT SOME WARNINGS:'
-        for w in warnings: print w    
+        print('OK BUT SOME WARNINGS:')
+        for w in warnings: print(w)    
          
 def generate_code(instruction,warnings,commands):
     program=''
@@ -211,11 +211,11 @@ def generate_code(instruction,warnings,commands):
 
 def menu():
     if len(sys.argv)==1:
-	print 'usage:'
-	print '"python qcd.py help" to list all availbale algorithms'
-	print '"python qcd.py help -heatbath" for help about the heatbath algorithm'
-	print '"python qcd.py code +cold TxXxYxZ=10x4x4x4 nc=3" to create a program that makes one cold gauge configuration'
-	print '"python qcd.py compile filename.cpp" to compile filename.cpp (for those who hate make like me)'
+	print('usage:')
+	print('"python qcd.py help" to list all availbale algorithms')
+	print('"python qcd.py help -heatbath" for help about the heatbath algorithm')
+	print('"python qcd.py code +cold TxXxYxZ=10x4x4x4 nc=3" to create a program that makes one cold gauge configuration')
+	print('"python qcd.py compile filename.cpp" to compile filename.cpp (for those who hate make like me)')
         # print '"python qcd.py submit filename.exe" to submit filename.exe to your cluster
         # print '"python qcd.py monitor pid" to monitor the executable running as pid
     elif sys.argv[1]=='code':
@@ -226,42 +226,42 @@ def menu():
 	   program=generate_code(instruction,warnings,commands)
 	   open('latest.cpp','w').write(program)
 	   #os.system('g++ test.cpp -I../Libraries -DOSX')       
-	   print 'saved as latest.cpp'
+	   print('saved as latest.cpp')
     elif sys.argv[1]=='compile':
 	try: filename=sys.argv[2]
         except: filename='latest.cpp'
-	osx=raw_input('do you have an an OS X 10 Mac (y/n)? ').lower()
-	sse=raw_input('do you have a processor that supports SSE2 (y/n)? ').lower()
-	pos=raw_input('do you have FULL posix support (y/n)? ').lower()
-	par=raw_input('do you want to compile with MPI support (y/n)? ').lower()
+	osx=input('do you have an an OS X 10 Mac (y/n)? ').lower()
+	sse=input('do you have a processor that supports SSE2 (y/n)? ').lower()
+	pos=input('do you have FULL posix support (y/n)? ').lower()
+	par=input('do you want to compile with MPI support (y/n)? ').lower()
 	command='g++ -O2 %s -I../Libraries -o %s' % (filename,filename.replace('.cpp','.exe'))
 	if osx=='y': command+=' -DOSX'
 	elif sse=='y': command+=' -DSSE2'
 	if par=='y': command+=' -DPARALLEL'
 	if pos=='n': command+=' -DNO_POSIX'
-	print command
+	print(command)
 	os.system(command)
     elif sys.argv[1]=='help' and len(sys.argv)<3:
-	print 'available algorithms:'
-	keys=allowed_commands.keys()
+	print('available algorithms:')
+	keys=list(allowed_commands.keys())
 	keys.sort()
 	for key in keys:
-	    print '   -'+key
+	    print('   -'+key)
     elif sys.argv[1]=='help' and len(sys.argv)==3:
 	key=sys.argv[2][1:]
-	if not allowed_commands.has_key(key):
-	    print 'command -%s not supported' % key
+	if key not in allowed_commands:
+	    print('command -%s not supported' % key)
 	else:
-	    print 'INFO FOR ALGORITHM -%s' % key
-	    print 'description:'
-	    print comments[key]
-	    print 'arguments:'
+	    print('INFO FOR ALGORITHM -%s' % key)
+	    print('description:')
+	    print(comments[key])
+	    print('arguments:')
 	    for a,b,c in allowed_commands[key]:
-		print '    "%s"' % a,
-		if c==None: print 'is required'
-		else: print 'is %s by default' % c
+		print('    "%s"' % a, end=' ')
+		if c==None: print('is required')
+		else: print('is %s by default' % c)
     else:
-	print 'I do not understand you commands'
+	print('I do not understand you commands')
 
 if __name__=='__main__': menu()
-         
+

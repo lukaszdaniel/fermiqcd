@@ -8,15 +8,15 @@ def Matrix(rows=0,cols=0):
     return [[0]*cols for k in range(rows)]
 
 def pprint(A):
-    print ' ['
+    print(' [')
     for line in A:
-        print '  [',
+        print('  [', end=' ')
         for item in line:
-            print '%.3e,' % float(item),
+            print('%.3e,' % float(item), end=' ')
             pass
-        print '],'
+        print('],')
         pass
-    print ' ]'
+    print(' ]')
     return
     
 def rows(A):
@@ -95,7 +95,7 @@ def inverse(A,checkpoint=None):
         for k in range(n):
             A[c][k],B[c][k]=float(A[c][k])/p,float(B[c][k])/p
             pass        
-        for r in range(0,c)+range(c+1,n):
+        for r in list(range(0,c))+list(range(c+1,n)):
             p=float(A[r][c])
             for k in range(n):
                 A[r][k]-=p*A[c][k]
@@ -107,13 +107,13 @@ def inverse(A,checkpoint=None):
 
 def test_inverse():
     """Test for the inverse(A) function"""
-    print "\n\nTesting inverse(A)........."
+    print("\n\nTesting inverse(A).........")
     A=[[1,2,3],[2,4,8],[1,3,7]]
-    print "A=",A
+    print("A=",A)
     B=inverse(A)
-    print "B=",B
+    print("B=",B)
     C=multiply(A,B)
-    print "A*B=",C
+    print("A*B=",C)
     return
 
 def transpose(A):
@@ -151,13 +151,13 @@ def Cholesky(A):
 
 def test_Cholesky():
     """Test for the inverse(A) function"""
-    print "\n\nTesting Cholesky(A)........."
+    print("\n\nTesting Cholesky(A).........")
     A=[[4,2,1],[2,9,3],[1,3,16]]
-    print "A=",A
+    print("A=",A)
     L=Cholesky(A)
-    print "L=",L
+    print("L=",L)
     C=sub(multiply(L,transpose(L)),A)
-    print "L*L^T-A=",C
+    print("L*L^T-A=",C)
     return
 
 def identity(n):
@@ -263,7 +263,7 @@ def Jacobi(A,checkpoint):
 
 def test_Jacobi():
     """Test the Jacobi algorithm"""
-    print "Testing Jacobi on random matrices..."
+    print("Testing Jacobi on random matrices...")
     n=4
     A=Matrix(n,n)
     for k in range(3):
@@ -272,10 +272,10 @@ def test_Jacobi():
                 A[i][j]=A[j][i]=gauss(10,10)
                 pass
             pass
-        print "A=",
+        print("A=", end=' ')
         pprint(A)
         U,e=Jacobi(A)
-        print "U*e*U^T-A=",
+        print("U*e*U^T-A=", end=' ')
         pprint(sub(multiply(U,multiply(diagonal(e),transpose(U))),A))
         pass
     return
@@ -323,8 +323,8 @@ def EXPONENTIAL(n):
 
 def test_fit():
     """Test for the fit function"""
-    print "\n\nTesting fit(QUADRATIC,...)........."
-    print "data generated using 5+0.8*k+0.3*k*k+gauss(0,1)"
+    print("\n\nTesting fit(QUADRATIC,...).........")
+    print("data generated using 5+0.8*k+0.3*k*k+gauss(0,1)")
     x=[]
     y=[]
     for k in range(100):
@@ -332,8 +332,8 @@ def test_fit():
         y.append(5+0.8*k+0.3*k*k+gauss(0,1))
         pass
     a,chi2,ff=fit(QUADRATIC,x,y)
-    print "f(x)=(",a[0][0],")+(",a[1][0],")*x+(",a[2][0],")*x*x"
-    print "chi2=",chi2
+    print("f(x)=(",a[0][0],")+(",a[1][0],")*x+(",a[2][0],")*x*x")
+    print("chi2=",chi2)
     
 def AR1filter(r):
     r.sort()    
@@ -359,14 +359,14 @@ def AR1filter(r):
 
 def test_AR1filter():
     """Test for AR1filter"""
-    print "\n\nTesting AR1filter()........."
+    print("\n\nTesting AR1filter().........")
     y=[(0,0.05)]
     for k in range(1,30):
         y.append((k,0.05+y[k-1][1]*0.3+gauss(0,0.01)))
         pass
     yf,a=AR1filter(y)
     for k in range(30):
-        print y[k],',',yf[k]
+        print(y[k],',',yf[k])
         pass
     return
 
@@ -429,7 +429,7 @@ def truncate_eigenvalues_cov(cov,delta=0.01,checkpoint=None):
     return cov,e1,e2
 
 def test_truncate_eigenvalues_cov():
-    print "Testing truncate_eigenvalues_cov"
+    print("Testing truncate_eigenvalues_cov")
     n=5
     A=Matrix(n,n)    
     for i in range(n):
@@ -438,13 +438,13 @@ def test_truncate_eigenvalues_cov():
             A[i][j]=A[j][i]=gauss(10,10)
             pass
         pass
-    print 'A=',
+    print('A=', end=' ')
     pprint(A)
     B,e1,e2=truncate_eigenvalues_cov(A)
-    print 'B=',
+    print('B=', end=' ')
     pprint(B)
     for i in range(n):
-        print e1[i],e2[i]
+        print(e1[i],e2[i])
     return
 
 def CorrelationMatrix(table,do_AR1fiter=True):    

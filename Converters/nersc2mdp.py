@@ -8,17 +8,17 @@ filename=sys.argv[1]
 for line in open(filename,'rb'):
     counter+=len(line)
     if not start and line[:12]=='BEGIN_HEADER': start=True
-    elif not start: raise SyntaxError, "Invalid file format"
+    elif not start: raise SyntaxError("Invalid file format")
     elif line[:10]=='END_HEADER': break
     else:
         match=regex.match(line)
-        print line.strip()
-        if not match: raise SyntaxError, "Invalid file format"
+        print(line.strip())
+        if not match: raise SyntaxError("Invalid file format")
         key,value=match.group('key'), match.group('value')
         data[key]=value
 
-print 'header size:', counter
-print data
+print('header size:', counter)
+print(data)
 
 if data['DATATYPE'].find('3x3')>0:
     os.system('./nersc2mdp.exe -skip %s -gauge %sx%sx%sx%s:3DY %s %s.mdp' % (counter,

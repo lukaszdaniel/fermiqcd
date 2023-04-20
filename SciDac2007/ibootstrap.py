@@ -56,7 +56,7 @@ class IBootstrap:
 
     def restricted_eval(self,expression,loc={}):
         try:  
-            exec('__result__=(%s)' % str(expression)) in loc
+            exec(('__result__=(%s)' % str(expression)), loc)
             return loc['__result__']
         except:
             self.report.append('expression "%s" contains undefined variables' % expression)
@@ -124,7 +124,7 @@ class IBootstrap:
 	self.symbols=symbols
 
 	length=-1
-        keys=symbols.keys()
+        keys=list(symbols.keys())
         keys.sort()
 	for key in keys:     
 	    ell=len(symbols[key])
@@ -133,7 +133,7 @@ class IBootstrap:
 	    if ell!=length:
 		self.report.append('warining, not all field with same occurrences')
 	    if ell<length: length=ell
-	for key in symbols.keys():     
+	for key in list(symbols.keys()):     
 	    symbols[key]=symbols[key][:length]
         self.length=length
 
@@ -147,7 +147,7 @@ class IBootstrap:
 	    keys=[]
 	    regex=re.compile(tag_pattern)
 	    items_regex.append(regex)
-	    for key in symbols.keys():
+	    for key in list(symbols.keys()):
 		m=regex.match(key)
 		if m: keys.append(m)
 	    if not keys:
@@ -169,14 +169,14 @@ class IBootstrap:
 	    for i in range(len(items)):
 		m=columns[i][counters[i]]            
 		e=e.replace(items[i],m.group(0),1)            
-		for key in items_regex[i].groupindex.keys():
+		for key in list(items_regex[i].groupindex.keys()):
 		    value=items_regex[i].groupindex[key]
 		    v=float(m.group(value))
-		    if loc.has_key(key) and loc[key]!=v: isvalid=False
+		    if key in loc and loc[key]!=v: isvalid=False
 		    else: loc[key]=v
 	    variables[e]=copy.copy(loc)
-	    exec('from math import *') in loc
-            if self.import_module: exec('from %s import *' % self.import_module) in loc	    
+	    exec(('from math import *'), loc)
+            if self.import_module: exec(('from %s import *' % self.import_module), loc)	    
             if not self.restricted_eval(condition,loc): isvalid=False
 	    if loc['__result__']==False: isvalid=False
 	    if isvalid:
@@ -200,7 +200,7 @@ class IBootstrap:
 	### perhps this should compute Hurst exponent too
 	symbols=self.symbols
 	self.autocorrelations={}
-	for key,sq in symbols.items():
+	for key,sq in list(symbols.items()):
 	    ac=self.autocorrelations[key]=[]
 	    n=len(sq)
 	    mu=sum(sq)/n
@@ -218,12 +218,12 @@ class IBootstrap:
         expressions=self.expressions
 	symbols=self.symbols
         loc={}
-        exec('from math import *') in loc
-        if self.import_module: exec('from %s import *' % self.import_module) in loc	    
+        exec(('from math import *'), loc)
+        if self.import_module: exec(('from %s import *' % self.import_module), loc)	    
 	trails={}
 	avgs={}
         n=max_index-min_index        
-	for key in symbols.keys():     
+	for key in list(symbols.keys()):     
             sq=symbols[key]
             aq=avgs[key]=[sq[min_index]]
             for i in range(1,n):
@@ -232,7 +232,7 @@ class IBootstrap:
 	    trails[expression]=[0]*n
             for i in range(n):
                 result=expression	    
-    	        for key in avgs.keys():
+    	        for key in list(avgs.keys()):
 		    result=result.replace(key,str(avgs[key][i]))                                        
 		trails[expression][i]=self.restricted_eval(result,loc)
 	self.trails=trails        
@@ -241,13 +241,13 @@ class IBootstrap:
 	results={}
 	avgs={}
 	loc={}
-        exec('from math import *') in loc
-        if self.import_module: exec('from %s import *' % self.import_module) in loc	    
-	for key in symbols.keys():        
+        exec(('from math import *'), loc)
+        if self.import_module: exec(('from %s import *' % self.import_module), loc)	    
+	for key in list(symbols.keys()):        
 	    avgs[key]=sum(symbols[key][min_index:max_index])/(max_index-min_index)
 	for expression in expressions:
 	    result=expression
-	    for key in avgs.keys():
+	    for key in list(avgs.keys()):
 		result=result.replace(key,str(avgs[key]))                        
 	    results[expression]=self.restricted_eval(result,loc)
 	return results
@@ -261,24 +261,24 @@ class IBootstrap:
         length=max_index-min_index
 	samples={}
 	means=results=self.average(expressions,symbols,min_index,max_index)
-	for key in results.keys(): samples[key]=[]
+	for key in list(results.keys()): samples[key]=[]
 	for sample in range(nsamples):
 	    v=[random.randint(min_index,max_index-1) for i in range(length)]       
 	    symbols2={}        
-	    for key in symbols.keys():
+	    for key in list(symbols.keys()):
 		s=symbols[key]
 		s2=symbols2[key]=[]            
 		for i in v:
 		    s2.append(s[i])                
 	    results=self.average(expressions,symbols2,min_index,max_index)
-	    for key in results.keys():
+	    for key in list(results.keys()):
 		 samples[key].append(results[key])
         min_mean_max={}
-	for key in results.keys():
+	for key in list(results.keys()):
             samples[key].sort()      
             s=samples[key]
 	    min_mean_max[key]=self.super_round(s[int(percent*nsamples)],means[key],s[int((1.0-percent)*nsamples)])
-	keys=min_mean_max.keys()
+	keys=list(min_mean_max.keys())
         keys.sort()
         for key in keys:
             m=min_mean_max[key]
@@ -288,14 +288,14 @@ class IBootstrap:
 
     def log_raw_data(self,filename='ibootstrap_raw_data.csv'):
         writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-        keys=self.symbols.keys()
+        keys=list(self.symbols.keys())
         keys.sort()
         for key in keys: writer.writerow([key]+self.symbols[key])
         self.report.append('raw data saved in %s' % filename)
 
     def log_autocorrelations(self,filename='ibootstrap_autocorrelations.csv'):
         writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-        keys=self.autocorrelations.keys()
+        keys=list(self.autocorrelations.keys())
         keys.sort()
         for key in keys: writer.writerow([key]+self.autocorrelations[key])
         self.report.append('autocorrelations saved in %s' % filename)
@@ -314,25 +314,25 @@ class IBootstrap:
 
     def log_samples(self,filename='ibootstrap_samples.csv'):
         writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-        keys=self.samples.keys()
+        keys=list(self.samples.keys())
         keys.sort()
         for key in keys: writer.writerow([key]+self.samples[key])
         self.report.append('bootstrap samples saved in %s' % filename)
 
     def log_trails(self,filename='ibootstrap_trails.csv'):
         writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-        keys=self.trails.keys()
+        keys=list(self.trails.keys())
         keys.sort()
         for key in keys: writer.writerow([key]+self.trails[key])
         self.report.append('average trails saved in %s' % filename)
     
     def log_min_mean_max(self,filename='ibootstrap_min_mean_max.csv'): 
         writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-        keys=self.min_mean_max.keys()
+        keys=list(self.min_mean_max.keys())
         keys.sort()             
-	variables=self.variables[keys[0]].keys()
+	variables=list(self.variables[keys[0]].keys())
 	variables.sort()
-	print self.variables[keys[0]]
+	print(self.variables[keys[0]])
 	header=[self.expression]+variables+['[min]','[mean]','[max]']
 	rows=[header]
 	for key in keys:

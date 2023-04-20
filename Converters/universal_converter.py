@@ -30,7 +30,7 @@ class MilcField:
     def get_header(self):
         ifile=self.ifile
         header=ifile.read(96)
-        if not len(header)==96: raise SyntaxError, "file too small"
+        if not len(header)==96: raise SyntaxError("file too small")
         self.endianess='<'
         milc_head=struct.unpack('<i4i64siii',header)            
         if not milc_head[0]==20103:
@@ -65,7 +65,7 @@ class MilcField:
         n1=self.lattice_size[self.site_order[1]] #Z
         n2=self.lattice_size[self.site_order[2]] #Y
         n3=self.lattice_size[self.site_order[3]] #X
-        print nt,nx,ny,nz
+        print(nt,nx,ny,nz)
         oheader=struct.pack(oheader_format,'File Type: MDP FIELD',
                             filename,datetime.datetime.now().isoformat(),
                             1325884739,4,nt,nx,ny,nz,0,0,0,0,0,0,
@@ -76,7 +76,7 @@ class MilcField:
         site=[0,0,0,0]        
         ifile.seek(offset)
         for p0 in range(n0):
-            print 'timeslice',p0,'...'
+            print('timeslice',p0,'...')
             for p1 in range(n1):
                 for p2 in range(n2):
                     for p3 in range(n3):
@@ -92,8 +92,8 @@ class MilcField:
                         for mu in [T,X,Y,Z]:
                             ofile.write(struct.pack(link_format_out,*site[mu]))
                             for i,r in enumerate(site[mu]):
-                                if abs(r)>1: raise SyntaxError, "Invalid Format"
-        print 'done'
+                                if abs(r)>1: raise SyntaxError("Invalid Format")
+        print('done')
 
 class QioField:
     site_order=[T,Z,Y,X]
@@ -114,14 +114,14 @@ class QioField:
             lime_head=struct.unpack('!2i1q128s',header)            
             if not lime_head[0]==1164413355: raise SyntaxError
             data=lime_head[2]
-            print 'Lime block:',data,lime_head[3]
+            print('Lime block:',data,lime_head[3])
             padding=(8 - (data % 8)) % 8
             if lime_head[3][:16]=='ildg-binary-data': self.offset=144+offset
             if lime_head[3][:11]=='ildg-format':
                  regex=re.compile('\<lx\>(?P<lx>\d+)\</lx\>\<ly\>(?P<ly>\d+)\</ly\>\<lz\>(?P<lz>\d+)\</lz\>\<lt\>(?P<lt>\d+)\</lt\>')
                  ell=regex.search(ifile.read(data))
                  self.lattice_size=[int(ell.group('lt')),int(ell.group('lx')),int(ell.group('ly')),int(ell.group('lz'))]
-                 print 'Lattice size from header:',self.lattice_size
+                 print('Lattice size from header:',self.lattice_size)
             offset+=144+data+padding
             ifile.seek(offset)
         return None
@@ -158,7 +158,7 @@ class QioField:
         site=[0,0,0,0]        
         ifile.seek(offset)
         for p0 in range(n0):
-            print 'timeslice',p0,'...'
+            print('timeslice',p0,'...')
             for p1 in range(n1):
                 for p2 in range(n2):
                     for p3 in range(n3):
@@ -174,8 +174,8 @@ class QioField:
                         for mu in [T,X,Y,Z]:
                             ofile.write(struct.pack(link_format_out,*site[mu]))
                             for i,r in enumerate(site[mu]):
-                                if abs(r)>1: raise SyntaxError, "Invalid Format"
-        print 'done'
+                                if abs(r)>1: raise SyntaxError("Invalid Format")
+        print('done')
 
 class ILDGField:
     site_order=[T,Z,Y,X]
@@ -196,21 +196,21 @@ class ILDGField:
             lime_head=struct.unpack('!2i1q128s',header)
             if not lime_head[0]==1164413355: raise SyntaxError
             data=lime_head[2]
-            print 'Lime block:',data,lime_head[3]
+            print('Lime block:',data,lime_head[3])
             padding=(8 - (data % 8)) % 8
             if lime_head[3][:16]=='ildg-binary-data': self.offset=144+offset
             if lime_head[3][:11]=='ildg-format':
                  regex=re.compile('\<lx\>(?P<lx>\d+)\</lx\>\<ly\>(?P<ly>\d+)\</ly\>\<lz\>(?P<lz>\d+)\</lz\>\<lt\>(?P<lt>\d+)\</lt\>')
                  ell=regex.search(ifile.read(data))
                  self.lattice_size=[int(ell.group('lt')),int(ell.group('lx')),int(ell.group('ly')),int(ell.group('lz'))]
-                 print 'Lattice size from header:',self.lattice_size
+                 print('Lattice size from header:',self.lattice_size)
             if lime_head[3][:18]=='scidac-binary-data': self.offset=144+offset
             if lime_head[3][:23]=='scidac-private-file-xml':
                  regex=re.compile('\<dims\>\D*(?P<dims>\d+.*\d+)\D*\</dims\>')
                  ell=regex.search(ifile.read(data))
                  tt=re.split('\D+',ell.group('dims'))
-                 self.lattice_size=map(int,[tt[-1]]+tt[0:-1])
-                 print 'Lattice size from header:',self.lattice_size
+                 self.lattice_size=list(map(int,[tt[-1]]+tt[0:-1]))
+                 print('Lattice size from header:',self.lattice_size)
             offset+=144+data+padding
             ifile.seek(offset)
         return None
@@ -247,7 +247,7 @@ class ILDGField:
         site=[0,0,0,0]        
         ifile.seek(offset)
         for p0 in range(n0):
-            print 'timeslice',p0,'...'
+            print('timeslice',p0,'...')
             for p1 in range(n1):
                 for p2 in range(n2):
                     for p3 in range(n3):
@@ -263,8 +263,8 @@ class ILDGField:
                         for mu in [T,X,Y,Z]:
                             ofile.write(struct.pack(link_format_out,*site[mu]))
                             for i,r in enumerate(site[mu]):
-                                if abs(r)>1: raise SyntaxError, "Invalid Format"
-        print 'done'
+                                if abs(r)>1: raise SyntaxError("Invalid Format")
+        print('done')
 
 
 
@@ -283,9 +283,9 @@ class Nersc3x3Field:
         self.ifile.seek(0)
         header=self.ifile.read(10000)
         self.offset=header.find(key)+len(key)
-        if self.offset<len(key): raise SyntaxError, "not in NERSC format"
+        if self.offset<len(key): raise SyntaxError("not in NERSC format")
         header=header[:self.offset]
-        print header
+        print(header)
         self.lattice_size=[
            int(re.compile('DIMENSION_4\s*=\s*(?P<t>\d+)').search(header).group('t')),
            int(re.compile('DIMENSION_1\s*=\s*(?P<x>\d+)').search(header).group('x')),
@@ -303,9 +303,9 @@ class Nersc3x3Field:
         elif re.compile('FLOATING_POINT\s*=\s*IEEE32(BIG)?').search(header):
             self.precision='f'
             self.endianess='>'
-        else: raise SyntaxError, "invalid endianess or precision"
+        else: raise SyntaxError("invalid endianess or precision")
         if not re.compile('DATATYPE = 4D_SU3_GAUGE_3x3').search(header):
-            raise SyntaxError, "DATATYPE = 4D_SU3_GAUGE_3x3"
+            raise SyntaxError("DATATYPE = 4D_SU3_GAUGE_3x3")
         self.ifile.seek(self.offset)
         return None
     def detect(self):
@@ -343,7 +343,7 @@ class Nersc3x3Field:
         site=[0,0,0,0]
         ifile.seek(offset)
         for p0 in range(n0):
-            print 'timeslice',p0,'...'
+            print('timeslice',p0,'...')
             for p1 in range(n1):
                 for p2 in range(n2):
                     for p3 in range(n3):
@@ -359,8 +359,8 @@ class Nersc3x3Field:
                         for mu in [T,X,Y,Z]:
                             ofile.write(struct.pack(link_format,*site[mu]))
                             for i,r in enumerate(site[mu]):
-                                if abs(r)>1: raise SyntaxError, "Invalid Format"
-                            if mu==T and p0+p1+p2+p3==0: print site[mu]
+                                if abs(r)>1: raise SyntaxError("Invalid Format")
+                            if mu==T and p0+p1+p2+p3==0: print(site[mu])
 
 class Nersc3x2Field:
     site_order=[T,Z,Y,X]
@@ -377,9 +377,9 @@ class Nersc3x2Field:
         self.ifile.seek(0)
         header=self.ifile.read(10000)
         self.offset=header.find(key)+len(key)
-        if self.offset<len(key): raise SyntaxError, "not in NERSC format"
+        if self.offset<len(key): raise SyntaxError("not in NERSC format")
         header=header[:self.offset]
-        print header
+        print(header)
         self.lattice_size=[
            int(re.compile('DIMENSION_4\s*=\s*(?P<t>\d+)').search(header).group('t')),
            int(re.compile('DIMENSION_1\s*=\s*(?P<x>\d+)').search(header).group('x')),
@@ -402,7 +402,7 @@ class Nersc3x2Field:
             self.endianess='>'
             #raise SyntaxError, "invalid endianess or precision"
         if not re.compile('DATATYPE = 4D_SU3_GAUGE').search(header):
-            raise SyntaxError, "DATATYPE = 4D_SU3_GAUGE"
+            raise SyntaxError("DATATYPE = 4D_SU3_GAUGE")
         self.ifile.seek(self.offset)
         return None
     def detect(self):
@@ -440,7 +440,7 @@ class Nersc3x2Field:
         site=[0,0,0,0]
         ifile.seek(offset)
         for p0 in range(n0):
-            print 'timeslice',p0,'...'
+            print('timeslice',p0,'...')
             for p1 in range(n1):
                 for p2 in range(n2):
                     for p3 in range(n3):
@@ -453,30 +453,30 @@ class Nersc3x2Field:
                             site[mu]=struct.unpack(self.endianess+link_format_in,
                                                    ifile.read(link_size_in))
                             for i,r in enumerate(site[mu]):
-                                if abs(r)>1: raise SyntaxError, "Invalid Format %f" % r
+                                if abs(r)>1: raise SyntaxError("Invalid Format %f" % r)
                         ofile.seek(ooffset+site_size*(p[Z]+nz*(p[Y]+ny*(p[X]+nx*p[T]))))
                         for mu in [T,X,Y,Z]:
                             site[mu]=reunitarize(site[mu])
                             ofile.write(struct.pack(link_format,*site[mu]))
-                            if mu==T and p0+p1+p2+p3==0: print site[mu]
+                            if mu==T and p0+p1+p2+p3==0: print(site[mu])
 
 def universal_converter(path, formats):
     files=[f for f in glob.glob(path) if not f[-4:]=='.mdp']    
-    if not files: raise RuntimeError, "no files to be converted"
+    if not files: raise RuntimeError("no files to be converted")
     done=False
     for file in files:
-        print 'trying to convert '+file
+        print('trying to convert '+file)
         for format in formats:
             try:
                 ofile=file+'.mdp'
                 format(open(file,'rb')).convert(ofile)
                 done=True
                 break
-            except Exception, e:
-                print e
+            except Exception as e:
+                print(e)
         if not done:
-            print 'ERROR... skipping!'
-    if not done: raise RuntimeError, "failure to convert "+file
+            print('ERROR... skipping!')
+    if not done: raise RuntimeError("failure to convert "+file)
 
 class ILDGPropField:
     site_order=[T,Z,Y,X]
@@ -498,21 +498,21 @@ class ILDGPropField:
             lime_head=struct.unpack('!2i1q128s',header)
             if not lime_head[0]==1164413355: raise SyntaxError
             data=lime_head[2]
-            print 'Lime block:',data,lime_head[3]
+            print('Lime block:',data,lime_head[3])
             padding=(8 - (data % 8)) % 8
             if lime_head[3][:16]=='ildg-binary-data': self.offset=144+offset
             if lime_head[3][:11]=='ildg-format':
                  regex=re.compile('\<lx\>(?P<lx>\d+)\</lx\>\<ly\>(?P<ly>\d+)\</ly\>\<lz\>(?P<lz>\d+)\</lz\>\<lt\>(?P<lt>\d+)\</lt\>')
                  ell=regex.search(ifile.read(data))
                  self.lattice_size=[int(ell.group('lt')),int(ell.group('lx')),int(ell.group('ly')),int(ell.group('lz'))]
-                 print 'Lattice size from header:',self.lattice_size
+                 print('Lattice size from header:',self.lattice_size)
             if lime_head[3][:18]=='scidac-binary-data': self.offset=144+offset
             if lime_head[3][:23]=='scidac-private-file-xml':
                  regex=re.compile('\<dims\>\D*(?P<dims>\d+.*\d+)\D*\</dims\>')
                  ell=regex.search(ifile.read(data))
                  tt=re.split('\D+',ell.group('dims'))
-                 self.lattice_size=map(int,[tt[-1]]+tt[0:-1])
-                 print 'Lattice size from header:',self.lattice_size
+                 self.lattice_size=list(map(int,[tt[-1]]+tt[0:-1]))
+                 print('Lattice size from header:',self.lattice_size)
             offset+=144+data+padding
             ifile.seek(offset)
         return None
@@ -549,7 +549,7 @@ class ILDGPropField:
         ofile=open(filename,'wb')
         ofile.write(oheader)        
         for p0 in range(n0):
-            print 'prop timeslice',p0,'...'
+            print('prop timeslice',p0,'...')
             for p1 in range(n1):
                 for p2 in range(n2):
                     for p3 in range(n3):
@@ -562,7 +562,7 @@ class ILDGPropField:
                                            ifile.read(spinor_size))
                         ofile.seek(ooffset+spinor_size*(p[0]+nt*(p[Z]+nz*(p[Y]+ny*(p[X])))))
                         ofile.write(struct.pack(spinor_format_out,*data))
-        print 'done'
+        print('done')
 
 
 class ILDGPropFieldSplit:
@@ -585,21 +585,21 @@ class ILDGPropFieldSplit:
             lime_head=struct.unpack('!2i1q128s',header)
             if not lime_head[0]==1164413355: raise SyntaxError
             data=lime_head[2]
-            print 'Lime block:',data,lime_head[3]
+            print('Lime block:',data,lime_head[3])
             padding=(8 - (data % 8)) % 8
             if lime_head[3][:16]=='ildg-binary-data': self.offset=144+offset
             if lime_head[3][:11]=='ildg-format':
                  regex=re.compile('\<lx\>(?P<lx>\d+)\</lx\>\<ly\>(?P<ly>\d+)\</ly\>\<lz\>(?P<lz>\d+)\</lz\>\<lt\>(?P<lt>\d+)\</lt\>')
                  ell=regex.search(ifile.read(data))
                  self.lattice_size=[int(ell.group('lt')),int(ell.group('lx')),int(ell.group('ly')),int(ell.group('lz'))]
-                 print 'Lattice size from header:',self.lattice_size
+                 print('Lattice size from header:',self.lattice_size)
             if lime_head[3][:18]=='scidac-binary-data': self.offset=144+offset
             if lime_head[3][:23]=='scidac-private-file-xml':
                  regex=re.compile('\<dims\>\D*(?P<dims>\d+.*\d+)\D*\</dims\>')
                  ell=regex.search(ifile.read(data))
                  tt=re.split('\D+',ell.group('dims'))
-                 self.lattice_size=map(int,[tt[-1]]+tt[0:-1])
-                 print 'Lattice size from header:',self.lattice_size
+                 self.lattice_size=list(map(int,[tt[-1]]+tt[0:-1]))
+                 print('Lattice size from header:',self.lattice_size)
             offset+=144+data+padding
             ifile.seek(offset)
         return None
@@ -636,7 +636,7 @@ class ILDGPropFieldSplit:
         for p0 in range(n0):
             ofile=open(filename[:-4]+'t%.4i.mdp' % p0,'wb')
             ofile.write(oheader)        
-            print 'prop timeslice',p0,'...'
+            print('prop timeslice',p0,'...')
             for p1 in range(n1):
                 for p2 in range(n2):
                     for p3 in range(n3):
@@ -649,7 +649,7 @@ class ILDGPropFieldSplit:
                                            ifile.read(spinor_size))
                         ofile.seek(ooffset+spinor_size*(p[Z]+nz*(p[Y]+ny*(p[X]))))
                         ofile.write(struct.pack(spinor_format_out,*data))
-        print 'done'
+        print('done')
 
 
 
@@ -674,5 +674,6 @@ def main():
     universal_converter(args[0],myformats)
 
 if __name__=='__main__':
-    print 'ATTENTION! This file is deprectade, you should use fermiqcd/Tools/qcdfetch.py'
+    print('ATTENTION! This file is deprectade, you should use fermiqcd/Tools/qcdfetch.py')
     main()
+

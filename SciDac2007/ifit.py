@@ -43,7 +43,7 @@ def invert_squared_matrix(A,checkpoint=None):
         for k in range(n):
             A[c][k],B[c][k]=float(A[c][k])/p,float(B[c][k])/p
             pass
-        for r in range(0,c)+range(c+1,n):
+        for r in list(range(0,c))+list(range(c+1,n)):
             p=float(A[r][c])
             for k in range(n):
                 A[r][k]-=p*A[c][k]
@@ -60,7 +60,7 @@ class IFitException(Exception):
     pass
 
 def restricted_eval(expression,loc):
-    exec('__result__=%s' % expression) in loc
+    exec(('__result__=%s' % expression), loc)
     return loc['__result__']
 
 class IFit:
@@ -96,21 +96,21 @@ class IFit:
 	self.last_variables=None
 	self.last_hessian=None
 	self.last_trail=None
-        exec('from math import *') in self.locals
+        exec(('from math import *'), self.locals)
         if import_module: 
-	    exec('from %s import *' % import_module) in self.locals
+	    exec(('from %s import *' % import_module), self.locals)
         ### parsing expression
         e=re.compile('[a-zA-Z_]+\w*').findall(expression)
         ### symbols like 'x' that are in the data
         self.required_symbols=[k for k in e if k in symbols]
         ### symbols like 'a' and 'b' that are intended to be variables
-        self.undefined_symbols=[k for k in e if k and not self.locals.has_key(k) and not k in symbols]
+        self.undefined_symbols=[k for k in e if k and k not in self.locals and not k in symbols]
 
     def apply(self,**objects):
 	"""
 	stores the arguments in self.locals
 	"""
-        for key,values in objects.items():
+        for key,values in list(objects.items()):
             self.locals[key]=value
 
     def f(self,**variables):
@@ -118,7 +118,7 @@ class IFit:
 	evaluates the expression after adding the arguments to self.locals
 	"""
         try:
-            for key,value in variables.items():
+            for key,value in list(variables.items()):
                 self.locals[key]=value
             return restricted_eval(self.expression,self.locals)
         except:
@@ -149,8 +149,8 @@ class IFit:
             least_squares+=((ye-yo)/err)**2
 	    off=(ye-yo)*2/(p[-1]-p[-3])
             self.last_fit.append(p+[ye,off])	
-	for key,value in variables.items():
-	    if self.baesyan.has_key(key):
+	for key,value in list(variables.items()):
+	    if key in self.baesyan:
 	        least_squares+=((value-self.priors[key])/self.baesyan[key])**2
         return least_squares
     def move(self,**variables):        
@@ -159,13 +159,13 @@ class IFit:
 	tangent to the point
 	"""
         n=len(variables)
-        rn=range(n)
+        rn=list(range(n))
         delta=self.delta
 	two_delta=2.0*delta
         df=[0.0]*n
         ddf={}
         hessian=[[0.0]*n for i in rn]
-        keys=variables.keys()
+        keys=list(variables.keys())
         keys.sort()
         i=0
         for key1 in keys:
@@ -214,10 +214,10 @@ class IFit:
         self.variables_samples=None
         self.apriori,self.baesyan={},{}
         for key in self.undefined_symbols:
-           if not variables.has_key(key):             
+           if key not in variables:             
                self.errors.append('variable %s must be initialized' % key)
                raise IFitException
-        for key,value in variables.items():
+        for key,value in list(variables.items()):
 	   if key[0]=='_':
                del variables[key]
                self.baesyan[key[1:]]=value      
@@ -286,11 +286,11 @@ class IFit:
                 p[-2]=random.gauss(p[-2],p[-1])
                 self.points.append(p)	  
 	    items=self.fit(**kb)
-	    print i,items[0]
+	    print(i,items[0])
             variables_samples.append(items)
         self.variables_samples=variables_samples	
         writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-	writer.writerows([item[0].values() for item in variables_samples])
+	writer.writerows([list(item[0].values()) for item in variables_samples])
         return variables_samples
 
     def plot2d(self,key1='a',key2='b',scale1=0.1,scale2=0.1):
@@ -301,7 +301,7 @@ class IFit:
 	"""
 	import pylab
 	key1,key2=key2,key1
-	keys=self.last_variables.keys()
+	keys=list(self.last_variables.keys())
 	keys.sort()
         nv=len(self.last_variables)
 	for k in range(len(keys)):
@@ -328,7 +328,7 @@ class IFit:
         pylab.show()        
 
     def save_fit_trail(self,filename):
-	keys=[k for k in self.last_trail[0].keys() if not k=='[least_squares]']
+	keys=[k for k in list(self.last_trail[0].keys()) if not k=='[least_squares]']
 	keys.sort()
 	keys.append('[least_squares]')
 	writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
@@ -341,7 +341,7 @@ class IFit:
 	under development
 	"""
 	writer=csv.writer(open(filename,'w'),delimiter=',',quoting=csv.QUOTE_NONNUMERIC)
-	expression=self.expression+'@'+','.join(["%s=%g" % (k,v) for k,v in self.last_variables.items()])
+	expression=self.expression+'@'+','.join(["%s=%g" % (k,v) for k,v in list(self.last_variables.items())])
 	others=["[min]", "[mean]", "[max]","[%s]" % expression,"[error]"]
 	writer.writerow(self.symbols+others)
 	for p in self.last_fit:
@@ -364,17 +364,17 @@ def read_min_mean_max_file(filename):
     return symbols,points
 
 def test_ifit():
-    print 'generating points with z=x*sin(y)+4*y and dz=1'
+    print('generating points with z=x*sin(y)+4*y and dz=1')
     points=[[x,y,x*sin(y)+4*y-1,x*sin(y)+4*y,x*sin(y)+4*y+1] for x in range(3) for y in range(100)]
-    print 'fitting with a*sin(y)+b*y'
-    print IFit("a*sin(y)+b*y",points,symbols=['x','y']).fit(a=0.0,b=0.0)
+    print('fitting with a*sin(y)+b*y')
+    print(IFit("a*sin(y)+b*y",points,symbols=['x','y']).fit(a=0.0,b=0.0))
 
 def test_correlated_ifit():
-    print 'generating points with z=x*sin(y)+4*y and dz=1'
+    print('generating points with z=x*sin(y)+4*y and dz=1')
     points=[[x,y,x*sin(y)+4*y-1,x*sin(y)+4*y,x*sin(y)+4*y+1] for x in range(3) for y in range(100)]
-    print 'fitting with (a0*(x==0)+a1*(x==1)+a2*(x==2))*sin(y)+c*y'
+    print('fitting with (a0*(x==0)+a1*(x==1)+a2*(x==2))*sin(y)+c*y')
     ifit=IFit("(a0*(x==0)+a1*(x==1)+a2*(x==2))*sin(y)+b*y",points,symbols=['x','y'])
-    print ifit.fit(a0=0.0,a1=0.0,a2=0.0,b=0.0)
+    print(ifit.fit(a0=0.0,a1=0.0,a2=0.0,b=0.0))
 
 def main_ifit():
     loc={}
@@ -417,23 +417,24 @@ def main_ifit():
 	ifit.scatter_points=int(options.scatter_points)
 	if ifit.scatter_points: 	
 	    ifit.iterative_fit(options.input_prefix+'_scatter.csv',**variables)
-	for key,value in variables.items():
-	    print '%s = %g' % (key, value)
-	print 'least_squares=',least_squares
-	print 'hessian=',hessian        
+	for key,value in list(variables.items()):
+	    print('%s = %g' % (key, value))
+	print('least_squares=',least_squares)
+	print('hessian=',hessian)        
 	for item in options.extrapolations:
 	    coordinates=restricted_eval('dict(%s)' % item,loc)	
 	    try: e=ifit.extrapolate_with_errors(**coordinates) 
 	    except: e=ifit.extrapolate(**coordinates) 
-	    print 'extrapolation %s -> %s' % (item,str(e))
+	    print('extrapolation %s -> %s' % (item,str(e)))
 	if options.plot:
-	    print 'attention! plotting is under development'
+	    print('attention! plotting is under development')
 	    key1,key2=options.plot.split(',')
 	    ifit.plot2d(key1,key2)
 	ifit.save_fit(options.input_prefix+'_fit_%s.csv' % clean(args[0]))
 	ifit.save_fit_trail(options.input_prefix+'_fit_%s_trail.csv' % clean(args[0]))
     except IFitException:
-	for item in ifit.errors: print item
+	for item in ifit.errors: print(item)
 	sys.exit(-1)
 
 if __name__=='__main__': main_ifit()
+

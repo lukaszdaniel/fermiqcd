@@ -1,6 +1,6 @@
 from optparse import *
 from rpy import *
-import re, urllib, csv
+import re, urllib.request, urllib.parse, urllib.error, csv
 
 usage = "python iplot.py\n" \
 
@@ -33,7 +33,7 @@ class IPlot:
 
     def end(self):
         if self.type=='ps': r.dev_off()
-        else: raw_input('press enter to continue')
+        else: eval(input('press enter to continue'))
 
 
     def plot_raw_data(self,filename):
@@ -41,7 +41,7 @@ class IPlot:
 	   tag=items[0]
 	   data=items[1:]
 	   self.begin(filename[:-4]+'_%s' % clean(tag))
-	   r.plot(x=range(len(data)),y=data,xlab='step',ylab=tag,main='')
+	   r.plot(x=list(range(len(data))),y=data,xlab='step',ylab=tag,main='')
 	   self.end()
 	   self.begin(filename[:-4]+'_%s_hist' % clean(tag))
 	   r.hist(data,n=len(data)/20,xlab=tag,ylab='frequency',main='',prob='T')
@@ -55,7 +55,7 @@ class IPlot:
 	   sd=r.sd(data)
 	   probs=[min(x,1-x) for x in [r.pnorm((x-mu)/sd) for x in data]]
 	   self.begin(filename[:-4]+'_%s_probability' % clean(tag))
-	   r.plot(range(len(probs)),probs,xlab="step",ylab="probability "+tag,main="",type="p")
+	   r.plot(list(range(len(probs))),probs,xlab="step",ylab="probability "+tag,main="",type="p")
 	   self.end()
 
     def plot_autocorrelations(self,filename):
@@ -63,7 +63,7 @@ class IPlot:
 	   tag=items[0]
 	   data=items[1:]
 	   self.begin(filename[:-4]+'_%s' % clean(tag))
-	   r.plot(x=range(len(data)),y=data,xlab='step',ylab=tag,main='')
+	   r.plot(x=list(range(len(data))),y=data,xlab='step',ylab=tag,main='')
 	   self.end()
 
     def plot_trails(self,filename):
@@ -71,7 +71,7 @@ class IPlot:
 	   tag=items[0]
 	   data=items[1:]
 	   self.begin(filename[:-4]+'_%s' % clean(tag))
-	   r.plot(x=range(len(data)),y=data,xlab='step',ylab=tag,main='',type='p')
+	   r.plot(x=list(range(len(data))),y=data,xlab='step',ylab=tag,main='',type='p')
 	   self.end()
 
     def plot_samples(self,filename):
@@ -101,7 +101,7 @@ class IPlot:
 	   legend=""
 	   for i in range(1,len(tags)-3):
 	       if not tags[i] in xlab: legend+="%s=%g " % (tags[i],data[i-1])
-	   if not sets.has_key(legend):
+	   if legend not in sets:
 	       x,y,yminus,yplus=[],[],[],[]
 	       sets[legend]=(x,y,yminus,yplus)
 	   else:
@@ -112,7 +112,7 @@ class IPlot:
 	   yminus.append(data[-3])
 	   yplus.append(data[-1])
 	#v=r.FALSE	
-	for legend in sets.keys():
+	for legend in list(sets.keys()):
 	   x,y,yminus,yplus=sets[legend]
 	   self.begin(filename[:-4]+'_%s' % clean(legend))
 	   r.errbar(x,y,yminus,yplus,xlab=tags[index+1],ylab=tags[0],main="")
@@ -133,7 +133,8 @@ def shell_iplot():
 		      help='fits to be performs on results')
     (options, args) = parser.parse_args()
     if options.fits:
-	print 'sorry -f not implemented yet!'
+	print('sorry -f not implemented yet!')
     plot=IPlot(options.input_prefix,options.plot_type,options.plot_variables.split(','))
 
 if __name__=='__main__': shell_iplot()
+

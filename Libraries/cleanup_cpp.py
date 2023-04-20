@@ -13,4 +13,4 @@ def cleanup_cpp(data):
     return data
 
 data=open(sys.argv[1],'rb').read()
-print cleanup_cpp(data)
+print(cleanup_cpp(data))
