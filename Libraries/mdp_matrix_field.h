@@ -37,13 +37,13 @@ namespace MDP
     {
     }
 
-    mdp_matrix_field(mdp_matrix_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
-    {
-    }
-
     /** @brief declares a field of ixj matrices at each site
      */
     mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j) : mdp_field<mdp_complex>(a, i * j), m_rows(i), m_columns(j), m_imax(i * j)
+    {
+    }
+
+    mdp_matrix_field(const mdp_matrix_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
     {
     }
 

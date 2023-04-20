@@ -46,7 +46,7 @@ namespace MDP
     {
     }
 
-    mdp_nmatrix_field(mdp_nmatrix_field &field) : mdp_field<mdp_complex>(field), m_matrices(field.m_matrices), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax), m_imax2(field.m_imax2)
+    mdp_nmatrix_field(const mdp_nmatrix_field &field) : mdp_field<mdp_complex>(field), m_matrices(field.m_matrices), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax), m_imax2(field.m_imax2)
     {
     }
 

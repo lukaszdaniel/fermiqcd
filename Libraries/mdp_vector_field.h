@@ -41,7 +41,7 @@ namespace MDP
     {
     }
 
-    mdp_vector_field(mdp_vector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
+    mdp_vector_field(const mdp_vector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
     {
     }
 

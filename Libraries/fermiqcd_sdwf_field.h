@@ -35,7 +35,7 @@ namespace MDP
       // attention here that nspin_ is ignored in field allocation!
     }
 
-    sdwf_field(sdwf_field &chi) : mdp_complex_field(chi), m_nspin(chi.m_nspin), m_nc(chi.m_nc), m_L5(chi.m_L5)
+    sdwf_field(const sdwf_field &chi) : mdp_complex_field(chi), m_nspin(chi.m_nspin), m_nc(chi.m_nc), m_L5(chi.m_L5)
     {
     }
 

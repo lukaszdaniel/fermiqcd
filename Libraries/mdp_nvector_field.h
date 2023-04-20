@@ -34,7 +34,7 @@ namespace MDP
     {
     }
 
-    mdp_nvector_field(mdp_nvector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_imax(field.m_imax), m_imax2(field.m_imax2)
+    mdp_nvector_field(const mdp_nvector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_imax(field.m_imax), m_imax2(field.m_imax2)
     {
     }
 
