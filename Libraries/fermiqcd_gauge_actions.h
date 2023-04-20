@@ -425,9 +425,8 @@ namespace MDP
 
       if (U.nc() == 1)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): U(1)? (use metropolis instead)");
-      int nc = U.nc();
-      int ndim = U.ndim();
-      int i, j, k, iter, mu, type;
+      mdp_int nc = U.nc();
+      mdp_int ndim = U.ndim();
       mdp_matrix M;
       mdp_site x(U.lattice());
       double time = mpi.time();
@@ -468,16 +467,16 @@ namespace MDP
 
       mdp << coeff;
 
-      for (iter = 0; iter < n_iter; iter++)
-        for (type = 0; type < (int)std::pow((float)iGauge_min, U.ndim()); type++)
+      for (mdp_int iter = 0; iter < n_iter; iter++)
+        for (mdp_int type = 0; type < (int)std::pow((float)iGauge_min, U.ndim()); type++)
         {
           forallsites(x)
           {
             if (strange_mapping(x) == type)
             {
-              for (mu = 0; mu < ndim; mu++)
-                for (i = 0; i < nc - 1; i++)
-                  for (j = i + 1; j < nc; j++)
+              for (mdp_int mu = 0; mu < ndim; mu++)
+                for (mdp_int i = 0; i < nc - 1; i++)
+                  for (mdp_int j = i + 1; j < nc; j++)
                   {
                     if (zeta != 1)
                     {
@@ -509,7 +508,7 @@ namespace MDP
                     a[2] = M(j, i);
                     a[3] = M(j, j);
                     heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-                    for (k = 0; k < U.nc(); k++)
+                    for (mdp_int k = 0; k < U.nc(); k++)
                     {
                       tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                       U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
