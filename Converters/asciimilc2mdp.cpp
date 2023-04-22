@@ -21,7 +21,7 @@ struct _generic_field_file_header
   }
 };
 
-int number(char *x)
+int number(const char *x)
 {
   return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
 }

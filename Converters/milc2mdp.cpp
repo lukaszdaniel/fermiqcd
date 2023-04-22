@@ -95,7 +95,7 @@ public:
   }
 };
 
-int number(char *x)
+int number(const char *x)
 {
   return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
 }
@@ -112,6 +112,7 @@ public:
   std::unique_ptr<Complex[]> m_data;
   long size;
   int dim[7];
+
   short_field() : m_data(nullptr)
   {
   }

@@ -52,7 +52,7 @@ public:
   }
 };
 
-int number(char *x)
+int number(const char *x)
 {
   return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
 }
