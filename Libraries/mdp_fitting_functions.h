@@ -36,11 +36,11 @@ namespace MDP
     }
     det = (S * Sxx - Sx * Sx);
     // this is m
-    a[0].mean = (S * Sxy - Sx * Sy) / det;
-    a[0].error = std::sqrt(S / det);
+    a[0].setmean((S * Sxy - Sx * Sy) / det);
+    a[0].setmerror(std::sqrt(S / det));
     // this is q
-    a[1].mean = (Sxx * Sy - Sx * Sxy) / det;
-    a[1].error = std::sqrt(Sxx / det);
+    a[1].setmean((Sxx * Sy - Sx * Sxy) / det);
+    a[1].setmerror(std::sqrt(Sxx / det));
   }
 
   /** @brief Fitting function

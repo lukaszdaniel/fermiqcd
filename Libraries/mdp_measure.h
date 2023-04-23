@@ -30,226 +30,242 @@ namespace MDP
   /// Assumes gaussian error propagation
   class mdp_measure
   {
+  private:
+    float m_mean;
+    float m_error;
+    int m_num;
+
   public:
-    int num;
-    float mean;
-    float error;
+    mdp_measure(float mean_ = 0, float error_ = 0, int num_ = 1) : m_mean(mean_), m_error(error_), m_num(num_)
+    {
+    }
 
     int getnum() const
     {
-      return num;
+      return m_num;
     }
 
     float getmean() const
     {
-      return mean;
+      return m_mean;
+    }
+
+    void setmean(float mean)
+    {
+      m_mean = mean;
     }
 
     float getmerr() const
     {
-      return error;
+      return m_error;
     }
 
-    mdp_measure()
+    void setmerror(float err)
     {
-      num = 0;
-      mean = 0;
-      error = 0;
-    }
-
-    mdp_measure(float mean_, float error_, int num_ = 1)
-    {
-      num = num_;
-      mean = mean_;
-      error = error_;
+      m_error = err;
     }
 
     void reset()
     {
-      num = 0;
-      mean = 0;
-      error = 0;
+      m_num = 0;
+      m_mean = 0;
+      m_error = 0;
     }
 
     void set(float x, float dx, int i = 1)
     {
-      num = i;
-      mean = x;
-      error = dx;
+      m_num = i;
+      m_mean = x;
+      m_error = dx;
     }
 
     void operator<<(float x)
     {
-      float err2 = num * (std::pow((double)error, (double)2.0) + mean * mean) + std::pow((double)x, (double)2.0);
-      ++num;
-      mean = (mean * (num - 1) + x) / num;
-      error = std::sqrt(err2 / num - mean * mean);
+      float err2 = m_num * (std::pow((double)m_error, (double)2.0) + m_mean * m_mean) + std::pow((double)x, (double)2.0);
+      ++m_num;
+      m_mean = (m_mean * (m_num - 1) + x) / m_num;
+      m_error = std::sqrt(err2 / m_num - m_mean * m_mean);
     }
 
     void operator>>(float &x)
     {
-      x = mean + error * Random.gaussian();
+      x = m_mean + m_error * Random.gaussian();
     }
 
-    friend mdp_measure operator+(mdp_measure a, mdp_measure b)
+    mdp_measure operator+()
+    {
+      return mdp_measure(m_mean, m_error);
+    }
+
+    mdp_measure operator-()
+    {
+      return mdp_measure(-m_mean, m_error);
+    }
+
+    mdp_measure operator+(mdp_measure b)
     {
       mdp_measure tmp;
-      tmp.mean = a.mean + b.mean;
-      tmp.error = a.error + b.error;
-      tmp.num = 1;
+      tmp.m_mean = m_mean + b.m_mean;
+      tmp.m_error = m_error + b.m_error;
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator-(mdp_measure a, mdp_measure b)
+    mdp_measure operator-(mdp_measure b)
     {
       mdp_measure tmp;
-      tmp.mean = a.mean - b.mean;
-      tmp.error = a.error + b.error;
-      tmp.num = 1;
+      tmp.m_mean = m_mean - b.m_mean;
+      tmp.m_error = m_error + b.m_error;
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator*(mdp_measure a, mdp_measure b)
+    mdp_measure operator*(mdp_measure b)
     {
       mdp_measure tmp;
-      tmp.mean = a.mean * b.mean;
-      tmp.error = std::fabs(a.mean) * b.error + a.error * std::fabs(b.mean);
-      tmp.num = 1;
+      tmp.m_mean = m_mean * b.m_mean;
+      tmp.m_error = std::fabs(m_mean) * b.m_error + m_error * std::fabs(b.m_mean);
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator/(mdp_measure a, mdp_measure b)
+    mdp_measure operator/(mdp_measure b)
     {
       mdp_measure tmp;
-      tmp.mean = a.mean / b.mean;
-      tmp.error = a.error / std::fabs(b.mean) +
-                  std::fabs(a.mean) / std::pow((double)b.mean, (double)2.0) * b.error;
-      tmp.num = 1;
+      tmp.m_mean = m_mean / b.m_mean;
+      tmp.m_error = m_error / std::fabs(b.m_mean) +
+                    std::fabs(m_mean) / std::pow((double)b.m_mean, (double)2.0) * b.m_error;
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator+(float a, mdp_measure b)
+    mdp_measure operator+(float b)
     {
       mdp_measure tmp;
-      tmp.mean = a + b.mean;
-      tmp.error = b.error;
-      tmp.num = 1;
+      tmp.m_mean = m_mean + b;
+      tmp.m_error = m_error;
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator-(float a, mdp_measure b)
+    mdp_measure operator-(float b)
     {
       mdp_measure tmp;
-      tmp.mean = a - b.mean;
-      tmp.error = b.error;
-      tmp.num = 1;
+      tmp.m_mean = m_mean - b;
+      tmp.m_error = m_error;
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator*(float a, mdp_measure b)
+    mdp_measure operator*(float b)
     {
       mdp_measure tmp;
-      tmp.mean = a * b.mean;
-      tmp.error = std::fabs(a) * b.error;
-      tmp.num = 1;
+      tmp.m_mean = m_mean * b;
+      tmp.m_error = m_error * std::fabs(b);
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator/(float a, mdp_measure b)
+    mdp_measure operator/(float b)
     {
       mdp_measure tmp;
-      tmp.mean = a / b.mean;
-      tmp.error = std::fabs(a) / std::pow((double)b.mean, (double)2.0) * b.error;
-      tmp.num = 1;
+      tmp.m_mean = m_mean / b;
+      tmp.m_error = m_error / std::fabs(b);
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator+(mdp_measure a, float b)
+    mdp_measure exp()
     {
       mdp_measure tmp;
-      tmp.mean = a.mean + b;
-      tmp.error = a.error;
-      tmp.num = 1;
+      tmp.m_mean = std::exp(m_mean);
+      tmp.m_error = std::exp(m_mean) * m_error;
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator-(mdp_measure a, float b)
+    mdp_measure log()
     {
       mdp_measure tmp;
-      tmp.mean = a.mean - b;
-      tmp.error = a.error;
-      tmp.num = 1;
+      tmp.m_mean = std::log(m_mean);
+      tmp.m_error = m_error / fabs(m_mean);
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator*(mdp_measure a, float b)
+    mdp_measure sin()
     {
       mdp_measure tmp;
-      tmp.mean = a.mean * b;
-      tmp.error = a.error * std::fabs(b);
-      tmp.num = 1;
+      tmp.m_mean = std::sin(m_mean);
+      tmp.m_error = std::fabs(std::cos(m_mean)) * m_error;
+      tmp.m_num = 1;
       return tmp;
     }
 
-    friend mdp_measure operator/(mdp_measure a, float b)
+    mdp_measure cos()
     {
       mdp_measure tmp;
-      tmp.mean = a.mean / b;
-      tmp.error = a.error / std::fabs(b);
-      tmp.num = 1;
+      tmp.m_mean = std::cos(m_mean);
+      tmp.m_error = std::fabs(std::sin(m_mean)) * m_error;
+      tmp.m_num = 1;
       return tmp;
-    }
-
-    friend mdp_measure exp(mdp_measure a)
-    {
-      mdp_measure tmp;
-      tmp.mean = std::exp(a.mean);
-      tmp.error = std::exp(a.mean) * a.error;
-      tmp.num = 1;
-      return tmp;
-    }
-
-    friend mdp_measure log(mdp_measure a)
-    {
-      mdp_measure tmp;
-      tmp.mean = std::log(a.mean);
-      tmp.error = a.error / fabs(a.mean);
-      tmp.num = 1;
-      return tmp;
-    }
-
-    friend mdp_measure pow(mdp_measure a, float b)
-    {
-      mdp_measure tmp;
-      tmp.mean = std::pow((double)a.mean, (double)b);
-      tmp.error = a.error * b * std::pow((double)a.mean, (double)b - 1);
-      tmp.num = 1;
-      return tmp;
-    }
-
-    friend mdp_measure sin(mdp_measure a)
-    {
-      mdp_measure tmp;
-      tmp.mean = std::sin(a.mean);
-      tmp.error = std::fabs(std::cos(a.mean)) * a.error;
-      tmp.num = 1;
-      return tmp;
-    }
-
-    friend mdp_measure cos(mdp_measure a)
-    {
-      mdp_measure tmp;
-      tmp.mean = std::cos(a.mean);
-      tmp.error = std::fabs(std::sin(a.mean)) * a.error;
-      tmp.num = 1;
-      return tmp;
-    }
-
-    friend void print(mdp_measure a)
-    {
-      printf("%f (%f)\n", a.mean, a.error);
     }
   };
+
+  mdp_measure operator+(float a, mdp_measure b)
+  {
+    return b + a;
+  }
+
+  mdp_measure operator-(float a, mdp_measure b)
+  {
+    return -(b - a);
+  }
+
+  mdp_measure operator*(float a, mdp_measure b)
+  {
+    return b * a;
+  }
+
+  mdp_measure operator/(float a, mdp_measure b)
+  {
+    float mean = a / b.getmean();
+    float error = std::fabs(a) / std::pow((double)b.getmean(), (double)2.0) * b.getmerr();
+    return mdp_measure(mean, error);
+  }
+
+  mdp_measure exp(mdp_measure a)
+  {
+    return a.exp();
+  }
+
+  mdp_measure log(mdp_measure a)
+  {
+    return a.log();
+  }
+
+  mdp_measure pow(mdp_measure a, float b)
+  {
+    float mean = std::pow((double)a.getmean(), (double)b);
+    float error = a.getmerr() * b * std::pow((double)a.getmean(), (double)b - 1);
+
+    return mdp_measure(mean, error);
+  }
+
+  mdp_measure sin(mdp_measure a)
+  {
+    return a.sin();
+  }
+
+  mdp_measure cos(mdp_measure a)
+  {
+    return a.cos();
+  }
+
+  void print(mdp_measure a)
+  {
+    std::cout << a.getmean() << " (" << a.getmerr() << ")" << std::endl;
+  }
 } // namespace MDP
 
 #endif /* MDP_MEASURE_ */
