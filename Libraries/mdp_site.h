@@ -14,14 +14,6 @@
 
 namespace MDP
 {
-  /// checks which process of the lattice a stores locally the site of
-  /// coordinates x0,x1,x2,...,x9
-  /// to be used before calling mdp_site::set()
-  /// (note: prototyping of friend functions is required by some compilers)
-  int on_which_process(mdp_lattice &a,
-                       int x0 = 0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
-                       int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0);
-
   /// @brief site object to loop on a lattice
   ///
   /// Example:
@@ -452,53 +444,53 @@ namespace MDP
         return false;
       return true;
     }
-
-    /// converts a site into a binary number
-    /// to be used only if the site is a vertex of an hypercube centered
-    /// at the origin. this is used to make staggered mesons
-    friend mdp_int site2binary(mdp_site x)
-    {
-      int a = 0;
-      for (mdp_int mu = 0; mu < x.lattice().n_dimensions(); mu++)
-      {
-#ifdef CHECK_ALL
-        if (fabs(0.5 - x(mu)) > 1)
-          error("site2binary");
-#endif
-        a += (0x1 << mu) * x(mu);
-      }
-      return a;
-    }
-
-    /// checks which process of the lattice a stores locally the site of
-    /// coordinates x0,x1,x2,...,x9
-    /// to be used before calling mdp_site::set()
-    friend int on_which_process(mdp_lattice &a, int x0, int x1, int x2, int x3,
-                                int x4, int x5, int x6, int x7, int x8, int x9)
-    {
-      int x[10];
-      x[0] = x0;
-      if (a.n_dimensions() > 1)
-        x[1] = x1;
-      if (a.n_dimensions() > 2)
-        x[2] = x2;
-      if (a.n_dimensions() > 3)
-        x[3] = x3;
-      if (a.n_dimensions() > 4)
-        x[4] = x4;
-      if (a.n_dimensions() > 5)
-        x[5] = x5;
-      if (a.n_dimensions() > 6)
-        x[6] = x6;
-      if (a.n_dimensions() > 7)
-        x[7] = x7;
-      if (a.n_dimensions() > 8)
-        x[8] = x8;
-      if (a.n_dimensions() > 9)
-        x[9] = x9;
-      return a.where(x);
-    }
   };
+
+  /// converts a site into a binary number
+  /// to be used only if the site is a vertex of an hypercube centered
+  /// at the origin. this is used to make staggered mesons
+  mdp_int site2binary(mdp_site x)
+  {
+    int a = 0;
+    for (mdp_int mu = 0; mu < x.lattice().n_dimensions(); mu++)
+    {
+#ifdef CHECK_ALL
+      if (fabs(0.5 - x(mu)) > 1)
+        error("site2binary");
+#endif
+      a += (0x1 << mu) * x(mu);
+    }
+    return a;
+  }
+
+  /// checks which process of the lattice a stores locally the site of
+  /// coordinates x0,x1,x2,...,x9
+  /// to be used before calling mdp_site::set()
+  int on_which_process(mdp_lattice &a, int x0 = 0, int x1 = 0, int x2 = 0, int x3 = 0,
+                       int x4 = 0, int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
+  {
+    int x[10];
+    x[0] = x0;
+    if (a.n_dimensions() > 1)
+      x[1] = x1;
+    if (a.n_dimensions() > 2)
+      x[2] = x2;
+    if (a.n_dimensions() > 3)
+      x[3] = x3;
+    if (a.n_dimensions() > 4)
+      x[4] = x4;
+    if (a.n_dimensions() > 5)
+      x[5] = x5;
+    if (a.n_dimensions() > 6)
+      x[6] = x6;
+    if (a.n_dimensions() > 7)
+      x[7] = x7;
+    if (a.n_dimensions() > 8)
+      x[8] = x8;
+    if (a.n_dimensions() > 9)
+      x[9] = x9;
+    return a.where(x);
+  }
 
 #ifdef MDP_LATTICE
 

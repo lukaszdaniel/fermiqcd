@@ -195,6 +195,7 @@ namespace MDP
     void *DataStorage;
     FILE *OutputFile;
     FILE *OutputFileAdvanced;
+
     VegasClass()
     {
       OutputFile = stdout;
@@ -202,16 +203,19 @@ namespace MDP
       ConvergenceCriteria = RelativePrecision;
       TargetPrecision = 1e-4;
     }
+
     void SetConvergenceCriteriaToRelativePrecision(double x = 1e-4)
     {
       ConvergenceCriteria = RelativePrecision;
       TargetPrecision = x;
     }
+
     void SetConvergenceCriteriaToAbsolutePrecision(double x = 1e-4)
     {
       ConvergenceCriteria = AbsolutePrecision;
       TargetPrecision = x;
     }
+
     void SaveGrid(char filename[])
     {
       if (ME == 0)
@@ -221,6 +225,7 @@ namespace MDP
         fclose(fp);
       }
     }
+
     void LoadGrid(char filename[])
     {
       FILE *fp = fopen(filename, "r");
@@ -245,6 +250,7 @@ namespace MDP
       }
       fflush(OutputFile);
     }
+
     void PrintOutput()
     {
       if (OutputFile != nullptr && ME == 0)

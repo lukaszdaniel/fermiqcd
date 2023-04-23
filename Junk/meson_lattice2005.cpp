@@ -29,7 +29,7 @@ int main(int argc, char **argv)
     U.save(std::string("gauge") + std::to_string(k)); // save config
     if (quark["c_{SW}"] != 0)
       compute_em_field(U);
-    generate(S, U, quark, 1e-20, 1e-12); // make propagator
+    fermi_propagator::generate(S, U, quark, 1e-20, 1e-12); // make propagator
     forallsites(x)                       // contract pion
         for (int a = 0; a < 4; a++)      // source spin
         for (int b = 0; b < 4; b++)      // sink spin

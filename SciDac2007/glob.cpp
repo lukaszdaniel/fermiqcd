@@ -5,7 +5,6 @@
 #include <iostream>
 #include <vector>
 
-
 std::vector<std::string> glob(std::string pattern)
 {
   std::vector<std::string> v;

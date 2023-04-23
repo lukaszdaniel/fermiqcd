@@ -35,17 +35,17 @@ namespace MDP
     float mean;
     float error;
 
-    int getnum()
+    int getnum() const
     {
       return num;
     }
 
-    float getmean()
+    float getmean() const
     {
       return mean;
     }
 
-    float getmerr()
+    float getmerr() const
     {
       return error;
     }

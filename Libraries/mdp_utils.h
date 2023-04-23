@@ -72,7 +72,7 @@ namespace MDP
       {
         error("Error while reading file");
       }
-      switch_header_endianess(myheader);
+      mdp_field_file_header::switch_header_endianess(myheader);
       fclose(fp); // fixed by Lucky [lucky@sfu.ca]
     }
     mpi.broadcast(myheader, proc);

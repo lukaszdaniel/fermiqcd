@@ -83,7 +83,7 @@ namespace MDP
           return false;
         }
 
-        reversed_header_endianess = switch_header_endianess(tmp_header);
+        reversed_header_endianess = mdp_field_file_header::switch_header_endianess(tmp_header);
 
         std::cout << "reverse: " << reversed_header_endianess << std::endl;
 

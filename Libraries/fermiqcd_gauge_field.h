@@ -329,166 +329,166 @@ namespace MDP
       return mdp_complex(0, 0);
     }
 #endif
+  };
 
-    // /////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////
-    // stuff for twisted boundary conditions
-    // ignore if you do not care
-    // /////////////////////////////////////////////////////
-    // /////////////////////////////////////////////////////
+  // /////////////////////////////////////////////////////
+  // /////////////////////////////////////////////////////
+  // stuff for twisted boundary conditions
+  // ignore if you do not care
+  // /////////////////////////////////////////////////////
+  // /////////////////////////////////////////////////////
 
 #ifdef TWISTED_BOUNDARY
-    friend void twist_boundary(mdp_matrix &M, mdp_site &x)
-    {
-      static int block;
-      static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
-      static mdp_complex a, b, c, d, e, f, g, h, i;
+  void twist_boundary(mdp_matrix &M, mdp_site &x)
+  {
+    static int block;
+    static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
+    static mdp_complex a, b, c, d, e, f, g, h, i;
 
-      for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
+    for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
+    {
+      block = x.block(mu);
+      if (block != 0)
       {
-        block = x.block(mu);
-        if (block != 0)
+        a = M(0, 0);
+        b = M(0, 1);
+        c = M(0, 2);
+        d = M(1, 0);
+        e = M(1, 1);
+        f = M(1, 2);
+        g = M(2, 0);
+        h = M(2, 1);
+        i = M(2, 2);
+        if (mu == 1 && block == 1)
         {
-          a = M(0, 0);
-          b = M(0, 1);
-          c = M(0, 2);
-          d = M(1, 0);
-          e = M(1, 1);
-          f = M(1, 2);
-          g = M(2, 0);
-          h = M(2, 1);
-          i = M(2, 2);
-          if (mu == 1 && block == 1)
-          {
-            M(0, 0) = e;
-            M(0, 1) = f;
-            M(0, 2) = d;
-            M(1, 0) = h;
-            M(1, 1) = i;
-            M(1, 2) = g;
-            M(2, 0) = b;
-            M(2, 1) = c;
-            M(2, 2) = a;
-          }
-          if (mu == 1 && block == -1)
-          {
-            M(0, 0) = i;
-            M(0, 1) = g;
-            M(0, 2) = h;
-            M(1, 0) = c;
-            M(1, 1) = a;
-            M(1, 2) = b;
-            M(2, 0) = f;
-            M(2, 1) = d;
-            M(2, 2) = e;
-          }
-          if (mu == 2 && block == 1)
-          {
-            M(0, 0) = a;
-            M(0, 1) = b / z;
-            M(0, 2) = c / z / z;
-            M(1, 0) = d * z;
-            M(1, 1) = e;
-            M(1, 2) = f / z;
-            M(2, 0) = g * z * z;
-            M(2, 1) = h * z;
-            M(2, 2) = i;
-          }
-          if (mu == 2 && block == -1)
-          {
-            M(0, 0) = a;
-            M(0, 1) = b * z;
-            M(0, 2) = c * z * z;
-            M(1, 0) = d / z;
-            M(1, 1) = e;
-            M(1, 2) = f * z;
-            M(2, 0) = g / z / z;
-            M(2, 1) = h / z;
-            M(2, 2) = i;
-          }
-          if (mu == 3 && block == 1)
-          {
-            M(0, 0) = i;
-            M(0, 1) = g / z;
-            M(0, 2) = h / z / z;
-            M(1, 0) = c * z;
-            M(1, 1) = a;
-            M(1, 2) = b / z;
-            M(2, 0) = f * z * z;
-            M(2, 1) = d * z;
-            M(2, 2) = e;
-          }
-          if (mu == 3 && block == -1)
-          {
-            M(0, 0) = e;
-            M(0, 1) = f * z;
-            M(0, 2) = d * z * z;
-            M(1, 0) = h / z;
-            M(1, 1) = i;
-            M(1, 2) = g * z;
-            M(2, 0) = b / z / z;
-            M(2, 1) = c / z;
-            M(2, 2) = a;
-          }
-          if (block * block > 1)
-            error("two blocks out\n");
+          M(0, 0) = e;
+          M(0, 1) = f;
+          M(0, 2) = d;
+          M(1, 0) = h;
+          M(1, 1) = i;
+          M(1, 2) = g;
+          M(2, 0) = b;
+          M(2, 1) = c;
+          M(2, 2) = a;
         }
+        if (mu == 1 && block == -1)
+        {
+          M(0, 0) = i;
+          M(0, 1) = g;
+          M(0, 2) = h;
+          M(1, 0) = c;
+          M(1, 1) = a;
+          M(1, 2) = b;
+          M(2, 0) = f;
+          M(2, 1) = d;
+          M(2, 2) = e;
+        }
+        if (mu == 2 && block == 1)
+        {
+          M(0, 0) = a;
+          M(0, 1) = b / z;
+          M(0, 2) = c / z / z;
+          M(1, 0) = d * z;
+          M(1, 1) = e;
+          M(1, 2) = f / z;
+          M(2, 0) = g * z * z;
+          M(2, 1) = h * z;
+          M(2, 2) = i;
+        }
+        if (mu == 2 && block == -1)
+        {
+          M(0, 0) = a;
+          M(0, 1) = b * z;
+          M(0, 2) = c * z * z;
+          M(1, 0) = d / z;
+          M(1, 1) = e;
+          M(1, 2) = f * z;
+          M(2, 0) = g / z / z;
+          M(2, 1) = h / z;
+          M(2, 2) = i;
+        }
+        if (mu == 3 && block == 1)
+        {
+          M(0, 0) = i;
+          M(0, 1) = g / z;
+          M(0, 2) = h / z / z;
+          M(1, 0) = c * z;
+          M(1, 1) = a;
+          M(1, 2) = b / z;
+          M(2, 0) = f * z * z;
+          M(2, 1) = d * z;
+          M(2, 2) = e;
+        }
+        if (mu == 3 && block == -1)
+        {
+          M(0, 0) = e;
+          M(0, 1) = f * z;
+          M(0, 2) = d * z * z;
+          M(1, 0) = h / z;
+          M(1, 1) = i;
+          M(1, 2) = g * z;
+          M(2, 0) = b / z / z;
+          M(2, 1) = c / z;
+          M(2, 2) = a;
+        }
+        if (block * block > 1)
+          error("two blocks out\n");
       }
     }
+  }
 
-    friend void define_twist_matrices()
+  void define_twist_matrices()
+  {
+    begin_function("gauge_field__define_twist_matrices");
+    mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
+    OmegaTwist[0] = mdp_identity(3);
+    OmegaTwist[1] = mdp_zero(3);
+    OmegaTwist[1](0, 1) = 1;
+    OmegaTwist[1](1, 2) = 1;
+    OmegaTwist[1](2, 0) = 1;
+    OmegaTwist[2] = mdp_zero(3);
+    OmegaTwist[2](0, 0) = 1.0 / z;
+    OmegaTwist[2](1, 1) = 1;
+    OmegaTwist[2](2, 2) = z;
+    OmegaTwist[3] = mdp_zero(3);
+    OmegaTwist[3](0, 2) = 1.0 / z;
+    OmegaTwist[3](1, 0) = 1;
+    OmegaTwist[3](2, 1) = z;
+    end_function("gauge_field__define_twist_matrices");
+  }
+
+  void twist_eat_fields(mdp_matrix &M, mdp_site &x,
+                        gauge_field &omega)
+  {
+    begin_function("gauge_field__twist_eat_matrices");
+    static int block;
+    // static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
+    static mdp_complex a, b, c, d, e, f, g, h, i;
+
+    for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
     {
-      begin_function("gauge_field__define_twist_matrices");
-      mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
-      OmegaTwist[0] = mdp_identity(3);
-      OmegaTwist[1] = mdp_zero(3);
-      OmegaTwist[1](0, 1) = 1;
-      OmegaTwist[1](1, 2) = 1;
-      OmegaTwist[1](2, 0) = 1;
-      OmegaTwist[2] = mdp_zero(3);
-      OmegaTwist[2](0, 0) = 1.0 / z;
-      OmegaTwist[2](1, 1) = 1;
-      OmegaTwist[2](2, 2) = z;
-      OmegaTwist[3] = mdp_zero(3);
-      OmegaTwist[3](0, 2) = 1.0 / z;
-      OmegaTwist[3](1, 0) = 1;
-      OmegaTwist[3](2, 1) = z;
-      end_function("gauge_field__define_twist_matrices");
-    }
-
-    friend void twist_eat_fields(mdp_matrix &M, mdp_site &x,
-                                 gauge_field &omega)
-    {
-      begin_function("gauge_field__twist_eat_matrices");
-      static int block;
-      // static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
-      static mdp_complex a, b, c, d, e, f, g, h, i;
-
-      for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
+      block = x.block(mu);
+      if (block != 0)
       {
-        block = x.block(mu);
-        if (block != 0)
-        {
-          if (mu == 1 && block == 1)
-            M = omega(x, mu) * M * hermitian(omega(x, mu));
-          if (mu == 1 && block == -1)
-            M = hermitian(omega(x, mu)) * M * omega(x, mu);
-          if (mu == 2 && block == 1)
-            M = omega(x, mu) * M * hermitian(omega(x, mu));
-          if (mu == 2 && block == -1)
-            M = hermitian(omega(x, mu)) * M * omega(x, mu);
-          if (mu == 3 && block == 1)
-            M = omega(x, mu) * M * hermitian(omega(x, mu));
-          if (mu == 3 && block == -1)
-            M = hermitian(omega(x, mu)) * M * omega(x, mu);
-          if (block * block > 1)
-            error("two blocks out\n");
-        }
+        if (mu == 1 && block == 1)
+          M = omega(x, mu) * M * hermitian(omega(x, mu));
+        if (mu == 1 && block == -1)
+          M = hermitian(omega(x, mu)) * M * omega(x, mu);
+        if (mu == 2 && block == 1)
+          M = omega(x, mu) * M * hermitian(omega(x, mu));
+        if (mu == 2 && block == -1)
+          M = hermitian(omega(x, mu)) * M * omega(x, mu);
+        if (mu == 3 && block == 1)
+          M = omega(x, mu) * M * hermitian(omega(x, mu));
+        if (mu == 3 && block == -1)
+          M = hermitian(omega(x, mu)) * M * omega(x, mu);
+        if (block * block > 1)
+          error("two blocks out\n");
       }
-      end_function("gauge_field__twist_eat_matrices");
     }
+    end_function("gauge_field__twist_eat_matrices");
+  }
 #endif
-  };
 } // namespace MDP
 
 #endif /* FERMIQCD_GAUGE_FIELD_ */

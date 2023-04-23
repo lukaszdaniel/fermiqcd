@@ -97,7 +97,7 @@ namespace MDP
     /// @param max_steps the max number of steps in inversion
     /// @param smf pointer to smearing function (smear sources)
     /// @param smear_coeff parameters for smearing
-    friend void generate(fermi_propagator &S, gauge_field &U,
+    static void generate(fermi_propagator &S, gauge_field &U,
                          coefficients &coeff,
                          mdp_real absolute_precision = fermi_inversion_precision,
                          mdp_real relative_precision = 0,

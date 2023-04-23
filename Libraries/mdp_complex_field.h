@@ -224,212 +224,6 @@ namespace MDP
         m_data[i] -= psi.m_data[i];
     }
 
-    friend mdp_real norm_square(mdp_complex_field &psi,
-                                int parity = EVENODD)
-    {
-      double n2 = 0;
-      mdp_int i_min = psi.physical_local_start(parity);
-      mdp_int i_max = psi.physical_local_stop(parity);
-      mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      static _sse_double c ALIGN16;
-      _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-
-      _sse_check_alignment(&c, 0xf);
-
-      c.c1 = c.c2 = 0;
-      for (; i < i_max - 7; i += 8, r += 8)
-      {
-        _sse_double_prefetch_16(r + 8);
-        _sse_double_add_norm_square_16(r, c);
-      }
-      n2 += c.c1 + c.c2;
-#endif
-
-      for (; i < i_max; i++)
-        n2 += abs2(psi[i]);
-      mpi.add(n2);
-      return n2;
-    }
-
-    friend mdp_complex scalar_product(mdp_complex_field &psi,
-                                      mdp_complex_field &chi,
-                                      int parity = EVENODD)
-    {
-      mdp_complex n2 = 0;
-      mdp_int i_min = psi.physical_local_start(parity);
-      mdp_int i_max = psi.physical_local_stop(parity);
-      mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      static _sse_double c, d ALIGN16;
-      _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-      _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-      _sse_check_alignment(&c, 0xf);
-
-      c.c1 = c.c2 = 0;
-      d.c1 = d.c2 = 0;
-      for (; i < i_max - 7; i += 8, r += 8, s += 8)
-      {
-        _sse_double_prefetch_16(r + 8);
-        _sse_double_prefetch_16(s + 8);
-        _sse_double_add_real_scalar_product_16(r, s, c);
-        _sse_double_add_imag_scalar_product_16(r, s, d);
-      }
-      n2 += mdp_complex(c.c1 + c.c2, d.c2 - d.c1);
-#endif
-
-      for (; i < i_max; i++)
-        n2 += conj(psi[i]) * chi[i];
-      mpi.add(n2);
-
-      return n2;
-    }
-
-    friend mdp_real real_scalar_product(mdp_complex_field &psi,
-                                        mdp_complex_field &chi,
-                                        int parity = EVENODD)
-    {
-
-      double n2 = 0;
-      mdp_int i_min = psi.physical_local_start(parity);
-      mdp_int i_max = psi.physical_local_stop(parity);
-      mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      static _sse_double c ALIGN16;
-      _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-      _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-      _sse_check_alignment(&c, 0xf);
-
-      c.c1 = c.c2 = 0;
-      for (; i < i_max - 7; i += 8, r += 8, s += 8)
-      {
-        _sse_double_prefetch_16(r + 8);
-        _sse_double_prefetch_16(s + 8);
-        _sse_double_add_real_scalar_product_16(r, s, c);
-      }
-      n2 += c.c1 + c.c2;
-#endif
-
-      for (; i < i_max; i++)
-        n2 +=
-            real(chi[i]) * real(psi[i]) +
-            imag(chi[i]) * imag(psi[i]);
-
-      mpi.add(n2);
-      return n2;
-    }
-
-    friend mdp_real imag_scalar_product(mdp_complex_field &psi,
-                                        mdp_complex_field &chi,
-                                        int parity = EVENODD)
-    {
-      double n2 = 0;
-      mdp_int i_min = psi.physical_local_start(parity);
-      mdp_int i_max = psi.physical_local_stop(parity);
-      mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      static _sse_double c ALIGN16;
-      _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-      _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-      _sse_check_alignment(&c, 0xf);
-
-      c.c1 = c.c2 = 0;
-      for (; i < i_max - 7; i += 8, r += 8, s += 8)
-      {
-        _sse_double_prefetch_16(r + 8);
-        _sse_double_prefetch_16(s + 8);
-        _sse_double_add_imag_scalar_product_16(r, s, c);
-      }
-      n2 += c.c2 - c.c1;
-#endif
-
-      for (; i < i_max; i++)
-        n2 +=
-            real(psi[i]) * imag(chi[i]) +
-            imag(psi[i]) * real(chi[i]);
-      mpi.add(n2);
-      return n2;
-    }
-
-    friend void mdp_add_scaled_field(mdp_complex_field &psi,
-                                     mdp_real alpha,
-                                     mdp_complex_field &chi,
-                                     int parity = EVENODD)
-    {
-      mdp_int i_min = psi.physical_local_start(parity);
-      mdp_int i_max = psi.physical_local_stop(parity);
-      mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      static _sse_double c ALIGN16;
-      _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-      _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-      _sse_check_alignment(&c, 0xf);
-
-      c.c1 = c.c2 = alpha;
-      for (i = 0; i < i_max - 7; i += 8, r += 8, s += 8)
-      {
-        _sse_double_prefetch_16(r + 8);
-        _sse_double_prefetch_16(s + 8);
-        _sse_double_add_multiply_16(r, c, s);
-      }
-
-#endif
-
-      for (; i < i_max; i++)
-        psi[i] += alpha * chi[i];
-    }
-
-    friend void mdp_add_scaled_field(mdp_complex_field &psi,
-                                     mdp_complex alpha,
-                                     mdp_complex_field &chi,
-                                     int parity = EVENODD)
-    {
-      mdp_int i_min = psi.physical_local_start(parity);
-      mdp_int i_max = psi.physical_local_stop(parity);
-
-      //    this needs optimization.
-      for (mdp_int i = i_min; i < i_max; i++)
-        psi[i] += alpha * chi[i];
-    }
-
-    friend mdp_complex operator*(mdp_complex_field &psi,
-                                 mdp_complex_field &chi)
-    {
-      return scalar_product(psi, chi);
-    }
-
-    friend mdp_real relative_residue(mdp_complex_field &p,
-                                     mdp_complex_field &q,
-                                     int parity = EVENODD)
-    {
-      double residue = 0, num = 0, den = 0;
-      mdp_int i_min = p.physical_local_start(parity);
-      mdp_int i_max = q.physical_local_stop(parity);
-
-      //    this needs optimization.
-      for (mdp_int i = i_min; i < i_max;)
-      {
-        num += abs2(p[i]);
-        den += abs2(q[i]);
-        if (++i % p.size_per_site() == 0)
-        {
-          residue += (den == 0) ? 1.0 : (num / den);
-          num = den = 0;
-        }
-      }
-      mpi.add(residue);
-      return std::sqrt(residue / p.lattice().global_volume());
-    }
-
     bool save_as_float(std::string filename,
                        int processIO = 0,
                        mdp_int max_buffer_size = 1024,
@@ -499,6 +293,212 @@ namespace MDP
       return true;
     }
   };
+
+  mdp_real norm_square(mdp_complex_field &psi,
+                       int parity = EVENODD)
+  {
+    double n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_int i = i_min;
+
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
+    static _sse_double c ALIGN16;
+    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
+
+    _sse_check_alignment(&c, 0xf);
+
+    c.c1 = c.c2 = 0;
+    for (; i < i_max - 7; i += 8, r += 8)
+    {
+      _sse_double_prefetch_16(r + 8);
+      _sse_double_add_norm_square_16(r, c);
+    }
+    n2 += c.c1 + c.c2;
+#endif
+
+    for (; i < i_max; i++)
+      n2 += abs2(psi[i]);
+    mpi.add(n2);
+    return n2;
+  }
+
+  mdp_complex scalar_product(mdp_complex_field &psi,
+                             mdp_complex_field &chi,
+                             int parity = EVENODD)
+  {
+    mdp_complex n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_int i = i_min;
+
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
+    static _sse_double c, d ALIGN16;
+    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
+    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
+
+    _sse_check_alignment(&c, 0xf);
+
+    c.c1 = c.c2 = 0;
+    d.c1 = d.c2 = 0;
+    for (; i < i_max - 7; i += 8, r += 8, s += 8)
+    {
+      _sse_double_prefetch_16(r + 8);
+      _sse_double_prefetch_16(s + 8);
+      _sse_double_add_real_scalar_product_16(r, s, c);
+      _sse_double_add_imag_scalar_product_16(r, s, d);
+    }
+    n2 += mdp_complex(c.c1 + c.c2, d.c2 - d.c1);
+#endif
+
+    for (; i < i_max; i++)
+      n2 += conj(psi[i]) * chi[i];
+    mpi.add(n2);
+
+    return n2;
+  }
+
+  mdp_real real_scalar_product(mdp_complex_field &psi,
+                               mdp_complex_field &chi,
+                               int parity = EVENODD)
+  {
+
+    double n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_int i = i_min;
+
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
+    static _sse_double c ALIGN16;
+    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
+    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
+
+    _sse_check_alignment(&c, 0xf);
+
+    c.c1 = c.c2 = 0;
+    for (; i < i_max - 7; i += 8, r += 8, s += 8)
+    {
+      _sse_double_prefetch_16(r + 8);
+      _sse_double_prefetch_16(s + 8);
+      _sse_double_add_real_scalar_product_16(r, s, c);
+    }
+    n2 += c.c1 + c.c2;
+#endif
+
+    for (; i < i_max; i++)
+      n2 +=
+          real(chi[i]) * real(psi[i]) +
+          imag(chi[i]) * imag(psi[i]);
+
+    mpi.add(n2);
+    return n2;
+  }
+
+  mdp_real imag_scalar_product(mdp_complex_field &psi,
+                               mdp_complex_field &chi,
+                               int parity = EVENODD)
+  {
+    double n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_int i = i_min;
+
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
+    static _sse_double c ALIGN16;
+    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
+    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
+
+    _sse_check_alignment(&c, 0xf);
+
+    c.c1 = c.c2 = 0;
+    for (; i < i_max - 7; i += 8, r += 8, s += 8)
+    {
+      _sse_double_prefetch_16(r + 8);
+      _sse_double_prefetch_16(s + 8);
+      _sse_double_add_imag_scalar_product_16(r, s, c);
+    }
+    n2 += c.c2 - c.c1;
+#endif
+
+    for (; i < i_max; i++)
+      n2 +=
+          real(psi[i]) * imag(chi[i]) +
+          imag(psi[i]) * real(chi[i]);
+    mpi.add(n2);
+    return n2;
+  }
+
+  void mdp_add_scaled_field(mdp_complex_field &psi,
+                            mdp_real alpha,
+                            mdp_complex_field &chi,
+                            int parity = EVENODD)
+  {
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_int i = i_min;
+
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
+    static _sse_double c ALIGN16;
+    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
+    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
+
+    _sse_check_alignment(&c, 0xf);
+
+    c.c1 = c.c2 = alpha;
+    for (i = 0; i < i_max - 7; i += 8, r += 8, s += 8)
+    {
+      _sse_double_prefetch_16(r + 8);
+      _sse_double_prefetch_16(s + 8);
+      _sse_double_add_multiply_16(r, c, s);
+    }
+
+#endif
+
+    for (; i < i_max; i++)
+      psi[i] += alpha * chi[i];
+  }
+
+  void mdp_add_scaled_field(mdp_complex_field &psi,
+                            mdp_complex alpha,
+                            mdp_complex_field &chi,
+                            int parity = EVENODD)
+  {
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+
+    //    this needs optimization.
+    for (mdp_int i = i_min; i < i_max; i++)
+      psi[i] += alpha * chi[i];
+  }
+
+  mdp_complex operator*(mdp_complex_field &psi,
+                        mdp_complex_field &chi)
+  {
+    return scalar_product(psi, chi);
+  }
+
+  mdp_real relative_residue(mdp_complex_field &p,
+                            mdp_complex_field &q,
+                            int parity = EVENODD)
+  {
+    double residue = 0, num = 0, den = 0;
+    mdp_int i_min = p.physical_local_start(parity);
+    mdp_int i_max = q.physical_local_stop(parity);
+
+    //    this needs optimization.
+    for (mdp_int i = i_min; i < i_max;)
+    {
+      num += abs2(p[i]);
+      den += abs2(q[i]);
+      if (++i % p.size_per_site() == 0)
+      {
+        residue += (den == 0) ? 1.0 : (num / den);
+        num = den = 0;
+      }
+    }
+    mpi.add(residue);
+    return std::sqrt(residue / p.lattice().global_volume());
+  }
 } // namespace MDP
 
 #endif /* MDP_COMPLEX_FIELD_ */

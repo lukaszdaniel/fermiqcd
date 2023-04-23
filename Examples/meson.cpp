@@ -238,7 +238,7 @@ int main(int argc, char **argv)
     Sl.load(output);
   else
   {
-    generate(Sl, U, light_quark, ap, rp);
+    fermi_propagator::generate(Sl, U, light_quark, ap, rp);
     Sl.save(output);
   }
 
@@ -251,7 +251,7 @@ int main(int argc, char **argv)
     Sh.load(output);
   else
   {
-    generate(Sh, U, heavy_quark, ap, rp);
+    fermi_propagator::generate(Sh, U, heavy_quark, ap, rp);
     Sh.save(output);
   }
 

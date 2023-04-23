@@ -13,14 +13,18 @@ int main(int argc, char **argv)
   fermi_propagator S(lattice, nc);
   mdp_site x(lattice);
   mdp_matrix c2(box[0], 1);
+
   for (mdp_uint t = 0; t < c2.size(); t++)
     c2(t) = 0;
+
   coefficients quark;
   quark["kappa"] = 1.1;
   quark["c_{sw}"] = 0.3;
+
   U.load(argv[1]);
   compute_em_field(U);
-  generate(S, U, quark);
+  fermi_propagator::generate(S, U, quark);
+
   forallsites(x)
   {
     for (int mu = 1; mu < 3; mu++)
@@ -34,9 +38,11 @@ int main(int argc, char **argv)
                                         hermitian(S(x, d, a))));
     }
   }
+
   mdp.add(c2);
   for (mdp_uint t = 0; t < c2.size(); t++)
     mdp << t << "\t" << c2(t) << "\n";
+
   mdp.close_wormholes();
   return 0;
 }

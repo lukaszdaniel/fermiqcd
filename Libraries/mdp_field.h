@@ -56,7 +56,7 @@ namespace MDP
 
     /** @brief tries to switch the endianess of the numerical members of the header
      */
-    friend bool switch_header_endianess(mdp_field_file_header &header)
+    static bool switch_header_endianess(mdp_field_file_header &header)
     {
       if (header.endianess == mdp_local_endianess)
         return false;

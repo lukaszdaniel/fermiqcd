@@ -75,7 +75,7 @@ namespace MDP
       return *(address(x) + a * m_nc * m_nc + i * m_nc + j);
     }
 
-    friend void generate(staggered_propagator &S, gauge_field &U,
+    static void generate(staggered_propagator &S, gauge_field &U,
                          coefficients &coeff,
                          mdp_real absolute_precision = fermi_inversion_precision,
                          mdp_real relative_precision = 0,

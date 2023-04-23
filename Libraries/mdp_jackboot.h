@@ -17,8 +17,6 @@
 
 namespace MDP
 {
-  float mdp_jackboot_plain(float *x, void *a);
-
   /// @brief container class for jackknife and boostrap analysis
   ///
   /// Example:
@@ -67,7 +65,7 @@ namespace MDP
           p[j + (conf + 1) * boot] = (int)((conf + 1) * mdp_random.plain());
     }
 
-    friend float mdp_jackboot_plain(float *x, void *a)
+    static float mdp_jackboot_plain(float *x, void *a)
     {
       int *i_ptr = (int *)a;
       return x[*i_ptr];

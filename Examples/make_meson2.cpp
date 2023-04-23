@@ -159,10 +159,10 @@ int main(int argc, char **argv)
     compute_em_field(U);
 
     // compute light propagator Sq
-    generate(Sq, U, light_coeff, absolute_precision, relative_precision);
+    fermi_propagator::generate(Sq, U, light_coeff, absolute_precision, relative_precision);
 
     // compute heavy propagator Sh
-    generate(Sh, U, heavy_coeff, absolute_precision, relative_precision);
+    fermi_propagator::generate(Sh, U, heavy_coeff, absolute_precision, relative_precision);
 
     // ////////////////////////////////////////////////////
     // compute the pion propagator by

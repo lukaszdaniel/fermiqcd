@@ -25,14 +25,14 @@ namespace MDP
     double dy2;
     for (i = i0; i < in; i++)
     {
-      dy2 = std::pow(y[i].error, 2.0);
+      dy2 = std::pow(y[i].getmerr(), 2.0);
       if (dy2 <= 0)
-        dy2 = std::pow(y[i].mean * 1e-5, 2.0);
+        dy2 = std::pow(y[i].getmean() * 1e-5, 2.0);
       S = S + 1.0 / dy2;
       Sx = Sx + 1.0 / dy2 * x[i];
-      Sy = Sy + y[i].mean / dy2;
+      Sy = Sy + y[i].getmean() / dy2;
       Sxx = Sxx + x[i] * x[i] / dy2;
-      Sxy = Sxy + y[i].mean / dy2 * x[i];
+      Sxy = Sxy + y[i].getmean() / dy2 * x[i];
     }
     det = (S * Sxx - Sx * Sx);
     // this is m
@@ -193,14 +193,14 @@ namespace MDP
         a[j] += h;
         dyda[j] /= (2.0 * h);
       }
-      sig2i = 1.0 / std::pow(y[i].error, 2.0);
-      dy = y[i].mean - ymod;
+      sig2i = 1.0 / std::pow(y[i].getmerr(), 2.0);
+      dy = y[i].getmean() - ymod;
       for (j = 0; j < ma; j++)
       {
         wt = dyda[j] * sig2i;
         for (k = 0; k < ma; k++)
-          alpha(j, k) += dyda[k] * wt * y[i].num;
-        beta(j, 0) += dy * wt * y[i].num;
+          alpha(j, k) += dyda[k] * wt * y[i].getnum();
+        beta(j, 0) += dy * wt * y[i].getnum();
       }
       chi_square += dy * dy * sig2i;
     }
