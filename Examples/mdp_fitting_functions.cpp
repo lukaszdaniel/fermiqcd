@@ -31,7 +31,7 @@ int main()
 
     for (i = 0; i < 10; i++)
         printf("%f %f (%f) %f\n",
-               x[i], y[i].mean, y[i].error, f(x[i], a, ma, 0));
+               x[i], y[i].getmean(), y[i].getmerr(), f(x[i], a, ma, 0));
 
     printf("%f %f %f\n", a[0], a[1], a[2]);
     std::cout << covar;

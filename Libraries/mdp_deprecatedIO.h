@@ -14,11 +14,12 @@
 
 namespace MDP
 {
+#ifdef INCLUDE_DEPRECATED_IO
 	template <class T>
-	void mdp_field<T>::load(char filename[],
+	void mdp_field<T>::load(const char filename[],
 							int processIO,
 							mdp_int max_buffer_size,
-							char *header,
+							const char *header,
 							mdp_int header_size,
 							mdp_int (*sort_x)(mdp_lattice &, mdp_int),
 							int auto_switch_endianess)
@@ -48,7 +49,7 @@ namespace MDP
 			{
 				error("NATIVE HEADER IN DEPRECATED FUNCTION NOT SUPPORTED ANY MORE");
 			}
-			else if (header != 0 && strcmp(header, "NOHEADER") != 0)
+			else if (header != nullptr && strcmp(header, "NOHEADER") != 0)
 			{
 				if (fread(header, sizeof(char), header_size, fp) !=
 					header_size)
@@ -142,10 +143,10 @@ namespace MDP
 	}
 
 	template <class T>
-	void mdp_field<T>::save(char filename[],
+	void mdp_field<T>::save(const char filename[],
 							int processIO,
 							mdp_int max_buffer_size,
-							char *header,
+							const char *header,
 							mdp_int header_size,
 							mdp_int (*sort_x)(mdp_lattice &, mdp_int),
 							const char *mode)
@@ -173,7 +174,7 @@ namespace MDP
 			{
 				error("NATIVE HEADER IN DEPRECATED FUNCTION NOT SUPPORTED ANY MORE");
 			}
-			else if (header != 0 && strcmp(header, "NOHEADER") != 0)
+			else if (header != nullptr && strcmp(header, "NOHEADER") != 0)
 			{
 				if (fwrite(header, sizeof(char), header_size, fp) !=
 					header_size)
@@ -256,6 +257,7 @@ namespace MDP
 			fflush(stdout);
 		}
 	}
+#endif
 } // namespace MDP
 
 #endif /* MDP_DEPRECATEDIO_ */

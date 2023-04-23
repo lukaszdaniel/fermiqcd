@@ -241,7 +241,7 @@ namespace MDP
                                   BLM_function func,
                                   float h = 0.001,
                                   mdp_int nmax = 1000,
-                                  void *junk = 0)
+                                  void *junk = nullptr)
   {
 
     double lambda = 0.1;

@@ -27,12 +27,7 @@ namespace MDP
   /// @endverbatim
   class mdp_postscript
   {
-  public:
-    enum
-    {
-      BOLD = 10
-    };
-
+  private:
     FILE *fp;
     float X0, Y0, Z0;
     float X1, Y1, Z1;
@@ -40,13 +35,14 @@ namespace MDP
     float scale;
     float alpha;
 
+  public:
     mdp_postscript()
     {
-      fp = 0;
+      fp = nullptr;
       scale = 1;
     }
 
-    mdp_postscript(char filename[])
+    mdp_postscript(const std::string &filename)
     {
       open(filename);
     }
@@ -57,10 +53,10 @@ namespace MDP
         close();
     }
 
-    FILE *open(char filename[])
+    FILE *open(const std::string &filename)
     {
-      printf("Making frame: %s\n", filename);
-      fp = fopen(filename, "w");
+      std::cout << "Making frame: " << filename << std::endl;
+      fp = fopen(filename.c_str(), "w");
       if (fp != nullptr)
         fprintf(fp, "%%!PS-Adobe-3.0 EPSF-3.0\n");
       fflush(fp);
@@ -121,6 +117,7 @@ namespace MDP
 
     void circle(float x0, float y0, float r, int fill = 0)
     {
+      constexpr int BOLD = 10;
       if (fill != BOLD)
         fprintf(fp, "%.2f %.2f %.2f 0 360 arc\n", scale * x0, scale * y0, r);
       if (fill == 1)
@@ -161,7 +158,7 @@ namespace MDP
       fflush(fp);
     }
 
-    void print(float x0, float y0, char text[])
+    void print(float x0, float y0, const char text[])
     {
       fprintf(fp, "%.2f %.2f moveto\n", scale * x0, scale * y0);
       fprintf(fp, "(%s) show\n", text);

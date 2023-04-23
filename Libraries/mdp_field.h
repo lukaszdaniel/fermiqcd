@@ -495,18 +495,18 @@ namespace MDP
                   bool ASCII = false);
 
 #ifdef INCLUDE_DEPRECATED_IO
-    void load(char filename[],
+    void load(const char filename[],
               int processIO,
               mdp_int max_buffer_size,
-              char *header,
+              const char *header,
               mdp_int header_size = 0,
               mdp_int (*sort_x)(mdp_lattice &, mdp_int) = nullptr,
               int auto_switch_endianess = true);
 
-    void save(char filename[],
+    void save(const char filename[],
               int processIO,
               mdp_int max_buffer_size,
-              char *header,
+              const char *header,
               mdp_int header_size = 0,
               mdp_int (*sort_x)(mdp_lattice &, mdp_int) = nullptr,
               const char *mode = "w");
