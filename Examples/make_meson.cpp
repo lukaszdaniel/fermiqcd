@@ -61,7 +61,7 @@ int main(int argc, char **argv)
 
   fermi_propagator S(mylattice, nc);
 
-  generate(S, U, light_quark);
+  fermi_propagator::generate(S, U, light_quark);
 
   forallsites(x)
   {
@@ -69,7 +69,9 @@ int main(int argc, char **argv)
       for (b = 0; b < 4; b++)
         for (i = 0; i < 3; i++)
           for (j = 0; j < 3; j++)
+          {
             C2(x(0)) += S(x, a, b, i, j) * conj(S(x, a, b, i, j));
+          }
   }
 
 #else
@@ -85,7 +87,8 @@ int main(int argc, char **argv)
       psi(x, a, i) = 1;
       psi.update();
 
-      /* ******* smearing here *******************
+#if 0
+      // ******* smearing here *******************
       for (n = 0; n < 10; n++)
       {
         forallsites(x)
@@ -100,8 +103,8 @@ int main(int argc, char **argv)
           psi(x) = chi(x);
         }
       }
-      **********end of smearing ***************** 
-      */
+      // **********end of smearing ***************** 
+#endif
 
           // make light prop phi
           mul_invQ(phi, psi, U, light_quark, absolute_precision, relative_precision);

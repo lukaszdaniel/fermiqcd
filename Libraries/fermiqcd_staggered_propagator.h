@@ -30,7 +30,7 @@ namespace MDP
   /// mdp_site y(lattice);
   /// coefficients coeff;
   /// coeff["mass"]=1.0;
-  /// generate(S,U,coeff);
+  /// staggered_propagator::generate(S,U,coeff);
   /// for(int i=0; i<(int) pow(2,lattice.ndim); i++) {
   ///    x=binary2versor(a);
   ///    cout << "source at:" << x << "\nprop:\n";
@@ -139,8 +139,7 @@ namespace MDP
 
       if (ME == 0 && shutup == false)
       {
-        printf("END Generating ordinary propagator. Time: %f (sec)\n",
-               mpi.time() - time);
+        printf("END Generating ordinary propagator. Time: %f (sec)\n", mpi.time() - time);
         fflush(stdout);
       }
     }

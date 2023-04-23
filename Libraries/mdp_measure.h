@@ -25,7 +25,7 @@ namespace MDP
   ///    for(int i=0; i<10; i++)
   ///       m << 3.0+mdp_random.gaussian(2.0);
   ///    m=sin(exp(m)+m);
-  ///    cout << m.getmean() << "+/-" << m.geterr() << endl;
+  ///    cout << m.getmean() << "+/-" << m.getmerr() << endl;
   /// @endverbatim
   /// Assumes gaussian error propagation
   class mdp_measure

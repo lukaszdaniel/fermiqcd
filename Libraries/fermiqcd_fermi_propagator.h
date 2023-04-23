@@ -25,7 +25,7 @@ namespace MDP
   /// fermi_propagator S(lattice,nc);
   /// coefficients quark;
   /// quark["kappa"]=1.12;
-  /// generate(S,U,quark);
+  /// fermi_propagator::generate(S,U,quark);
   /// vector<float> sum(U.lattice.size(TIME));
   /// forallsites(x)
   ///   for(int alpha=0; alpha<4; alpha++)

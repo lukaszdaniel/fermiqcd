@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   quark["c_{sw}"] = 0.3;
   U.load(argv[1]);
   compute_em_field(U);
-  generate(S, U, quark);
+  fermi_propagator::generate(S, U, quark);
   forallsites(x)
   {
     for (int alpha = 0; alpha < 4; alpha++)
