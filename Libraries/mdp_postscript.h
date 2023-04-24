@@ -20,7 +20,7 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///    mdp_postscript ps("test.ps");
+  ///    mdp_postscript ps("test.eps");
   ///    ps.color(0.2,0.2,0.7);
   ///    ps.line(0,0,  5,5);
   ///    ps.font("Times-Roman", 12);
@@ -71,6 +71,8 @@ namespace MDP
         close();
     }
 
+    /** @brief Set paper size
+     */
     void size(float x0, float y0, float x1, float y1)
     {
       fprintf(m_fp, "%%%%BoundingBox: %.0f %.0f %.0f %.0f\n", m_scale * x0, m_scale * y0, m_scale * x1, m_scale * y1);
@@ -78,6 +80,8 @@ namespace MDP
       fflush(m_fp);
     }
 
+    /** @brief Draw a line segment
+     */
     void line(float x0, float y0, float x1, float y1)
     {
       fprintf(m_fp, "%.2f %.2f %.2f setrgbcolor\n", m_red, m_green, m_blue);
@@ -87,21 +91,25 @@ namespace MDP
       fflush(m_fp);
     }
 
-    void box(float x0, float y0, float x1, float y1, int fill = 0)
+    /** @brief Draw a box
+     */
+    void box(float x0, float y0, float x1, float y1, bool fill = false)
     {
-      if (fill == 1)
+      if (fill)
         fprintf(m_fp, "stroke\n");
       fprintf(m_fp, "%.2f %.2f moveto\n", m_scale * x0, m_scale * y0);
       fprintf(m_fp, "%.2f %.2f lineto\n", m_scale * x0, m_scale * y1);
       fprintf(m_fp, "%.2f %.2f lineto\n", m_scale * x1, m_scale * y1);
       fprintf(m_fp, "%.2f %.2f lineto\n", m_scale * x1, m_scale * y0);
       fprintf(m_fp, "%.2f %.2f lineto\n", m_scale * x0, m_scale * y0);
-      if (fill == 1)
+      if (fill)
         fprintf(m_fp, "fill\n");
       fprintf(m_fp, "stroke\n");
       fflush(m_fp);
     }
 
+    /** @brief Draw an arc
+     */
     void arc(float x0, float y0, float r, float alpha, float beta)
     {
       fprintf(m_fp, "%.2f %.2f %.2f %.2f %.2f arc\n", m_scale * x0, m_scale * y0, m_scale * r, alpha, beta);
@@ -109,6 +117,8 @@ namespace MDP
       fflush(m_fp);
     }
 
+    /** @brief Draw a circle
+     */
     void circle(float x0, float y0, float r, int fill = 0)
     {
       constexpr int BOLD = 10;
@@ -131,12 +141,17 @@ namespace MDP
       fflush(m_fp);
     }
 
+    /** @brief Set line width
+     */
     void pen(float size)
     {
       fprintf(m_fp, "%.2f setlinewidth\n", size);
     }
 
-    // colors are numbers in [0,1] black=(0,0,0) white=(1,1,1)
+    /** @brief Set default colours
+     *
+     * @note colours are numbers in [0,1] black=(0,0,0) white=(1,1,1)
+     */
     void color(float r, float g, float b)
     {
       fprintf(m_fp, "%.2f %.2f %.2f setrgbcolor\n", r, g, b);
@@ -146,12 +161,16 @@ namespace MDP
       fflush(m_fp);
     }
 
+    /** @brief Set default font
+     */
     void font(const char *text, int size)
     {
       fprintf(m_fp, "/%s findfont\n%i scalefont\nsetfont\n", text, size);
       fflush(m_fp);
     }
 
+    /** @brief Print text
+     */
     void print(float x0, float y0, const char text[])
     {
       fprintf(m_fp, "%.2f %.2f moveto\n", m_scale * x0, m_scale * y0);
