@@ -199,7 +199,7 @@ int main(int argc, char **argv)
   // //////////////////////////////
 
   if (!verbose)
-    mdp.print = false;          // eventualy print off
+    mdp.disablePrinting();          // eventualy print off
   mdp_lattice lattice(ndim, L); // declare lattice
   mdp_site x(lattice);          // declare site variable
   gauge_field U(lattice, nc);   // declare SU(3) field
@@ -289,7 +289,7 @@ int main(int argc, char **argv)
 
   // print result
   if (mdp.me() == 0)
-    mdp.print = true;
+    mdp.enablePrinting();
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
   for (int t = 0; t < lattice.size(0); t++)
   {

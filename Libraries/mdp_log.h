@@ -25,13 +25,19 @@ namespace MDP
   class mdp_log
   {
   private:
-    int level;
-    int max_level;
-    std::vector<std::string> level_tag;
-    std::ostream *os;
+    int m_level;
+    int m_max_level;
+    std::vector<std::string> m_level_tag;
+    std::ostream *m_os;
+
+  protected:
+    bool m_print;
 
   public:
-    bool print;
+    mdp_log() : m_level(0), m_max_level(100000), m_print(true)
+    {
+      connect(std::cout);
+    }
 
     void abort()
     {
@@ -40,57 +46,69 @@ namespace MDP
 
     void set_level(int i)
     {
-      max_level = i;
-    }
-
-    mdp_log()
-    {
-      level = 0;
-      max_level = 100000;
-      print = true;
-      connect(std::cout);
+      m_max_level = i;
     }
 
     void connect(std::ostream &os1)
     {
-      os = &os1;
+      m_os = &os1;
     }
 
     void connect(std::ofstream &os2)
     {
-      os = &os2; // is this correct? I think so!
+      m_os = &os2; // is this correct? I think so!
+    }
+
+    bool printing() const
+    {
+      return m_print;
+    }
+
+    void disablePrinting()
+    {
+      m_print = false;
+    }
+
+    void enablePrinting()
+    {
+      m_print = true;
+    }
+
+    void restorePrinting(bool value)
+    {
+      m_print = value;
     }
 
     void error_message(std::string s, std::string file = "unkown", int line = 0)
     {
-      if (print)
+      if (m_print)
       {
         begin_function("error");
-        *os << "In file \"" << file;
-        *os << "\", before line " << line;
-        *os << ", this error occurred: " << s << "\n";
-        for (; level; level--)
-          if (level < max_level)
-            *os << "</" << level_tag[level - 1] << ">\n";
+        *m_os << "In file \"" << file;
+        *m_os << "\", before line " << line;
+        *m_os << ", this error occurred: " << s << "\n";
+        for (; m_level; m_level--)
+          if (m_level < m_max_level)
+            *m_os << "</" << m_level_tag[m_level - 1] << ">\n";
       }
       throw s;
     }
 
     void begin_function(std::string s)
     {
-      level_tag.resize(++level);
-      level_tag[level - 1] = s;
-      if (print && level < max_level)
-        *os << "<" << s << ">\n";
+      m_level_tag.resize(++m_level);
+      m_level_tag[m_level - 1] = s;
+      if (m_print && m_level < m_max_level)
+        *m_os << "<" << s << ">\n";
     }
 
     void end_function(std::string s)
     {
-      if (level_tag[level - 1] == s)
+      if (m_level_tag[m_level - 1] == s)
       {
-        if (print && level < max_level)
-          *os << "</" << level_tag[level - 1] << ">\n";
-        level--;
+        if (m_print && m_level < m_max_level)
+          *m_os << "</" << m_level_tag[m_level - 1] << ">\n";
+        m_level--;
       }
       else
         error_message("missing end_function()", "unkown", 0);
@@ -99,8 +117,8 @@ namespace MDP
     template <class T>
     mdp_log &operator<<(const T x)
     {
-      if (print && level < max_level)
-        *os << x;
+      if (m_print && m_level < m_max_level)
+        *m_os << x;
       return (*this);
     }
   };

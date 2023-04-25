@@ -353,11 +353,11 @@ namespace MDP
       m_idx = lattice().local(m_idx);
       if (m_idx == NOWHERE)
       {
-        bool print = mdp.print;
-        mdp.print = true;
+        bool print = mdp.printing();
+        mdp.enablePrinting();
         mdp << "Warning message from ME=" << ME << ":\n";
         mdp << "You assigned a site that is not here!\n";
-        mdp.print = print;
+        mdp.restorePrinting(print);
       }
     }
 
@@ -392,11 +392,11 @@ namespace MDP
 
       if (m_idx == NOWHERE)
       {
-        bool print = mdp.print;
-        mdp.print = true;
+        bool print = mdp.printing();
+        mdp.enablePrinting();
         mdp << "Warning message from ME=" << ME << ":\n";
         mdp << "You assigned a site that is not here!\n";
-        mdp.print = print;
+        mdp.restorePrinting(print);
       }
     }
 

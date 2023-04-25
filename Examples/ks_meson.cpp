@@ -130,7 +130,7 @@ int main(int argc, char **argv)
   // //////////////////////////////
 
   if (!verbose)
-    mdp.print = false; // eventualy print off
+    mdp.disablePrinting(); // eventualy print off
   // declare lattice (note the next_next=3 for long links)
   if (u0 < 0)
     i = 1;
@@ -216,7 +216,7 @@ int main(int argc, char **argv)
 
   // print result
   if (mdp.me() == 0)
-    mdp.print = true;
+    mdp.enablePrinting();
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
   for (int t = 0; t < lattice.size(0); t += 2)
   {

@@ -453,10 +453,7 @@ namespace MDP
       my_nproc = 1;
 #endif
 #endif
-      if (me() == 0)
-        print = true;
-      else
-        print = false;
+        m_print = (me() == 0);
 
       begin_function("PROGRAM");
       begin_function("open_wormholes");
