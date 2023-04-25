@@ -5,7 +5,7 @@ using namespace MDP;
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   int j = 0;
   for (int i = 0; i < 5; i++)
   {
@@ -14,11 +14,11 @@ int main(int argc, char **argv)
     else
       j = 0;
     if (i % 2 == 0)
-      mpi.barrier();
-    mpi.broadcast(j, 0);
+      mdp.barrier();
+    mdp.broadcast(j, 0);
     std::cout << "I am process " << ME
          << ", i=" << i
          << ", j=" << j << "\n";
   }
-  mpi.close_wormholes();
+  mdp.close_wormholes();
 }

@@ -315,7 +315,7 @@ namespace MDP
         for (j = 0; j < U.nc(); j++)     //
           tmp(t, j) += conj(quark_prop(x, j)) * quark_prop(x, j);
       }                              //
-      mpi.add(tmp);                  //
+      mdp.add(tmp);                  //
       for (t = 0; t < nt; t++)       //
         for (j = 0; j < U.nc(); j++) //
           prop(0, t) += tmp(t, j);   //
@@ -329,7 +329,7 @@ namespace MDP
         for (j = 0; j < U.nc(); j++)                 //
           tmp(t, j) += quark_prop(x, j);             //
       }                                              //
-      mpi.add(tmp);                                  //
+      mdp.add(tmp);                                  //
       for (t = 0; t < nt; t++)                       //
         for (j = 0; j < U.nc(); j++)                 //
           prop(1, t) += conj(tmp(t, j)) * tmp(t, j); //

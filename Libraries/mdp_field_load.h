@@ -47,7 +47,7 @@ namespace MDP
     mdp_int header_size = 0;
     size_t idx_gl, nvol_gl = lattice().global_volume();
     size_t psize = m_field_components * sizeof(T);
-    double mytime = mpi.time();
+    double mytime = mdp.time();
     bool reversed_header_endianess = false;
     struct stat statbuf;
     if (ME == processIO)
@@ -164,9 +164,9 @@ namespace MDP
           buffer_size[process]++;
           if (buffer_size[process] == max_buffer_size)
           {
-            mpi.put(&(large_buffer(process, 0, 0)),
+            mdp.put(&(large_buffer(process, 0, 0)),
                     max_buffer_size * m_field_components, process, request);
-            mpi.wait(request);
+            mdp.wait(request);
             buffer_size[process] = 0;
           }
           if (idx_gl == nvol_gl - 1)
@@ -175,10 +175,10 @@ namespace MDP
                   (buffer_size[process] != max_buffer_size) &&
                   (buffer_size[process] > 0))
               {
-                mpi.put(&(large_buffer(process, 0, 0)),
+                mdp.put(&(large_buffer(process, 0, 0)),
                         buffer_size[process] * m_field_components,
                         process, request);
-                mpi.wait(request);
+                mdp.wait(request);
               }
         }
         if (process == processIO)
@@ -208,7 +208,7 @@ namespace MDP
         if ((buffer_size == max_buffer_size) ||
             ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
         {
-          mpi.get(&(local_buffer(0, 0)), buffer_size * m_field_components, processIO);
+          mdp.get(&(local_buffer(0, 0)), buffer_size * m_field_components, processIO);
           for (idx = 0; idx < buffer_size; idx++)
             for (mdp_uint k = 0; k < m_field_components; k++)
               *(m_data.get() + local_index[idx] * m_field_components + k) = local_buffer(idx, k);
@@ -219,10 +219,10 @@ namespace MDP
     }
 
     update();
-    mpi.broadcast(reversed_header_endianess, processIO);
+    mdp.broadcast(reversed_header_endianess, processIO);
     if (try_swicth_endianess && reversed_header_endianess)
     {
-      mpi << "swithing endiness...\n";
+      mdp << "swithing endiness...\n";
 #ifdef USE_DOUBLE_PRECISION
       switch_endianess_8bytes();
 #else
@@ -231,7 +231,7 @@ namespace MDP
     }
     if (ME == 0 && !mdp_shutup)
     {
-      printf("... Loading time: %f (sec)\n", mpi.time() - mytime);
+      printf("... Loading time: %f (sec)\n", mdp.time() - mytime);
       fflush(stdout);
     }
     return true;

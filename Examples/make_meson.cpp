@@ -5,7 +5,7 @@ using namespace MDP;
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
 
   // Setting parameters here:
   coefficients gauge;
@@ -121,9 +121,9 @@ int main(int argc, char **argv)
 
 #endif
 
-  mpi.add(C2.address(), nt);
+  mdp.add(C2.address(), nt);
   for (int t = 0; t < nt; t++)
     printf("%i\t%e\t%e\n", t, real(C2(t)), imag(C2(t)));
 
-  mpi.close_wormholes();
+  mdp.close_wormholes();
 };

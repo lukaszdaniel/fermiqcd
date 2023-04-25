@@ -24,7 +24,7 @@ namespace MDP
   {
     T *dynamic_buffer = nullptr;
     T *where_to = nullptr;
-    mpi.comm_time -= mpi.time();
+    mdp.comm_time -= mdp.time();
     mdp_request request;
     mdp_int start_to_send = 0;
     mdp_int process = 0;
@@ -81,7 +81,7 @@ namespace MDP
             dynamic_buffer[idx * ncomp + k] =
                 *(m_data.get() + lattice().to_send0(process, start_to_send + idx) * m_field_components + d * ncomp + k);
           }
-        mpi.put(dynamic_buffer, length * ncomp, process, request);
+        mdp.put(dynamic_buffer, length * ncomp, process, request);
         std::cout.flush();
       }
       else
@@ -96,13 +96,13 @@ namespace MDP
         if (ncomp == m_field_components)
         {
           where_to = m_data.get() + lattice().start0(process, ni) * m_field_components;
-          mpi.get(where_to, length * m_field_components, process);
+          mdp.get(where_to, length * m_field_components, process);
           where_to = nullptr;
         }
         else
         {
           where_to = new T[length * ncomp];
-          mpi.get(where_to, length * ncomp, process);
+          mdp.get(where_to, length * ncomp, process);
           for (mdp_int idx = 0; idx < length; idx++)
             for (mdp_uint k = 0; k < ncomp; k++)
             {
@@ -117,11 +117,11 @@ namespace MDP
 
       if (dynamic_buffer != nullptr)
       {
-        mpi.wait(request);
+        mdp.wait(request);
         delete[] dynamic_buffer;
       }
     }
-    mpi.comm_time += mpi.time();
+    mdp.comm_time += mdp.time();
   }
 } // namespace MDP
 

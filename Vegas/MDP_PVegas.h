@@ -317,10 +317,10 @@ namespace MDP
       // ////////////////////////
       // Parallel sum here!
       // ////////////////////////
-      mpi.add(fb);
-      mpi.add(f2b);
-      mpi.add((double *)local_d, nd * MXDIM);
-      mpi.add((double *)local_di, nd * MXDIM);
+      mdp.add(fb);
+      mdp.add(f2b);
+      mdp.add((double *)local_d, nd * MXDIM);
+      mdp.add((double *)local_di, nd * MXDIM);
       for (j = 0; j < NumberOfDimensions; j++)
         for (i = 0; i < nd; i++)
         {

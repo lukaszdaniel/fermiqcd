@@ -56,7 +56,7 @@ namespace MDP
                                     mdp_real relative_precision = 0,
                                     int max_steps = 2000)
     {
-      mpi.begin_function("BiConugateGradientStabilizedInverter");
+      mdp.begin_function("BiConugateGradientStabilizedInverter");
       const std::string filename_prefix = inversion_vtk_prefix;
       const int tc = 0;
       std::string filename1, filename2;
@@ -71,10 +71,10 @@ namespace MDP
       mdp_site x(psi_in.lattice());
       double residue, rresidue = -1, old_rresidue;
       mdp_complex alpha, beta, rho, rho_old, omega;
-      double time = mpi.time();
+      double time = mdp.time();
       inversion_stats stats;
 
-      mpi << "\tstep\tresidue\t\ttime (sec)\n";
+      mdp << "\tstep\tresidue\t\ttime (sec)\n";
 
       // Initial conditions
       if (BiCGStabRestart == false)
@@ -91,7 +91,7 @@ namespace MDP
 
       rho_old = alpha = omega = 1;
 
-      mpi << "\t<target>\n"
+      mdp << "\t<target>\n"
           << "\t\t<max_steps>" << max_steps << "</max_steps>\n"
           << "\t\t<absolute_precision>" << absolute_precision << "</absolute_precision>\n"
           << "\t\t<relative_precision>" << relative_precision << "</relative_precision>\n"
@@ -151,10 +151,10 @@ namespace MDP
 
         mdp_add_scaled_field(r, -omega, t);
 
-        mpi << "\t\t<step>" << step << "</step>\n"
+        mdp << "\t\t<step>" << step << "</step>\n"
             << "\t\t<residue>" << residue << "</residue>\n"
             << "\t\t<relative_residue>" << rresidue << "</relative_residue>\n"
-            << "\t\t<time>" << mpi.time() - time << "</time>\n\n";
+            << "\t\t<time>" << mdp.time() - time << "</time>\n\n";
 
         if ((step > 10) && (rresidue == old_rresidue))
           error("not converging");
@@ -174,16 +174,16 @@ namespace MDP
       stats.residue = residue;
       stats.steps = step;
       stats.mul_Q_steps = 2 * step + 1;
-      stats.time = mpi.time() - time;
+      stats.time = mdp.time() - time;
 
-      mpi << "\t<stats>\n"
+      mdp << "\t<stats>\n"
           << "\t\t<max_steps>" << step << "</max_steps>\n"
           << "\t\t<absolute_precision>" << residue << "</absolute_precision>\n"
           << "\t\t<relative_precision>" << rresidue << "</relative_precision>\n"
           << "\t\t<time>" << stats.time << "</time>\n"
           << "\t</stats>\n";
 
-      mpi.end_function("BiConugateGradientStabilizedInverter");
+      mdp.end_function("BiConugateGradientStabilizedInverter");
       return stats;
     }
   };

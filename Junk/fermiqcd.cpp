@@ -249,7 +249,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   }
   if (arguments.have("-pion"))
   {
-    mpi.add(&pion[0], NT);
+    mdp.add(&pion[0], NT);
     pretty_print("C2", pion);
     if (arguments.get("-pion", "vtk", "false|true") == "true")
       Q.save_vtk(prefix + ".pion.vtk");
@@ -280,7 +280,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         }
       }
     }
-    mpi.add(&meson[0], NT);
+    mdp.add(&meson[0], NT);
     pretty_print("C2_meson", meson);
     if (arguments.get("-meson", "vtk", "false|true") == "true")
       Q.save_vtk(prefix + ".meson.vtk");
@@ -339,7 +339,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         }
       }
     }
-    mpi.add(&current[0], NT);
+    mdp.add(&current[0], NT);
     pretty_print("C2_current", current);
     if (arguments.get("-current_static", "vtk", "false|true") == "true")
       Q.save_vtk(prefix + ".current_static.vtk");
@@ -363,7 +363,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                   open_prop[a][b][i][j][(x(TIME) - t0 + NT) % NT] +=
                       S(x, a, c, i, k) * conj(S(x, b, d, j, k)) * G(c, d);
               }
-        mpi.add((mdp_complex *)&open_prop[0], NT * 4 * 4 * 3 * 3);
+        mdp.add((mdp_complex *)&open_prop[0], NT * 4 * 4 * 3 * 3);
       }
     }
     mdp_matrix G1, G2;

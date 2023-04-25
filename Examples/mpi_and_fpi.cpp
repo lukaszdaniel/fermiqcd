@@ -46,7 +46,7 @@ int main(int argc, char **argv)
         }
       }
   }
-  mpi.add(C.address(), C.size()); // add parallel results
+  mdp.add(C.address(), C.size()); // add parallel results
   for (int t = 0; t < L[0]; t++)  // print output
     mdp << "C(" << t << ")=" << C(t) << "\n";
   mdp.close_wormholes(); // STOP

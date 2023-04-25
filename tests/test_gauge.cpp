@@ -16,9 +16,9 @@ void test_gauge()
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
   test_gauge();
-  mpi.close_wormholes();
+  mdp.close_wormholes();
   return 0;
 }

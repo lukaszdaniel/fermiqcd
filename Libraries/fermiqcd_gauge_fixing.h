@@ -169,7 +169,7 @@ namespace MDP
           if (x(mu) == t)
             A += U(x, mu);
         }
-        mpi.add(A);
+        mdp.add(A);
         alpha[0] = real(trace(A * conj(phase[0])));
         alpha[1] = real(trace(A * conj(phase[1])));
         alpha[2] = real(trace(A * conj(phase[2])));
@@ -247,8 +247,8 @@ namespace MDP
             for (j = 0; j < U.nc(); j++)
               precision += (double)std::pow(abs(M(i, j)), 2);
         }
-        mpi.add(precision);
-        mpi.add(action);
+        mdp.add(precision);
+        mdp.add(action);
 
         precision = std::sqrt(precision / (U.nc() * U.nc() * U.lattice().global_volume()));
         action = action / (2.0 * U.nc() * U.lattice().global_volume());

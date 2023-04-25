@@ -27,15 +27,15 @@ void test_wilson()
   default_fermi_action = FermiCloverActionFast::mul_Q;
 
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Wilson Min Res TIME=" << t1 << std::endl;
 
   default_fermi_inverter = BiConjugateGradientStabilizedInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Wilson BiCGStab TIME=" << t1 << std::endl;
 
 #ifdef SSE2
@@ -43,15 +43,15 @@ void test_wilson()
 #endif
 
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Wilson SSE Min Res TIME=" << t1 << std::endl;
 
   default_fermi_inverter = BiConjugateGradientStabilizedInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Wilson SSE BiCGStab TIME=" << t1 << std::endl;
 }
 
@@ -80,15 +80,15 @@ void test_clover()
   default_fermi_action = FermiCloverActionFast::mul_Q;
 
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Clover Min Res TIME=" << t1 << std::endl;
 
   default_fermi_inverter = BiConjugateGradientStabilizedInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Clover BiCGStab TIME=" << t1 << std::endl;
 
 #ifdef SSE2
@@ -96,15 +96,15 @@ void test_clover()
 #endif
 
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Clover SSE Min Res TIME=" << t1 << std::endl;
 
   default_fermi_inverter = BiConjugateGradientStabilizedInverter<fermi_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Clover SSE BiCGStab TIME=" << t1 << std::endl;
 }
 
@@ -133,21 +133,21 @@ void test_staggered()
   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
 
   default_staggered_inverter = MinimumResidueInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Staggered Min Res TIME=" << t1 << std::endl;
 
   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Staggered BiCGStab TIME=" << t1 << std::endl;
 
   default_staggered_inverter = StaggeredBiCGUML::inverter;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Staggered SSE BiCGStabUML TIME=" << t1 << std::endl;
 
 #ifdef SSE2
@@ -155,21 +155,21 @@ void test_staggered()
 #endif
 
   default_staggered_inverter = MinimumResidueInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Staggered SSE Min Res TIME=" << t1 << std::endl;
 
   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Staggered SSE BiCGStab TIME=" << t1 << std::endl;
 
   default_staggered_inverter = StaggeredBiCGUML::inverter;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Staggered SSE BiCGStabUML TIME=" << t1 << std::endl;
 }
 
@@ -200,21 +200,21 @@ void test_asqtad()
   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
 
   default_staggered_inverter = MinimumResidueInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, V, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Asqtad Min Res TIME=" << t1 << std::endl;
 
   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, V, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Asqtad BiCGStab TIME=" << t1 << std::endl;
 
   default_staggered_inverter = StaggeredBiCGUML::inverter;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, V, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Asqtad SSE BiCGStabUML TIME=" << t1 << std::endl;
 
 #ifdef SSE2
@@ -222,21 +222,21 @@ void test_asqtad()
 #endif
 
   default_staggered_inverter = MinimumResidueInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, V, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Asqtad SSE Min Res TIME=" << t1 << std::endl;
 
   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, V, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Asqtad SSE BiCGStab TIME=" << t1 << std::endl;
 
   default_staggered_inverter = StaggeredBiCGUML::inverter;
-  t0 = mpi.time();
+  t0 = mdp.time();
   stats = mul_invQ(chi2, psi, V, coeff);
-  t1 = (mpi.time() - t0) / lattice.global_volume() / stats.steps;
+  t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cout << "Asqtad SSE BiCGStabUML TIME=" << t1 << std::endl;
 }
 

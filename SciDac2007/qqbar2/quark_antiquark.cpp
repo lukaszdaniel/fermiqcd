@@ -29,7 +29,7 @@ public:
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
     mdp_site x(U.lattice());
-    double time = mpi.time();
+    double time = mdp.time();
 
     mdp << coeff;
 
@@ -72,7 +72,7 @@ public:
           // The next command does all the communications!
           U.update(parity, mu, U.nc() * U.nc());
         }
-    mdp << "\t<stats>\n\t\t<time>" << mpi.time() - time << "</time>\n\t</stats>\n";
+    mdp << "\t<stats>\n\t\t<time>" << mdp.time() - time << "</time>\n\t</stats>\n";
     end_function("WilsonGaugeAction__heatbath");
     return stats;
   }

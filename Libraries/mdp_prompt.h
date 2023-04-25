@@ -40,7 +40,7 @@ namespace MDP
     char response[1024];
 
 #ifdef PARALLEL
-    mpi.barrier();
+    mdp.barrier();
 #endif
 
     if (ME == p)
@@ -148,7 +148,7 @@ namespace MDP
     }
 
 #ifdef PARALLEL
-    mpi.broadcast(response, 1024, p);
+    mdp.broadcast(response, 1024, p);
 #endif
     std::string s(response);
     return s;

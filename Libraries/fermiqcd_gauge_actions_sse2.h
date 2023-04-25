@@ -553,7 +553,7 @@ namespace MDP
       int i, j, k, iter, mu, type;
       mdp_matrix M;
       mdp_site x(U.lattice());
-      double time = mpi.time();
+      double time = mdp.time();
       mdp_complex a[4], tmpUik;
       mdp_real alpha_s;
       mdp_real c_tp = 0, c_tr = 0, c_sp = 0, c_sr = 0, c_p = 0, c_r = 0, c_c = 0;
@@ -643,7 +643,7 @@ namespace MDP
           }
           U.update();
         }
-      mdp << "\t<stats>\n\t\t<time>" << mpi.time() - time << "</time>\n\t</stats>\n";
+      mdp << "\t<stats>\n\t\t<time>" << mdp.time() - time << "</time>\n\t</stats>\n";
       end_function("ImprovedGaugeAction__heatbath");
       return stats;
     }

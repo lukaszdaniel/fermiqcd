@@ -74,7 +74,7 @@ namespace MDP
       staggered_field q(psi_in.lattice(), nc);
       mdp_site x(psi_in.lattice());
 
-      double time = mpi.time();
+      double time = mdp.time();
 
       if (!coeff.has_key("mass") || coeff["mass"] != 0)
         error("coefficient mass undeclared or different from zero");
@@ -167,14 +167,14 @@ namespace MDP
             p(x, i) = r(x, i) + beta * p(x, i);
         }
 
-        mdp << step << "\t" << residue << "\t" << mpi.time() - time << "\n";
+        mdp << step << "\t" << residue << "\t" << mdp.time() - time << "\n";
 
         if ((ME == 0) && (step > 100) && (residue == old_residue))
           error("fermiqcd_staggered_uml_inverter/staggered_BiCG_QQh: not converging");
         step++;
       } while (step < max_steps);
       mdp << "UML BiCG converged in " << step
-          << " iterations and " << mpi.time() - time << " seconds\n",
+          << " iterations and " << mdp.time() - time << " seconds\n",
 
           stats.target_absolute_precision = absolute_precision;
       stats.target_relative_precision = relative_precision;

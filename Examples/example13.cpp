@@ -5,7 +5,7 @@ using namespace MDP;
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   int mybox[] = {10, 10};
   mdp_lattice mylattice(2, mybox);
   mdp_site x(mylattice);
@@ -21,5 +21,5 @@ int main(int argc, char **argv)
       x = x + mu;
     } while (true);
   }
-  mpi.close_wormholes();
+  mdp.close_wormholes();
 }

@@ -89,7 +89,7 @@ namespace MDP
       mdp_int ndim = S.lattice().n_dimensions();
       mdp_int nc = S.nc();
 
-      double time = mpi.time();
+      double time = mdp.time();
 
       if (ME == 0 && shutup == false)
       {
@@ -139,7 +139,7 @@ namespace MDP
 
       if (ME == 0 && shutup == false)
       {
-        printf("END Generating ordinary propagator. Time: %f (sec)\n", mpi.time() - time);
+        printf("END Generating ordinary propagator. Time: %f (sec)\n", mdp.time() - time);
         fflush(stdout);
       }
     }

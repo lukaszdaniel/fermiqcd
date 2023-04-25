@@ -5,25 +5,25 @@ using namespace MDP;
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   int a;
-  if (mpi.nproc() == 2)
+  if (mdp.nproc() == 2)
   {
     if (ME == 1)
     {
       a = 4 * 8;
-      mpi.add(a);
+      mdp.add(a);
     }
     if (ME == 0)
     {
       a = 5 * 7;
-      mpi.add(a);
+      mdp.add(a);
       std::cout << "a=" << a << "\n";
     }
   }
   else
   {
-    mpi << "Sorry, this only runs on 2 processes\n";
+    mdp << "Sorry, this only runs on 2 processes\n";
   }
-  mpi.close_wormholes();
+  mdp.close_wormholes();
 }

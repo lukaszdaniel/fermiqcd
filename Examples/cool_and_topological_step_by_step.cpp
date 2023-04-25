@@ -27,11 +27,11 @@ void test_gauge(int nt, int nx, const char *filename)
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
   int nt, nx;
   sscanf(argv[1], "%ix%i", &nt, &nx);
   test_gauge(nt, nx, argv[2]);
-  mpi.close_wormholes();
+  mdp.close_wormholes();
   return 0;
 }

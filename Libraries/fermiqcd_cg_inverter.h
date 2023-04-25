@@ -53,11 +53,11 @@ namespace MDP
                                     int max_steps = 2000,
                                     bool qdaggerq = false)
     {
-      mpi.begin_function("ConjugateGradientInverter");
+      mdp.begin_function("ConjugateGradientInverter");
       int step = 0;
       double residue, rresidue = -1;
       // double old_rresidue;
-      double time = mpi.time();
+      double time = mdp.time();
       inversion_stats stats;
 
       fieldT r(psi_in);
@@ -71,13 +71,13 @@ namespace MDP
 
       double alpha, beta, rrtmp, rrtmp2, psdot;
 
-      // mpi << "\tstep\tresidue\t\ttime (sec)\n";
+      // mdp << "\tstep\tresidue\t\ttime (sec)\n";
 
       psi_out = 0;
       r = psi_in;
       p = r;
 
-      // mpi << "\t<target>\n"
+      // mdp << "\t<target>\n"
       //    << "\t\t<max_steps>" << max_steps << "</max_steps>\n"
       //    << "\t\t<absolute_precision>" << absolute_precision << "</absolute_precision>\n"
       //    << "\t\t<relative_precision>" << relative_precision << "</relative_precision>\n"
@@ -112,10 +112,10 @@ namespace MDP
         psi_out = solnew;
         step++;
 
-        // mpi << "\t\t<step>" << step << "</step>\n"
+        // mdp << "\t\t<step>" << step << "</step>\n"
         //     << "\t\t<residue>" << residue << "</residue>\n"
         //     << "\t\t<relative_residue>" << rresidue << "</relative_residue>\n"
-        //     << "\t\t<time>" << mpi.time()-time << "</time>\n\n";
+        //     << "\t\t<time>" << mdp.time()-time << "</time>\n\n";
 
         // debug: cout << residue << endl;
 
@@ -143,16 +143,16 @@ namespace MDP
       stats.residue = residue;
       stats.steps = step;
       stats.mul_Q_steps = 2 * step + 1;
-      stats.time = mpi.time() - time;
+      stats.time = mdp.time() - time;
 
-      mpi << "\t<stats>\n"
+      mdp << "\t<stats>\n"
           << "\t\t<max_steps>" << step << "</max_steps>\n"
           << "\t\t<absolute_precision>" << residue << "</absolute_precision>\n"
           << "\t\t<relative_precision>" << rresidue << "</relative_precision>\n"
           << "\t\t<time>" << stats.time << "</time>\n"
           << "\t</stats>\n";
 
-      mpi.end_function("ConjugateGradientInverter");
+      mdp.end_function("ConjugateGradientInverter");
       return stats;
     }
   };

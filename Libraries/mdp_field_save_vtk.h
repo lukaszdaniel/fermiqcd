@@ -28,7 +28,7 @@ namespace MDP
     int max_buffer_size = 1024;
     int timeslice;
     mdp_int nvol_gl = lattice().global_volume();
-    double mytime = mpi.time();
+    double mytime = mdp.time();
     m_header.reset();
     if (lattice().n_dimensions() < 3 || lattice().n_dimensions() > 4)
       error("mdp_field::save_vtk only works for ndim=3 and 4");
@@ -87,8 +87,8 @@ namespace MDP
         {
           if (buffer_ptr[process] == 0)
           {
-            mpi.get(buffer_size[process], process);
-            mpi.get(&(large_buffer(process, 0, 0)),
+            mdp.get(buffer_size[process], process);
+            mdp.get(&(large_buffer(process, 0, 0)),
                     buffer_size[process] * m_field_components, process);
           }
           for (mdp_uint k = 0; k < m_field_components; k++)
@@ -163,11 +163,11 @@ namespace MDP
           for (mdp_int idx = 0; idx < buffer_size; idx++)
             for (mdp_uint k = 0; k < m_field_components; k++)
               local_buffer(idx, k) = *(m_data.get() + local_index[idx] * m_field_components + k);
-          mpi.put(buffer_size, processIO, request);
-          mpi.wait(request);
-          mpi.put(&(local_buffer(0, 0)), buffer_size * m_field_components,
+          mdp.put(buffer_size, processIO, request);
+          mdp.wait(request);
+          mdp.put(&(local_buffer(0, 0)), buffer_size * m_field_components,
                   processIO, request);
-          mpi.wait(request);
+          mdp.wait(request);
           buffer_size = 0;
         }
       }
@@ -175,7 +175,7 @@ namespace MDP
     }
     if (ME == 0 && !mdp_shutup)
     {
-      printf("... Saving time: %f (sec)\n", mpi.time() - mytime);
+      printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
       fflush(stdout);
     }
     return true;

@@ -17,10 +17,10 @@ void test_gauge()
   for (mdp_uint i = 0; i < 10; i++)
   {
     WilsonGaugeAction::heatbath(U, coeff);
-    mpi << "plaquette = " << average_plaquette(U) << "\n";
+    mdp << "plaquette = " << average_plaquette(U) << "\n";
   }
   GaugeFixing::fix(U);
-  mpi << "plaquette after gauge fixing = " << average_plaquette(U) << "\n";
+  mdp << "plaquette after gauge fixing = " << average_plaquette(U) << "\n";
 }
 
 void test_gauge_improved()
@@ -36,7 +36,7 @@ void test_gauge_improved()
   for (mdp_uint i = 0; i < 10; i++)
   {
     ImprovedGaugeAction::heatbath(U, coeff, 1, "MILC");
-    mpi << "plaquette = " << average_plaquette(U) << "\n";
+    mdp << "plaquette = " << average_plaquette(U) << "\n";
   }
 }
 
@@ -45,7 +45,7 @@ void test_fermi()
   int box[] = {4, 4, 4, 4};
   int nc = 3;
 
-  mpi << "\n\nTEST FERMI FIELDS\n\n";
+  mdp << "\n\nTEST FERMI FIELDS\n\n";
 
   mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
@@ -70,7 +70,7 @@ void test_fermi()
   default_fermi_action = FermiCloverActionFast::mul_Q;
   mul_invQ(chi2, psi, U, coeff);
 
-  mpi << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
+  mdp << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
   check_differences(chi1, chi2);
 
 #ifdef SSE2
@@ -78,11 +78,11 @@ void test_fermi()
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
   mul_invQ(chi2, psi, U, coeff);
 
-  mpi << "\n\nCheching that CloverActionSlow and CloverActionSSE2 agree\n\n";
+  mdp << "\n\nCheching that CloverActionSlow and CloverActionSSE2 agree\n\n";
   check_differences(chi1, chi2);
 #endif
 
-  mpi << "\n\nCheching that inversion was correct\n\n";
+  mdp << "\n\nCheching that inversion was correct\n\n";
   mul_Q(chi1, chi2, U, coeff);
   check_differences(psi, chi1);
 
@@ -90,7 +90,7 @@ void test_fermi()
   default_fermi_action = FermiCloverActionSlow::mul_Q;
   mul_invQ(chi1, psi, U, coeff);
 
-  mpi << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
+  mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
   check_differences(chi1, chi2);
 }
 
@@ -99,7 +99,7 @@ void test_staggered()
   int box[] = {4, 4, 4, 4};
   int nc = 3;
 
-  mpi << "\n\nTEST STAGGERED FIELDS\n\n";
+  mdp << "\n\nTEST STAGGERED FIELDS\n\n";
 
   mdp_lattice lattice(4, box, default_partitioning<0>,
                       torus_topology, 0, 3);
@@ -114,7 +114,7 @@ void test_staggered()
   set_hot(U);
   set_random(psi);
 
-  mpi << "ATTENTION: need to adjust asqtad coefficnets\n";
+  mdp << "ATTENTION: need to adjust asqtad coefficnets\n";
 
   lepage_improved_links(V, U, lepage_coefficients(0.4, "Full"));
 
@@ -126,18 +126,18 @@ void test_staggered()
   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
   mul_invQ(chi1, psi, V, coeff);
 
-  mpi << "\n\nCheching that AsqtadActionSlow and AsqtadActionFast agree\n\n";
+  mdp << "\n\nCheching that AsqtadActionSlow and AsqtadActionFast agree\n\n";
   check_differences(chi1, chi2);
 
 #ifdef SSE2
   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
   default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
   mul_invQ(chi2, psi, V, coeff);
-  mpi << "\n\nCheching that AsqtadActionSlow and AsqtadActionSSE2 agree\n\n";
+  mdp << "\n\nCheching that AsqtadActionSlow and AsqtadActionSSE2 agree\n\n";
   check_differences(chi1, chi2);
 #endif
 
-  mpi << "\n\nCheching that inversion(s) were correct\n\n";
+  mdp << "\n\nCheching that inversion(s) were correct\n\n";
   mul_Q(chi1, chi2, V, coeff);
   check_differences(psi, chi1);
 
@@ -145,7 +145,7 @@ void test_staggered()
   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
   mul_invQ(chi1, psi, V, coeff);
 
-  mpi << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
+  mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
   check_differences(chi1, chi2);
 }
 
@@ -155,7 +155,7 @@ void test_dwfermi()
   int nc = 3;
   int L5 = 5;
 
-  mpi << "\n\nTEST DWFIELDS FIELDS\n\n";
+  mdp << "\n\nTEST DWFIELDS FIELDS\n\n";
 
   mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
@@ -177,10 +177,10 @@ void test_dwfermi()
   default_dwfermi_action = DWFermiActionSlow::mul_Q;
   mul_invQ(chi2, psi, U, coeff);
 
-  mpi << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
+  mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
   check_differences(chi1, chi2);
   mul_Q(chi1, chi2, U, coeff);
-  mpi << "\n\nCheching that inversion was correct\n\n";
+  mdp << "\n\nCheching that inversion was correct\n\n";
   check_differences(psi, chi1);
 }
 
@@ -224,7 +224,7 @@ void test_sdwf()
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
 
   test_gauge();
@@ -234,6 +234,6 @@ int main(int argc, char **argv)
   test_dwfermi();
   // test_sdwf();
 
-  mpi.close_wormholes();
+  mdp.close_wormholes();
   return 0;
 }

@@ -34,7 +34,7 @@ int main(int argc, char **argv)
         for (int a = 0; a < 4; a++)      // source spin
         for (int b = 0; b < 4; b++)      // sink spin
         Cpi[x(TIME)] += real(trace(S(x, a, b) * hermitian(S(x, a, b))));
-    mpi.add(Cpi.address(), Cpi.size()); // parallel add
+    mdp.add(Cpi.address(), Cpi.size()); // parallel add
     for (int t = 0; t < L[TIME]; t++)
       mdp << t << " " << Cpi(t) << "\n"; // print output
   }

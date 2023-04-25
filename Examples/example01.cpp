@@ -5,7 +5,7 @@ using namespace MDP;
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   int ndim = 3;
   int mybox[] = {4, 4, 4};
   mdp_lattice mylattice(ndim, mybox);
@@ -23,6 +23,6 @@ int main(int argc, char **argv)
     std::cout << "F(x) for x=(" << x(0) << "," << x(1) << ")\n";
     std::cout << F(x) << "\n";
   }
-  mpi.close_wormholes();
+  mdp.close_wormholes();
   return 0;
 }

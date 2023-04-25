@@ -75,7 +75,7 @@ namespace MDP
       mdp_field_file_header::switch_header_endianess(myheader);
       fclose(fp); // fixed by Lucky [lucky@sfu.ca]
     }
-    mpi.broadcast(myheader, proc);
+    mdp.broadcast(myheader, proc);
     return myheader;
   }
 
@@ -87,7 +87,7 @@ namespace MDP
       std::string s = "echo '" + message + "' | mail -s 'MDP MESSAGE' " + email;
       ret = system(s.c_str());
     }
-    mpi.broadcast(ret, 0);
+    mdp.broadcast(ret, 0);
     return ret;
   }
 
@@ -99,7 +99,7 @@ namespace MDP
       std::string s = "more " + filename + " | mail -s 'MDP MESSAGE' " + email;
       ret = system(s.c_str());
     }
-    mpi.broadcast(ret, 0);
+    mdp.broadcast(ret, 0);
     return ret;
   }
 

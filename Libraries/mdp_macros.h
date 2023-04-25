@@ -38,9 +38,9 @@ namespace MDP
                x.next())
 
 /// Returns the unique id of this process
-#define ME mpi.me()
+#define ME mdp.me()
 /// Returns the total number of parallel processes for this job
-#define Nproc mpi.nproc()
+#define Nproc mdp.nproc()
 
 /// Reports a runtime error and the line that caused it
 #define error(a) _mpi_error_message(a, __FILE__, __LINE__);

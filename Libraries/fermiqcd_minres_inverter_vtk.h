@@ -62,7 +62,7 @@ namespace MDP
                                     int max_steps = 2000)
     {
 
-      mpi.begin_function("MinimumResidueInverter");
+      mdp.begin_function("MinimumResidueInverter");
 
       const std::string filename_prefix = inversion_vtk_prefix;
       const int tc = 0;
@@ -73,7 +73,7 @@ namespace MDP
       double residue, rresidue = -1, old_rresidue;
       mdp_complex alpha;
       int step = 0;
-      double time = mpi.time();
+      double time = mdp.time();
       inversion_stats stats;
       mdp_site x(psi_in.lattice());
       std::string filename1;
@@ -85,7 +85,7 @@ namespace MDP
       r += psi_in;
       psi_out = psi_in;
 
-      mpi << "\t<target>\n"
+      mdp << "\t<target>\n"
           << "\t\t<max_steps>" << max_steps << "</max_steps>\n"
           << "\t\t<absolute_precision>" << absolute_precision << "</absolute_precision>\n"
           << "\t\t<relative_precision>" << relative_precision << "</relative_precision>\n"
@@ -130,10 +130,10 @@ namespace MDP
         filename2 = filename_prefix + ".residue." + std::to_string(step) + ".vtk";
         s.save_vtk(filename2, tc);
 
-        mpi << "\t\t<step>" << step << "</step>\n"
+        mdp << "\t\t<step>" << step << "</step>\n"
             << "\t\t<residue>" << residue << "</residue>\n"
             << "\t\t<relative_residue>" << rresidue << "</relative_residue>\n"
-            << "\t\t<time>" << mpi.time() - time << "</time>\n\n";
+            << "\t\t<time>" << mdp.time() - time << "</time>\n\n";
 
         if ((step > 10) && (rresidue == old_rresidue))
           error("not converging");
@@ -152,16 +152,16 @@ namespace MDP
       stats.residue = residue;
       stats.steps = step;
       stats.mul_Q_steps = step + 1;
-      stats.time = mpi.time() - time;
+      stats.time = mdp.time() - time;
 
-      mpi << "\t<stats>\n"
+      mdp << "\t<stats>\n"
           << "\t\t<max_steps>" << step << "</max_steps>\n"
           << "\t\t<absolute_precision>" << residue << "</absolute_precision>\n"
           << "\t\t<relative_precision>" << rresidue << "</relative_precision>\n"
           << "\t\t<time>" << stats.time << "</time>\n"
           << "\t</stats>\n";
 
-      mpi.end_function("MinimumResidueInverter");
+      mdp.end_function("MinimumResidueInverter");
       return stats;
     }
   };

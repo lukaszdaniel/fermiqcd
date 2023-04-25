@@ -24,7 +24,7 @@ void accumulate_c2(mdp_array<mdp_complex, 1> &c2,
                 c2(x(0)) += real(Sl(x, a, b, i, j) * G1(b, c) * conj(Sh(x, d, c, i, j)) * G2(d, a));
               }
   }
-  mpi.add(c2.address(), c2.size());
+  mdp.add(c2.address(), c2.size());
 };
 
 int main(int argc, char **argv)

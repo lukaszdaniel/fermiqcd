@@ -133,16 +133,16 @@ namespace MDP
         else
           sscanf(stringa.c_str(), "%i,%i,%i,%i", &x0, &x1, &x2, &x3);
       }
-      mpi.broadcast(do_exit, 0);
+      mdp.broadcast(do_exit, 0);
       if (do_exit == true)
       {
         mdp << "\n";
         break;
       }
-      mpi.broadcast(x0, 0);
-      mpi.broadcast(x1, 0);
-      mpi.broadcast(x2, 0);
-      mpi.broadcast(x3, 0);
+      mdp.broadcast(x0, 0);
+      mdp.broadcast(x1, 0);
+      mdp.broadcast(x2, 0);
+      mdp.broadcast(x3, 0);
       if (on_which_process(psi.lattice(), x0, x1, x2, x3) == ME)
       {
         x.set(x0, x1, x2, x3);

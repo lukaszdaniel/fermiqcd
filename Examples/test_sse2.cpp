@@ -9,7 +9,7 @@ void test_fermi()
   int box[] = {4, 4, 4, 4};
   int nc = 3;
 
-  mpi << "\n\nTEST FERMI FIELDS\n\n";
+  mdp << "\n\nTEST FERMI FIELDS\n\n";
 
   mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
@@ -32,7 +32,7 @@ void test_fermi()
   default_fermi_action = FermiCloverActionFast::mul_Q;
   mul_Q(chi2, psi, U, coeff);
 
-  mpi << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
+  mdp << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
   check_differences(chi1, chi2);
 
 #ifdef SSE2
@@ -40,16 +40,16 @@ void test_fermi()
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
   mul_Q(chi2, psi, U, coeff);
 
-  mpi << "\n\nCheching that CloverActionSlow and CloverActionSSE2 agree\n\n";
+  mdp << "\n\nCheching that CloverActionSlow and CloverActionSSE2 agree\n\n";
   check_differences(chi1, chi2);
 #endif
 }
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
   test_fermi();
-  mpi.close_wormholes();
+  mdp.close_wormholes();
   return 0;
 }

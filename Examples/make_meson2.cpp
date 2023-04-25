@@ -39,7 +39,7 @@ using namespace MDP;
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv); // open communications
+  mdp.open_wormholes(argc, argv); // open communications
 
   // //////////////////////////////////////////////////////
   // declare parameters of the simulation
@@ -138,7 +138,7 @@ int main(int argc, char **argv)
   for (int i = 0; i < 100; i++)
   {
     WilsonGaugeAction::heatbath(U, gauge_coeff);
-    mpi << "average_plaquette=" << average_plaquette(U) << "\n";
+    mdp << "average_plaquette=" << average_plaquette(U) << "\n";
   }
 
   // //////////////////////////////////////////////////////
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < 10; i++)
     {
       WilsonGaugeAction::heatbath(U, gauge_coeff);
-      mpi << "average_plaquette=" << average_plaquette(U) << "\n";
+      mdp << "average_plaquette=" << average_plaquette(U) << "\n";
     }
 
     // compute electromagnetic-field
@@ -189,22 +189,22 @@ int main(int argc, char **argv)
     // ////////////////////////////////////////////////////
     // for each t print out C_2(t) with the Bootstrap error
     // ////////////////////////////////////////////////////
-    mpi << "\nRESULT FOR C2(t) (@ gauge = " << config << ")\n";
-    mpi << "==================================\n";
-    mpi << "t\tC2\t\t(error)\n";
-    mpi << "==================================\n";
+    mdp << "\nRESULT FOR C2(t) (@ gauge = " << config << ")\n";
+    mdp << "==================================\n";
+    mdp << "t\tC2\t\t(error)\n";
+    mdp << "==================================\n";
     for (int t = 0; t < Nt; t++)
     {
-      mpi.barrier(); // syncronize output if in parallel!
+      mdp.barrier(); // syncronize output if in parallel!
       if (on_which_process(lattice, t) == ME)
       {
         F.plain(t);
         std::cout << t << "\t" << F.mean() << "\t" << F.b_err() << "\n";
       }
     }
-    mpi << "==================================\n\n";
+    mdp << "==================================\n\n";
   }
 
-  mpi.close_wormholes(); // close communications
+  mdp.close_wormholes(); // close communications
   return 0;
 }

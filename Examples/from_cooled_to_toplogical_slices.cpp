@@ -23,7 +23,7 @@ void make_slices(int nt, int nx, const char *filename)
 
 int main(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
   mdp_field_file_header header = get_info(argv[1]);
   assert(header.ndim == 4);
@@ -32,6 +32,6 @@ int main(int argc, char **argv)
   int nt = header.box[0];
   int nx = header.box[1];
   make_slices(nt, nx, argv[1]);
-  mpi.close_wormholes();
+  mdp.close_wormholes();
   return 0;
 }

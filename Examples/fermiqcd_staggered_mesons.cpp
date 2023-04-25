@@ -10,7 +10,7 @@ using namespace MDP;
 
 int main(int argc, char **argv)
 {
-    mpi.open_wormholes(argc, argv);
+    mdp.open_wormholes(argc, argv);
     define_base_matrices("FERMILAB");
 
 #ifdef TWISTED_BOUNDARY
@@ -109,6 +109,6 @@ int main(int argc, char **argv)
             printf("\n");
         }
     }
-    mpi.close_wormholes();
+    mdp.close_wormholes();
     return 0;
 }

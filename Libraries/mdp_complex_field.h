@@ -319,7 +319,7 @@ namespace MDP
 
     for (; i < i_max; i++)
       n2 += abs2(psi[i]);
-    mpi.add(n2);
+    mdp.add(n2);
     return n2;
   }
 
@@ -353,7 +353,7 @@ namespace MDP
 
     for (; i < i_max; i++)
       n2 += conj(psi[i]) * chi[i];
-    mpi.add(n2);
+    mdp.add(n2);
 
     return n2;
   }
@@ -390,7 +390,7 @@ namespace MDP
           real(chi[i]) * real(psi[i]) +
           imag(chi[i]) * imag(psi[i]);
 
-    mpi.add(n2);
+    mdp.add(n2);
     return n2;
   }
 
@@ -424,7 +424,7 @@ namespace MDP
       n2 +=
           real(psi[i]) * imag(chi[i]) +
           imag(psi[i]) * real(chi[i]);
-    mpi.add(n2);
+    mdp.add(n2);
     return n2;
   }
 
@@ -496,7 +496,7 @@ namespace MDP
         num = den = 0;
       }
     }
-    mpi.add(residue);
+    mdp.add(residue);
     return std::sqrt(residue / p.lattice().global_volume());
   }
 } // namespace MDP

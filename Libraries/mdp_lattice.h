@@ -88,23 +88,23 @@ namespace MDP
         {
           buffer[np] = m_stop[process][np] - m_start[process][np];
         }
-        mpi.put(buffer, 2, process, request);
+        mdp.put(buffer, 2, process, request);
         process = (ME - dp + Nproc) % Nproc;
-        mpi.get(m_len_to_send[process], 2, process);
-        mpi.wait(request);
+        mdp.get(m_len_to_send[process], 2, process);
+        mdp.wait(request);
         process = (ME + dp) % Nproc;
         length = m_stop[process][1] - m_start[process][0];
         std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
         for (int idx = 0; idx < length; idx++)
           dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-        mpi.put(dynamic_buffer.get(), length, process, request);
+        mdp.put(dynamic_buffer.get(), length, process, request);
         process = (ME - dp + Nproc) % Nproc;
         length = m_len_to_send[process][0] + m_len_to_send[process][1];
         m_to_send[process] = new mdp_int[length];
-        mpi.get(m_to_send[process], length, process);
+        mdp.get(m_to_send[process], length, process);
         for (int idx = 0; idx < length; idx++)
           m_to_send[process][idx] = local(m_to_send[process][idx]);
-        mpi.wait(request);
+        mdp.wait(request);
       }
 #if 0 // debugging code below
     }
@@ -122,19 +122,19 @@ namespace MDP
           {
             for (int np = 0; np < 2; np++)
               buffer[np] = m_stop[process][np] - m_start[process][np];
-            mpi.put(buffer, 2, process, request);
+            mdp.put(buffer, 2, process, request);
             length = m_stop[process][1] - m_start[process][0];
             std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
             for (int idx = 0; idx < length; idx++)
               dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-            mpi.put(dynamic_buffer.get(), length, process, request);
+            mdp.put(dynamic_buffer.get(), length, process, request);
           }
           else
           {
-            mpi.get(m_len_to_send[process2], 2, process2);
+            mdp.get(m_len_to_send[process2], 2, process2);
             length = m_len_to_send[process2][0] + m_len_to_send[process2][1];
             m_to_send[process2] = new mdp_int[length];
-            mpi.get(m_to_send[process2], length, process);
+            mdp.get(m_to_send[process2], length, process);
             for (int idx = 0; idx < length; idx++)
               m_to_send[process2][idx] = local(m_to_send[process2][idx]);
           }
@@ -308,10 +308,10 @@ namespace MDP
                           int next_next_ = 1,
                           bool local_random_ = true)
     {
-      mpi.begin_function("allocate_lattice");
+      mdp.begin_function("allocate_lattice");
       m_local_random_generator = local_random_;
       if (ndim_ != ndir_)
-        mpi << "It is getting complicated: you have ndim!=ndir\n";
+        mdp << "It is getting complicated: you have ndim!=ndir\n";
       deallocate_memory();
 
       // //////////////////////////////////////////////////////////////////
@@ -319,7 +319,7 @@ namespace MDP
       // (*neghbour)(mu,x_dw,x,x_up,ndim, nx) must fill x_dw and x_up
       //            according with current position x and direction mu
       // //////////////////////////////////////////////////////////////////
-      mpi << "Initializing a mdp_lattice...\n";
+      mdp << "Initializing a mdp_lattice...\n";
 
       bool is_boundary;
       mdp_int global_idx, new_idx;
@@ -331,10 +331,10 @@ namespace MDP
       m_local_volume = 0;
       m_global_volume = 1;
 
-      mpi << "Lattice dimension: " << nx_[0];
+      mdp << "Lattice dimension: " << nx_[0];
       for (mdp_int mu = 1; mu < m_ndim; mu++)
-        mpi << " x " << nx_[mu];
-      mpi << "\n";
+        mdp << " x " << nx_[mu];
+      mdp << "\n";
 
       ///////////////////////////////////////////////////////////////////
       // Dynamically allocate some arrays
@@ -599,9 +599,9 @@ namespace MDP
       }
 
       m_internal_volume = m_stop[ME][1] - m_start[ME][0];
-      mpi << "Communicating...\n";
+      mdp << "Communicating...\n";
       communicate_results_to_all_processes();
-      mpi << "Initializing random per mdp_site...\n";
+      mdp << "Initializing random per mdp_site...\n";
       if (mdp_random_seed_filename && random_seed_ == 0)
       {
         if (ME == 0)
@@ -621,20 +621,20 @@ namespace MDP
             random_seed_ -= 1;
             fclose(fp);
           }
-          mpi << "Reading from file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ << "\n";
-          mpi << "Writing to   file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ + 1 << "\n";
+          mdp << "Reading from file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ << "\n";
+          mdp << "Writing to   file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ + 1 << "\n";
         }
-        mpi.broadcast(random_seed_, 0);
+        mdp.broadcast(random_seed_, 0);
       }
       else
       {
-        mpi << "Adopting random_seed=" << random_seed_ << "\n";
+        mdp << "Adopting random_seed=" << random_seed_ << "\n";
       }
 
       initialize_random(random_seed_);
 
-      mpi << "Lattice created.\n";
-      mpi.end_function("allocate_lattice");
+      mdp << "Lattice created.\n";
+      mdp.end_function("allocate_lattice");
     }
 
     /** @brief deallocate all the dynamically allocated arrays

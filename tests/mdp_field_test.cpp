@@ -18,7 +18,7 @@ using namespace MDP;
 /// For debugging purposes only
 bool mdp_field_test(int argc, char **argv)
 {
-  mpi.open_wormholes(argc, argv);
+  mdp.open_wormholes(argc, argv);
 
   int box[] = {4, 4, 4, 4};
   mdp_lattice lattice(4, box);
@@ -41,13 +41,13 @@ bool mdp_field_test(int argc, char **argv)
   forallsites(x)
       counter += real(trace(M(x) * inv(M(x)))) / 3;
 
-  mpi.add(counter);
+  mdp.add(counter);
   counter /= lattice.size();
 
   assert((counter - 1) < mdp_precision);
   printf("lattice and field ...test passed.\n");
 
-  mpi.close_wormholes();
+  mdp.close_wormholes();
   return (mdp_int)counter;
 }
 

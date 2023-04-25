@@ -380,11 +380,15 @@ namespace MDP
 #endif
     }
 
+    /** @brief Returns the unique id of this process
+     */
     const int me()
     {
       return my_id;
     }
 
+    /** @brief Returns the total number of parallel processes for this job
+     */
     const int nproc()
     {
       return my_nproc;
@@ -453,7 +457,7 @@ namespace MDP
       my_nproc = 1;
 #endif
 #endif
-        m_print = (me() == 0);
+      m_print = (me() == 0);
 
       begin_function("PROGRAM");
       begin_function("open_wormholes");
@@ -549,19 +553,19 @@ namespace MDP
 
   void _mpi_error_message(std::string a, std::string b = "unkown", int c = 0)
   {
-    mpi.error_message(a, b, c);
+    mdp.error_message(a, b, c);
   }
 
   /// Logs in xml the start of a function with message s
   void begin_function(std::string s)
   {
-    mpi.begin_function(s);
+    mdp.begin_function(s);
   }
 
   /// Logs in xml the end of a function with message s
   void end_function(std::string s)
   {
-    mpi.end_function(s);
+    mdp.end_function(s);
   }
 } // namespace MDP
 

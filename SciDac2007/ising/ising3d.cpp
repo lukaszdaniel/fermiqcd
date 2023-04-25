@@ -41,7 +41,7 @@ int main(int argc, char **argv)
       }
       spin.update();
     }
-    mpi.add(dH);
+    mdp.add(dH);
     H = H + dH;
     mdp << "magnetization=" << H << "\n";
   }

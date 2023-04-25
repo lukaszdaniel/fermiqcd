@@ -144,7 +144,7 @@ namespace MDP
         for (mdp_int i = 0; i < phi.nc(); i++)
           precision += real(pow(phi(x, a, i) - chi(x, a, i), 2));
     }
-    mpi.add(precision);
+    mdp.add(precision);
     precision /= phi.lattice().global_volume() * phi.nc() * phi.nspin();
     mdp << "Inversion precision=" << precision << "\n";
     begin_function("end_inversion");
