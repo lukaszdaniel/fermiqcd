@@ -129,7 +129,7 @@ namespace MDP
 			delete[] local_index;
 		}
 		update();
-		if (ME == 0 && mdp_shutup == false)
+		if (ME == 0 && !mdp_shutup)
 		{
 			printf("... Loading time: %f (sec)\n", mpi.time() - mytime);
 			fflush(stdout);
@@ -251,7 +251,7 @@ namespace MDP
 			}
 			delete[] local_index;
 		}
-		if (ME == 0 && mdp_shutup == false)
+		if (ME == 0 && !mdp_shutup)
 		{
 			printf("... Saving time: %f (sec)\n", mpi.time() - mytime);
 			fflush(stdout);

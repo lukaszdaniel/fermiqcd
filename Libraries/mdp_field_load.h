@@ -229,7 +229,7 @@ namespace MDP
       switch_endianess_4bytes();
 #endif
     }
-    if (ME == 0 && mdp_shutup == false)
+    if (ME == 0 && !mdp_shutup)
     {
       printf("... Loading time: %f (sec)\n", mpi.time() - mytime);
       fflush(stdout);
