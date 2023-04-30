@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 
 	if (argc < 2)
 	{
-		cerr << "usage:\t" << argv[0] << " input_file" << endl;
+		std::cerr << "usage:\t" << argv[0] << " input_file" << std::endl;
 		exit(1);
 	}
 
@@ -72,12 +72,12 @@ int main(int argc, char **argv)
 		seed = par.i("seed");
 	if (not par.defined_d("beta"))
 	{
-		cerr << "Beta undefined. Exiting..." << endl;
+		std::cerr << "Beta undefined. Exiting..." << std::endl;
 		exit(1);
 	}
-	if (not(par.defined_i("L_time") and par.defined_i("L_space")))
+	if (!(par.defined_i("L_time") && par.defined_i("L_space")))
 	{
-		cerr << "L_space or L_time undefined. Exiting..." << endl;
+		std::cerr << "L_space or L_time undefined. Exiting..." << std::endl;
 		exit(1);
 	}
 
@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 	gauge_field U(lattice, ncolors);
 	coefficients coeff;
 	coeff["beta"] = par.d("beta");
-	FILE *stdlog = NULL;
+	FILE *stdlog = nullptr;
 	stdlog = fopen(logFileName.c_str(), "w");
 
 	if (par.defined_s("start-config-file"))
@@ -125,30 +125,30 @@ int main(int argc, char **argv)
 				fprintf(stdlog, "%d %.12lg\n", i, stats);
 			}
 			fflush(stdlog);
-			U.save(cfgFileName.c_str());
+			U.save(cfgFileName);
 		}
 	}
 	else
 		fprintf(stdlog, "Field has been loaded. Skipping thermalisation.\n");
 
-	ofstream plaqfile(plaqFileName.c_str());
+	ofstream plaqfile(plaqFileName);
 	plaqfile << setprecision(16);
-	ofstream polyfile(polyFileName.c_str());
+	ofstream polyfile(polyFileName);
 	polyfile << setprecision(16);
-	ofstream polycorfile(polyCorFileName.c_str());
+	ofstream polycorfile(polyCorFileName);
 	polycorfile << setprecision(16);
-	// ofstream plaqcorfile(plaqCorFileName.c_str());	plaqcorfile << setprecision(16);
+	// ofstream plaqcorfile(plaqCorFileName);	plaqcorfile << setprecision(16);
 
 	mdp_real Pt, Ps;
 	mdp_real S;
-	mdp_real D = 1.0 * U.ndim() * (U.ndim() - 1) / 2;
-	mdp_real as = 1.0 * (U.ndim() - 2) * (U.ndim() - 1) / 2;
-	mdp_real at = 1.0 * U.ndim() - 1;
+	const mdp_real D = 1.0 * U.ndim() * (U.ndim() - 1) / 2;
+	const mdp_real as = 1.0 * (U.ndim() - 2) * (U.ndim() - 1) / 2;
+	const mdp_real at = 1.0 * U.ndim() - 1;
 
-	// mdp_real c1 = -1.0 / 12; // Symanzik
-	//  mdp_real c1=-0.331; //Iwasaki
-	//  mdp_real c1=-1.4088; //DBW2
-	// mdp_real c0 = 1 - 8 * c1;
+	// const mdp_real c1 = -1.0 / 12; // Symanzik
+	// const mdp_real c1 = -0.331;	   // Iwasaki
+	// const mdp_real c1 = -1.4088;   // DBW2
+	// const mdp_real c0 = 1 - 8 * c1;
 	mdp_complex polyakov;
 
 	//	SWEEPING
@@ -157,10 +157,7 @@ int main(int argc, char **argv)
 	for (mdp_uint i = 1; i <= nsweeps; i++)
 	{
 		WilsonGaugeAction::heatbath(U, coeff);
-		// cerr << "Heatbath -> ";
-		// if(ncolors == 3) relaxation(U,relax_freq);
 		relaxation(U, relax_freq);
-		// cerr << "relaxation -> ";
 
 		Pt = TimePlaquette(U);
 		Ps = SpacePlaquette(U);
@@ -204,7 +201,7 @@ int main(int argc, char **argv)
 						cor[k] += real(a(mu - 1, j) * conj(a(mu - 1, (k + j) % U.lattice().size(1))));
 					}
 				}
-				cor[k] /= (2 * U.lattice().size(1));
+				cor[k] /= (2.0 * U.lattice().size(1));
 				polycorfile << cor[k] << "\n";
 			}
 			polycorfile << flush;
@@ -218,11 +215,11 @@ int main(int argc, char **argv)
 			plaqfile << flush;
 			polyfile << flush;
 			fflush(stdlog);
-			U.save(cfgFileName.c_str());
+			U.save(cfgFileName);
 		}
 	}
 
-	U.save(cfgFileName.c_str());
+	U.save(cfgFileName);
 
 	mdp.close_wormholes();
 

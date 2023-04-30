@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     printf("COMPUTING C2(t) FOR STAGGERED MESON: %s\n", argv[1]);
 
     float seed = 0;
-    int t, Nt = 24, Ns = 8;
+    int Nt = 24, Ns = 8;
     int Nc = 3;
     int box[] = {Nt, Ns, Ns, Ns};
 
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
                            torus_topology,
                            seed, 3);
 
-    int conf, nconf = (int)val(argv[2]);
+    int nconf = (int)val(argv[2]);
 
     gauge_field U(space_time, Nc);
     gauge_field V(space_time, Nc);
@@ -53,9 +53,9 @@ int main(int argc, char **argv)
 
     mdp_jackboot c2(nconf, Nt);
 
-    for (conf = 0; conf < nconf; conf++)
+    for (int conf = 0; conf < nconf; conf++)
     {
-        c2.conf = conf;
+        c2.set_conf(conf);
         snprintf(s, 256, "/home/mdp/data/gauge_improved_b7.4_u0.8629/gauge32x08_b7.4_u0.8629_n%.6i", conf + 1);
 
         U.load(s);
@@ -92,14 +92,14 @@ int main(int argc, char **argv)
             prop = make_meson(U, V, Gamma[0] * Gamma5, Gamma1, mass_a, mass_b,
                               wall_source, wall_source, 1e-5);
 
-        for (t = 0; t < Nt; t++)
+        for (int t = 0; t < Nt; t++)
             c2(t) = real(prop(0, t));
 
         float x, dx;
 
         if (ME == 0)
         {
-            for (t = 0; t < Nt; t = t + 2)
+            for (int t = 0; t < Nt; t = t + 2)
             {
                 c2.plain(t);
                 x = c2.mean();

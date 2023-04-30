@@ -20,5 +20,6 @@ int main(int argc, char **argv)
   mdp << "there3\n";
 
   mdp.close_wormholes();
+
   return 0;
 }

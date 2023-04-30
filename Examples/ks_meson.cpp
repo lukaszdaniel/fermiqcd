@@ -131,11 +131,10 @@ int main(int argc, char **argv)
 
   if (!verbose)
     mdp.disablePrinting(); // eventualy print off
+
   // declare lattice (note the next_next=3 for long links)
-  if (u0 < 0)
-    i = 1;
-  else
-    i = 3;
+  i = u0 < 0 ? 1 : 3;
+
   mdp_lattice lattice(ndim, L, default_partitioning0, torus_topology, 0, i);
   mdp_site x(lattice);        // declare site variable
   gauge_field U(lattice, nc); // declare SU(3) field

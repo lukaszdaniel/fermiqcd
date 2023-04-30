@@ -191,14 +191,14 @@ namespace MDP
       _commTimeout = COMM_TIMEOUT_DEFAULT;
 
       _hash = new std::map<std::string, std::vector<char>>[_processCount];
-      if (_hash == NULL)
+      if (!_hash)
       {
         log("PSIM ERROR: failure to allocate hash");
         throw std::string("PSIM ERROR: failure to allocate hash");
       }
 
       _socketFD = new int[_processCount * _processCount][2];
-      if (_socketFD == NULL)
+      if (!_socketFD)
       {
         log("PSIM ERROR: failed to create socket array");
         throw std::string("PSIM ERROR: failed to create socket array");
@@ -454,11 +454,9 @@ namespace MDP
       static std::string tagReceived;
       int size;
 
-      std::map<std::string, std::vector<char>>::iterator itr;
-
       while (true)
       {
-        itr = _hash[sourceProcessID].find(tag);
+        const auto &itr = _hash[sourceProcessID].find(tag);
 
         if (itr != _hash[sourceProcessID].end())
         { // Found?

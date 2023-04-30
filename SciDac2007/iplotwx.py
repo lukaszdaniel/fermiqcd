@@ -24,12 +24,14 @@ import ibootstrap
 import ifit
 
 usage = "python iplot.py\n"
-version = ("iplotv1.0"
-           "\n  Copyright (c) 2007 Massimo Di Pierro"
-           "\n  All rights reserved"
-           "\n  License: GPL 2.0"
-           "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>"
-           "\n    and Vincent Harvey <vincent@vincentharvey.com>")
+version = (
+    "iplotv1.0"
+    "\n  Copyright (c) 2007 Massimo Di Pierro"
+    "\n  All rights reserved"
+    "\n  License: GPL 2.0"
+    "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>"
+    "\n    and Vincent Harvey <vincent@vincentharvey.com>"
+)
 
 description = "plot the output of ibootstrap.py"
 
@@ -53,9 +55,7 @@ def gen_plot(figure, plot_args):
 
 
 def csv_items(filename):
-    return csv.reader(open(filename, "r"),
-                      delimiter=",",
-                      quoting=csv.QUOTE_NONNUMERIC)
+    return csv.reader(open(filename, "r"), delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
 
 
 # Notice that I defer the actual generation of the plots, and just pass
@@ -67,7 +67,6 @@ def csv_items(filename):
 
 
 class IPlot:
-
     def __init__(self, filename, plot_type="ps", items=[], output_prefix=""):
         self.type = plot_type
 
@@ -96,7 +95,6 @@ class IPlot:
         self.figure.clear()
 
     def print_all(self):
-
         def print_dict(d):
             for name, val in list(d.items()):
                 if isinstance(val, dict):
@@ -120,34 +118,23 @@ class IPlot:
         plot.set_ylabel(ylabel)
         return plot
 
-    def make_error_bar(self, figure, name, xdata, ydata, errors, xlabel,
-                       ylabel, filename):
+    def make_error_bar(
+        self, figure, name, xdata, ydata, errors, xlabel, ylabel, filename
+    ):
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.errorbar(xdata, ydata, errors, fmt="ko", markerfacecolor=None)
         plot.iplot_errorbar = True
         plot.filename = filename
         return plot
 
-    def make_hist(self,
-                  figure,
-                  name,
-                  data,
-                  length,
-                  xlabel="x",
-                  ylabel="y"):  # prob='T'
+    def make_hist(self, figure, name, data, length, xlabel="x", ylabel="y"):  # prob='T'
         # be sure to add a 'rug', whatever that is
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.hist(data, length, facecolor="w", edgecolor="k")
         return plot
         # plot.set_xticks(data) # was not a good 'rug'
 
-    def make_plot(self,
-                  figure,
-                  name,
-                  xdata,
-                  ydata,
-                  xlabel="x",
-                  ylabel="y"):  # type='p'
+    def make_plot(self, figure, name, xdata, ydata, xlabel="x", ylabel="y"):  # type='p'
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.plot(xdata, ydata, "k-", markerfacecolor=None)
         return plot
@@ -172,14 +159,12 @@ class IPlot:
                 tag,
             )
             name = prefix + " %s hist" % clean(tag)
-            plots[name] = self.make_hist, (name, data, len(data) / 20, tag,
-                                           "frequency")
+            plots[name] = self.make_hist, (name, data, len(data) / 20, tag, "frequency")
             probs = []
             mu = numpy.mean(data)
             sd = numpy.std(data)
             probs = [
-                min(x, 1 - x)
-                for x in [stats.norm.cdf((x - mu) / sd) for x in data]
+                min(x, 1 - x) for x in [stats.norm.cdf((x - mu) / sd) for x in data]
             ]
             name = prefix + " %s probability" % clean(tag)
             plots[name] = self.make_plot, (
@@ -325,20 +310,15 @@ def make_gui():
 
     def save_data():
         if not os.access(".data", os.R_OK):
-            dlg = wx.MessageDialog(None,
-                                   "No data to save",
-                                   style=wx.ICON_ERROR | wx.OK)
+            dlg = wx.MessageDialog(None, "No data to save", style=wx.ICON_ERROR | wx.OK)
             dlg.ShowModal()
             return
-        fdialog = wx.FileDialog(None,
-                                "Choose save file",
-                                os.getcwd(),
-                                style=wx.SAVE,
-                                wildcard="*.zip")
+        fdialog = wx.FileDialog(
+            None, "Choose save file", os.getcwd(), style=wx.SAVE, wildcard="*.zip"
+        )
         if fdialog.ShowModal() == wx.ID_OK:
             zipfilename = fdialog.GetFilename()
-            zip = zipfile.ZipFile(
-                str(zipfilename).rstrip(".zip") + ".zip", "w")
+            zip = zipfile.ZipFile(str(zipfilename).rstrip(".zip") + ".zip", "w")
             for filename in os.listdir(".data"):
                 zip.write(filename)
             zip.close()
@@ -357,12 +337,12 @@ def make_gui():
         )
         if fdialog.ShowModal() == wx.ID_OK:
             zipfilename = fdialog.GetFilename()
-            zip = zipfile.ZipFile(
-                str(zipfilename).rstrip(".zip") + ".zip", "r")
+            zip = zipfile.ZipFile(str(zipfilename).rstrip(".zip") + ".zip", "r")
             for filename in zip.namelist():
                 # os.makedirs(os.path.dirname(filename))
-                file(".data/" + os.path.basename(filename),
-                     "wb").write(zip.read(filename))
+                file(".data/" + os.path.basename(filename), "wb").write(
+                    zip.read(filename)
+                )
             zip.close()
             load_iplot(default_output_prefix)
         fdialog.Destroy()
@@ -423,29 +403,26 @@ def make_gui():
                     loc = {}
                     try:
                         expression, initial = expr_entry.GetValue().split("@")
-                        symbols, points = ifit.read_min_mean_max_file(
-                            plot[0].filename)
-                        fit = ifit.IFit(expression,
-                                        points,
-                                        symbols,
-                                        condition=cond_entry.GetValue())
-                        variables = ifit.restricted_eval(
-                            "dict(%s)" % initial, loc)
-                        variables, least_squares, hessian = fit.fit(
-                            **variables)
+                        symbols, points = ifit.read_min_mean_max_file(plot[0].filename)
+                        fit = ifit.IFit(
+                            expression, points, symbols, condition=cond_entry.GetValue()
+                        )
+                        variables = ifit.restricted_eval("dict(%s)" % initial, loc)
+                        variables, least_squares, hessian = fit.fit(**variables)
                         fit.scatter_points = 0
                         if scatter_entry.GetValue():
                             fit.scatter_points = int(scatter_entry.GetValue())
                         if fit.scatter_points:
                             fit.iterative_fit(
-                                default_output_prefix + "_scatter.csv",
-                                **variables)
+                                default_output_prefix + "_scatter.csv", **variables
+                            )
                         for key, value in list(variables.items()):
                             log_msg("%s = %g" % (key, value))
                         log_msg("least_squares=%s" % least_squares)
                         log_msg("hessian=%s" % str(hessian))
-                        bound_min, bound_max = (plot[0].get_xaxis(
-                        ).get_data_interval().get_bounds())
+                        bound_min, bound_max = (
+                            plot[0].get_xaxis().get_data_interval().get_bounds()
+                        )
                         if bound_min == bound_max:
                             return
                         new_ydata = []
@@ -502,8 +479,7 @@ def make_gui():
 
         expr_entry = cond_entry = extrap_entry = scatter_entry = None
         if hasattr(plot[0], "iplot_errorbar"):
-            expr_entry = make_entry("Expression",
-                                    "a*t*t + b*t + c@a=1.0,b=1.0,c=1.0")
+            expr_entry = make_entry("Expression", "a*t*t + b*t + c@a=1.0,b=1.0,c=1.0")
             cond_entry = make_entry("Condition", "True")
             # extrap_entry = make_entry('Extrapolate to', 't')
             scatter_entry = make_entry("Number of scatter points", "0")
@@ -511,8 +487,7 @@ def make_gui():
         xlabel_entry = make_entry("X-Label", plot[0].xaxis.label.get_text())
         ylabel_entry = make_entry("Y-Label", plot[0].yaxis.label.get_text())
         title_entry = make_entry("Title", plot[0].title.get_text())
-        background_entry = make_entry("Background Color",
-                                      plot[0].get_axis_bgcolor())
+        background_entry = make_entry("Background Color", plot[0].get_axis_bgcolor())
 
         def color_dialog(*args):
             try:
@@ -599,8 +574,7 @@ def make_gui():
             ("max_index", "Maximum Index", int, 0),
             ("nsamples", "Number of samples", int, 100),
             ("percent", "Bootstrap percent", float, 0.158),
-            ("raw", "Raw", bool,
-             False),  # ('advanced', 'Advanced', bool, False), \
+            ("raw", "Raw", bool, False),  # ('advanced', 'Advanced', bool, False), \
             ("import_module", "Import module", str, None),
         ]
 
@@ -624,10 +598,9 @@ def make_gui():
                 entry.SetValue(default)
             else:
                 # entry = wx.TextCtrl(param_panel, -1, empty_if_none(default))
-                entry = wx.TextCtrl(param_panel,
-                                    -1,
-                                    empty_if_none(default),
-                                    size=wx.Size(500, 20))
+                entry = wx.TextCtrl(
+                    param_panel, -1, empty_if_none(default), size=wx.Size(500, 20)
+                )
             psizer.Add(entry, (index, 1), wx.DefaultSpan, wx.RIGHT | wx.EXPAND)
             entries.append(entry)
 
@@ -719,11 +692,9 @@ def shell_iplot():
         dest="origin_prefix",
         help="the prefix used to build input filenames",
     )
-    parser.add_option("-p",
-                      "--plot_type",
-                      default="ps",
-                      dest="plot_type",
-                      help="ps or png")
+    parser.add_option(
+        "-p", "--plot_type", default="ps", dest="plot_type", help="ps or png"
+    )
     parser.add_option(
         "-v",
         "--plot_variables",
