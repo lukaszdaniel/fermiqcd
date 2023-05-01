@@ -1,6 +1,6 @@
 /*
 
-  MyVegas.C  (requires MDP_Lib2.h)
+  MDP_PVegas.h  (requires mdp.h)
 
   parallel implementation of the Vegas algorithm
 
@@ -14,20 +14,20 @@
   run from 0 to n-1, while in the original version they
   run from 1 to n, because translated badly from fortran.
   Moreover it does not need numerical recipes any more but relies
-  on the Marsagla random number generator in MDP_Lib2.h
+  on the Marsagla random number generator in mdp.h
   The output is much nicer now.
   Moreover all the variables and functions required are
-  local or private members of VegasClass.
+  local or private members of VegasBase.
 
   Many of the original variable names have been left
-  unchanged form the original version.
+  unchanged from the original version.
 
   Goals:
   Performs Monte Carlo integration of a user supplied
-  ndim-dimensional function function over a rectangular volume
+  ndim-dimensional function over a rectangular volume
   specified by { IntegrationLimitsMin[i], IntegrationLimitsMax[i] }
-  The integration consists of niterations iterations, each with
-  approximately ncalls calls to the function.
+  The integration consists of n-iterations , each with
+  approximately n-calls to the function.
   After each iteration the grid is refined; more than 5 or 10
   iterations are rarely useful. The input flag init signals
   whether this call is a new start, or a subsequent call for
@@ -39,10 +39,9 @@
 
   The main function for integration is
 
-  double VegasClass::Integrate(double (*function)(double*, void*),
-                               int init, int ncalls, int niter)
+  double VegasClass::Integrate(int init, int ncalls, int niter)
 
-  where function is the function to integrate
+  where function suplied in derived class is the function to integrate
         init is 0,1 or 2
         ncalls if the number of calls to function per iteration
   niter is the total number of iterations
@@ -66,21 +65,24 @@
 
 namespace MDP
 {
-  class VegasClass
+  class VegasBase
   {
+  protected:
+    virtual double m_function(const double *) = 0;
+
   private:
     // constants
-    static const double ALPHA = 1.5;
-    static const int NDMX = 200;
-    static const int MXDIM = 10; // max grid size
-    static const double TINY = 1.0e-30;
+    static constexpr double ALPHA = 1.5;
+    static constexpr int NDMX = 200;
+    static constexpr int MXDIM = 10; // max grid size
+    static constexpr double TINY = 1.0e-30;
 
     // ////////////////////////////////////////////
     // Make all variables members of the class to
     // allow restart
     // ////////////////////////////////////////////
 
-    // variables for VegasClass:Integrate
+    // variables for VegasBase:Integrate
     int it, it1, it2, mds, nd, ndo, ng, npg;
     int ia[MXDIM], kg[MXDIM];
     double calls, dv2g, dxg, ti, tsi, xjac, xnd;
@@ -92,53 +94,43 @@ namespace MDP
 
     void PrintInputParameters(int init, int ncalls, int niterations)
     {
-      int j;
       if (OutputFile != nullptr && ME == 0)
       {
-        fprintf(OutputFile,
-                "======================================\n");
-        fprintf(OutputFile,
-                "Vegas Montecarlo Numerical Integration\n");
-        fprintf(OutputFile,
-                "======================================\n");
-        fprintf(OutputFile,
-                "Input Parameters:\n");
-        fprintf(OutputFile,
-                "Number of dimensions     = %i\n", NumberOfDimensions);
+        fprintf(OutputFile, "======================================\n");
+        fprintf(OutputFile, "Vegas Montecarlo Numerical Integration\n");
+        fprintf(OutputFile, "======================================\n");
+        fprintf(OutputFile, "Input Parameters:\n");
+        fprintf(OutputFile, "Number of dimensions     = %i\n", NumberOfDimensions);
         fprintf(OutputFile, "Present iteration        = %i\n", it);
         fprintf(OutputFile, "Number of iterations     = %i\n", niterations);
         fprintf(OutputFile, "Number of function calls = %i\n", ncalls);
-        fprintf(OutputFile, "ALPHA                    = %i\n", ALPHA);
+        fprintf(OutputFile, "ALPHA                    = %f\n", ALPHA);
         fprintf(OutputFile, "mds(?)                   = %i\n", mds);
         fprintf(OutputFile, "nd                       = %i\n\n", nd);
         fprintf(OutputFile, "Integration Limits: i\tmin(x[i])\tmax(x[i])\n");
-        fprintf(OutputFile,
-                "=================================================\n");
-        for (j = 0; j < NumberOfDimensions; j++)
-          fprintf(OutputFile, "                    %i\t%f\t%f\n",
-                  j, IntegrationLimitsMin[j], IntegrationLimitsMax[j]);
+        fprintf(OutputFile, "=================================================\n");
+        for (int j = 0; j < NumberOfDimensions; j++)
+        {
+          fprintf(OutputFile, "                    %i\t%f\t%f\n", j, IntegrationLimitsMin[j], IntegrationLimitsMax[j]);
+        }
         fprintf(OutputFile, "\n");
         fflush(OutputFile);
       }
     }
+
     void PrintOutputParameters()
     {
-      int i, j;
       if (OutputFile != nullptr && ME == 0)
       {
         if (it == it1)
         {
-          fprintf(OutputFile,
-                  "Iteration    Integral    StandardDeviation ChiSquare\n");
-          fprintf(OutputFile,
-                  "====================================================\n");
+          fprintf(OutputFile, "Iteration    Integral    StandardDeviation ChiSquare\n");
+          fprintf(OutputFile, "====================================================\n");
         }
-        fprintf(OutputFile, "%3d\t%14.7f\t%14.7f\t%10.3f\n",
-                it, Integral, StandardDeviation, ChiSquare);
+        fprintf(OutputFile, "%3d\t%14.7f\t%14.7f\t%10.3f\n", it, Integral, StandardDeviation, ChiSquare);
         if (it == it2 - 1)
         {
-          fprintf(OutputFile,
-                  "====================================================\n");
+          fprintf(OutputFile, "====================================================\n");
         }
         fflush(OutputFile);
         PrintGrid();
@@ -152,12 +144,11 @@ namespace MDP
     // /////////////////////////////////////////////////////
     void rebin(double rc, int nd, double r[], double xin[], double xi[])
     {
-      int i;
       int k = 0;
       double xo = 0.0;
       double dr = 0.0;
       double xn = 0.0;
-      for (i = 0; i < nd - 1; i++)
+      for (int i = 0; i < nd - 1; i++)
       {
         while (rc > dr)
         {
@@ -165,12 +156,14 @@ namespace MDP
           xo = xn;
           xn = xi[k];
           k++;
-        };
+        }
         dr -= rc;
         xin[i] = xn - (xn - xo) * dr / r[k - 1];
-      };
-      for (i = 0; i < nd - 1; i++)
+      }
+      for (int i = 0; i < nd - 1; i++)
+      {
         xi[i] = xin[i];
+      }
       xi[nd - 1] = 1.0;
     }
 
@@ -180,8 +173,8 @@ namespace MDP
     }
 
   public:
-    double *IntegrationLimitsMin;
-    double *IntegrationLimitsMax;
+    double IntegrationLimitsMin[MXDIM];
+    double IntegrationLimitsMax[MXDIM];
     int NumberOfDimensions;
     double Integral;
     double StandardDeviation;
@@ -192,11 +185,10 @@ namespace MDP
     } ConvergenceCriteria;
     double TargetPrecision;
     double ChiSquare;
-    void *DataStorage;
     FILE *OutputFile;
     FILE *OutputFileAdvanced;
 
-    VegasClass()
+    VegasBase()
     {
       OutputFile = stdout;
       OutputFileAdvanced = 0;
@@ -216,36 +208,36 @@ namespace MDP
       TargetPrecision = x;
     }
 
-    void SaveGrid(char filename[])
+    void SaveGrid(const char filename[])
     {
       if (ME == 0)
       {
         FILE *fp = fopen(filename, "w");
-        fwrite(this, sizeof(VegasClass) / sizeof(char), 1, fp);
+        fwrite(this, sizeof(VegasBase) / sizeof(char), 1, fp);
         fclose(fp);
       }
     }
 
-    void LoadGrid(char filename[])
+    void LoadGrid(const char filename[])
     {
       FILE *fp = fopen(filename, "r");
-      fread(this, sizeof(VegasClass) / sizeof(char), 1, fp);
+      fread(this, sizeof(VegasBase) / sizeof(char), 1, fp);
       fclose(fp);
     }
+
     void PrintGrid()
     {
-      int i, j;
       if (OutputFileAdvanced != nullptr && ME == 0)
       {
-        for (j = 0; j < NumberOfDimensions; j++)
+        for (int j = 0; j < NumberOfDimensions; j++)
         {
           fprintf(OutputFileAdvanced, "DATA FOR axis %2d\n", j);
           fprintf(OutputFileAdvanced, "Dim\ti\t x\t\tDelta_i\n");
-          fprintf(OutputFileAdvanced,
-                  "=============================================\n");
-          for (i = 0; i < nd; i++)
-            fprintf(OutputFileAdvanced, "%d\t%d\t%8.5f\t%12.4f\n",
-                    j, i, xi[j][i], di[i][j]);
+          fprintf(OutputFileAdvanced, "=============================================\n");
+          for (int i = 0; i < nd; i++)
+          {
+            fprintf(OutputFileAdvanced, "%d\t%d\t%8.5f\t%12.4f\n", j, i, xi[j][i], di[i][j]);
+          }
         }
       }
       fflush(OutputFile);
@@ -262,11 +254,8 @@ namespace MDP
       }
     }
 
-    void parallel_loop(double (*function)(double *, void *),
-                       double &fb, double &f2b)
+    void parallel_loop(double &fb, double &f2b)
     {
-
-      static int i, j, k;
       static double wgt, xn, xo, rc, f, f2;
       static double local_d[NDMX][MXDIM], local_di[NDMX][MXDIM];
 
@@ -275,20 +264,20 @@ namespace MDP
       // /////////////////
 
       fb = f2b = 0.0;
-      for (i = 0; i < nd; i++)
-        for (j = 0; j < NumberOfDimensions; j++)
+      for (int i = 0; i < nd; i++)
+        for (int j = 0; j < NumberOfDimensions; j++)
           local_d[i][j] = local_di[i][j] = 0.0;
 
       // /////////////////
       // parallel loop
       // /////////////////
-      for (k = 0; k < npg; k++)
+      for (int k = 0; k < npg; k++)
         if (is_local(k, npg))
         {
           wgt = xjac;
-          for (j = 0; j < NumberOfDimensions; j++)
+          for (int j = 0; j < NumberOfDimensions; j++)
           {
-            xn = (kg[j] - Random.plain()) * dxg;
+            xn = (kg[j] - mdp_random.plain()) * dxg;
             ia[j] = std::max(std::min((int)(xn), NDMX - 1), 0); // check NDMX
             if (ia[j] > 0)
             {
@@ -299,15 +288,15 @@ namespace MDP
             {
               xo = xi[j][ia[j]];
               rc = (xn - ia[j]) * xo;
-            };
+            }
             x[j] = IntegrationLimitsMin[j] + rc * dx[j];
             wgt *= xo * xnd;
           }
-          f = wgt * (*function)(x, DataStorage);
+          f = wgt * m_function(x);
           f2 = f * f;
           fb += f;
           f2b += f2;
-          for (j = 0; j < NumberOfDimensions; j++)
+          for (int j = 0; j < NumberOfDimensions; j++)
           {
             local_di[ia[j]][j] += f;
             if (mds >= 0)
@@ -321,20 +310,19 @@ namespace MDP
       mdp.add(f2b);
       mdp.add((double *)local_d, nd * MXDIM);
       mdp.add((double *)local_di, nd * MXDIM);
-      for (j = 0; j < NumberOfDimensions; j++)
-        for (i = 0; i < nd; i++)
+      for (int j = 0; j < NumberOfDimensions; j++)
+        for (int i = 0; i < nd; i++)
         {
           d[i][j] += local_d[i][j];
           di[i][j] += local_di[i][j];
         }
     }
 
-    double Integrate(double (*function)(double *, void *),
-                     int init = 0,
+    double Integrate(int init = 0,
                      int ncalls = 1000,
                      int niterations = 100)
     {
-      int i, j, k;
+      int k;
       double wgt, f2b, fb, xo, xn, rc;
 
       if (init <= 0)
@@ -345,7 +333,7 @@ namespace MDP
         // importance sampling only, change to mds = 0.
         // ////////////////////////////////////////////
         mds = ndo = 1;
-        for (j = 0; j < NumberOfDimensions; j++)
+        for (int j = 0; j < NumberOfDimensions; j++)
           xi[j][0] = 1.0;
       }
       if (init <= 1)
@@ -377,18 +365,24 @@ namespace MDP
             ng = npg * nd;
           }
         }
-        for (k = 1, i = 0; i < NumberOfDimensions; i++)
+        k = 1;
+        for (int i = 0; i < NumberOfDimensions; i++)
+        {
           k *= ng;
+        }
         npg = std::max(ncalls / k, 2);
         calls = npg * k;
         dxg = 1.0 / ng;
-        for (dv2g = 1, i = 0; i < NumberOfDimensions; i++)
+        dv2g = 1;
+        for (int i = 0; i < NumberOfDimensions; i++)
+        {
           dv2g *= dxg;
+        }
         dv2g = std::pow(calls * dv2g / npg, 2.0) / (npg - 1.0);
         xnd = nd;
         dxg *= xnd;
         xjac = 1.0 / calls;
-        for (j = 0; j < NumberOfDimensions; j++)
+        for (int j = 0; j < NumberOfDimensions; j++)
         {
           dx[j] = IntegrationLimitsMax[j] - IntegrationLimitsMin[j];
           xjac *= dx[j];
@@ -398,10 +392,14 @@ namespace MDP
         // ////////////////////////////////////////////
         if (nd != ndo)
         {
-          for (i = 0; i < nd; i++)
+          for (int i = 0; i < nd; i++)
+          {
             r[i] = 1.0;
-          for (j = 0; j < NumberOfDimensions; j++)
+          }
+          for (int j = 0; j < NumberOfDimensions; j++)
+          {
             rebin(ndo / xnd, nd, r, xin, xi[j]);
+          }
           ndo = nd;
         }
         PrintInputParameters(init, ncalls, niterations);
@@ -417,15 +415,15 @@ namespace MDP
       for (; it < it2; it++)
       {
         ti = tsi = 0.0;
-        for (j = 0; j < NumberOfDimensions; j++)
+        for (int j = 0; j < NumberOfDimensions; j++)
         {
           kg[j] = 1;
-          for (i = 0; i < nd; i++)
+          for (int i = 0; i < nd; i++)
             d[i][j] = di[i][j] = 0.0;
         }
         do
         {
-          parallel_loop(function, fb, f2b);
+          parallel_loop(fb, f2b);
           f2b = std::sqrt(f2b * npg);
           f2b = (f2b - fb) * (f2b + fb);
           if (f2b <= 0.0)
@@ -435,7 +433,7 @@ namespace MDP
 
           if (mds < 0)
           { // Use stratified sampling.
-            for (j = 0; j < NumberOfDimensions; j++)
+            for (int j = 0; j < NumberOfDimensions; j++)
               d[ia[j]][j] += f2b;
           }
           for (k = NumberOfDimensions - 1; k >= 0; k--)
@@ -472,13 +470,13 @@ namespace MDP
         // to avoid rapid, destabilizing changes, and also
         // compressed in range by the exponent ALPHA.
         // ////////////////////////////////////////////
-        for (j = 0; j < NumberOfDimensions; j++)
+        for (int j = 0; j < NumberOfDimensions; j++)
         {
           xo = d[0][j];
           xn = d[1][j];
           d[0][j] = (xo + xn) / 2.0;
           dt[j] = d[0][j];
-          for (i = 1; i < nd - 1; i++)
+          for (int i = 1; i < nd - 1; i++)
           {
             rc = xo + xn;
             xo = xn;
@@ -489,14 +487,14 @@ namespace MDP
           d[nd - 1][j] = (xo + xn) / 2.0;
           dt[j] += d[nd - 1][j];
         }
-        for (j = 0; j < NumberOfDimensions; j++)
+        for (int j = 0; j < NumberOfDimensions; j++)
         {
           rc = 0.0;
-          for (i = 0; i < nd; i++)
+          for (int i = 0; i < nd; i++)
           {
             if (d[i][j] < TINY)
               d[i][j] = TINY;
-            r[i] = std::pow((1.0 - d[i][j] / dt[j]) / (log(dt[j]) - log(d[i][j])), ALPHA);
+            r[i] = std::pow((1.0 - d[i][j] / dt[j]) / (std::log(dt[j]) - std::log(d[i][j])), ALPHA);
             rc += r[i];
           }
           rebin(rc / xnd, nd, r, xin, xi[j]);
@@ -509,13 +507,13 @@ namespace MDP
       }
       if (((ConvergenceCriteria == RelativePrecision) &&
            (fabs(StandardDeviation / Integral) > TargetPrecision)) ||
-          ((ConvergenceCriteria == AbsolutePrecision) &&
-           (fabs(StandardDeviation) > TargetPrecision)) &&
-              ME == 0)
+          (((ConvergenceCriteria == AbsolutePrecision) &&
+            (fabs(StandardDeviation) > TargetPrecision)) &&
+           ME == 0))
         fprintf(OutputFile, "Vegas failed to reach target precision.\n");
       return Integral;
     }
-  } Vegas;
+  };
 } // namespace MDP
 
 #endif /* MDP_PVEGAS_ */
