@@ -26,11 +26,9 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
   MyFunction myfunction;
   mdp << "Exact value = " << std::sin(1) * (1 - std::cos(1)) << "\n";
-  myfunction.NumberOfDimensions = 2;
-  myfunction.IntegrationLimitsMin[0] = 0;
-  myfunction.IntegrationLimitsMin[1] = 0;
-  myfunction.IntegrationLimitsMax[0] = 1;
-  myfunction.IntegrationLimitsMax[1] = 1;
+  myfunction.setDimension(2);
+  myfunction.setIntegrationLimits(0, 0, 1);
+  myfunction.setIntegrationLimits(1, 0, 1);
   mdp << "Intergal = " << myfunction.Integrate();
   mdp.close_wormholes();
   return 0;
