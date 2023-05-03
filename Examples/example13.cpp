@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   mdp_lattice mylattice(2, mybox);
   mdp_site x(mylattice);
   int mu = 0;
-  if (ME == 0)
+  if (isMainProcess())
   {
     x.set(0, 0);
     do

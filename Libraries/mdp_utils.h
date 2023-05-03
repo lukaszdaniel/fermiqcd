@@ -62,7 +62,7 @@ namespace MDP
   mdp_field_file_header get_info(std::string filename, int proc = 0)
   {
     mdp_field_file_header myheader;
-    if (ME == proc)
+    if (isSubProcess(proc))
     {
       FILE *fp = fopen(filename.c_str(), "r");
       if (fp == nullptr)
@@ -82,7 +82,7 @@ namespace MDP
   int mail(std::string email, std::string message)
   {
     static int ret;
-    if (ME == 0)
+    if (isMainProcess())
     {
       std::string s = "echo '" + message + "' | mail -s 'MDP MESSAGE' " + email;
       ret = system(s.c_str());
@@ -94,7 +94,7 @@ namespace MDP
   int mail_file(std::string email, std::string filename)
   {
     static int ret;
-    if (ME == 0)
+    if (isMainProcess())
     {
       std::string s = "more " + filename + " | mail -s 'MDP MESSAGE' " + email;
       ret = system(s.c_str());

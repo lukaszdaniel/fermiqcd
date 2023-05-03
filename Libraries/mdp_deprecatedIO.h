@@ -27,7 +27,7 @@ namespace MDP
 		mdp_int idx_gl, nvol_gl = lattice().global_volume();
 		double mytime = mdp.time();
 		int try_switch_endianess = false;
-		if (ME == processIO)
+		if (isSubProcess(processIO))
 		{
 			mdp_int *buffer_size = new mdp_int[Nproc];
 			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
@@ -129,14 +129,14 @@ namespace MDP
 			delete[] local_index;
 		}
 		update();
-		if (ME == 0 && !mdp_shutup)
+		if (isMainProcess() && !mdp_shutup)
 		{
 			printf("... Loading time: %f (sec)\n", mdp.time() - mytime);
 			fflush(stdout);
 		}
 		if (try_switch_endianess == true && auto_switch_endianess == true)
 		{
-			if (ME == 0)
+			if (isMainProcess())
 				printf("Trying to switch endianess.");
 			switch_endianess_4bytes();
 		}
@@ -153,7 +153,7 @@ namespace MDP
 	{
 		mdp_int idx_gl, nvol_gl = lattice().global_volume();
 		double mytime = mdp.time();
-		if (ME == processIO)
+		if (isSubProcess(processIO))
 		{
 			mdp_int *buffer_size = new mdp_int[Nproc];
 			mdp_int *buffer_ptr = new mdp_int[Nproc];
@@ -251,7 +251,7 @@ namespace MDP
 			}
 			delete[] local_index;
 		}
-		if (ME == 0 && !mdp_shutup)
+		if (isMainProcess() && !mdp_shutup)
 		{
 			printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
 			fflush(stdout);

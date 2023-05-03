@@ -32,7 +32,7 @@ namespace MDP
     m_header.reset();
     if (lattice().n_dimensions() < 3 || lattice().n_dimensions() > 4)
       error("mdp_field::save_vtk only works for ndim=3 and 4");
-    if (ME == processIO)
+    if (isSubProcess(processIO))
     {
       mdp_int *buffer_size = new mdp_int[Nproc];
       mdp_int *buffer_ptr = new mdp_int[Nproc];
@@ -173,7 +173,7 @@ namespace MDP
       }
       delete[] local_index;
     }
-    if (ME == 0 && !mdp_shutup)
+    if (isMainProcess() && !mdp_shutup)
     {
       printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
       fflush(stdout);

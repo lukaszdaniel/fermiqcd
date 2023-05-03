@@ -169,7 +169,7 @@ namespace MDP
 
         mdp << step << "\t" << residue << "\t" << mdp.time() - time << "\n";
 
-        if ((ME == 0) && (step > 100) && (residue == old_residue))
+        if (isMainProcess() && (step > 100) && (residue == old_residue))
           error("fermiqcd_staggered_uml_inverter/staggered_BiCG_QQh: not converging");
         step++;
       } while (step < max_steps);

@@ -124,7 +124,7 @@ namespace MDP
       mdp << "\nCheck point!\n";
       mdp << "Here you called the function to print the propagator\n";
       mdp << "Enter the coordinates (x0,x1,x2,x3 or 'quit' to end): ";
-      if (ME == 0)
+      if (isMainProcess())
       {
         std::string stringa;
         std::cin >> stringa;

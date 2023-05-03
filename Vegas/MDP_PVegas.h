@@ -108,7 +108,7 @@ namespace MDP
 
     void PrintInputParameters(int init, int ncalls, int niterations)
     {
-      if (m_OutputFile && ME == 0)
+      if (m_OutputFile && isMainProcess())
       {
         fprintf(m_OutputFile, "======================================\n");
         fprintf(m_OutputFile, "Vegas Montecarlo Numerical Integration\n");
@@ -134,7 +134,7 @@ namespace MDP
 
     void PrintOutputParameters()
     {
-      if (m_OutputFile && ME == 0)
+      if (m_OutputFile && isMainProcess())
       {
         if (m_it == m_it1)
         {
@@ -233,7 +233,7 @@ namespace MDP
 
     void SaveGrid(const char filename[])
     {
-      if (ME == 0)
+      if (isMainProcess())
       {
         FILE *fp = fopen(filename, "w");
         fwrite(this, sizeof(VegasBase) / sizeof(char), 1, fp);
@@ -250,7 +250,7 @@ namespace MDP
 
     void PrintGrid()
     {
-      if (m_OutputFileAdvanced && ME == 0)
+      if (m_OutputFileAdvanced && isMainProcess())
       {
         for (int j = 0; j < m_NumberOfDimensions; j++)
         {
@@ -268,7 +268,7 @@ namespace MDP
 
     void PrintOutput()
     {
-      if (m_OutputFile && ME == 0)
+      if (m_OutputFile && isMainProcess())
       {
         fprintf(m_OutputFile, "Integral           = %f\n", m_Integral);
         fprintf(m_OutputFile, "Standard Deviation = %f\n", m_StandardDeviation);
@@ -525,7 +525,7 @@ namespace MDP
         if (converged())
           return m_Integral;
       }
-      if (!converged() && ME == 0)
+      if (!converged() && isMainProcess())
       {
         fprintf(m_OutputFile, "Vegas failed to reach target precision.\n");
       }

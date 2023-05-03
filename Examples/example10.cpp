@@ -9,12 +9,14 @@ int main(int argc, char **argv)
   int j = 0;
   for (int i = 0; i < 5; i++)
   {
-    if (ME == 0)
+    if (isMainProcess())
       j = i;
     else
       j = 0;
+
     if (i % 2 == 0)
       mdp.barrier();
+
     mdp.broadcast(j, 0);
     std::cout << "I am process " << ME
          << ", i=" << i

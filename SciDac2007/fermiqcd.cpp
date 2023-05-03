@@ -34,9 +34,9 @@ public:
     plattice = nullptr;
     pU = nullptr;
     prefix = make_prefix();
-    // if (ME == 0)
+    // if (isMainProcess())
     //   system((std::string("mkdir ") + prefix).c_str());
-    if (ME == 0)
+    if (isMainProcess())
       os.open((prefix + "README.log").c_str());
     os << "prefix=" << prefix << std::endl;
     os << "initialization completed\n";
@@ -49,7 +49,7 @@ public:
   FermiQCD &operator<<(const T &obj)
   {
     std::cout << ME << ":" << obj;
-    if (ME == 0)
+    if (isMainProcess())
     {
       os << obj;
       os.flush();

@@ -9,12 +9,12 @@ int main(int argc, char **argv)
   int a;
   if (mdp.nproc() == 2)
   {
-    if (ME == 1)
+    if (isSubProcess(1))
     {
       a = 4 * 8;
       mdp.add(a);
     }
-    if (ME == 0)
+    if (isMainProcess())
     {
       a = 5 * 7;
       mdp.add(a);

@@ -43,7 +43,7 @@ namespace MDP
     mdp.barrier();
 #endif
 
-    if (ME == p)
+    if (isSubProcess(p))
     {
       if (filename == STD_INPUT)
       {

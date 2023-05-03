@@ -8,13 +8,13 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
   if (mdp.nproc() == 2)
   {
-    if (ME == 1)
+    if (isSubProcess(1))
     {
       int b;
       b = 4 * 8;
       mdp.put(b, 0);
     }
-    if (ME == 0)
+    if (isMainProcess())
     {
       int a, b;
       a = 5 * 7;

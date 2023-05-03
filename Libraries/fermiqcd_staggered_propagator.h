@@ -91,7 +91,7 @@ namespace MDP
 
       double time = mdp.time();
 
-      if (ME == 0 && shutup == false)
+      if (isMainProcess() && shutup == false)
       {
         printf("BEGIN Generating ordinary propagator\n");
         fflush(stdout);
@@ -107,7 +107,7 @@ namespace MDP
           }
 
           x = binary2versor(a);
-          if (ME == 0 && shutup == false)
+          if (isMainProcess() && shutup == false)
           {
             printf("(source at (");
 
@@ -137,7 +137,7 @@ namespace MDP
           }
         }
 
-      if (ME == 0 && shutup == false)
+      if (isMainProcess() && shutup == false)
       {
         printf("END Generating ordinary propagator. Time: %f (sec)\n", mdp.time() - time);
         fflush(stdout);

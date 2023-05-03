@@ -193,7 +193,7 @@ void test_sdwf()
   int nc = 3;
   int L5 = 5;
 
-  if (ME == 0)
+  if (isMainProcess())
     printf("\n\nTEST SDWF FIELDS\n\n");
 
   mdp_lattice lattice(4, box);
@@ -216,7 +216,7 @@ void test_sdwf()
   mul_invQ(chi2, psi, U, coeff);
 
   mul_Q(chi1, chi2, U, coeff);
-  if (ME == 0)
+  if (isMainProcess())
     printf("\n\nCheching that inversion was correct\n\n");
   check_differences(psi, chi1);
 }

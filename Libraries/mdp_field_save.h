@@ -45,7 +45,7 @@ namespace MDP
     mdp_int idx_gl, nvol_gl = lattice().global_volume();
     double mytime = mdp.time();
     m_header.reset();
-    if (ME == processIO)
+    if (isSubProcess(processIO))
     {
       mdp_int *buffer_size = new mdp_int[Nproc];
       mdp_int *buffer_ptr = new mdp_int[Nproc];
@@ -160,7 +160,7 @@ namespace MDP
       }
       delete[] local_index;
     }
-    if (ME == 0 && !mdp_shutup)
+    if (isMainProcess() && !mdp_shutup)
     {
       printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
       fflush(stdout);

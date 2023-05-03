@@ -93,7 +93,7 @@ void polyakov_vtk(gauge_field &U, std::string filename)
 
 void pretty_print(std::string prefix, std::vector<mdp_real> data)
 {
-  if (ME == 0)
+  if (isMainProcess())
   {
     for (size_t t = 0; t < data.size(); t++)
     {

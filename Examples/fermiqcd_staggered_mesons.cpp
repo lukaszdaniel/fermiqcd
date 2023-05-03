@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 
         float x, dx;
 
-        if (ME == 0)
+        if (isMainProcess())
         {
             for (int t = 0; t < Nt; t = t + 2)
             {

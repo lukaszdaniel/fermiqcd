@@ -604,7 +604,7 @@ namespace MDP
       mdp << "Initializing random per mdp_site...\n";
       if (mdp_random_seed_filename && random_seed_ == 0)
       {
-        if (ME == 0)
+        if (isMainProcess())
         {
           FILE *fp = fopen(mdp_random_seed_filename, "r");
           if (fp != nullptr)

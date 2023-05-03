@@ -39,6 +39,13 @@ namespace MDP
 
 /// Returns the unique id of this process
 #define ME mdp.me()
+
+/// Check for Sub Process
+#define isSubProcess(i) (mdp.me() == (i))
+
+/// Check for Parent (Main) Process
+#define isMainProcess() (isSubProcess(0))
+
 /// Returns the total number of parallel processes for this job
 #define Nproc mdp.nproc()
 

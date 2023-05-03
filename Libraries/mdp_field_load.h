@@ -50,7 +50,7 @@ namespace MDP
     double mytime = mdp.time();
     bool reversed_header_endianess = false;
     struct stat statbuf;
-    if (ME == processIO)
+    if (isSubProcess(processIO))
     {
       mdp_int *buffer_size = new mdp_int[Nproc];
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
@@ -229,7 +229,7 @@ namespace MDP
       switch_endianess_4bytes();
 #endif
     }
-    if (ME == 0 && !mdp_shutup)
+    if (isMainProcess() && !mdp_shutup)
     {
       printf("... Loading time: %f (sec)\n", mdp.time() - mytime);
       fflush(stdout);
