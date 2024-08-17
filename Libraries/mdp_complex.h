@@ -63,12 +63,12 @@ namespace MDP
     {
     }
 
-    bool operator==(const mdp_complex &c)
+    bool operator==(const mdp_complex &c) const
     {
       return ((m_re == c.m_re) && (m_im == c.m_im));
     }
 
-    bool operator!=(const mdp_complex &c)
+    bool operator!=(const mdp_complex &c) const
     {
       return !(*this == c);
     }

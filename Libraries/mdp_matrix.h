@@ -730,6 +730,29 @@ namespace MDP
     return os;
   }
 
+  bool operator==(const mdp_matrix &a, const mdp_matrix &b)
+  {
+    if (a.rows() != b.rows())
+      return false;
+    if (a.cols() != b.cols())
+      return false;
+
+    for (mdp_uint i = 0; i < a.rows(); ++i)
+    {
+      for (mdp_uint j = 0; j < a.cols(); ++j)
+      {
+        if (a(i, j) != b(i, j))
+          return false;
+      }
+    }
+    return true;
+  }
+
+  bool operator!=(const mdp_matrix &a, const mdp_matrix &b)
+  {
+    return !(a == b);
+  }
+
   mdp_matrix operator+(mdp_complex b, const mdp_matrix &a)
   {
     return a + b;
