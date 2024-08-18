@@ -12,29 +12,36 @@
 #ifndef MDP_NVECTOR_FIELD_
 #define MDP_NVECTOR_FIELD_
 
+#include "mdp_nmatrix_field.h"
+
 namespace MDP
 {
-  /** @brief field of vectors of vectors (DEPRECATED)
-   */
-  class mdp_nvector_field : public mdp_field<mdp_complex>
+  /// @brief a field of vectors of vectors (DEPRECATED)
+  ///
+  /// Example:
+  /// @verbatim
+  ///    int box[]={10,10,10};
+  ///    mdp_lattice lattice(3,box);
+  ///    mdp_nvector_field h(lattice,10,2);
+  ///    mdp_site x(lattice);
+  ///    forallsites(x)
+  ///      for(int i=0; i<10; i++)
+  ///        h(x,i)=lattice.random(x).SU(3);
+  /// @endverbatim
+  class mdp_nvector_field : public mdp_nmatrix_field
   {
-  private:
-    mdp_uint m_rows;
-    mdp_uint m_imax;
-    mdp_uint m_imax2;
-
   public:
-    mdp_nvector_field() : mdp_field<mdp_complex>(), m_rows(0), m_imax(0), m_imax2(0)
+    mdp_nvector_field() : mdp_nmatrix_field()
     {
     }
 
     /** @brief declares a n-component vector field of i-component vectors at each site
      */
-    mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i) : mdp_field<mdp_complex>(a, i * n), m_rows(i), m_imax(i * n), m_imax2(i)
+    mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i) : mdp_nmatrix_field(a, n, i, 1)
     {
     }
 
-    mdp_nvector_field(const mdp_nvector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_imax(field.m_imax), m_imax2(field.m_imax2)
+    mdp_nvector_field(const mdp_nvector_field &field) : mdp_nmatrix_field(field)
     {
     }
 
@@ -42,32 +49,54 @@ namespace MDP
      */
     void allocate_mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i)
     {
-      deallocate_field();
-      m_rows = i;
-      m_imax = i * n;
-      m_imax2 = i;
-      allocate_field(a, m_imax);
+      allocate_mdp_nmatrix_field(a, n, i, 1);
     }
 
     /** @brief returns the n-th vector stored at site x
      */
     mdp_matrix operator()(mdp_site x, mdp_uint n)
     {
-      return mdp_matrix(address(x, n * m_imax2), m_rows, 1);
+#ifdef CHECK_BOUNDARY
+      if (n >= m_matrices)
+      {
+        error("field component can be indexed up to " + (m_matrices - 1));
+      }
+#endif
+      return mdp_matrix(address(x, n * m_rows * m_columns), m_rows, m_columns);
     }
 
     /** @brief returns the i-th component of the n-th vector stored at site x
      */
     mdp_complex &operator()(mdp_site x, mdp_uint n, mdp_uint i)
     {
-      return address(x, n * m_imax2)[i];
+#ifdef CHECK_BOUNDARY
+      if (n >= m_matrices)
+      {
+        error("field component can be indexed up to " + (m_matrices - 1));
+      }
+      if (i >= m_rows)
+      {
+        error("field rows can be indexed up to " + (m_rows - 1));
+      }
+#endif
+      return address(x, n * m_rows * m_columns)[i * m_columns + 0];
     }
 
     /** @brief returns the i-th const component of the n-th vector stored at site x
      */
     const mdp_complex &operator()(mdp_site x, mdp_uint n, mdp_uint i) const
     {
-      return address(x, n * m_imax2)[i];
+#ifdef CHECK_BOUNDARY
+      if (n >= m_matrices)
+      {
+        error("field component can be indexed up to " + (m_matrices - 1));
+      }
+      if (i >= m_rows)
+      {
+        error("field rows can be indexed up to " + (m_rows - 1));
+      }
+#endif
+      return address(x, n * m_rows * m_columns)[i * m_columns + 0];
     }
   };
 } // namespace MDP

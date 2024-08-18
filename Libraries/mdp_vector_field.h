@@ -12,6 +12,8 @@
 #ifndef MDP_VECTOR_FIELD_
 #define MDP_VECTOR_FIELD_
 
+#include "mdp_nvector_field.h"
+
 namespace MDP
 {
   /// @brief a field of vectors of complex numbers
@@ -25,48 +27,62 @@ namespace MDP
   ///    forallsites(x)
   ///      h(x)=0.0+0.0*I;
   /// @endverbatim
-  class mdp_vector_field : public mdp_field<mdp_complex>
+  class mdp_vector_field : public mdp_nvector_field
   {
-  private:
-    mdp_int m_rows;
-    mdp_int m_columns;
-    mdp_int m_imax;
 
   public:
-    mdp_vector_field() : mdp_field<mdp_complex>(), m_rows(0), m_columns(0), m_imax(0)
+    mdp_vector_field() : mdp_nvector_field()
     {
     }
 
-    mdp_vector_field(mdp_lattice &a, int i) : mdp_field<mdp_complex>(a, i), m_rows(i), m_columns(1), m_imax(i)
+    /** @brief declares a field of i-component vectors at each site
+     */
+    mdp_vector_field(mdp_lattice &a, int i) : mdp_nvector_field(a, 1, i)
     {
     }
 
-    mdp_vector_field(const mdp_vector_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
+    mdp_vector_field(const mdp_vector_field &field) : mdp_nvector_field(field)
     {
     }
 
+    /** @brief dynamically allocates a field of i-component vectors at each site
+     */
     void allocate_mdp_vector_field(mdp_lattice &a, int i)
     {
-      deallocate_field();
-      m_rows = i;
-      m_columns = 1;
-      m_imax = i;
-      allocate_field(a, m_imax);
+      allocate_mdp_nvector_field(a, 1, i);
     }
 
+    /** @brief returns the matrix stored at site x
+     */
     mdp_matrix operator()(mdp_site x)
     {
       return mdp_matrix(address(x), m_rows, m_columns);
     }
 
-    mdp_complex &operator()(mdp_site x, int i)
+    /** @brief returns the i-th component of the vector stored at site x
+     */
+    mdp_complex &operator()(mdp_site x, mdp_uint i)
     {
-      return address(x)[i];
+#ifdef CHECK_BOUNDARY
+      if (i >= m_rows)
+      {
+        error("field rows can be indexed up to " + (m_rows - 1));
+      }
+#endif
+      return address(x)[i * m_columns + 0];
     }
 
-    const mdp_complex &operator()(mdp_site x, int i) const
+    /** @brief returns the i-th const component of the vector stored at site x
+     */
+    const mdp_complex &operator()(mdp_site x, mdp_uint i) const
     {
-      return address(x)[i];
+#ifdef CHECK_BOUNDARY
+      if (i >= m_rows)
+      {
+        error("field rows can be indexed up to " + (m_rows - 1));
+      }
+#endif
+      return address(x)[i * m_columns + 0];
     }
   };
 } // namespace MDP

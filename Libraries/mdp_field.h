@@ -127,7 +127,7 @@ namespace MDP
   protected:
     mdp_lattice *m_lattice;      /* this points to the lattice for this field  */
     std::unique_ptr<T[]> m_data; /* this is to store the main field            */
-    mdp_uint m_size;             /* this is the size of the field in sizeof(T) */
+    mdp_uint m_size;             /* this is the total number field components on the lattice */
     mdp_uint m_field_components; /* this is the number of field components per site */
 
     /** @brief the field file header, contains data only if field was read from file

@@ -12,9 +12,11 @@
 #ifndef MDP_MATRIX_FIELD_
 #define MDP_MATRIX_FIELD_
 
+#include "mdp_nmatrix_field.h"
+
 namespace MDP
 {
-  /// @brief a field of matrices
+  /// @brief a field of complex matrices
   ///
   /// Example:
   /// @verbatim
@@ -25,25 +27,20 @@ namespace MDP
   ///    forallsites(x)
   ///       h(x)=lattice.random(x).SU(5);
   /// @endverbatim
-  class mdp_matrix_field : public mdp_field<mdp_complex>
+  class mdp_matrix_field : public mdp_nmatrix_field
   {
-  private:
-    mdp_uint m_rows;
-    mdp_uint m_columns;
-    mdp_uint m_imax;
-
   public:
-    mdp_matrix_field() : mdp_field<mdp_complex>(), m_rows(0), m_columns(0), m_imax(0)
+    mdp_matrix_field() : mdp_nmatrix_field()
     {
     }
 
     /** @brief declares a field of ixj matrices at each site
      */
-    mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j) : mdp_field<mdp_complex>(a, i * j), m_rows(i), m_columns(j), m_imax(i * j)
+    mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j) : mdp_nmatrix_field(a, 1, i, j)
     {
     }
 
-    mdp_matrix_field(const mdp_matrix_field &field) : mdp_field<mdp_complex>(field), m_rows(field.m_rows), m_columns(field.m_columns), m_imax(field.m_imax)
+    mdp_matrix_field(const mdp_matrix_field &field) : mdp_nmatrix_field(field)
     {
     }
 
@@ -51,11 +48,7 @@ namespace MDP
      */
     void allocate_mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j)
     {
-      deallocate_field();
-      m_rows = i;
-      m_columns = j;
-      m_imax = i * j;
-      allocate_field(a, m_imax);
+      allocate_mdp_nmatrix_field(a, 1, i, j);
     }
 
     /** @brief returns the matrix stored at site x
@@ -69,6 +62,16 @@ namespace MDP
      */
     mdp_complex &operator()(mdp_site x, mdp_uint i, mdp_uint j)
     {
+#ifdef CHECK_BOUNDARY
+      if (i >= m_rows)
+      {
+        error("field rows can be indexed up to " + (m_rows - 1));
+      }
+      if (j >= m_rows)
+      {
+        error("field columns can be indexed up to " + (m_columns - 1));
+      }
+#endif
       return address(x)[i * m_columns + j];
     }
 
@@ -76,6 +79,16 @@ namespace MDP
      */
     const mdp_complex &operator()(mdp_site x, mdp_uint i, mdp_uint j) const
     {
+#ifdef CHECK_BOUNDARY
+      if (i >= m_rows)
+      {
+        error("field rows can be indexed up to " + (m_rows - 1));
+      }
+      if (j >= m_rows)
+      {
+        error("field columns can be indexed up to " + (m_columns - 1));
+      }
+#endif
       return address(x)[i * m_columns + j];
     }
   };
