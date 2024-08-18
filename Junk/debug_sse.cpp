@@ -22,14 +22,17 @@ typedef struct
 {
   float c1, c2, c3, c4;
 } _sse_float ALIGN16;
+
 typedef struct
 {
   _sse_float c1, c2, c3;
 } _sse_vector ALIGN16;
+
 typedef struct
 {
   int c1, c2, c3, c4;
 } _sse_int ALIGN16;
+
 typedef struct
 {
   double c1, c2;
@@ -39,10 +42,12 @@ typedef struct
 {
   mdp_complex c11, c12, c13, c21, c22, c23, c31, c32, c33;
 } _sse_su3;
+
 typedef struct
 {
   mdp_complex c1, c2, c3;
 } _sse_su3_vector;
+
 typedef struct
 {
   _sse_su3_vector c1, c2, c3, c4;
@@ -267,8 +272,10 @@ static _sse_float _sse_float_sgn34 __attribute__((unused)) = {1.0f, 1.0f, -1.0f,
 
 int main()
 {
+#ifndef __APPLE__
   _sse_su3 u;
   _sse_float_su3_multiply(u);
   _sse_float_su3_multiply(u);
+#endif
   return 0;
 }
