@@ -14,6 +14,8 @@
 
 #include <string>
 #include <vector>
+#include "mdp_global_vars.h"
+#include "mdp_utils.h"
 
 namespace MDP
 {

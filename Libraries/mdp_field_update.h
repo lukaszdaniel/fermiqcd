@@ -12,6 +12,9 @@
 #ifndef MDP_FIELD_UPDATE_
 #define MDP_FIELD_UPDATE_
 
+
+#include "mdp_field.h"
+
 namespace MDP
 {
   /** @brief The only communication function for a field object

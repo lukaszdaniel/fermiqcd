@@ -15,6 +15,10 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#ifndef _WIN64
+#include "glob.h"
+#endif
+#include "mdp_field.h"
 
 namespace MDP
 {

@@ -14,6 +14,8 @@
 #ifndef FERMIQCD_DWFERMI_FIELD_
 #define FERMIQCD_DWFERMI_FIELD_
 
+#include "mdp_complex_field.h"
+
 namespace MDP
 {
   /// @brief domain wall fermionic field

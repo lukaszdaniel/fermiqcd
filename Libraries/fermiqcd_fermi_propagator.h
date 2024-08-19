@@ -14,6 +14,14 @@
 #ifndef FERMIQCD_FERMI_PROPAGATOR_
 #define FERMIQCD_FERMI_PROPAGATOR_
 
+#include "mdp_complex_field.h"
+#include "fermiqcd_default_parameters.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_fermi_field.h"
+#include "fermiqcd_minres_inverter.h"
+#include "fermiqcd_fermi_algorithms.h"
+
 namespace MDP
 {
   /// @brief a Wilson/Clover quark propagator (all 12 components)

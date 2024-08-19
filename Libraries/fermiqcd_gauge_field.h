@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_GAUGE_FIELD_
 #define FERMIQCD_GAUGE_FIELD_
 
+#include "mdp_complex_field.h"
+#include "mdp_matrix_field.h"
+
 namespace MDP
 {
   /// @brief the chromo-electro-magnetic field for any SU(n)

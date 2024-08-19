@@ -14,6 +14,8 @@
 #ifndef FERMIQCD_DEFAULT_PARAMETERS_
 #define FERMIQCD_DEFAULT_PARAMETERS_
 
+#include "mdp_global_vars.h"
+
 namespace MDP
 {
 #define TIME 0

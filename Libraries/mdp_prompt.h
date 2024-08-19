@@ -14,6 +14,10 @@
 #define MDP_PROMPT_
 
 #include <string>
+#include <cstring>
+#include <iostream>
+#include "mdp_macros.h"
+#include "mdp_communicator.h"
 
 namespace MDP
 {

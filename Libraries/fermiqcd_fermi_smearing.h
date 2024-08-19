@@ -14,6 +14,11 @@
 #ifndef FERMIQCD_FERMI_SMEARING_
 #define FERMIQCD_FERMI_SMEARING_
 
+#include "fermiqcd_fermi_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_fermi_propagator.h"
+
 namespace MDP
 {
   /// @brief wupperthal smearing algotihm

@@ -14,6 +14,10 @@
 #ifndef FERMIQCD_MINRES_INVERTER_VTK_
 #define FERMIQCD_MINRES_INVERTER_VTK_
 
+#include <string>
+#include "mdp_field.h"
+#include "fermiqcd_minres_inverter.h"
+
 namespace MDP
 {
   std::string inversion_vtk_prefix = "test";

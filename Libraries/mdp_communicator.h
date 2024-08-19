@@ -16,6 +16,10 @@
 #ifdef PARALLEL
 #include "mpi.h"
 #endif
+#include "mdp_log.h"
+#include "mdp_psim.h"
+#include "mdp_timer.h"
+#include "mdp_matrix.h"
 
 namespace MDP
 {

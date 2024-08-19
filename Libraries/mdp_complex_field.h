@@ -12,6 +12,10 @@
 #ifndef MDP_COMPLEX_FIELD_
 #define MDP_COMPLEX_FIELD_
 
+#include <cstdio>
+#include "mdp_global_vars.h"
+#include "mdp_field.h"
+
 namespace MDP
 {
   bool mdp_write_double_as_float(FILE *fp,

@@ -14,6 +14,12 @@
 #ifndef FERMIQCD_DWFERMI_ACTIONS_
 #define FERMIQCD_DWFERMI_ACTIONS_
 
+#include "mdp_lattice.h"
+#include "fermiqcd_dwfermi_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_gamma_matrices.h"
+
 namespace MDP
 {
   /// @brief domain wall action (SORRY THIS IS SLOW)

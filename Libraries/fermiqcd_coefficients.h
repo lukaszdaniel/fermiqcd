@@ -16,6 +16,8 @@
 
 #include <map>
 #include <string>
+#include "mdp_global_vars.h"
+#include "mdp_communicator.h"
 
 namespace MDP
 {

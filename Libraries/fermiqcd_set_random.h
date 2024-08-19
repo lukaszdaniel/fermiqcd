@@ -14,6 +14,8 @@
 #ifndef FERMIQCD_SET_RANDOM_
 #define FERMIQCD_SET_RANDOM_
 
+#include "mdp_field.h"
+
 namespace MDP
 {
   /// Set the complex field components of chi to be gaussian random numbers

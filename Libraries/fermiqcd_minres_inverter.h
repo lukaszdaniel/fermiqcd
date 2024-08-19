@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_MINRES_INVERTER_
 #define FERMIQCD_MINRES_INVERTER_
 
+#include "mdp_global_vars.h"
+#include "fermiqcd_coefficients.h"
+
 namespace MDP
 {
   /// @brief structure for inverstion stats

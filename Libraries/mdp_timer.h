@@ -13,6 +13,10 @@
 #define MDP_TIMER_
 
 #include <string>
+#include <unistd.h>
+#include <sys/time.h>
+#include "mdp_global_vars.h"
+#include "mdp_macros.h"
 
 namespace MDP
 {

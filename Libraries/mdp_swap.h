@@ -13,6 +13,7 @@
 #define MDP_SWAP_
 
 #include <algorithm>
+#include "mdp_global_vars.h"
 
 namespace MDP
 {

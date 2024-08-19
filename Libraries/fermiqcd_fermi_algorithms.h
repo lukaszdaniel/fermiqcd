@@ -14,6 +14,14 @@
 #ifndef FERMIQCD_FERMI_ALGORITHMS_
 #define FERMIQCD_FERMI_ALGORITHMS_
 
+#include "fermiqcd_default_parameters.h"
+#include "fermiqcd_fermi_field.h"
+#include "fermiqcd_gamma_matrices.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_fermi_actions.h"
+#include "fermiqcd_minres_inverter.h"
+
 namespace MDP
 {
   /// r(x,alpha,i) = Gamma5(alpha,beta) * s(x,beta,i)

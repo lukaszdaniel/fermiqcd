@@ -14,6 +14,9 @@
 
 #include <iostream>
 #include <memory>
+#include "mdp_macros.h"
+#include "mdp_global_vars.h"
+#include "mdp_complex.h"
 
 namespace MDP
 {

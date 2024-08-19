@@ -13,6 +13,9 @@
 #define FERMIQCD_TOPOLOGICAL_CHARGE_
 
 #include <string>
+#include "mdp_field_save_vtk.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_gauge_algorithms.h"
 
 namespace MDP
 {

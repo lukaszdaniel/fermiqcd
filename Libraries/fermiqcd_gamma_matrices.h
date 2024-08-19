@@ -22,6 +22,9 @@
 
 // modified 20 Nov 2009 to include MILC convention
 #include <string>
+#include "mdp_communicator.h"
+#include "mdp_complex.h"
+#include "mdp_matrix.h"
 
 #define GAMMA_MATRICES
 

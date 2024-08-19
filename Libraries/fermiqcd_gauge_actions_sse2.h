@@ -14,6 +14,8 @@
 #ifndef FERMIQCD_GAUGE_ACTIONS_SSE2_
 #define FERMIQCD_GAUGE_ACTIONS_SSE2_
 
+#include "fermiqcd_gauge_actions.h"
+
 namespace MDP
 {
   /// @brief the \f$ O(a^2)\f$ Improved Gauge Action for SU3 with SSE2

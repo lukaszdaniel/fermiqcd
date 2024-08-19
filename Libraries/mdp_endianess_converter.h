@@ -12,6 +12,9 @@
 #ifndef MDP_ENDIANESS_CONVERTER_
 #define MDP_ENDIANESS_CONVERTER_
 
+#include "mdp_macros.h"
+#include "mdp_communicator.h"
+
 namespace MDP
 {
   /// Converts endianess of object passed by reference

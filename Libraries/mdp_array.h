@@ -16,6 +16,8 @@
 #include <memory>
 #include <array>
 #include <numeric>
+#include "mdp_global_vars.h"
+#include "mdp_macros.h"
 #define ARRAY_MAX_DIM 5
 
 namespace MDP

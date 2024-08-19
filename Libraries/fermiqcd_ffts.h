@@ -14,6 +14,10 @@
 #ifndef FERMIQCD_FFTS_
 #define FERMIQCD_FFTS_
 
+#include "mdp_global_vars.h"
+#include "mdp_field.h"
+#include "fermiqcd_fermi_field.h"
+
 namespace MDP
 {
   mdp_int i2pow(mdp_int n)

@@ -17,6 +17,10 @@
 
 #include <memory>
 #include <string>
+#include "mdp_global_vars.h"
+#include "mdp_prng.h"
+#include "mdp_partitionings.h"
+#include "mdp_topologies.h"
 
 #define MAX_DIM 10
 

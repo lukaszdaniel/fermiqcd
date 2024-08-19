@@ -13,6 +13,7 @@
 #define MDP_VECTOR_
 
 #include <array>
+#include "mdp_global_vars.h"
 
 namespace MDP
 {

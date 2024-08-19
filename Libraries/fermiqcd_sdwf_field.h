@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_SDWF_FIELD_
 #define FERMIQCD_SDWF_FIELD_
 
+#include "mdp_complex_field.h"
+#include "mdp_mod2sign.h"
+
 namespace MDP
 {
   /** @brief field for domain wall staggered fermions

@@ -13,6 +13,7 @@
 #define FERMIQCD_ILDG_GAUGE_READER_
 
 #include <string>
+#include "fermiqcd_gauge_field.h"
 
 namespace MDP
 {

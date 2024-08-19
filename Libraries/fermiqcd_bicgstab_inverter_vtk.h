@@ -15,6 +15,11 @@
 #ifndef FERMIQCD_BICGSTAB_INVERTER_VTK_
 #define FERMIQCD_BICGSTAB_INVERTER_VTK_
 
+#include "mdp_field.h"
+#include "fermiqcd_default_parameters.h"
+#include "fermiqcd_minres_inverter.h"
+#include "fermiqcd_minres_inverter_vtk.h"
+
 namespace MDP
 {
   /// @brief the stabilized biconjugate inverter

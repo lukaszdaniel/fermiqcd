@@ -15,6 +15,7 @@
 #define FERMIQCD_FERMI_FIELD_
 
 #include <iostream>
+#include "mdp_complex_field.h"
 
 namespace MDP
 {

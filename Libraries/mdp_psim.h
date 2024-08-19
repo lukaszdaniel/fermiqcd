@@ -32,6 +32,7 @@
 #endif
 #include <sys/file.h> // for flock()
 #include <fcntl.h>
+#include "mdp_global_vars.h"
 
 namespace MDP
 {

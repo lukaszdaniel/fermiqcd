@@ -12,6 +12,10 @@
 #ifndef MDP_SAVE_PARTITIONING_VTK_
 #define MDP_SAVE_PARTITIONING_VTK_
 
+
+#include "mdp_lattice.h"
+#include "mdp_field.h"
+
 namespace MDP
 {
   void save_partitioning_vtk(mdp_lattice &lattice, std::string filename)

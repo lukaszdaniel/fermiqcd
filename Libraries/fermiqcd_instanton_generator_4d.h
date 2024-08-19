@@ -12,6 +12,11 @@
 #ifndef FERMIQCD_INSTANTON_GENERATOR_4D_
 #define FERMIQCD_INSTANTON_GENERATOR_4D_
 
+#include "mdp_matrix.h"
+#include "mdp_lattice.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_gamma_matrices.h"
+
 namespace MDP
 {
   // based on code from James Hetrick

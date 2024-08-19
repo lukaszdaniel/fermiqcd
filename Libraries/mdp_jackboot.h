@@ -14,6 +14,8 @@
 
 #include <cmath>
 #include <memory>
+#include "mdp_macros.h"
+#include "mdp_prng.h"
 
 namespace MDP
 {

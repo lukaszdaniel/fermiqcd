@@ -15,6 +15,10 @@
 #define FERMIQCD_GAUGE_ACTIONS_
 
 #include <string>
+#include "mdp_prng.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_gauge_routines.h"
 
 namespace MDP
 {

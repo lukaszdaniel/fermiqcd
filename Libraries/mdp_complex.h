@@ -20,6 +20,7 @@
 #ifdef DO_NOT_USE_MDP_COMPLEX
 #include <complex>
 #endif
+#include "mdp_global_vars.h"
 
 namespace MDP
 {

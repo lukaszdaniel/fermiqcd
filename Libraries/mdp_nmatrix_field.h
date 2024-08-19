@@ -12,6 +12,8 @@
 #ifndef MDP_NMATRIX_FIELD_
 #define MDP_NMATRIX_FIELD_
 
+#include "mdp_field.h"
+
 namespace MDP
 {
   /// @brief a field of vectors of complex matrices

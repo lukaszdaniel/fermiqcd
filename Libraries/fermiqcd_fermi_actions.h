@@ -14,6 +14,11 @@
 #ifndef FERMIQCD_FERMI_ACTIONS_
 #define FERMIQCD_FERMI_ACTIONS_
 
+#include "fermiqcd_gamma_matrices.h"
+#include "fermiqcd_fermi_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+
 namespace MDP
 {
   /// @brief Wilson/Clover action (SLOW: DO NOT USE IN PRODUCTION)

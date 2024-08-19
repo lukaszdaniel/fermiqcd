@@ -13,6 +13,8 @@
 #define MDP_POSTSCRIPT_
 
 #include <cstdio>
+#include <string>
+#include <iostream>
 
 namespace MDP
 {

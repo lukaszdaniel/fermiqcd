@@ -14,6 +14,10 @@
 #ifndef FERMIQCD_SDWF_ACTIONS_
 #define FERMIQCD_SDWF_ACTIONS_
 
+#include "fermiqcd_sdwf_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+
 namespace MDP
 {
   /// @brief domain wall staggered (WORK IN PROGRESS)

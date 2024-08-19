@@ -12,6 +12,11 @@
 #ifndef FERMIQCD_FERMI_ROTATION_
 #define FERMIQCD_FERMI_ROTATION_
 
+#include "fermiqcd_fermi_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_gamma_matrices.h"
+#include "fermiqcd_coefficients.h"
+
 namespace MDP
 {
   void rotate_field(fermi_field &psi, gauge_field &U, coefficients &coeff)

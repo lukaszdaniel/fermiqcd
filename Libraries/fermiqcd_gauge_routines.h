@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_GAUGE_ROUTINES_
 #define FERMIQCD_GAUGE_ROUTINES_
 
+#include "mdp_matrix.h"
+#include "fermiqcd_gauge_field.h"
+
 namespace MDP
 {
   // ///////////////////////////

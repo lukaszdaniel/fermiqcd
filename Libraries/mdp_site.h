@@ -12,6 +12,9 @@
 #ifndef MDP_SITE_
 #define MDP_SITE_
 
+#include "mdp_vector.h"
+#include "mdp_lattice.h"
+
 namespace MDP
 {
   /// @brief site object to loop on a lattice

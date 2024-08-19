@@ -16,6 +16,9 @@
 
 #include <string>
 #include <cstdio>
+#include "mdp_global_vars.h"
+#include "mdp_site.h"
+#include "fermiqcd_gauge_field.h"
 
 namespace MDP
 {

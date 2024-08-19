@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <algorithm>
+#include "mdp_global_vars.h"
 
 // this is my favourite piece of code...
 

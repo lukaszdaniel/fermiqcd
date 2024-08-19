@@ -13,6 +13,7 @@
 #define MDP_FITTING_FUNCTIONS_
 
 #include <memory>
+#include "mdp_measure.h"
 
 namespace MDP
 {

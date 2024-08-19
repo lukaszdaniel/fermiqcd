@@ -13,6 +13,12 @@
 #define MDP_FIELD_
 
 #include <memory>
+#include <cstring>
+#include "mdp_global_vars.h"
+#include "mdp_complex.h"
+#include "mdp_endianess_converter.h"
+#include "mdp_lattice.h"
+#include "mdp_site.h"
 
 namespace MDP
 {

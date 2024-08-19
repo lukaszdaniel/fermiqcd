@@ -14,6 +14,8 @@
 #ifndef FERMIQCD_GAUGE_FIXING_
 #define FERMIQCD_GAUGE_FIXING_
 
+#include "fermiqcd_gauge_field.h"
+
 namespace MDP
 {
   /// Structure for gaugefixing stats

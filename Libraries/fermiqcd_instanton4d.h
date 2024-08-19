@@ -14,6 +14,12 @@
 #ifndef FERMIQCD_INSTANTON4D_
 #define FERMIQCD_INSTANTON4D_
 
+#include <vector>
+#include "mdp_global_vars.h"
+#include "mdp_matrix.h"
+#include "mdp_site.h"
+#include "fermiqcd_gamma_matrices.h"
+
 namespace MDP
 {
   class Instanton4D

@@ -13,6 +13,8 @@
 #define MDP_PARTITIONINGS_
 
 #include <cmath>
+#include "mdp_macros.h"
+#include "mdp_communicator.h"
 
 namespace MDP
 {

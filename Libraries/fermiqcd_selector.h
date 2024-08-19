@@ -13,6 +13,11 @@
 #define FERMIQCD_SELECTOR_
 
 #include <string>
+#include "fermiqcd_fermi_algorithms.h"
+#include "fermiqcd_staggered_algorithms.h"
+#include "fermiqcd_minres_inverter_vtk.h"
+#include "fermiqcd_bicgstab_inverter_vtk.h"
+#include "fermiqcd_staggered_uml_inverter.h"
 
 namespace MDP
 {

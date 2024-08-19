@@ -12,6 +12,8 @@
 #ifndef FERMIQCD_CG_INVERTER_
 #define FERMIQCD_CG_INVERTER_
 
+#include "fermiqcd_minres_inverter.h"
+
 namespace MDP
 {
   /// @brief the conjugate gradient inverter

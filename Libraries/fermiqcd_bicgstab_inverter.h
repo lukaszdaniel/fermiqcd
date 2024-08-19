@@ -15,6 +15,9 @@
 #ifndef FERMIQCD_BICGSTAB_INVERTER_
 #define FERMIQCD_BICGSTAB_INVERTER_
 
+#include "fermiqcd_default_parameters.h"
+#include "fermiqcd_minres_inverter.h"
+
 namespace MDP
 {
   /// @brief the stabilized biconjugate inverter

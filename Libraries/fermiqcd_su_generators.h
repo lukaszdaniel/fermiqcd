@@ -14,6 +14,7 @@
 
 #include <vector>
 #include <cmath>
+#include "mdp_matrix.h"
 
 namespace MDP
 {

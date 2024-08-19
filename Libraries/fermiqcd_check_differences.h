@@ -14,6 +14,7 @@
 #ifndef FERMIQCD_CHECK_DIFFERENCES_
 #define FERMIQCD_CHECK_DIFFERENCES_
 
+#include "mdp_field.h"
 namespace MDP
 {
   // compares two fields and returns the max distance between

@@ -14,6 +14,13 @@
 #ifndef FERMIQCD_STAGGERED_MESONS_
 #define FERMIQCD_STAGGERED_MESONS_
 
+#include "mdp_field.h"
+#include "fermiqcd_gamma_matrices.h"
+#include "fermiqcd_staggered_field.h"
+#include "fermiqcd_staggered_algorithms.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+
 namespace MDP
 {
 #ifndef TWISTED_BOUNDARY

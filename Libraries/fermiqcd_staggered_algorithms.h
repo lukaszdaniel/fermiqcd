@@ -14,6 +14,12 @@
 #ifndef FERMIQCD_STAGGERED_ALGORITHMS_
 #define FERMIQCD_STAGGERED_ALGORITHMS_
 
+#include "mdp_array.h"
+#include "fermiqcd_gamma_matrices.h"
+#include "fermiqcd_staggered_actions.h"
+#include "fermiqcd_bicgstab_inverter.h"
+#include "fermiqcd_gauge_algorithms.h"
+
 namespace MDP
 {
   mdp_matrix Omega4x4(mdp_site x)

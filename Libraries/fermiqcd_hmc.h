@@ -13,6 +13,12 @@
 #define FERMIQCD_HMC_
 
 #include <vector>
+#include "mdp_site.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_su_generators.h"
+#include "fermiqcd_so_generators.h"
+#include "fermiqcd_gamma_matrices.h"
+#include "fermiqcd_cg_inverter.h"
 
 namespace MDP
 {

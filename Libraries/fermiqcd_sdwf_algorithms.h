@@ -14,6 +14,15 @@
 #ifndef FERMIQCD_SDWF_ALGORITHMS_
 #define FERMIQCD_SDWF_ALGORITHMS_
 
+#include "mdp_permutations.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_staggered_field.h"
+#include "fermiqcd_sdwf_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_sdwf_actions.h"
+#include "fermiqcd_minres_inverter.h"
+#include "fermiqcd_bicgstab_inverter.h"
+
 namespace MDP
 {
   const double MDP_SDWF_SGN = 1.0;

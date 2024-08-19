@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_GAUGE_ALGORITHMS_
 #define FERMIQCD_GAUGE_ALGORITHMS_
 
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_gauge_routines.h"
+
 namespace MDP
 {
   /** @brief make a cold gauge configuration

@@ -14,6 +14,7 @@
 
 #include <cassert>
 #include <cstddef> // for size_t
+#include "mdp_global_vars.h"
 
 #define MSK1 0xdfffffefU
 #define MSK2 0xddfecb7fU

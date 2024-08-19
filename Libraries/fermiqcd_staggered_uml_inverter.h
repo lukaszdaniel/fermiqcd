@@ -14,6 +14,12 @@
 #ifndef FERMIQCD_STAGGERED_UML_INVERTER_
 #define FERMIQCD_STAGGERED_UML_INVERTER_
 
+#include "fermiqcd_default_parameters.h"
+#include "fermiqcd_minres_inverter.h"
+#include "fermiqcd_staggered_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_staggered_algorithms.h"
+
 namespace MDP
 {
   // ////////////////////////////////////////////////

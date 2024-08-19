@@ -13,6 +13,9 @@
 #define MDP_MEASURE_
 
 #include <cmath>
+#include <iostream>
+#include "mdp_compatibility_macros.h"
+#include "mdp_prng.h"
 
 namespace MDP
 {

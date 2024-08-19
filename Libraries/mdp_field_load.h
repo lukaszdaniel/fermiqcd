@@ -12,6 +12,13 @@
 #ifndef MDP_FIELD_LOAD_
 #define MDP_FIELD_LOAD_
 
+#include <cstdio>
+#include "mdp_global_vars.h"
+#include "mdp_utils.h"
+#include "mdp_array.h"
+#include "mdp_lattice.h"
+#include "mdp_field.h"
+
 namespace MDP
 {
   /// Auxiliary function

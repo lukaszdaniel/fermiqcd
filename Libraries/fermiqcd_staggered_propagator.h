@@ -14,6 +14,14 @@
 #ifndef FERMIQCD_STAGGERED_PROPAGATOR_
 #define FERMIQCD_STAGGERED_PROPAGATOR_
 
+#include "mdp_complex_field.h"
+#include "fermiqcd_global_vars.h"
+#include "fermiqcd_default_parameters.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_staggered_field.h"
+#include "fermiqcd_staggered_algorithms.h"
+
 namespace MDP
 {
   /// @brief staggared quark propagator

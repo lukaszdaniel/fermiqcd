@@ -14,6 +14,15 @@
 #ifndef FERMIQCD_DWFERMI_ALGORITHMS_
 #define FERMIQCD_DWFERMI_ALGORITHMS_
 
+#include "fermiqcd_default_parameters.h"
+#include "fermiqcd_gamma_matrices.h"
+#include "fermiqcd_coefficients.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_fermi_field.h"
+#include "fermiqcd_dwfermi_field.h"
+#include "fermiqcd_dwfermi_actions.h"
+#include "fermiqcd_minres_inverter.h"
+
 namespace MDP
 {
 	/// Projects a domain wall fermion (chi) into a wilson fermion (psi)

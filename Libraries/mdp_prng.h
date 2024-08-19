@@ -13,6 +13,9 @@
 #define MDP_PRNG_
 
 #include <cmath>
+#include "mdp_global_vars.h"
+#include "mdp_matrix.h"
+#include "mdp_communicator.h"
 
 namespace MDP
 {

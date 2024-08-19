@@ -12,6 +12,10 @@
 #ifndef MDP_FIELD_SAVE_VTK_
 #define MDP_FIELD_SAVE_VTK_
 
+#include "mdp_field.h"
+#include "mdp_utils.h"
+#include "mdp_array.h"
+
 namespace MDP
 {
   template <class T>

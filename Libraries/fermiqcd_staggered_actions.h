@@ -14,6 +14,10 @@
 #ifndef FERMIQCD_STAGGERED_ACTIONS_
 #define FERMIQCD_STAGGERED_ACTIONS_
 
+#include "fermiqcd_staggered_field.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+
 namespace MDP
 {
 	/// @brief Staggered/Asqtad action (SLOW: DO NOT USE IN PRODUCTION)

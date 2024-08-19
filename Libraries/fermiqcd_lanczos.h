@@ -14,6 +14,10 @@
 #ifndef FERMIQCD_LANCZOS_
 #define FERMIQCD_LANCZOS_
 
+#include "mdp_complex.h"
+#include "fermiqcd_gauge_field.h"
+#include "fermiqcd_coefficients.h"
+
 namespace MDP
 {
   /// @brief Lanczos algorithms

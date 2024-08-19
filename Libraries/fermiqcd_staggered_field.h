@@ -14,6 +14,9 @@
 #ifndef FERMIQCD_STAGGERED_FIELD_
 #define FERMIQCD_STAGGERED_FIELD_
 
+#include "mdp_mod2sign.h"
+#include "mdp_complex_field.h"
+
 namespace MDP
 {
   /// @brief staggered fermionic field
