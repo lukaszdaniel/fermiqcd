@@ -16,6 +16,7 @@
 #include <memory>
 #include "mdp_macros.h"
 #include "mdp_global_vars.h"
+#include "mdp_communicator.h"
 #include "mdp_complex.h"
 
 namespace MDP
@@ -342,7 +343,7 @@ namespace MDP
     mdp_matrix operator-(mdp_complex b) const
     {
       if (m_cols != m_rows)
-        error("mdp_matrix::operator+(...)\nmdp_matrix is not squared");
+        error("mdp_matrix::operator-(...)\nmdp_matrix is not squared");
 
       mdp_matrix tmp((*this));
 
@@ -465,7 +466,7 @@ namespace MDP
       for (mdp_uint i = 0; i < rows(); i++)
         for (mdp_uint j = 0; j < cols(); j++)
         {
-          (*this)(i, j) = (i == j) ? mdp_complex(a, 0) : 0;
+          (*this)(i, j) = (i == j) ? mdp_complex(a) : 0;
         }
     }
 
@@ -577,11 +578,11 @@ namespace MDP
       mdp_uint j;
       mdp_matrix A((*this));
 
-      mdp_complex tmp, pivot, x = mdp_complex(1, 0);
+      mdp_complex tmp, pivot, x = mdp_complex(1);
 
       for (mdp_uint i = 0; i < m_cols; i++)
       {
-        for (j = i; (A(i, j) == mdp_complex(0, 0)) && (j < m_cols); j++)
+        for (j = i; (A(i, j) == mdp_complex(0)) && (j < m_cols); j++)
           ;
         if (j == m_cols)
           return 0;
@@ -621,7 +622,7 @@ namespace MDP
       // Handle most common cases quickly here.
       if (m_rows == 1)
       {
-        if (m_data[0] == mdp_complex(0, 0))
+        if (m_data[0] == mdp_complex(0))
           error("inv(...)\ndeterminant is zero");
         ans.m_data[0] = 1.0 / m_data[0];
         return ans;
@@ -630,7 +631,7 @@ namespace MDP
       if (m_rows == 2)
       {
         mdp_complex div = det();
-        if (div == mdp_complex(0, 0))
+        if (div == mdp_complex(0))
           error("inv(...)\ndeterminant is zero");
         ans.m_data[0] = m_data[3] / div;
         ans.m_data[1] = -m_data[1] / div;
@@ -642,7 +643,7 @@ namespace MDP
       if (m_rows == 3)
       {
         mdp_complex div = det();
-        if (div == mdp_complex(0, 0))
+        if (div == mdp_complex(0))
           error("inv(...)\ndeterminant is zero");
         ans.m_data[0] = (m_data[4] * m_data[8] - m_data[5] * m_data[7]) / div;
         ans.m_data[1] = -(m_data[1] * m_data[8] - m_data[2] * m_data[7]) / div;
@@ -660,7 +661,7 @@ namespace MDP
       mdp_complex x, pivot;
       mdp_uint rmax;
 
-      ans = 0;
+      ans = mdp_complex(0);
       for (mdp_uint i = 0; i < m_rows; ++i)
       {
         ans(i, i) = 1;
@@ -809,7 +810,7 @@ namespace MDP
     for (mdp_uint r = 0; r < i; r++)
       for (mdp_uint c = 0; c < i; c++)
       {
-        tmp(r, c) = (r == c) ? mdp_complex(1, 0) : mdp_complex(0, 0);
+        tmp(r, c) = (r == c) ? mdp_complex(1) : mdp_complex(0);
       }
 
     return tmp;
@@ -829,7 +830,7 @@ namespace MDP
     for (mdp_uint r = 0; r < i; r++)
       for (mdp_uint c = 0; c < j; c++)
       {
-        tmp(r, c) = mdp_complex(0, 0);
+        tmp(r, c) = mdp_complex(0);
       }
 
     return tmp;
@@ -1039,7 +1040,7 @@ namespace MDP
     if (a.rows() != a.cols())
       error("trace(...)\nmdp_matrix is not squared");
 #endif
-    mdp_complex x;
+    mdp_complex x = mdp_complex(0);
     for (mdp_uint c = 0; c < a.cols(); c++)
     {
       x += a(c, c);

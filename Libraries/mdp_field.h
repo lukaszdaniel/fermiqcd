@@ -114,7 +114,7 @@ namespace MDP
    *    psi.load("myfield");
    * @endverbatim
    */
-  template <class T>
+  template <class T = mdp_complex>
   class mdp_field
   {
   private:
@@ -227,6 +227,12 @@ namespace MDP
         error("You are looking for a site that is not here");
       }
 #endif
+#ifdef CHECK_BOUNDARY
+      if (i >= m_field_components)
+      {
+        error("field rows can be indexed up to " + (m_field_components - 1));
+      }
+#endif
       return m_data[x.local_index() * m_field_components + i];
     }
 
@@ -234,6 +240,12 @@ namespace MDP
      */
     T &operator()(mdp_uint idx, mdp_uint i = 0)
     {
+#ifdef CHECK_BOUNDARY
+      if (i >= m_field_components)
+      {
+        error("field rows can be indexed up to " + (m_field_components - 1));
+      }
+#endif
       return m_data[idx * m_field_components + i];
     }
 
