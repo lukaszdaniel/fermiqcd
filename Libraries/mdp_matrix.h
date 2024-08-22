@@ -46,7 +46,9 @@ namespace MDP
       {
         m_data = std::make_unique<mdp_complex[]>(size());
         if (size() && !m_data)
+        {
           error("mdp_matrix::allocate()\nOut of memory");
+        }
         // memset(m_data.get(), 0, size() * sizeof(mdp_complex));
       }
     }
@@ -65,7 +67,7 @@ namespace MDP
       }
       else
       {
-        m_data = nullptr;
+        m_data.reset();
       }
     }
 
@@ -75,7 +77,7 @@ namespace MDP
      * @param r Number of rows. Default is 3.
      * @param c Number of columns. Default is 3.
      */
-    mdp_matrix(mdp_uint r = 3, mdp_uint c = 3) : m_shared(false), m_rows(r), m_cols(c), m_data(nullptr)
+    mdp_matrix(mdp_uint r = 3, mdp_uint c = 3) : m_shared(false), m_rows(r), m_cols(c)
     {
       allocate();
     }
@@ -84,11 +86,10 @@ namespace MDP
      *
      * @param a Matrix to be copied.
      */
-    mdp_matrix(const mdp_matrix &a) : m_shared(false), m_rows(a.m_rows), m_cols(a.m_cols), m_data(nullptr)
+    mdp_matrix(const mdp_matrix &a) : m_shared(false), m_rows(a.m_rows), m_cols(a.m_cols)
     {
       allocate();
-      for (mdp_uint i = 0; i < size(); i++)
-        m_data[i] = a[i];
+      std::copy(a.m_data.get(), a.m_data.get() + size(), m_data.get());
     }
 
     /** @brief Special constructor used to format array of complex numbers
@@ -106,7 +107,7 @@ namespace MDP
 #endif
     }
 
-    virtual ~mdp_matrix()
+    ~mdp_matrix()
     {
       deallocate();
     }
@@ -124,17 +125,18 @@ namespace MDP
       reallocate();
     }
 
-    const mdp_matrix &operator=(const mdp_matrix &x)
+    mdp_matrix &operator=(const mdp_matrix &x)
     {
-      if (rows() != x.rows() || cols() != x.cols())
+      if (this != &x)
       {
-        m_rows = x.rows();
-        m_cols = x.cols();
-        reallocate();
+        if (m_rows != x.m_rows || m_cols != x.m_cols)
+        {
+          m_rows = x.m_rows;
+          m_cols = x.m_cols;
+          reallocate();
+        }
+        std::copy(x.m_data.get(), x.m_data.get() + size(), m_data.get());
       }
-
-      for (mdp_uint i = 0; i < size(); i++)
-        m_data[i] = x[i];
       return *this;
     }
 
@@ -235,8 +237,10 @@ namespace MDP
         error("mdp_matrix::operator+()\nWrong argument size");
 #endif
       mdp_matrix z(m_rows, m_cols);
-      for (mdp_uint i = 0; i < z.size(); i++)
+      for (mdp_uint i = 0; i < size(); i++)
+      {
         z[i] = m_data[i] + x.m_data[i];
+      }
       return z;
     }
 
@@ -247,8 +251,10 @@ namespace MDP
         error("mdp_matrix::operator-()\nWrong argument size");
 #endif
       mdp_matrix z(m_rows, m_cols);
-      for (mdp_uint i = 0; i < z.size(); i++)
+      for (mdp_uint i = 0; i < size(); i++)
+      {
         z[i] = m_data[i] - x.m_data[i];
+      }
       return z;
     }
 
@@ -256,7 +262,9 @@ namespace MDP
     {
 #ifdef CHECK_ALL
       if (m_cols != x.m_rows)
+      {
         error("mdp_matrix::operator*()\nWrong argument size");
+      }
 #endif
       mdp_matrix z(m_rows, x.m_cols);
 #ifdef SSE2
@@ -289,12 +297,16 @@ namespace MDP
 #endif
 
       for (mdp_uint i = 0; i < m_rows; i++)
+      {
         for (mdp_uint j = 0; j < x.m_cols; j++)
         {
           z(i, j) = (*this)(i, 0) * x(0, j);
           for (mdp_uint k = 1; k < m_cols; k++)
+          {
             z(i, j) += (*this)(i, k) * x(k, j);
+          }
         }
+      }
       return z;
     }
 
@@ -576,9 +588,9 @@ namespace MDP
                 m_data[2] * m_data[4] * m_data[6]);
 
       mdp_uint j;
-      mdp_matrix A((*this));
+      mdp_matrix A(*this);
 
-      mdp_complex tmp, pivot, x = mdp_complex(1);
+      mdp_complex pivot, x = mdp_complex(1);
 
       for (mdp_uint i = 0; i < m_cols; i++)
       {
@@ -590,15 +602,13 @@ namespace MDP
         if (i != j)
         {
           for (mdp_uint k = 0; k < m_rows; k++)
-          {
-            tmp = A(k, j);
-            A(k, j) = A(k, i);
-            A(k, i) = tmp;
-          }
+            std::swap(A(k, j), A(k, i));
           x *= -A(i, i);
         }
         else
+        {
           x *= A(i, i);
+        }
         for (mdp_uint k = i + 1; k < m_rows; k++)
         {
           pivot = A(k, i) / A(i, i);
@@ -614,8 +624,10 @@ namespace MDP
     mdp_matrix inv() const
     {
 #ifdef CHECK_ALL
-      if ((m_rows != m_cols) || (m_rows == 0))
+      if (m_rows != m_cols)
         error("inv(...)\nmdp_matrix is not squared");
+      if (m_rows == 0)
+        error("inv(...)\nmdp_matrix is of size 0");
 #endif
 
       mdp_matrix ans(m_rows, m_cols);
@@ -623,7 +635,9 @@ namespace MDP
       if (m_rows == 1)
       {
         if (m_data[0] == mdp_complex(0))
+        {
           error("inv(...)\ndeterminant is zero");
+        }
         ans.m_data[0] = 1.0 / m_data[0];
         return ans;
       }
@@ -657,7 +671,7 @@ namespace MDP
         return ans;
       }
 
-      mdp_matrix tma((*this));
+      mdp_matrix tma(*this);
       mdp_complex x, pivot;
       mdp_uint rmax;
 
