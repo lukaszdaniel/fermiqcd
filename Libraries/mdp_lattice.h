@@ -148,8 +148,8 @@ namespace MDP
 #endif
     }
 
-    int (*m_where)(const int *x, const int ndim, const int *nx);
-    void (*m_neighbour)(const int mu, int *x_dw, const int *x, int *x_up, const int ndim, const int *nx);
+    int (*m_where)(const int x[], const int ndim, const int nx[]);
+    void (*m_neighbour)(const int mu, int x_dw[], const int x[], int x_up[], const int ndim, const int nx[]);
 
   public:
     /** Which process point x[] is in?
@@ -157,7 +157,7 @@ namespace MDP
      * @param x Point x[] to be inspected
      * @return Process ID
      */
-    int where(const int *x) const
+    int where(const int x[]) const
     {
       return (*m_where)(x, m_ndim, m_nx);
     }
@@ -177,7 +177,7 @@ namespace MDP
      * Calculate ordinal (global) coordinate of
      * a n-dimentional point x[].
      */
-    mdp_int global_coordinate(const int *x)
+    mdp_int global_coordinate(const int x[])
     {
       mdp_int global_idx = 0;
       for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
@@ -190,7 +190,7 @@ namespace MDP
      * Given the ordinal coordinate, recover
      * x = (x0, x1, ... x9) coordinates.
      */
-    void translate_to_coordinates(mdp_int global_idx, int *x)
+    void translate_to_coordinates(mdp_int global_idx, int x[])
     {
       for (mdp_int mu = m_ndim - 1; mu > 0; mu--)
       {
@@ -212,7 +212,7 @@ namespace MDP
      *
      * Check the parity of the sum of x coordintes.
      */
-    int compute_parity(const int *x)
+    int compute_parity(const int x[])
     {
       int p = 0;
       for (mdp_int mu = 0; mu < m_ndim; mu++)
@@ -236,8 +236,8 @@ namespace MDP
      */
     mdp_lattice(int ndim_,
                 int nx_[],
-                int (*where_)(const int *, const int, const int *) = default_partitioning0,
-                void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
+                int (*where_)(const int [], const int, const int []) = default_partitioning0,
+                void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice()
@@ -260,8 +260,8 @@ namespace MDP
     mdp_lattice(int ndim_,
                 int ndir_,
                 int nx_[],
-                int (*where_)(const int *, const int, const int *) = default_partitioning0,
-                void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
+                int (*where_)(const int [], const int, const int []) = default_partitioning0,
+                void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice()
@@ -282,8 +282,8 @@ namespace MDP
      */
     void allocate_lattice(int ndim_,
                           int nx_[],
-                          int (*where_)(const int *, const int, const int *) = default_partitioning0,
-                          void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
+                          int (*where_)(const int [], const int, const int []) = default_partitioning0,
+                          void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
                           mdp_int random_seed_ = 0,
                           int next_next_ = 1,
                           bool local_random_ = true)
@@ -306,8 +306,8 @@ namespace MDP
     void allocate_lattice(int ndim_,
                           int ndir_,
                           int nx_[],
-                          int (*where_)(const int *, const int, const int *) = default_partitioning0,
-                          void (*neighbour_)(const int, int *, const int *, int *, const int, const int *) = torus_topology,
+                          int (*where_)(const int [], const int, const int []) = default_partitioning0,
+                          void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
                           mdp_int random_seed_ = 0,
                           int next_next_ = 1,
                           bool local_random_ = true)

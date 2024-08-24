@@ -347,7 +347,7 @@ namespace MDP
       return lattice().coordinate(m_idx, mu);
     }
 
-    void operator=(int *x)
+    void operator=(const int x[])
     {
       mdp_int ndim = lattice().n_dimensions();
       m_idx = x[0];
@@ -403,7 +403,7 @@ namespace MDP
       }
     }
 
-    bool operator==(const int *x)
+    bool operator==(const int x[])
     {
       mdp_int ndim = lattice().n_dimensions();
       bool is_it = true;
@@ -413,7 +413,7 @@ namespace MDP
       return is_it;
     }
 
-    bool operator!=(const int *x)
+    bool operator!=(const int x[])
     {
       return !(*this == x);
     }

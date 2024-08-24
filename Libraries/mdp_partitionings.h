@@ -35,9 +35,9 @@ namespace MDP
    * @return Suggested process ID for point x[]
    */
   template <int dim>
-  int default_partitioning(const int *x,
+  int default_partitioning(const int x[],
                            const int ndim,
-                           const int *nx)
+                           const int nx[])
   {
     int partition_factor = std::ceil((1.0 * nx[dim]) / Nproc);
     return x[dim] / partition_factor;
@@ -54,9 +54,9 @@ namespace MDP
    * @note Shorthand for generic default_partitioning<0>
    * function
    */
-  int default_partitioning0(const int *x,
+  int default_partitioning0(const int x[],
                             const int ndim,
-                            const int *nx)
+                            const int nx[])
   {
     return default_partitioning<0>(x, ndim, nx);
   }

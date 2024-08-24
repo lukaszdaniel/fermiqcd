@@ -66,14 +66,14 @@ namespace MDP
           m_data[i * m_narg + j] = 0;
     }
 
-    void makesample(int *p, int nboot)
+    void makesample(int p[], int nboot)
     {
       for (int boot = 0; boot < nboot; boot++)
         for (int j = 0; j <= m_conf; j++)
           p[j + (m_conf + 1) * boot] = (int)((m_conf + 1) * mdp_random.plain());
     }
 
-    static float mdp_jackboot_plain(const float *x, const void *a)
+    static float mdp_jackboot_plain(const float x[], const void *a)
     {
       const int *i_ptr = static_cast<const int *>(a);
       return x[*i_ptr];
