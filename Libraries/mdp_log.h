@@ -41,7 +41,7 @@ namespace MDP
 
     void abort()
     {
-      exit(-1);
+      throw std::runtime_error("Abort called");
     }
 
     void set_level(int i)
@@ -54,10 +54,10 @@ namespace MDP
       m_os = &os1;
     }
 
-    void connect(std::ofstream &os2)
-    {
-      m_os = &os2; // is this correct? I think so!
-    }
+    // void connect(std::ofstream &os2)
+    // {
+    //   m_os = &os2; // is this correct? I think so!
+    // }
 
     bool printing() const
     {
@@ -79,7 +79,7 @@ namespace MDP
       m_print = value;
     }
 
-    void error_message(std::string s, std::string file = "unkown", int line = 0)
+    void error_message(std::string s, std::string file = "unknown", int line = 0)
     {
       if (m_print)
       {
@@ -88,9 +88,12 @@ namespace MDP
         *m_os << "\", before line " << line;
         *m_os << ", this error occurred: " << s << "\n";
         for (; m_level; m_level--)
+        {
           if (m_level < m_max_level)
             *m_os << "</" << m_level_tag[m_level - 1] << ">\n";
+        }
       }
+      end_function("error");
       throw s;
     }
 
@@ -111,7 +114,7 @@ namespace MDP
         m_level--;
       }
       else
-        error_message("missing end_function()", "unkown", 0);
+        error_message("missing end_function()", "unknown", 0);
     }
 
     template <class T>

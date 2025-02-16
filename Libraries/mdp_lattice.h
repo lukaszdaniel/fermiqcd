@@ -45,7 +45,7 @@ namespace MDP
   private:
     int m_ndim;                   /* number of dimensions       */
     int m_ndir;                   /* number of directions       */
-    int m_next_next;              /* 1, 2 or 3 is the thickness of the boudary */
+    int m_next_next;              /* 1, 2 or 3 is the thickness of the boundary */
     int *m_nx;                    /* box containing the lattice */
     mdp_int m_local_volume;       /* local volume               */
     mdp_int m_global_volume;      /* global volume              */
@@ -175,7 +175,7 @@ namespace MDP
     /** @brief Calculate global coordinate
      *
      * Calculate ordinal (global) coordinate of
-     * a n-dimentional point x[].
+     * a n-dimensional point x[].
      */
     mdp_int global_coordinate(const int x[])
     {
@@ -210,7 +210,7 @@ namespace MDP
 
     /** @brief Calculate parity of point x[]
      *
-     * Check the parity of the sum of x coordintes.
+     * Check the parity of the sum of x coordinates.
      */
     int compute_parity(const int x[])
     {
@@ -315,7 +315,7 @@ namespace MDP
       mdp.begin_function("allocate_lattice");
       m_local_random_generator = local_random_;
       if (ndim_ != ndir_)
-        mdp << "It is getting complicated: you have ndim!=ndir\n";
+        mdp << "Error: The number of dimensions (ndim) does not match the number of directions (ndir). This may cause unexpected behavior in lattice operations.\n";
       deallocate_memory();
 
       // //////////////////////////////////////////////////////////////////
@@ -407,7 +407,7 @@ namespace MDP
 
             if (((*m_where)(x_up, m_ndim, m_nx) >= Nproc) ||
                 ((*m_where)(x_dw, m_ndim, m_nx) >= Nproc))
-              error("Incorrect patitioning");
+              error("Incorrect partitioning");
 
             if (((*m_where)(x_up, m_ndim, m_nx) == ME) ||
                 ((*m_where)(x_dw, m_ndim, m_nx) == ME))
@@ -430,7 +430,7 @@ namespace MDP
                     ((*m_where)(x_up_up, m_ndim, m_nx) >= Nproc) ||
                     ((*m_where)(x_dw_dw, m_ndim, m_nx) >= Nproc) ||
                     ((*m_where)(x_dw_up, m_ndim, m_nx) >= Nproc))
-                  error("Incorrect patitioning");
+                  error("Incorrect partitioning");
 
                 if (((*m_where)(x_up_dw, m_ndim, m_nx) == ME) ||
                     ((*m_where)(x_up_up, m_ndim, m_nx) == ME) ||
@@ -448,7 +448,7 @@ namespace MDP
                         ((*m_where)(x_up_up_dw, m_ndim, m_nx) >= Nproc) ||
                         ((*m_where)(x_dw_dw_up, m_ndim, m_nx) >= Nproc) ||
                         ((*m_where)(x_dw_dw_dw, m_ndim, m_nx) >= Nproc))
-                      error("Incorrect patitioning");
+                      error("Incorrect partitioning");
 
                     if (((*m_where)(x_up_up_up, m_ndim, m_nx) == ME) ||
                         ((*m_where)(x_up_up_dw, m_ndim, m_nx) == ME) ||
@@ -538,7 +538,7 @@ namespace MDP
             if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
                 fread(&lms_tmp, sizeof(mdp_int), 1, lms_file) != 1)
               error("mdp_lattice::allocate_lattice()\n"
-                    "Unable to read to temporary file");
+                    "Unable to read from temporary file");
             translate_to_coordinates(lms_tmp, x);
 #endif
             if (((*m_where)(x, m_ndim, m_nx) == process) && (compute_parity(x) == np))
@@ -552,7 +552,7 @@ namespace MDP
               if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
                   fread(&lms_tmp, sizeof(mdp_int), 1, lms_file) != 1)
                 error("mdp_lattice::allocate_lattice()\n"
-                      "Unable to read to temporary file");
+                      "Unable to read from temporary file");
               if (fseek(m_lg_file, lms_tmp * sizeof(mdp_int), SEEK_SET) != 0 ||
                   fwrite(&new_idx, sizeof(mdp_int), 1, m_lg_file) != 1)
                 error("mdp_lattice::allocate_lattice()\n"
@@ -797,7 +797,7 @@ namespace MDP
       if (fseek(m_lg_file, global_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
           fread(&lg_tmp, sizeof(mdp_int), 1, m_lg_file) != 1)
         error("mdp_lattice::allocate_lattice()\n"
-              "Unable to read to temporary file");
+              "Unable to read from temporary file");
       return lg_tmp;
 #endif
     }

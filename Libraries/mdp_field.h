@@ -49,6 +49,12 @@ namespace MDP
       strcpy(file_id, "File Type: MDP FIELD\n");
       strcpy(program_version, mdp_program_name);
       endianess = mdp_local_endianess;
+      ndim = 0;
+      bytes_per_site = 0;
+      sites = 0;
+      for (int i = 0; i < 10; i++)
+        box[i] = 0;
+      set_time();
     }
 
     void set_time()
@@ -56,7 +62,7 @@ namespace MDP
       time_t time_and_date;
       time(&time_and_date);
       strcpy(creation_date, ctime(&time_and_date));
-      for (size_t i = strlen(creation_date) + 1; i < sizeof(creation_date); i++)
+      for (size_t i = strlen(creation_date); i < sizeof(creation_date); i++)
         creation_date[i] = '\0';
     }
 
@@ -156,8 +162,6 @@ namespace MDP
         error("You cannot have a field of zero size!");
       m_size = a.enclosing_volume() * m_field_components;
       m_data = std::make_unique<T[]>(m_size);
-      if (m_data == nullptr)
-        error("OUT OF MEMORY !!!!");
       m_lattice = &a;
       fill_header();
     }
@@ -230,7 +234,7 @@ namespace MDP
 #ifdef CHECK_BOUNDARY
       if (i >= m_field_components)
       {
-        error("field rows can be indexed up to " + (m_field_components - 1));
+        error("field rows can be indexed up to " + std::to_string(m_field_components - 1));
       }
 #endif
       return m_data[x.local_index() * m_field_components + i];
@@ -310,6 +314,9 @@ namespace MDP
 
     void operator=(const mdp_field &a)
     {
+      if (this == &a)
+        return;
+    
       if (&lattice() != &a.lattice() ||
           m_size != a.m_size ||
           m_field_components != a.m_field_components)
@@ -388,7 +395,8 @@ namespace MDP
 
     void switch_endianess_4bytes()
     {
-      // I am not sure if this works for complex<double>
+      // This method might not work for complex<double> because it assumes that the data type T
+      // can be safely cast to int32_t for endianess switching, which may not be true for complex<double>.
       mdp_int *p = nullptr;
 
       if (sizeof(T) * m_field_components % 4 != 0)

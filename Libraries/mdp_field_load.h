@@ -43,7 +43,7 @@ namespace MDP
                           bool load_header,
                           mdp_int skip_bytes,
                           bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &),
-                          bool try_swicth_endianess)
+                          bool try_switch_endianess)
   {
 
     if (!file_exists(filename))
@@ -227,9 +227,9 @@ namespace MDP
 
     update();
     mdp.broadcast(reversed_header_endianess, processIO);
-    if (try_swicth_endianess && reversed_header_endianess)
+    if (try_switch_endianess && reversed_header_endianess)
     {
-      mdp << "swithing endiness...\n";
+      mdp << "switching endianess...\n";
 #ifdef USE_DOUBLE_PRECISION
       switch_endianess_8bytes();
 #else

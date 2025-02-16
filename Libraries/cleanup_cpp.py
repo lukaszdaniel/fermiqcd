@@ -7,7 +7,7 @@ def cleanup_cpp(data):
     data = re.compile('(?P<op>[\=\+\-\*])(?P<txt>[\w\-\+\.\[\{"])').sub(
         "\g<op> \g<txt>", data)
     data = re.compile(" \+ \+").sub("++", data)
-    data = re.compile(" \- \-").sub("++", data)
+    data = re.compile(" \- \-").sub("--", data)
     data = re.compile("(?P<op>[,;])(?P<txt>[^\s])").sub("\g<op> \g<txt>", data)
     data = re.compile("this ->").sub("this->", data)
     data = re.compile("\s*\{", re.DOTALL).sub(" {", data)
@@ -15,5 +15,5 @@ def cleanup_cpp(data):
     return data
 
 
-data = open(sys.argv[1], "rb").read()
+data = open(sys.argv[1], "rb").read().decode('utf-8')
 print(cleanup_cpp(data))

@@ -92,7 +92,7 @@ namespace MDP
       Gamma5 = Gamma[1] * Gamma[2] * Gamma[3] * Gamma[0];
     }
 
-    if (convention == "FERMILAB")
+    else if (convention == "FERMILAB")
     {
       Gamma[0](0, 0) = +1;
       Gamma[0](1, 1) = +1;
@@ -117,7 +117,7 @@ namespace MDP
       Gamma5 = Gamma[0] * Gamma[1] * Gamma[2] * Gamma[3];
     }
 
-    if (convention == "MILC")
+    else if (convention == "MILC")
     {
       Gamma[0](0, 2) = +1;
       Gamma[0](1, 3) = +1;
@@ -142,7 +142,7 @@ namespace MDP
       Gamma5 = Gamma[1] * Gamma[2] * Gamma[3] * Gamma[0];
     }
 
-    if (convention == "Minkowsky-Dirac")
+    else if (convention == "Minkowsky-Dirac")
     {
       Gamma[0](0, 0) = +1;
       Gamma[0](1, 1) = +1;
@@ -166,7 +166,7 @@ namespace MDP
       Gamma5 = I * Gamma[0] * Gamma[1] * Gamma[2] * Gamma[3];
     }
 
-    if (convention == "Minkowsky-Chiral")
+    else if (convention == "Minkowsky-Chiral")
     {
       Gamma[0](0, 3) = -1;
       Gamma[0](1, 2) = -1;
@@ -190,7 +190,7 @@ namespace MDP
       Gamma5 = I * Gamma[0] * Gamma[1] * Gamma[2] * Gamma[3];
     }
 
-    if (convention == "CHIRAL")
+    else if (convention == "CHIRAL")
     {
       Gamma[0](0, 3) = -1;
       Gamma[0](1, 2) = -1;
@@ -362,35 +362,35 @@ namespace MDP
   {
     if (g == "I")
       return Gamma1;
-    if (g == "0")
+    else if (g == "0")
       return Gamma[0];
-    if (g == "1")
+    else if (g == "1")
       return Gamma[1];
-    if (g == "2")
+    else if (g == "2")
       return Gamma[2];
-    if (g == "3")
+    else if (g == "3")
       return Gamma[3];
-    if (g == "5")
+    else if (g == "5")
       return Gamma5;
-    if (g == "05")
+    else if (g == "05")
       return Gamma[0] * Gamma5;
-    if (g == "15")
+    else if (g == "15")
       return Gamma[1] * Gamma5;
-    if (g == "25")
+    else if (g == "25")
       return Gamma[2] * Gamma5;
-    if (g == "35")
+    else if (g == "35")
       return Gamma[3] * Gamma5;
-    if (g == "01")
+    else if (g == "01")
       return Gamma[0] * Gamma[1];
-    if (g == "02")
+    else if (g == "02")
       return Gamma[0] * Gamma[2];
-    if (g == "03")
+    else if (g == "03")
       return Gamma[0] * Gamma[3];
-    if (g == "12")
+    else if (g == "12")
       return Gamma[1] * Gamma[2];
-    if (g == "13")
+    else if (g == "13")
       return Gamma[1] * Gamma[3];
-    if (g == "23")
+    else if (g == "23")
       return Gamma[2] * Gamma[3];
     throw std::string("undefined gamma structure");
   }

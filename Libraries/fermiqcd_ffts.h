@@ -42,37 +42,64 @@ namespace MDP
     }
   }
 
-#if 0
-  // NOT NOT UNCOMMENT THIS, WORK IN PROGRESS!!!
   void fft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
            mdp_int offset = 0, mdp_int coeff = 1)
   {
-    mdp_int pow2b, N = i2pow(n);
-    mdp_complex alpha, omega, F[N];
-    if (sign != 0)
-      for (mdp_int h = 0; h < N; h++)
+    mdp_int N = i2pow(n); // Size of the transform (2^n)
+    if (sign != 0.0)
+    {
+
+      // Copy data from f to fft_f
+      for (mdp_int i = 0; i < N; i++)
+        fft_f[offset + coeff * i] = f[offset + coeff * i];
+
+      // Bit reversal step (important for FFT)
+      mdp_int j = 0;
+      for (mdp_int i = 1; i < N; i++)
       {
-        alpha = 2.0 * sign * Pi * I / N * h;
-        for (mdp_int a = 0; a < N; a++)
-          F[a] = f[offset + coeff * a];
+        mdp_int bit = N >> 1;
+        for (; j >= bit; bit >>= 1)
+          j -= bit;
+        j += bit;
 
-        for (mdp_int b = n - 1; b >= 0; b--)
-        {
-          pow2b = i2pow(b);
-          omega = exp(alpha * pow2b);
-          for (mdp_int a = 0; a < pow2b; a++)
-            F[a] += omega * F[a + pow2b];
-        }
-
-        fft_f[offset + coeff * h] = F[0] / std::sqrt(N);
+        if (i < j)
+          std::swap(fft_f[offset + coeff * i], fft_f[offset + coeff * j]);
       }
+
+      // Cooley-Tukey FFT
+      for (mdp_int s = 1; s <= n; s++)
+      {
+        mdp_int m = std::pow(2, s); // Size of the current stage
+        mdp_int half_m = m / 2;
+        mdp_complex omega_m = exp(mdp_complex(0, sign * 2.0 * Pi / m)); // Twiddle factor
+
+        for (mdp_int k = 0; k < N; k += m)
+        {
+          mdp_complex omega = 1.0;
+          for (mdp_int j = 0; j < half_m; j++)
+          {
+            mdp_complex t = omega * fft_f[offset + coeff * (k + j + half_m)];
+            mdp_complex u = fft_f[offset + coeff * (k + j)];
+            fft_f[offset + coeff * (k + j)] = u + t;
+            fft_f[offset + coeff * (k + j + half_m)] = u - t;
+
+            omega *= omega_m; // Update the omega value for the next iteration
+          }
+        }
+      }
+
+      // Normalize if needed, typically for FFT we divide by sqrt(N) if not an inverse FFT
+      for (mdp_int i = 0; i < N; i++)
+      {
+        fft_f[offset + coeff * i] /= std::sqrt(N);
+      }
+    }
     else
     {
       for (mdp_int a = 0; a < N; a++)
         fft_f[offset + coeff * a] = f[offset + coeff * a];
     }
   }
-#endif
 
   void fermi_field_fft(int t,
                        fermi_field &psi_out,

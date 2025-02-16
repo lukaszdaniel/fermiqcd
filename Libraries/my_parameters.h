@@ -5,6 +5,7 @@
 #include <map>
 #include <iostream>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 namespace MDP
@@ -35,24 +36,30 @@ namespace MDP
         {
           ++line_number;
 
-          if (sscanf(line, "%s %s %s\n", type, name, value) == 3)
+          if (sscanf(line, "%s %s %s", type, name, value) == 3)
           {
             if (strncmp(type, "int", LENGTH) == 0)
-              _i_rep[std::string(name)] = atoi(value);
+            {
+              _i_rep[std::string(name)] = std::atoi(value);
+            }
             else if (strncmp(type, "double", LENGTH) == 0)
-              _d_rep[std::string(name)] = atof(value);
+            {
+              _d_rep[std::string(name)] = std::atof(value);
+            }
             else if (strncmp(type, "string", LENGTH) == 0)
+            {
               _s_rep[std::string(name)] = std::string(value);
+            }
             else
             {
-              std::cerr << "unknown type " << type << std::endl;
-              exit(1);
+              std::cerr << "Unknown type " << type << std::endl;
+              throw std::runtime_error("Unknown parameter type");
             }
           }
           else
           {
-            std::cerr << "error reading line " << line_number << std::endl;
-            exit(1);
+            std::cerr << "Error reading line " << line_number << std::endl;
+            throw std::runtime_error("Error reading configuration file");
           }
         }
       }
@@ -60,97 +67,98 @@ namespace MDP
     }
 
   public:
-    parameter(FILE *fin)
+    explicit parameter(FILE *fin)
     {
+      if (!fin)
+      {
+        std::cerr << "File pointer is null." << std::endl;
+        throw std::invalid_argument("Invalid file pointer");
+      }
       fscanf(fin);
     }
 
-    int fprint(FILE *fout)
+    explicit parameter(const char *file)
     {
+      FILE *fin = fopen(file, "r");
+      if (!fin)
+      {
+        std::cerr << "Cannot open file " << file << std::endl;
+        throw std::ios_base::failure("File not found");
+      }
+      fscanf(fin);
+      fclose(fin);
+    }
+
+    ~parameter() = default;
+
+    int fprint(FILE *fout) const
+    {
+      if (!fout)
+      {
+        std::cerr << "File pointer is null." << std::endl;
+        throw std::invalid_argument("Invalid file pointer");
+      }
+
       for (const auto &p : _i_rep)
       {
-        fprintf(fout, "int  %s =  %d\n", (p.first).c_str(), p.second);
+        fprintf(fout, "int    %s =  %d\n", p.first.c_str(), p.second);
       }
 
       for (const auto &p : _d_rep)
       {
-        fprintf(fout, "double  %s =  %.12g\n", (p.first).c_str(), p.second);
+        fprintf(fout, "double %s =  %.12g\n", p.first.c_str(), p.second);
       }
 
       for (const auto &p : _s_rep)
       {
-        fprintf(fout, "string  %s  =  %s\n", (p.first).c_str(), (p.second).c_str());
+        fprintf(fout, "string %s =  %s\n", p.first.c_str(), p.second.c_str());
       }
 
       fflush(fout);
       return 0;
     }
 
-    parameter(const char *file)
+    double d(const std::string &name) const
     {
-      FILE *fin;
-
-      if ((fin = fopen(file, "r")) == NULL)
-      {
-        std::cerr << "cannot open file " << file << std::endl;
-        exit(1);
-      }
-      fscanf(fin);
-      fclose(fin);
+      return get_param(_d_rep, name, "double");
     }
 
-    double d(std::string name)
+    int i(const std::string &name) const
     {
-      const auto &p = _d_rep.find(name);
-
-      if (p == _d_rep.end())
-      {
-        std::cerr << "double parameter " << name << " was not defined" << std::endl;
-        exit(1);
-      }
-      return p->second;
+      return get_param(_i_rep, name, "int");
     }
 
-    int i(std::string name)
+    std::string s(const std::string &name) const
     {
-      const auto &p = _i_rep.find(name);
-
-      if (p == _i_rep.end())
-      {
-        std::cerr << "int parameter " << name << " was not defined" << std::endl;
-        exit(1);
-      }
-      return p->second;
+      return get_param(_s_rep, name, "string");
     }
 
-    std::string s(std::string name)
+    bool defined_d(const std::string &name) const
     {
-      const auto &p = _s_rep.find(name);
+      return _d_rep.find(name) != _d_rep.end();
+    }
 
-      if (p == _s_rep.end())
+    bool defined_i(const std::string &name) const
+    {
+      return _i_rep.find(name) != _i_rep.end();
+    }
+
+    bool defined_s(const std::string &name) const
+    {
+      return _s_rep.find(name) != _s_rep.end();
+    }
+
+  private:
+    template <typename T>
+    T get_param(const std::map<std::string, T> &rep, const std::string &name, const char *type) const
+    {
+      const auto &p = rep.find(name);
+      if (p == rep.end())
       {
-        std::cerr << "string parameter " << name << " was not defined" << std::endl;
-        exit(1);
+        std::cerr << type << " parameter " << name << " was not defined" << std::endl;
+        throw std::runtime_error("Parameter not defined");
       }
       return p->second;
-    }
-
-    bool defined_d(std::string name)
-    {
-      const auto &p = _d_rep.find(name);
-      return (p != _d_rep.end());
-    }
-
-    bool defined_i(std::string name)
-    {
-      const auto &p = _i_rep.find(name);
-      return (p != _i_rep.end());
-    }
-
-    bool defined_s(std::string name)
-    {
-      const auto &p = _s_rep.find(name);
-      return (p != _s_rep.end());
     }
   };
 } // namespace MDP
