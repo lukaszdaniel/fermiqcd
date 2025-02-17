@@ -26,8 +26,6 @@
 #include "mdp_complex.h"
 #include "mdp_matrix.h"
 
-#define GAMMA_MATRICES
-
 namespace MDP
 {
   /** @brief Gamma matrices and relatives!
@@ -59,7 +57,7 @@ namespace MDP
   /// - "Minkowsky-Dirac" (not ok for lattice qcd)
   /// - "Minkowsky-Chiral" (not ok for lattice qcd)
   /// Convention can be changed within the program.
-  void define_base_matrices(std::string convention = "FERMILAB")
+  void define_base_matrices(const std::string &convention = "FERMILAB")
   {
     begin_function("define_base_matrices");
 

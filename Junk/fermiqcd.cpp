@@ -68,7 +68,7 @@ void polyakov_vtk(gauge_field &U, std::string filename)
                     torus_topology,
                     0, 1, false);
   mdp_matrix_field V(space, U.nc(), U.nc());
-  mdp_real_scalar_field q(space, 2);
+  mdp_real_vector_field q(space, 2);
   mdp_site x(U.lattice());
   mdp_site y(space);
 
