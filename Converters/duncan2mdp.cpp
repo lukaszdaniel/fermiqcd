@@ -30,10 +30,9 @@ public:
 
 int main(int argc, char **argv)
 {
-
   printf("=======================================================\n");
   printf("Program for converting Tony Duncan gauge configurations\n");
-  printf("and quarks (fermi_fields) into MDP files\n");
+  printf("and quark (fermi_field) into MDP files\n");
   printf("=======================================================\n");
 
   if (argc < 4)
@@ -88,10 +87,7 @@ int main(int argc, char **argv)
                 {
                   if (fscanf(TONY_fp, "%lf%lf",
                              &(buffer[6 * j + 2 * i]),
-                             &(buffer[6 * j + 2 * i + 1])) != 2)
-                  {
-                    error("Error while reading from file");
-                  }
+                             &(buffer[6 * j + 2 * i + 1])));
                   // printf("%e %e\n", buffer[6*j+2*i], buffer[6*j+2*i+1]);
                   buffer[6 * j + 2 * i + 1] *= -1;
                 }
@@ -141,10 +137,7 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%f%f",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]) != 2)
-                {
-                  error("Error while reading from file");
-                }
+                           &buffer[6 * a + 2 * i + 1]));
 
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
@@ -194,10 +187,7 @@ int main(int argc, char **argv)
                 {
                   if (fscanf(TONY_fp, "%lf%lf",
                              &(buffer[6 * j + 2 * i]),
-                             &(buffer[6 * j + 2 * i + 1])) != 2)
-                  {
-                    error("Error while reading from file");
-                  }
+                             &(buffer[6 * j + 2 * i + 1])));
                   buffer[6 * j + 2 * i + 1] *= -1;
                 }
               // this map to the MDP ordering
@@ -245,10 +235,7 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%lf%lf",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]) != 2)
-                {
-                  error("Error while reading from file");
-                }
+                           &buffer[6 * a + 2 * i + 1]));
 
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);

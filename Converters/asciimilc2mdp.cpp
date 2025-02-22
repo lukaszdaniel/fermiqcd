@@ -69,18 +69,17 @@ int main(int argc, char **argv)
     myheader.bytes_per_site = 288;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from MILC (ascii) file");
-    strcpy(myheader.creation_date, "unknown");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
-    fwrite(&myheader, offset, sizeof(char), MDP_fp);
+    fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
     long a, b[4];
     char s[5][20];
 
     if (fscanf(TONY_fp, "%li%s%s%s%s%s%li%li%li%li", &a, s[0], s[1], s[2],
-               s[3], s[4], b, b + 1, b + 2, b + 3) != 10)
-    {
-      error("Error while reading from file");
-    }
+      s[3], s[4], b, b + 1, b + 2, b + 3));
 
     printf("%li\n%s %s %s %s %s\n%li %li %li %li\n", a, s[0], s[1], s[2], s[3], s[4], b[0], b[1], b[2], b[3]);
 
@@ -96,10 +95,7 @@ int main(int argc, char **argv)
                 {
                   if (fscanf(TONY_fp, "%f%f",
                              &(buffer[6 * i + 2 * j]),
-                             &(buffer[6 * i + 2 * j + 1])) != 2)
-                  {
-                    error("Error while reading from file");
-                  }
+                             &(buffer[6 * i + 2 * j + 1])));
                 }
 
               // this map to the MDP ordering
@@ -131,7 +127,9 @@ int main(int argc, char **argv)
     myheader.bytes_per_site = 96;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from MILC (ascii) file");
-    strcpy(myheader.creation_date, "unknown");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
@@ -145,10 +143,7 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%f%f",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]) != 2)
-                {
-                  error("Error while reading from file");
-                }
+                           &buffer[6 * a + 2 * i + 1]));
 
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
@@ -180,9 +175,11 @@ int main(int argc, char **argv)
     myheader.bytes_per_site = 576;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from MILC (ascii) file");
-    strcpy(myheader.creation_date, "unknown");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
-    fwrite(&myheader, offset, sizeof(char), MDP_fp);
+    fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
     double buffer[18]; // this assumes data in double precision: 144 = 9 x 2 x 8
     for (int x0 = 0; x0 < nx[0]; x0++)
@@ -196,10 +193,7 @@ int main(int argc, char **argv)
                 {
                   if (fscanf(TONY_fp, "%lf%lf",
                              &(buffer[6 * j + 2 * i]),
-                             &(buffer[6 * j + 2 * i + 1])) != 2)
-                  {
-                    error("Error while reading from file");
-                  }
+                             &(buffer[6 * j + 2 * i + 1])));
                   buffer[6 * j + 2 * i + 1] *= -1;
                 }
               // this map to the MDP ordering
@@ -231,7 +225,9 @@ int main(int argc, char **argv)
     myheader.bytes_per_site = 192;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from MILC (ascii) file");
-    strcpy(myheader.creation_date, "unknown");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
@@ -245,10 +241,8 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%lf%lf",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]) != 2)
-                {
-                  error("Error while reading from file");
-                }
+                           &buffer[6 * a + 2 * i + 1]));
+
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
             fseek(MDP_fp, 192 * position + offset, SEEK_SET);
