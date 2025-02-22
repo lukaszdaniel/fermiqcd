@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     for (int ii = 4; ii < 10; ii++)
       myheader.box_size[ii] = 0;
     myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
-    myheader.bytes_per_site = 288;
+    myheader.bytes_per_site = 576; // 4 * 3 * 3 * 2 * sizeof(double)
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from MILC (ascii) file");
     time_t time_and_date;
@@ -75,15 +75,7 @@ int main(int argc, char **argv)
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
-    long a, b[4];
-    char s[5][20];
-
-    if (fscanf(TONY_fp, "%li%s%s%s%s%s%li%li%li%li", &a, s[0], s[1], s[2],
-      s[3], s[4], b, b + 1, b + 2, b + 3));
-
-    printf("%li\n%s %s %s %s %s\n%li %li %li %li\n", a, s[0], s[1], s[2], s[3], s[4], b[0], b[1], b[2], b[3]);
-
-    float buffer[18]; // this assumes data in single precision: 72 = 9 x 2 x sizeof(float)
+    double buffer[18]; // this assumes data in double precision: 144 bytes = 3 x 3 x 2 x sizeof(double)
     for (int x0 = 0; x0 < nx[0]; x0++)
       for (int x3 = 0; x3 < nx[3]; x3++)
         for (int x2 = 0; x2 < nx[2]; x2++)
@@ -93,15 +85,17 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 for (int j = 0; j < 3; j++)
                 {
-                  if (fscanf(TONY_fp, "%f%f",
-                             &(buffer[6 * i + 2 * j]),
-                             &(buffer[6 * i + 2 * j + 1])));
+                  if (fscanf(TONY_fp, "%lf%lf",
+                             &(buffer[6 * j + 2 * i]),
+                             &(buffer[6 * j + 2 * i + 1])))
+                             {}
+                  buffer[6 * j + 2 * i + 1] *= -1;
                 }
 
               // this map to the MDP ordering
               position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + ((mu + 1) % Ndim);
-              fseek(MDP_fp, 72 * position + offset, SEEK_SET);
-              fwrite(buffer, 72, 1, MDP_fp);
+              fseek(MDP_fp, 144 * position + offset, SEEK_SET);
+              fwrite(buffer, 144, 1, MDP_fp);
             }
     fclose(TONY_fp);
     fclose(MDP_fp);
@@ -143,7 +137,8 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%f%f",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]));
+                           &buffer[6 * a + 2 * i + 1]))
+                           {}
 
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
@@ -172,7 +167,7 @@ int main(int argc, char **argv)
     for (int ii = 4; ii < 10; ii++)
       myheader.box_size[ii] = 0;
     myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
-    myheader.bytes_per_site = 576;
+    myheader.bytes_per_site = 576; // 4 * 3 * 3 * 2 * sizeof(double)
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from MILC (ascii) file");
     time_t time_and_date;
@@ -181,7 +176,7 @@ int main(int argc, char **argv)
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
-    double buffer[18]; // this assumes data in double precision: 144 = 9 x 2 x 8
+    double buffer[18]; // this assumes data in double precision: 144 bytes = 3 x 3 x 2 x sizeof(double)
     for (int x0 = 0; x0 < nx[0]; x0++)
       for (int x3 = 0; x3 < nx[3]; x3++)
         for (int x2 = 0; x2 < nx[2]; x2++)
@@ -193,9 +188,11 @@ int main(int argc, char **argv)
                 {
                   if (fscanf(TONY_fp, "%lf%lf",
                              &(buffer[6 * j + 2 * i]),
-                             &(buffer[6 * j + 2 * i + 1])));
+                             &(buffer[6 * j + 2 * i + 1])))
+                             {}
                   buffer[6 * j + 2 * i + 1] *= -1;
                 }
+
               // this map to the MDP ordering
               position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + ((mu + 1) % Ndim);
               fseek(MDP_fp, 144 * position + offset, SEEK_SET);
@@ -241,7 +238,8 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%lf%lf",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]));
+                           &buffer[6 * a + 2 * i + 1]))
+                           {}
 
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);

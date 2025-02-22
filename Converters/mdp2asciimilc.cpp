@@ -27,18 +27,17 @@ int main(int argc, char **argv)
       << L[0] << "x" << L[1] << "x"
       << L[2] << "x" << L[3] << "\n";
 
-  int n = 3; // number of colors;
+  constexpr int nc = 3; // number of colors;
   mdp_lattice lattice(4, L);
   mdp_site x(lattice);
-  if (header.bytes_per_site == 4 * 9 * 2 * sizeof(mdp_real))
+  assert(header.ndim == 4);
+  assert(sizeof(mdp_complex) == 2 * sizeof(mdp_real));
+  if (size_t(header.bytes_per_site) == header.ndim * nc * nc * sizeof(mdp_complex))
   {
 
-    gauge_field U(lattice, n);
+    gauge_field U(lattice, nc);
     U.load(argv[1]);
 
-    // WHAT IS THIS
-    // printf("%i\n%s %s %s %s %s\n%i %i %i %i\n",a,s[0],s[1],s[2],s[3],s[4], b[0],b[1],b[2], b[3]);
-    // ???
     for (int x0 = 0; x0 < L[0]; x0++)
       for (int x3 = 0; x3 < L[3]; x3++)
         for (int x2 = 0; x2 < L[2]; x2++)

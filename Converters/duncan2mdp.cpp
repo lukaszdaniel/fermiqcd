@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     for (int ii = 4; ii < 10; ii++)
       myheader.box_size[ii] = 0;
     myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
-    myheader.bytes_per_site = 288 * 2;
+    myheader.bytes_per_site = 576;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from Tony Duncan file");
     time_t time_and_date;
@@ -87,8 +87,8 @@ int main(int argc, char **argv)
                 {
                   if (fscanf(TONY_fp, "%lf%lf",
                              &(buffer[6 * j + 2 * i]),
-                             &(buffer[6 * j + 2 * i + 1])));
-                  // printf("%e %e\n", buffer[6*j+2*i], buffer[6*j+2*i+1]);
+                             &(buffer[6 * j + 2 * i + 1])))
+                             {}
                   buffer[6 * j + 2 * i + 1] *= -1;
                 }
 
@@ -137,7 +137,8 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%f%f",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]));
+                           &buffer[6 * a + 2 * i + 1]))
+                           {}
 
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
@@ -175,7 +176,7 @@ int main(int argc, char **argv)
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
-    double buffer[18]; // this assumes data in double precision: 144 = 9 x 2 x 8
+    double buffer[18]; // this assumes data in double precision: 144 = 9 x 2 x sizeof(double)
     for (int x0 = 0; x0 < nx[0]; x0++)
       for (int x3 = 0; x3 < nx[3]; x3++)
         for (int x2 = 0; x2 < nx[2]; x2++)
@@ -187,9 +188,11 @@ int main(int argc, char **argv)
                 {
                   if (fscanf(TONY_fp, "%lf%lf",
                              &(buffer[6 * j + 2 * i]),
-                             &(buffer[6 * j + 2 * i + 1])));
+                             &(buffer[6 * j + 2 * i + 1])))
+                             {}
                   buffer[6 * j + 2 * i + 1] *= -1;
                 }
+
               // this map to the MDP ordering
               position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + ((mu + 1) % Ndim);
               fseek(MDP_fp, 144 * position + offset, SEEK_SET);
@@ -235,7 +238,8 @@ int main(int argc, char **argv)
               for (int i = 0; i < 3; i++)
                 if (fscanf(TONY_fp, "%lf%lf",
                            &buffer[6 * a + 2 * i],
-                           &buffer[6 * a + 2 * i + 1]));
+                           &buffer[6 * a + 2 * i + 1]))
+                           {}
 
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
