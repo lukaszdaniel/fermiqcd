@@ -49,12 +49,12 @@ namespace MDP
       strcpy(file_id, "File Type: MDP FIELD\n");
       strcpy(program_version, mdp_program_name);
       endianess = mdp_local_endianess;
-      ndim = 0;
-      bytes_per_site = 0;
-      sites = 0;
+      // ndim = 0;
+      // bytes_per_site = 0;
+      // sites = 0;
       // for (int i = 0; i < 10; i++)
       //   box[i] = 1;
-      set_time();
+      // set_time();
     }
 
     void set_time()
