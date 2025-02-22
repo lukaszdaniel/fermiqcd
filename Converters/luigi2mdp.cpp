@@ -6,7 +6,17 @@
 #include <complex>
 #include <memory>
 
-using namespace std;
+#ifndef USE_DOUBLE_PRECISION
+using Complex = std::complex<float>;
+#else
+using Complex = std::complex<double>;
+#endif
+
+void error(const char s[])
+{
+  printf("ERROR: %s\n", s);
+  exit(1);
+}
 
 template <class T>
 void switch_endianess_byte4(T &a)
@@ -28,12 +38,6 @@ void switch_endianess_byte4(T &a)
     printf("error endianess\n");
 }
 
-#ifndef USE_DOUBLE_PRECISION
-typedef std::complex<float> Complex;
-#else
-typedef std::complex<double> Complex;
-#endif
-
 class _generic_field_file_header
 {
 public:
@@ -52,17 +56,6 @@ public:
   }
 };
 
-int number(const char *x)
-{
-  return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-}
-
-void error(const char s[])
-{
-  printf("ERROR: %s\n", s);
-  exit(1);
-}
-
 class short_field
 {
 public:
@@ -71,6 +64,10 @@ public:
   int dim[7];
 
   short_field() : m_data(nullptr)
+  {
+  }
+
+  ~short_field()
   {
   }
 
@@ -88,7 +85,8 @@ public:
     m_data = std::make_unique<Complex[]>(size);
   }
 
-  Complex &operator()(int x1, int x2, int x3, int a = 0, int b = 0, int c = 0, int d = 0)
+  Complex &operator()(int x1, int x2, int x3,
+                      int a = 0, int b = 0, int c = 0, int d = 0)
   {
     return m_data[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
   }
@@ -96,29 +94,27 @@ public:
 
 int main(int argc, char **argv)
 {
-
   printf("======================================================\n");
-  printf("Program for converting LUIGI gauge configurations and\n");
+  printf("Program for converting LUIGI gauge configurations\n");
   printf("and propagators into MDP files\n");
   printf("Conversion of propagators not implemented yet\n");
   printf("======================================================\n");
-
-  int nx[4], nc;
 
   if (argc < 4)
   {
     printf("usage:\n\n");
     printf("luigi2mdp -gauge 16x08x08x08,NC input output\n\n");
     exit(0);
-  };
+  }
+
+  int nx[4];
+  int nc;
   sscanf(argv[2], "%ix%ix%ix%i,%i", nx, nx + 1, nx + 2, nx + 3, &nc);
 
-  int nu = 0;
   long time0 = clock() / CLOCKS_PER_SEC;
 
   if (strcmp(argv[1], "-gauge") == 0)
   {
-
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
     printf("opening the LUIGI file: %s (read)\n", argv[3]);
     FILE *LUIGI_fp = fopen(argv[3], "r");
@@ -137,9 +133,9 @@ int main(int argc, char **argv)
       myheader.bytes_per_site = 4 * nc * nc * sizeof(Complex);
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from LUIGI");
-    time_t tt;
-    time(&tt);
-    strcpy(myheader.creation_date, ctime(&tt));
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
@@ -154,31 +150,14 @@ int main(int argc, char **argv)
         for (int x2 = 0; x2 < nx[2]; x2++)
           for (int x1 = 0; x1 < nx[1]; x1++)
             for (int mu = 0; mu < 4; mu++)
-            {
-              switch (mu)
-              {
-              case 0:
-                nu = 0;
-                break;
-              case 1:
-                nu = 3;
-                break;
-              case 2:
-                nu = 2;
-                break;
-              case 3:
-                nu = 1;
-                break;
-              }
-              if (fread(&U(x1, x2, x3, nu, 0, 0), matrix_size, 1,
+              if (fread(&U(x1, x2, x3, (4 - mu) % 4, 0, 0), matrix_size, 1,
                         LUIGI_fp) != matrix_size)
               {
                 error("Error while reading from file");
               }
-            }
 
       fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
-    };
+    }
     fclose(LUIGI_fp);
     fclose(MDP_fp);
     printf("\nAll sites are OK.\n");
@@ -186,6 +165,6 @@ int main(int argc, char **argv)
   }
   else
   {
-    printf("I am sorry conversion of propagators not implemnetd yet!\n");
+    printf("I am sorry, but conversion of propagators is not implemented yet!\n");
   }
 }

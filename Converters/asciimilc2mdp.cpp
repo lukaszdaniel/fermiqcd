@@ -4,8 +4,15 @@
 #include <cstring>
 #include <ctime>
 
-struct _generic_field_file_header
+void error(const char s[])
 {
+  printf("ERROR: %s\n", s);
+  exit(1);
+}
+
+class _generic_field_file_header
+{
+public:
   char file_id[60];
   char program_version[60];
   char creation_date[60];
@@ -21,25 +28,11 @@ struct _generic_field_file_header
   }
 };
 
-int number(const char *x)
-{
-  return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-}
-
-void error(const char s[])
-{
-  printf("ERROR: %s\n", s);
-  exit(1);
-}
-
-int nx[4];
-
 int main(int argc, char **argv)
 {
-
   printf("=======================================================\n");
-  printf("Program for convertingMILC ascii gauge configurations\n");
-  printf("and quark (fermi field) into MDP files\n");
+  printf("Program for converting MILC ascii gauge configurations\n");
+  printf("and quark (fermi_field) into MDP files\n");
   printf("=======================================================\n");
 
   if (argc < 4)
@@ -50,6 +43,7 @@ int main(int argc, char **argv)
     exit(0);
   }
 
+  int nx[4];
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
 
   int Ndim = 4;
@@ -58,7 +52,6 @@ int main(int argc, char **argv)
 
   if (strcmp(argv[1], "-gauge") == 0)
   {
-
     printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
     printf("opening the MILC (ascii) file: %s (read)\n", argv[3]);
     FILE *TONY_fp = fopen(argv[3], "r");
@@ -91,12 +84,12 @@ int main(int argc, char **argv)
 
     printf("%li\n%s %s %s %s %s\n%li %li %li %li\n", a, s[0], s[1], s[2], s[3], s[4], b[0], b[1], b[2], b[3]);
 
-    float buffer[18]; // this assumes data in single precision: 72 = 9 x 2 x 4
+    float buffer[18]; // this assumes data in single precision: 72 = 9 x 2 x sizeof(float)
     for (int x0 = 0; x0 < nx[0]; x0++)
       for (int x3 = 0; x3 < nx[3]; x3++)
         for (int x2 = 0; x2 < nx[2]; x2++)
           for (int x1 = 0; x1 < nx[1]; x1++)
-            for (int mu = 1; mu <= 4; mu++)
+            for (int mu = 0; mu < 4; mu++)
             {
               for (int i = 0; i < 3; i++)
                 for (int j = 0; j < 3; j++)
@@ -110,7 +103,7 @@ int main(int argc, char **argv)
                 }
 
               // this map to the MDP ordering
-              position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + (mu % Ndim);
+              position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + ((mu + 1) % Ndim);
               fseek(MDP_fp, 72 * position + offset, SEEK_SET);
               fwrite(buffer, 72, 1, MDP_fp);
             }

@@ -56,8 +56,8 @@ int main(int argc, char **argv)
             }
           }
   }
-  fclose(outfp);
 
+  fclose(outfp);
   mdp.close_wormholes();
   return 0;
 }

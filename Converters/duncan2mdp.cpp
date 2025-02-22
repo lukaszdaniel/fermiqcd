@@ -4,10 +4,15 @@
 #include <cstring>
 #include <ctime>
 
-using namespace std;
-
-struct _generic_field_file_header
+void error(const char s[])
 {
+  printf("ERROR: %s\n", s);
+  exit(1);
+}
+
+class _generic_field_file_header
+{
+public:
   char file_id[60];
   char program_version[60];
   char creation_date[60];
@@ -22,19 +27,6 @@ struct _generic_field_file_header
     strcpy(file_id, "File Type: MDP FIELD\n");
   }
 };
-
-int number(const char *x)
-{
-  return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-}
-
-void error(const char s[])
-{
-  printf("ERROR: %s\n", s);
-  exit(1);
-}
-
-int nx[4];
 
 int main(int argc, char **argv)
 {
@@ -52,6 +44,7 @@ int main(int argc, char **argv)
     exit(0);
   }
 
+  int nx[4];
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
 
   int Ndim = 4;
@@ -73,15 +66,17 @@ int main(int argc, char **argv)
       myheader.box_size[ii] = nx[ii];
     for (int ii = 4; ii < 10; ii++)
       myheader.box_size[ii] = 0;
-    strcpy(myheader.program_version, "Converted from Tony Duncan file");
-    strcpy(myheader.creation_date, "unknown");
     myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
     myheader.bytes_per_site = 288 * 2;
     myheader.endianess = 0x87654321;
+    strcpy(myheader.program_version, "Converted from Tony Duncan file");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
-    fwrite(&myheader, offset, sizeof(char), MDP_fp);
+    fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
-    double buffer[18]; // this assumes data in double precision: 144 = 9 x 2 x 8
+    double buffer[18]; // this assumes data in double precision: 144 = 9 x 2 x sizeof(double)
     for (int x0 = 0; x0 < nx[0]; x0++)
       for (int x3 = 0; x3 < nx[3]; x3++)
         for (int x2 = 0; x2 < nx[2]; x2++)
@@ -100,6 +95,7 @@ int main(int argc, char **argv)
                   // printf("%e %e\n", buffer[6*j+2*i], buffer[6*j+2*i+1]);
                   buffer[6 * j + 2 * i + 1] *= -1;
                 }
+
               // this map to the MDP ordering
               position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3) * 4 + ((mu + 1) % Ndim);
               fseek(MDP_fp, 144 * position + offset, SEEK_SET);
@@ -129,7 +125,9 @@ int main(int argc, char **argv)
     myheader.bytes_per_site = 96;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from Tony Duncan file");
-    strcpy(myheader.creation_date, "unknown");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
@@ -147,6 +145,7 @@ int main(int argc, char **argv)
                 {
                   error("Error while reading from file");
                 }
+
             // this map to the MDP ordering
             position = (((x0 * nx[1] + x1) * nx[2] + x2) * nx[3] + x3);
             fseek(MDP_fp, 96 * position + offset, SEEK_SET);
@@ -177,9 +176,11 @@ int main(int argc, char **argv)
     myheader.bytes_per_site = 576;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from Tony Duncan file");
-    strcpy(myheader.creation_date, "unknown");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
-    fwrite(&myheader, offset, sizeof(char), MDP_fp);
+    fwrite(&myheader, sizeof(char), offset, MDP_fp);
 
     double buffer[18]; // this assumes data in double precision: 144 = 9 x 2 x 8
     for (int x0 = 0; x0 < nx[0]; x0++)
@@ -228,7 +229,9 @@ int main(int argc, char **argv)
     myheader.bytes_per_site = 192;
     myheader.endianess = 0x87654321;
     strcpy(myheader.program_version, "Converted from Tony Duncan file");
-    strcpy(myheader.creation_date, "unknown");
+    time_t time_and_date;
+    time(&time_and_date);
+    strcpy(myheader.creation_date, ctime(&time_and_date));
     int offset = sizeof(_generic_field_file_header) / sizeof(char);
     fwrite(&myheader, sizeof(char), offset, MDP_fp);
 

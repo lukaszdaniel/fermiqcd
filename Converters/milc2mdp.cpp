@@ -1,11 +1,23 @@
 #include <cstdio>
 #include <cmath>
-#include <complex>
-#include <ctime>
 #include <cstring>
+#include <ctime>
+#include <complex>
 #include <memory>
 
-using namespace std;
+using Complex = std::complex<float>;
+
+#ifdef SHORT32
+using type32 = short;
+#else
+using type32 = int;
+#endif
+
+void error(const char s[])
+{
+  printf("ERROR: %s\n", s);
+  exit(1);
+}
 
 template <class T>
 void switch_endianess_byte4(T &a)
@@ -26,14 +38,6 @@ void switch_endianess_byte4(T &a)
   else
     printf("error endianess\n");
 }
-
-#define Complex std::complex<float>
-
-#ifdef SHORT32
-typedef short type32;
-#else
-typedef int type32;
-#endif
 
 /**********************************************************************/
 /* Binary lattice formats                                             */
@@ -56,7 +60,7 @@ typedef int type32;
 
 /* 1. Header comes first    */
 
-typedef struct
+struct gauge_header_t
 {
   uint32_t magic_number; /* Identifies file format */
   type32 dims[4];        /* Full lattice dimensions */
@@ -75,7 +79,8 @@ Nonzero means that a
 coordinate list is attached,
 specifying the order of values */
   type32 boo;
-} gauge_header;
+};
+using gauge_header = struct gauge_header_t;
 
 class _generic_field_file_header
 {
@@ -95,17 +100,6 @@ public:
   }
 };
 
-int number(const char *x)
-{
-  return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-}
-
-void error(const char s[])
-{
-  printf("ERROR: %s\n", s);
-  exit(1);
-}
-
 class short_field
 {
 public:
@@ -114,6 +108,10 @@ public:
   int dim[7];
 
   short_field() : m_data(nullptr)
+  {
+  }
+
+  ~short_field()
   {
   }
 
@@ -131,18 +129,17 @@ public:
     m_data = std::make_unique<Complex[]>(size);
   }
 
-  Complex &operator()(int x1, int x2, int x3, int a = 0, int b = 0, int c = 0, int d = 0)
+  Complex &operator()(int x1, int x2, int x3,
+                      int a = 0, int b = 0, int c = 0, int d = 0)
   {
     return m_data[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
   }
 };
 
-int nx[4];
-
 int main(int argc, char **argv)
 {
   printf("======================================================\n");
-  printf("Program for converting MILC gauge configurations and\n");
+  printf("Program for converting MILC gauge configurations\n");
   printf("and propagators into MDP files\n");
   printf("Conversion of propagators not implemented yet\n");
   printf("======================================================\n");
@@ -154,9 +151,10 @@ int main(int argc, char **argv)
     printf("milc2mdp -fermi 16x08x08x08 input output\n\n");
     exit(0);
   }
+
+  int nx[4];
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
 
-  int x0, x1, x2, x3, mu;
   // int Ndim=4;
   // long position;
   long time0 = clock() / CLOCKS_PER_SEC;
@@ -204,10 +202,9 @@ int main(int argc, char **argv)
     }
 
     myheader.ndim = 4;
-    int ii;
-    for (ii = 0; ii < 4; ii++)
+    for (int ii = 0; ii < 4; ii++)
       myheader.box_size[ii] = nx[ii];
-    for (ii = 4; ii < 10; ii++)
+    for (int ii = 4; ii < 10; ii++)
       myheader.box_size[ii] = 0;
     myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
     if (strcmp(argv[1], "-gauge") == 0)
@@ -225,20 +222,20 @@ int main(int argc, char **argv)
 
     unsigned int matrix_size = 72;
     // char buffer[matrix_size];  // assumes single precision: 72 = 9 x 2 x 4
-    for (x0 = 0; x0 < nx[0]; x0++)
+    for (int x0 = 0; x0 < nx[0]; x0++)
     {
-      for (x3 = 0; x3 < nx[3]; x3++)
-        for (x2 = 0; x2 < nx[2]; x2++)
-          for (x1 = 0; x1 < nx[1]; x1++)
-            for (mu = 1; mu <= 4; mu++)
-              if (fread(&U(x1, x2, x3, mu % 4, 0, 0), matrix_size, 1, MILC_fp) != matrix_size)
+      for (int x3 = 0; x3 < nx[3]; x3++)
+        for (int x2 = 0; x2 < nx[2]; x2++)
+          for (int x1 = 0; x1 < nx[1]; x1++)
+            for (int mu = 0; mu < 4; mu++)
+              if (fread(&U(x1, x2, x3, (mu + 1) % 4, 0, 0), matrix_size, 1, MILC_fp) != matrix_size)
               {
                 error("Error while reading from file");
               }
 
       if (MILC_header.magic_number == 0x874e0000)
       {
-        for (mu = 0; mu < U.size; mu++)
+        for (int mu = 0; mu < U.size; mu++)
         {
           switch_endianess_byte4(*((long *)U.m_data.get() + 2 * mu));
           switch_endianess_byte4(*((long *)U.m_data.get() + 2 * mu + 1));

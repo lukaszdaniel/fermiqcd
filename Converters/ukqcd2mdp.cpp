@@ -1,10 +1,7 @@
 // ukqcd2mdp from the FermiQCD utilities by Massimo di Pierro
 // last change: 27 Mar 2003 JMF
-
 // read UKQCD binary gauge fields or propagators and save as mdp files
-
 // compile with something like: g++ -o ukqcd2mdp ukqcd2mdp.C
-
 // run program with no arguments for help
 
 #include <cstdlib>
@@ -14,9 +11,7 @@
 #include <ctime>
 #include <memory>
 
-using namespace std;
-
-#define Complex std::complex<float>
+using Complex = std::complex<float>;
 #define Nspace nx[1] * nx[2] * nx[3]
 #define Ndim 4
 
@@ -37,14 +32,13 @@ int nx[4];
 
 void block_swap(float *buffer, long length)
 {
-  int i;
   union swapper
   {
     float float_number;
     char pos[4];
   } a, b;
 
-  for (i = 0; i < length; i++)
+  for (int i = 0; i < length; i++)
   {
     a.float_number = *buffer;
     b.pos[0] = a.pos[3];
@@ -58,14 +52,13 @@ void block_swap(float *buffer, long length)
 
 void block_swap_double(double *buffer, long length)
 {
-  int i;
   union swapper
   {
     double double_number;
     char pos[8];
   } a, b;
 
-  for (i = 0; i < length; i++)
+  for (int i = 0; i < length; i++)
   {
     a.double_number = *buffer;
     b.pos[0] = a.pos[7];
@@ -96,7 +89,8 @@ public:
   {
   }
 
-  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1, int d = 1)
+  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1,
+                  int d = 1)
   {
     size = x1 * x2 * x3 * a * b * c * d;
     dim[0] = x1;
@@ -330,12 +324,10 @@ void read_t_prop(short_field &S, char fileprefix[],
         for (x2 = 0; x2 < nx[2]; x2++)
           for (x1 = 0; x1 < nx[1]; x1++)
           {
-
             for (int sink_spin = 0; sink_spin < 4; sink_spin++)
             {
               for (int sink_colour = 0; sink_colour < 3; sink_colour++)
               {
-
                 if (precision == 'F')
                 {
                   S(x1, x2, x3, sink_spin, source_spin, sink_colour, source_colour) =
@@ -377,7 +369,6 @@ public:
 
 int main(int argc, char **argv)
 {
-
   printf("=============================================================\n");
   printf("ukqcd2mdp: Convert UKQCD gauge configurations and propagators\n");
   printf("to MDP format.\n");
@@ -394,7 +385,7 @@ int main(int argc, char **argv)
     printf("where xx is the timeslice and yy is the spin source\n\n");
     printf("F=float, D=double, Y=swap, N=no swap\n\n");
     exit(0);
-  };
+  }
 
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
 
@@ -443,7 +434,7 @@ int main(int argc, char **argv)
       fwrite(U.m_data.get(), sizeof(Complex), U.size, MDP_fp);
     }
   }
-  if (strcmp(argv[1], "-fermi") == 0)
+  else if (strcmp(argv[1], "-fermi") == 0)
   {
     U.initialize(nx[1], nx[2], nx[3], 4, 4, 3, 3);
     for (int x0 = 0; x0 < nx[0]; x0++)

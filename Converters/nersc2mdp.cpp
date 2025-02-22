@@ -12,9 +12,7 @@
 #include <iostream>
 #include <memory>
 
-using namespace std;
-
-#define Complex std::complex<float>
+using Complex = std::complex<float>;
 #define Nspace nx[1] * nx[2] * nx[3]
 #define Ndim 4
 
@@ -22,7 +20,7 @@ void error(const char s[])
 {
   printf("ERROR: %s\n", s);
   exit(1);
-};
+}
 
 int nx[4];
 
@@ -92,7 +90,8 @@ public:
   {
   }
 
-  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1, int d = 1)
+  void initialize(int x1, int x2, int x3, int a = 1, int b = 1, int c = 1,
+                  int d = 1)
   {
     size = x1 * x2 * x3 * a * b * c * d;
     dim[0] = x1;
@@ -257,9 +256,8 @@ void read_t_prop(short_field &S, char fileprefix[],
   std::unique_ptr<unsigned char[]> buffer;
   long bytes_to_read;
   long bytes_read;
-  int source_spin, source_colour, x1, x2, x3;
+  int x1, x2, x3;
   // int x0;
-  int sink_spin, sink_colour;
   // int comp;
   long buffer_index;
 
@@ -283,9 +281,9 @@ void read_t_prop(short_field &S, char fileprefix[],
   if (buffer == 0x0)
     error("Out of memory");
 
-  for (source_spin = 0; source_spin < 4; source_spin++)
+  for (int source_spin = 0; source_spin < 4; source_spin++)
   {
-    for (source_colour = 0; source_colour < 3; source_colour++)
+    for (int source_colour = 0; source_colour < 3; source_colour++)
     {
 
       // Construct filename
@@ -321,9 +319,9 @@ void read_t_prop(short_field &S, char fileprefix[],
           for (x1 = 0; x1 < nx[1]; x1++)
           {
 
-            for (sink_spin = 0; sink_spin < 4; sink_spin++)
+            for (int sink_spin = 0; sink_spin < 4; sink_spin++)
             {
-              for (sink_colour = 0; sink_colour < 3; sink_colour++)
+              for (int sink_colour = 0; sink_colour < 3; sink_colour++)
               {
 
                 if (precision == 'F')
@@ -365,12 +363,6 @@ public:
   }
 };
 
-// this does not seem to be used
-// int number(const char *x)
-// {
-//   return 10 * (((int)x[0]) - 48) + (((int)x[1]) - 48);
-// }
-
 int main(int argc, char **argv)
 {
 
@@ -396,7 +388,6 @@ int main(int argc, char **argv)
   char precision, swap;
   sscanf(argv[4], "%ix%ix%ix%i:%i%c%c", nx, nx + 1, nx + 2, nx + 3, &rows, &precision, &swap);
 
-  long x0;
   long time0 = clock() / CLOCKS_PER_SEC;
 
   printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
@@ -407,10 +398,9 @@ int main(int argc, char **argv)
   short_field U; // stores one timeslice
 
   myheader.ndim = 4;
-  int ii;
-  for (ii = 0; ii < 4; ii++)
+  for (int ii = 0; ii < 4; ii++)
     myheader.box_size[ii] = nx[ii];
-  for (ii = 4; ii < 10; ii++)
+  for (int ii = 4; ii < 10; ii++)
     myheader.box_size[ii] = 0;
   myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
   // gauge: bytes_per_site = 4(mu)*9(SU3 matrix)*2(cplx)*4(bytes_per_float)
@@ -433,7 +423,7 @@ int main(int argc, char **argv)
     U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
     FILE *file = fopen(argv[5], "rb");
     fseek(file, skip_bytes, SEEK_SET);
-    for (x0 = 0; x0 < nx[0]; x0++)
+    for (int x0 = 0; x0 < nx[0]; x0++)
     {
       read_t_gauge(U, file, precision, swap, rows);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
@@ -441,10 +431,10 @@ int main(int argc, char **argv)
     }
   }
   /*
-  if (strcmp(argv[1], "-fermi") == 0)
+  else if (strcmp(argv[1], "-fermi") == 0)
   {
     U.initialize(nx[1], nx[2], nx[3], 4, 4, 3, 3);
-    for (x0 = 0; x0 < nx[0]; x0++)
+    for (int x0 = 0; x0 < nx[0]; x0++)
     {
       read_t_prop(U, argv[3], PRECISION, SWAP, x0);
       fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
