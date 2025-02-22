@@ -52,8 +52,8 @@ namespace MDP
       ndim = 0;
       bytes_per_site = 0;
       sites = 0;
-      for (int i = 0; i < 10; i++)
-        box[i] = 0;
+      // for (int i = 0; i < 10; i++)
+      //   box[i] = 1;
       set_time();
     }
 
