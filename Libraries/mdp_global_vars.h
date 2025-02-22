@@ -66,9 +66,9 @@ namespace MDP
     using mdp_suint = uint8_t;
 
 #ifdef USE_DOUBLE_PRECISION
-    typedef double mdp_real;
+    using mdp_real = double;
 #else
-    typedef float mdp_real;
+    using mdp_real = float;
 #endif
 
     constexpr int EVEN = 0;

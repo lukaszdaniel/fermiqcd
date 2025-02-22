@@ -24,10 +24,10 @@
 namespace MDP
 {
 #ifdef PARALLEL
-  typedef MPI_Request mdp_request;
+  using mdp_request = MPI_Request;
 #else // not PARALLEL
-  typedef int mdp_request;
-  typedef int MPI_Comm;
+  using mdp_request = int;
+  using MPI_Comm = int;
 #endif
 
   /// @brief DO NOT INSTANTIATE use object mdp instead

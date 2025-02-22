@@ -139,12 +139,12 @@ namespace MDP
         }
       }
     }
-    printf("Too many iterations in golden_rune\n");
+    printf("Too many iterations in golden_rule\n");
     xmin = x;
     return fx;
   }
 
-  typedef float (*BLM_function)(float, float *, mdp_int, void *);
+  using BLM_function = float (*)(float, float *, mdp_int, void *);
 
   /** @brief This function is used by the BayesianLevenbergMarquardt
    * It computes the chi_square (including the Baesyan term)

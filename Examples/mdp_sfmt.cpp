@@ -19,20 +19,20 @@ class MDP_SFMT19937
 {
 private:
   bool initialized;
-  static const unsigned int MEXP = 19937;
-  static const unsigned int N = 156;
-  static const unsigned int N32 = 624;
-  static const unsigned int POS1 = 122;
-  static const unsigned int SL1 = 18;
-  static const unsigned int SL2 = 1;
-  static const unsigned int SR1 = 11;
-  static const unsigned int SR2 = 1;
+  static constexpr unsigned int MEXP = 19937;
+  static constexpr unsigned int N = 156;
+  static constexpr unsigned int N32 = 624;
+  static constexpr unsigned int POS1 = 122;
+  static constexpr unsigned int SL1 = 18;
+  static constexpr unsigned int SL2 = 1;
+  static constexpr unsigned int SR1 = 11;
+  static constexpr unsigned int SR2 = 1;
   unsigned int idx;
   struct W128_T
   {
     unsigned int u[4];
   };
-  typedef struct W128_T w128_t;
+  using w128_t = struct W128_T;
   w128_t sfmt[N];
   unsigned int *psfmt32;
   void period_certification(void)

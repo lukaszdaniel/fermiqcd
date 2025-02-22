@@ -46,7 +46,7 @@ namespace MDP
       unsigned int u[4];
     };
 
-    typedef struct W128_T w128_t;
+    using w128_t = struct W128_T;
     w128_t sfmt[N];
     unsigned int *psfmt32;
 

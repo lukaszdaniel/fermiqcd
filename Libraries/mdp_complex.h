@@ -25,7 +25,7 @@
 namespace MDP
 {
 #ifdef DO_NOT_USE_MDP_COMPLEX
-  typedef std::complex<mdp_real> mdp_complex;
+  using mdp_complex = std::complex<mdp_real>;
 #else
 
   /// @brief portable complex numbers
