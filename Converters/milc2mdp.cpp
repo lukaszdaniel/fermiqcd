@@ -1,8 +1,8 @@
 #include <cstdio>
 #include <cmath>
 #include <cstring>
-#include <ctime>
 #include <complex>
+#include <ctime>
 #include <memory>
 
 using Complex = std::complex<float>;
@@ -136,6 +136,53 @@ public:
   }
 };
 
+void write_header(FILE *MDP_fp, int bytes_per_site, const char *program_version, const char *creation_date, int nx[4])
+{
+  _generic_field_file_header myheader;
+  myheader.ndim = 4;
+  for (int ii = 0; ii < 4; ii++)
+    myheader.box_size[ii] = nx[ii];
+  for (int ii = 4; ii < 10; ii++)
+    myheader.box_size[ii] = 0;
+  myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
+  myheader.bytes_per_site = bytes_per_site;
+  myheader.endianess = 0x87654321;
+  strcpy(myheader.program_version, program_version);
+  strcpy(myheader.creation_date, creation_date);
+  int offset = sizeof(_generic_field_file_header) / sizeof(char);
+  fwrite(&myheader, sizeof(char), offset, MDP_fp);
+}
+
+void process_gauge(FILE *MILC_fp, FILE *MDP_fp, int nx[4], bool switch_endianess)
+{
+  short_field U;
+  U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
+  unsigned int matrix_size = 72;
+
+  for (int x0 = 0; x0 < nx[0]; x0++)
+  {
+    for (int x3 = 0; x3 < nx[3]; x3++)
+      for (int x2 = 0; x2 < nx[2]; x2++)
+        for (int x1 = 0; x1 < nx[1]; x1++)
+          for (int mu = 0; mu < 4; mu++)
+            if (fread(&U(x1, x2, x3, (mu + 1) % 4, 0, 0), matrix_size, 1, MILC_fp) != matrix_size)
+            {
+              error("Error while reading from file");
+            }
+
+    if (switch_endianess)
+    {
+      for (int mu = 0; mu < U.size; mu++)
+      {
+        switch_endianess_byte4(*((long *)U.m_data.get() + 2 * mu));
+        switch_endianess_byte4(*((long *)U.m_data.get() + 2 * mu + 1));
+      }
+    }
+
+    fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
+  }
+}
+
 int main(int argc, char **argv)
 {
   printf("======================================================\n");
@@ -154,29 +201,48 @@ int main(int argc, char **argv)
 
   int nx[4];
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
-
-  // int Ndim=4;
-  // long position;
   long time0 = clock() / CLOCKS_PER_SEC;
+
+  FILE *MILC_fp = fopen(argv[3], "r");
+  if (!MILC_fp)
+  {
+    error("Cannot open input file");
+  }
+
+  FILE *MDP_fp = fopen(argv[4], "w");
+  if (!MDP_fp)
+  {
+    fclose(MILC_fp);
+    error("Cannot open output file");
+  }
+
+  printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
+  printf("opening the MILC file: %s (read)\n", argv[3]);
+  printf("opening the MDP file: %s (write) \n", argv[4]);
+
+  int offset = sizeof(_generic_field_file_header) / sizeof(char);
+  // gauge: bytes_per_site = 4(mu)*9(SU3 matrix)*2(cplx)*4(bytes_per_float)
+  //                       = 288
+  // fermi: bytes_per_site = 16(spin-sq)*9(color-sq)*2(cplx)*4(bytes_per_float)
+  //                       = 1152
+  long bytes_per_site;
+  if (strcmp(argv[3], "-gauge") == 0)
+    bytes_per_site = 288;
+  else
+    bytes_per_site = 1152;
 
   if (strcmp(argv[1], "-gauge") == 0)
   {
-    printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
-    printf("opening the MILC file: %s (read)\n", argv[3]);
-    FILE *MILC_fp = fopen(argv[3], "r");
-    printf("opening the MDP file: %s (write) \n", argv[4]);
-    FILE *MDP_fp = fopen(argv[4], "w");
-
     gauge_header MILC_header;
-    _generic_field_file_header myheader;
-    size_t gauge_hader_size = sizeof(gauge_header) / sizeof(char);
-    if (fread(&MILC_header, gauge_hader_size, 1, MILC_fp) != gauge_hader_size)
+    size_t gauge_header_size = sizeof(gauge_header) / sizeof(char);
+    if (fread(&MILC_header, gauge_header_size, 1, MILC_fp) != gauge_header_size)
     {
       error("Error while reading from file");
     }
 
     printf("%x\n", MILC_header.magic_number);
 
+    bool switch_endianess = false;
     if (MILC_header.magic_number == 0x874e0000)
     {
       printf("switching endianess\n");
@@ -184,6 +250,7 @@ int main(int argc, char **argv)
       switch_endianess_byte4(MILC_header.dims[1]);
       switch_endianess_byte4(MILC_header.dims[2]);
       switch_endianess_byte4(MILC_header.dims[3]);
+      switch_endianess = true;
     }
 
     if ((MILC_header.dims[0] != nx[1]) &&
@@ -191,66 +258,31 @@ int main(int argc, char **argv)
         (MILC_header.dims[2] != nx[3]) &&
         (MILC_header.dims[3] != nx[0]))
     {
-
       printf("%xx%xx%xx%x => Incorrect dimensions!\n",
              MILC_header.dims[3],
              MILC_header.dims[0],
              MILC_header.dims[1],
              MILC_header.dims[2]);
-
       exit(1);
     }
 
-    myheader.ndim = 4;
-    for (int ii = 0; ii < 4; ii++)
-      myheader.box_size[ii] = nx[ii];
-    for (int ii = 4; ii < 10; ii++)
-      myheader.box_size[ii] = 0;
-    myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
-    if (strcmp(argv[1], "-gauge") == 0)
-      myheader.bytes_per_site = 288;
-    if (strcmp(argv[1], "-fermi") == 0)
-      myheader.bytes_per_site = 1152;
-    myheader.endianess = 0x87654321;
-    strcpy(myheader.program_version, "Converted from MILC");
-    strcpy(myheader.creation_date, MILC_header.time_stamp);
-    int offset = sizeof(_generic_field_file_header) / sizeof(char);
-    fwrite(&myheader, sizeof(char), offset, MDP_fp);
-
-    short_field U;
-    U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
-
-    unsigned int matrix_size = 72;
-    // char buffer[matrix_size];  // assumes single precision: 72 = 9 x 2 x 4
-    for (int x0 = 0; x0 < nx[0]; x0++)
-    {
-      for (int x3 = 0; x3 < nx[3]; x3++)
-        for (int x2 = 0; x2 < nx[2]; x2++)
-          for (int x1 = 0; x1 < nx[1]; x1++)
-            for (int mu = 0; mu < 4; mu++)
-              if (fread(&U(x1, x2, x3, (mu + 1) % 4, 0, 0), matrix_size, 1, MILC_fp) != matrix_size)
-              {
-                error("Error while reading from file");
-              }
-
-      if (MILC_header.magic_number == 0x874e0000)
-      {
-        for (int mu = 0; mu < U.size; mu++)
-        {
-          switch_endianess_byte4(*((long *)U.m_data.get() + 2 * mu));
-          switch_endianess_byte4(*((long *)U.m_data.get() + 2 * mu + 1));
-        }
-      }
-
-      fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
-    }
-    fclose(MILC_fp);
-    fclose(MDP_fp);
-    printf("\nAll sites are OK.\n");
-    printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
+    write_header(MDP_fp, bytes_per_site, "Converted from MILC", MILC_header.time_stamp, nx);
+    process_gauge(MILC_fp, MDP_fp, nx, switch_endianess);
   }
-  else
+  else if (strcmp(argv[1], "-quark") == 0)
   {
     printf("I am sorry, but conversion of propagators is not implemented yet!\n");
   }
+
+  fclose(MILC_fp);
+  fclose(MDP_fp);
+
+  printf("\nAll sites are OK.\n");
+  printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
+  printf("Header size is %i bytes.\n", offset);
+  printf("Output file size is %li bytes.\n", bytes_per_site * nx[0] * nx[1] * nx[2] * nx[3] + offset);
+  printf("Output file name is: %s\n", argv[4]);
+  printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
+
+  return 0;
 }

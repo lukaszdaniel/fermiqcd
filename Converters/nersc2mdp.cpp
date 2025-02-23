@@ -1,7 +1,7 @@
-// ukqcd2mdp from the FermiQCD utilities by Massimo di Pierro
+// nersc2mdp from the FermiQCD utilities by Massimo di Pierro
 // last change: 27 Mar 2003 JMF
-// read UKQCD binary gauge fields or propagators and save as mdp files
-// compile with something like: g++ -o ukqcd2mdp ukqcd2mdp.C
+// read NERSC binary gauge fields or propagators and save as mdp files
+// compile with: g++ -o nersc2mdp nersc2mdp.cpp
 // run program with no arguments for help
 
 #include <cstdlib>
@@ -9,7 +9,6 @@
 #include <cstring>
 #include <complex>
 #include <ctime>
-#include <iostream>
 #include <memory>
 
 using Complex = std::complex<float>;
@@ -115,16 +114,11 @@ public:
 void read_t_gauge(short_field &U, FILE *file,
                   char precision, char swap, int rows = 2)
 {
-
-  // char            filename[200];
-  std::unique_ptr<unsigned char[]> buffer;            // array to store the raw data
-  long file_length = Ndim * 6 * rows * sizeof(float); // file length in bytes (one time slice)
-  long bytes_read;                                    // monitor how many bytes we read
+  std::unique_ptr<unsigned char[]> buffer;
+  long file_length = Ndim * 6 * rows * sizeof(float);
+  long bytes_read;
   int x1, x2, x3, mu, a, b, muf;
-  // int c;
-  long buf_index; // indices for the temporary buffer
-  // long site_index;
-  // FILE *fp;                    // pointer to input file
+  long buf_index;
 
   // Check input makes sense -- ie that precision is correct
   if ((precision != 'F') && (precision != 'D'))
@@ -144,7 +138,7 @@ void read_t_gauge(short_field &U, FILE *file,
   // Open, read, check and close the file! Allocate storage space in
   // buffer[].
   buffer = std::make_unique<unsigned char[]>(file_length);
-  if (buffer == 0x0)
+  if (buffer == nullptr)
     error("Unable to allocate memory");
   bytes_read = fread(buffer.get(), sizeof(unsigned char), file_length, file);
   if (bytes_read != file_length)
@@ -250,15 +244,12 @@ void read_t_gauge(short_field &U, FILE *file,
 void read_t_prop(short_field &S, char fileprefix[],
                  char precision, char swap, int time)
 {
-
   char filename[200];
   FILE *fp;
   std::unique_ptr<unsigned char[]> buffer;
   long bytes_to_read;
   long bytes_read;
   int x1, x2, x3;
-  // int x0;
-  // int comp;
   long buffer_index;
 
   printf("Reading propagator on timeslice %d ...\n", time);
@@ -278,7 +269,7 @@ void read_t_prop(short_field &S, char fileprefix[],
 
   // Allocate space to buffer[]
   buffer = std::make_unique<unsigned char[]>(bytes_to_read);
-  if (buffer == 0x0)
+  if (buffer == nullptr)
     error("Out of memory");
 
   for (int source_spin = 0; source_spin < 4; source_spin++)
@@ -293,7 +284,7 @@ void read_t_prop(short_field &S, char fileprefix[],
 
       // Open, read, check and close file
       fp = fopen(filename, "rb");
-      if (fp == (FILE *)NULL)
+      if (fp == nullptr)
         error("Unable to open file");
       bytes_read = fread(buffer.get(), sizeof(unsigned char), bytes_to_read, fp);
       if (bytes_read != bytes_to_read)
@@ -318,12 +309,10 @@ void read_t_prop(short_field &S, char fileprefix[],
         for (x2 = 0; x2 < nx[2]; x2++)
           for (x1 = 0; x1 < nx[1]; x1++)
           {
-
             for (int sink_spin = 0; sink_spin < 4; sink_spin++)
             {
               for (int sink_colour = 0; sink_colour < 3; sink_colour++)
               {
-
                 if (precision == 'F')
                 {
                   S(x1, x2, x3, sink_spin, source_spin, sink_colour, source_colour) =
@@ -337,11 +326,11 @@ void read_t_prop(short_field &S, char fileprefix[],
                               ((double *)buffer.get())[buffer_index + 1]);
                 }
                 buffer_index += 2;
-              }   // sink_colour;
-            }     // sink spin
-          }       // spatial loops
-    }             // source colour
-  }               // source spin
+              } // sink_colour;
+            } // sink spin
+          } // spatial loops
+    } // source colour
+  } // source spin
   buffer.reset(); // now free the buffer
 }
 
@@ -363,9 +352,27 @@ public:
   }
 };
 
+void write_header(FILE *MDP_fp, int bytes_per_site, const char *program_version, int nx[4])
+{
+  _generic_field_file_header myheader;
+  myheader.ndim = 4;
+  for (int ii = 0; ii < 4; ii++)
+    myheader.box_size[ii] = nx[ii];
+  for (int ii = 4; ii < 10; ii++)
+    myheader.box_size[ii] = 0;
+  myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
+  myheader.bytes_per_site = bytes_per_site;
+  myheader.endianess = 0x87654321;
+  strcpy(myheader.program_version, program_version);
+  time_t time_and_date;
+  time(&time_and_date);
+  strcpy(myheader.creation_date, ctime(&time_and_date));
+  int offset = sizeof(_generic_field_file_header) / sizeof(char);
+  fwrite(&myheader, sizeof(char), offset, MDP_fp);
+}
+
 int main(int argc, char **argv)
 {
-
   printf("=============================================================\n");
   printf("nersc2mdp: Convert NERSC gauge configurations and propagators\n");
   printf("to MDP format.\n");
@@ -383,8 +390,7 @@ int main(int argc, char **argv)
   if (strcmp(argv[1], "-skip") != 0)
     return 1;
   sscanf(argv[2], "%i", &skip_bytes);
-  std::cout << skip_bytes << std::endl;
-  std::cout << argv[4] << std::endl;
+
   char precision, swap;
   sscanf(argv[4], "%ix%ix%ix%i:%i%c%c", nx, nx + 1, nx + 2, nx + 3, &rows, &precision, &swap);
 
@@ -394,64 +400,56 @@ int main(int argc, char **argv)
   printf("opening the MDP file: %s (write) \n", argv[6]);
   FILE *MDP_fp = fopen(argv[6], "w");
 
-  _generic_field_file_header myheader;
-  short_field U; // stores one timeslice
-
-  myheader.ndim = 4;
-  for (int ii = 0; ii < 4; ii++)
-    myheader.box_size[ii] = nx[ii];
-  for (int ii = 4; ii < 10; ii++)
-    myheader.box_size[ii] = 0;
-  myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
+  int offset = sizeof(_generic_field_file_header) / sizeof(char);
   // gauge: bytes_per_site = 4(mu)*9(SU3 matrix)*2(cplx)*4(bytes_per_float)
   //                       = 288
   // fermi: bytes_per_site = 16(spin-sq)*9(color-sq)*2(cplx)*4(bytes_per_float)
   //                       = 1152
+  long bytes_per_site;
   if (strcmp(argv[3], "-gauge") == 0)
-    myheader.bytes_per_site = 288;
-  myheader.endianess = 0x87654321;
-  strcpy(myheader.program_version, "Converted from UKQCD");
-  time_t time_and_date;
-  time(&time_and_date);
-  strcpy(myheader.creation_date, ctime(&time_and_date));
-  int offset = sizeof(_generic_field_file_header) / sizeof(char);
-  fwrite(&myheader, sizeof(char), offset, MDP_fp);
+    bytes_per_site = 288;
+  else
+    bytes_per_site = 1152;
 
+  write_header(MDP_fp, bytes_per_site, "Converted from NERSC", nx);
   if (strcmp(argv[3], "-gauge") == 0)
   {
     // U indices: space, space, space, mu, color, color
+    short_field U; // stores one timeslice of the gauge field
     U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
     FILE *file = fopen(argv[5], "rb");
     fseek(file, skip_bytes, SEEK_SET);
     for (int x0 = 0; x0 < nx[0]; x0++)
     {
       read_t_gauge(U, file, precision, swap, rows);
-      fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
+      fseek(MDP_fp, bytes_per_site * Nspace * x0 + offset, SEEK_SET);
       fwrite(U.m_data.get(), sizeof(Complex), U.size, MDP_fp);
     }
+    fclose(file);
   }
-  /*
   else if (strcmp(argv[1], "-fermi") == 0)
   {
+    printf("I am sorry, but conversion of fermi fields is not implemented yet!\n");
+    /*
+    short_field U;
     U.initialize(nx[1], nx[2], nx[3], 4, 4, 3, 3);
     for (int x0 = 0; x0 < nx[0]; x0++)
     {
-      read_t_prop(U, argv[3], PRECISION, SWAP, x0);
-      fseek(MDP_fp, myheader.bytes_per_site * Nspace * x0 + offset, SEEK_SET);
+      read_t_prop(U, argv[3], precision, swap, x0);
+      fseek(MDP_fp, bytes_per_site * Nspace * x0 + offset, SEEK_SET);
       fwrite(U.m_data.get(), sizeof(Complex), U.size, MDP_fp);
     }
+    */
   }
-  */
 
   fclose(MDP_fp);
 
-  printf("\nAll sites seem OK.\n");
+  printf("\nAll sites are OK.\n");
   printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
   printf("Header size is %i bytes.\n", offset);
-  printf("Output file size is %li bytes.\n",
-         myheader.bytes_per_site * myheader.sites + offset);
-  printf("Output file name is: %s\n", argv[6]);
+  printf("Output file size is %li bytes.\n", bytes_per_site * nx[0] * nx[1] * nx[2] * nx[3] + offset);
+  printf("Output file name is: %s\n", argv[4]);
   printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
 
-  return 0; // success
+  return 0;
 }

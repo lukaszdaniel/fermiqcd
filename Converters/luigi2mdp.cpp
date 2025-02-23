@@ -92,6 +92,45 @@ public:
   }
 };
 
+void write_header(FILE *MDP_fp, int bytes_per_site, const char *program_version, int nx[4])
+{
+  _generic_field_file_header myheader;
+  myheader.ndim = 4;
+  for (int ii = 0; ii < 4; ii++)
+    myheader.box_size[ii] = nx[ii];
+  for (int ii = 4; ii < 10; ii++)
+    myheader.box_size[ii] = 0;
+  myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
+  myheader.bytes_per_site = bytes_per_site;
+  myheader.endianess = 0x87654321;
+  strcpy(myheader.program_version, program_version);
+  time_t time_and_date;
+  time(&time_and_date);
+  strcpy(myheader.creation_date, ctime(&time_and_date));
+  int offset = sizeof(_generic_field_file_header) / sizeof(char);
+  fwrite(&myheader, sizeof(char), offset, MDP_fp);
+}
+
+void process_gauge(FILE *LUIGI_fp, FILE *MDP_fp, int nx[4], int nc)
+{
+  short_field U;
+  U.initialize(nx[1], nx[2], nx[3], 4, nc, nc);
+  unsigned int matrix_size = nc * nc * sizeof(Complex);
+
+  for (int x0 = 0; x0 < nx[0]; x0++)
+  {
+    for (int x3 = 0; x3 < nx[3]; x3++)
+      for (int x2 = 0; x2 < nx[2]; x2++)
+        for (int x1 = 0; x1 < nx[1]; x1++)
+          for (int mu = 0; mu < 4; mu++)
+            if (fread(&U(x1, x2, x3, (4 - mu) % 4, 0, 0), matrix_size, 1, LUIGI_fp) != matrix_size)
+            {
+              error("Error while reading from file");
+            }
+    fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
+  }
+}
+
 int main(int argc, char **argv)
 {
   printf("======================================================\n");
@@ -110,61 +149,55 @@ int main(int argc, char **argv)
   int nx[4];
   int nc;
   sscanf(argv[2], "%ix%ix%ix%i,%i", nx, nx + 1, nx + 2, nx + 3, &nc);
-
   long time0 = clock() / CLOCKS_PER_SEC;
 
+  FILE *LUIGI_fp = fopen(argv[3], "r");
+  if (!LUIGI_fp)
+  {
+    error("Cannot open input file");
+  }
+
+  FILE *MDP_fp = fopen(argv[4], "w");
+  if (!MDP_fp)
+  {
+    fclose(LUIGI_fp);
+    error("Cannot open output file");
+  }
+
+  printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
+  printf("opening the LUIGI file: %s (read)\n", argv[3]);
+  printf("opening the MDP file: %s (write) \n", argv[4]);
+
+  int offset = sizeof(_generic_field_file_header) / sizeof(char);
+  // gauge: bytes_per_site = 4(mu)*9(SU3 matrix)*2(cplx)*8(bytes_per_double)
+  //                       = 576
+  // quark: bytes_per_site = 4(spin)*3(color)*2(cplx)*8(bytes_per_double)
+  //                       = 192
+  long bytes_per_site;
+  if (strcmp(argv[1], "-gauge") == 0)
+    bytes_per_site = 576;
+  else
+    bytes_per_site = 192;
+
+  write_header(MDP_fp, bytes_per_site, "Converted from LUIGI", nx);
   if (strcmp(argv[1], "-gauge") == 0)
   {
-    printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
-    printf("opening the LUIGI file: %s (read)\n", argv[3]);
-    FILE *LUIGI_fp = fopen(argv[3], "r");
-    printf("opening the MDP file: %s (write) \n", argv[4]);
-    FILE *MDP_fp = fopen(argv[4], "w");
-
-    _generic_field_file_header myheader;
-
-    myheader.ndim = 4;
-    for (int ii = 0; ii < 4; ii++)
-      myheader.box_size[ii] = nx[ii];
-    for (int ii = 4; ii < 10; ii++)
-      myheader.box_size[ii] = 0;
-    myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
-    if (strcmp(argv[1], "-gauge") == 0)
-      myheader.bytes_per_site = 4 * nc * nc * sizeof(Complex);
-    myheader.endianess = 0x87654321;
-    strcpy(myheader.program_version, "Converted from LUIGI");
-    time_t time_and_date;
-    time(&time_and_date);
-    strcpy(myheader.creation_date, ctime(&time_and_date));
-    int offset = sizeof(_generic_field_file_header) / sizeof(char);
-    fwrite(&myheader, sizeof(char), offset, MDP_fp);
-
-    short_field U;
-    U.initialize(nx[1], nx[2], nx[3], 4, nc, nc);
-
-    unsigned int matrix_size = nc * nc * sizeof(Complex);
-
-    for (int x0 = 0; x0 < nx[0]; x0++)
-    {
-      for (int x3 = 0; x3 < nx[3]; x3++)
-        for (int x2 = 0; x2 < nx[2]; x2++)
-          for (int x1 = 0; x1 < nx[1]; x1++)
-            for (int mu = 0; mu < 4; mu++)
-              if (fread(&U(x1, x2, x3, (4 - mu) % 4, 0, 0), matrix_size, 1,
-                        LUIGI_fp) != matrix_size)
-              {
-                error("Error while reading from file");
-              }
-
-      fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
-    }
-    fclose(LUIGI_fp);
-    fclose(MDP_fp);
-    printf("\nAll sites are OK.\n");
-    printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
+    process_gauge(LUIGI_fp, MDP_fp, nx, nc);
   }
-  else
+  else if (strcmp(argv[1], "-quark") == 0)
   {
     printf("I am sorry, but conversion of propagators is not implemented yet!\n");
   }
+
+  fclose(LUIGI_fp);
+  fclose(MDP_fp);
+
+  printf("\nAll sites are OK.\n");
+  printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
+  printf("Header size is %i bytes.\n", offset);
+  printf("Output file size is %li bytes.\n", bytes_per_site * nx[0] * nx[1] * nx[2] * nx[3] + offset);
+  printf("Output file name is: %s\n", argv[4]);
+  printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
+
+  return 0;
 }
