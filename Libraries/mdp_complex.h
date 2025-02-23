@@ -250,10 +250,10 @@ namespace MDP
 
   std::ostream &operator<<(std::ostream &os, const mdp_complex &a)
   {
-    if (a.imag() < 0)
-      os << a.real() << "-" << -a.imag() << "I";
+    if (a.imag() < 0.0)
+      os << a.real() << "-" << std::abs(a.imag()) << "I";
     else
-      os << a.real() << "+" << a.imag() << "I";
+      os << a.real() << "+" << std::abs(a.imag()) << "I";
     return os;
   }
 } // namespace MDP

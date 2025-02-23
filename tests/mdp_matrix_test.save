@@ -6,6 +6,6 @@ exp, log                    ...test passed
 *=, /=, +=, -= (mdp_complex)    ...test passed
 *=, /=, +=, -= (Real)       ...test passed
 *=, /=, +=, -= (mdp_matrix)     ...test passed
-sizeof(a) = 32
-sizeof(b) = 32
-sizeof(c) = 32
+sizeof(a) = 24
+sizeof(b) = 24
+sizeof(c) = 24
