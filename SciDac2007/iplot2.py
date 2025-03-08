@@ -23,6 +23,7 @@ class IPlot:
 
     def __init__(self, filename, plot_type, items=[]):
         self.type = plot_type
+
         if self.type == "quartz":
             r.quartz()
         self.plot_raw_data(filename + "_raw_data.csv")

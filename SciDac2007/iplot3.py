@@ -11,7 +11,8 @@ from matplotlib.backends.backend_tkagg import (
     NavigationToolbar2TkAgg as NavigationToolbar2Tk,
 )
 
-import re, csv
+import re
+import csv
 
 usage = "python iplot.py\n"
 version = ("iplotv1.0"

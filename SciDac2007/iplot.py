@@ -1,13 +1,15 @@
 from optparse import *
 from rpy import *
-import re, urllib.request, urllib.parse, urllib.error, csv
+import re
+import urllib.request, urllib.parse, urllib.error
+import csv
 
 usage = "python iplot.py\n"
-version = ("iplotv1.0\n"
-           "  Copyright (c) 2007 Massimo Di Pierro\n"
-           "  All rights reserved\n"
-           "  License: GPL 2.0\n\n"
-           "  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>\n")
+version = ("iplotv1.0"
+           "\n  Copyright (c) 2007 Massimo Di Pierro"
+           "\n  All rights reserved"
+           "\n  License: GPL 3.0"
+           "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>")
 
 description = "plot the output of ibootstrap.py"
 
@@ -22,6 +24,7 @@ class IPlot:
 
     def __init__(self, filename, plot_type, items=[]):
         self.type = plot_type
+
         if self.type == "quartz":
             r.quartz()
         self.plot_raw_data(filename + "_raw_data.csv")
@@ -40,7 +43,7 @@ class IPlot:
         if self.type == "ps":
             r.dev_off()
         else:
-            eval(input("press enter to continue"))
+            input("press enter to continue")
 
     def plot_raw_data(self, filename):
         for items in csv.reader(open(filename, "r"),
@@ -184,10 +187,10 @@ def shell_iplot():
     parser = OptionParser(usage, None, Option, version)
     parser.description = description
     parser.add_option(
-        "-i",
-        "--input_prefix",
+        "-o",
+        "--origin_prefix",
         default="ibootstrap",
-        dest="input_prefix",
+        dest="origin_prefix",
         help="the prefix used to build input filenames",
     )
     parser.add_option("-p",
@@ -213,7 +216,7 @@ def shell_iplot():
     (options, args) = parser.parse_args()
     if options.fits:
         print("sorry -f not implemented yet!")
-    plot = IPlot(options.input_prefix, options.plot_type,
+    plot = IPlot(options.origin_prefix, options.plot_type,
                  options.plot_variables.split(","))
 
 
