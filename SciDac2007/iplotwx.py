@@ -1,5 +1,9 @@
-from optparse import *
-import numpy
+import csv
+from optparse import OptionParser
+import re
+import os
+import sys
+import numpy as np
 from scipy import stats
 import wx
 from matplotlib.axes import Subplot
@@ -13,34 +17,37 @@ from matplotlib.backends.backend_wxagg import (
 from matplotlib.colors import ColorConverter
 from matplotlib.colors import rgb2hex
 
-import re, csv
-import os, os.path
+import os.path
+import zipfile
 import datetime
 import traceback
-import sys
-import zipfile
+from matplotlib.backends.backend_wxagg import FigureCanvasWx
+from matplotlib.figure import Figure
+from matplotlib.colors import rgb2hex
+from wx.lib.pubsub import pub
+from wx.lib.agw import flatnotebook as fnb
+from wx.lib.agw.aui import AuiManager
 
 import ibootstrap
 import ifit
 
-usage = "python iplot.py\n"
-version = (
-    "iplotv1.0"
+# Script information
+USAGE = "python iplot.py\n"
+VERSION = (
+    "iplot v1.0"
     "\n  Copyright (c) 2007 Massimo Di Pierro"
     "\n  All rights reserved"
-    "\n  License: GPL 2.0"
+    "\n  License: GPL 3.0"
     "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>"
     "\n    and Vincent Harvey <vincent@vincentharvey.com>"
 )
+DESCRIPTION = "Plot the output of ibootstrap.py"
 
-description = "plot the output of ibootstrap.py"
-
-default_output_prefix = ".data/ibootstrap"
+DEFAULT_OUTPUT_PREFIX = ".data/ibootstrap"
 
 
 def clean(text):
     return text
-    # return re.sub('\W','',text.replace('/','div'))
 
 
 def get_name(filename, prefix):
@@ -69,34 +76,26 @@ def csv_items(filename):
 class IPlot:
     def __init__(self, filename, plot_type="ps", items=[], output_prefix=""):
         self.type = plot_type
-
         self.filename = filename
         self.output_prefix = output_prefix
         self.figure = Figure((8.5, 11))
-        # self.figure = Figure((8.3,11.7))
-        if plot_type == "png":
-            self.canvas = FigureCanvasAgg(self.figure)
-            self.extension = ".png"
-        else:
-            self.canvas = FigureCanvasPS(self.figure)
-            self.extension = ".ps"
+        self.extension = ".png" if plot_type == "png" else ".ps"
+        self.canvas = FigureCanvasAgg(self.figure) if plot_type == "png" else FigureCanvasPS(self.figure)
         self.plots = {}
 
-        # if self.type=='quartz': r.quartz()
-
         try:
-            self.plot_raw_data(filename + "_raw_data.csv")
-            self.plot_trails(filename + "_autocorrelations.csv")
-            self.plot_trails(filename + "_trails.csv")
-            self.plot_samples(filename + "_samples.csv")
-            self.plot_min_mean_max(filename + "_min_mean_max.csv", items)
+            self.plot_raw_data(f"{filename}_raw_data.csv")
+            self.plot_trails(f"{filename}_autocorrelations.csv")
+            self.plot_trails(f"{filename}_trails.csv")
+            self.plot_samples(f"{filename}_samples.csv")
+            self.plot_min_mean_max(f"{filename}_min_mean_max.csv", items)
         except Exception as e:
             print(e)
         self.figure.clear()
 
     def print_all(self):
         def print_dict(d):
-            for name, val in list(d.items()):
+            for name, val in d.items():
                 if isinstance(val, dict):
                     print_dict(val)
                 else:
@@ -106,35 +105,30 @@ class IPlot:
 
     def print_plot(self, name, plot_args):
         plot = gen_plot(self.figure, plot_args)
-        fname = self.output_prefix + name + self.extension
+        fname = f"{self.output_prefix}{name}{self.extension}"
         self.canvas.print_figure(fname, 72)
         return fname
 
     def setup_plot(self, figure, name, xlabel, ylabel):
         plot = Subplot(figure, 111, axisbg="white", frameon="False")
-        # plot.set_axis_bg_color('#000000')
         plot.set_title(name)
         plot.set_xlabel(xlabel)
         plot.set_ylabel(ylabel)
         return plot
 
-    def make_error_bar(
-        self, figure, name, xdata, ydata, errors, xlabel, ylabel, filename
-    ):
+    def make_error_bar(self, figure, name, xdata, ydata, errors, xlabel, ylabel, filename):
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.errorbar(xdata, ydata, errors, fmt="ko", markerfacecolor=None)
         plot.iplot_errorbar = True
         plot.filename = filename
         return plot
 
-    def make_hist(self, figure, name, data, length, xlabel="x", ylabel="y"):  # prob='T'
-        # be sure to add a 'rug', whatever that is
+    def make_hist(self, figure, name, data, length, xlabel="x", ylabel="y"):
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.hist(data, length, facecolor="w", edgecolor="k")
         return plot
-        # plot.set_xticks(data) # was not a good 'rug'
 
-    def make_plot(self, figure, name, xdata, ydata, xlabel="x", ylabel="y"):  # type='p'
+    def make_plot(self, figure, name, xdata, ydata, xlabel="x", ylabel="y"):
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.plot(xdata, ydata, "k-", markerfacecolor=None)
         return plot
@@ -146,34 +140,19 @@ class IPlot:
         for items in csv_items(filename):
             plots = {}
             tag = items[0]
-
-            quants[prefix + " " + tag] = plots
+            quants[f"{prefix} {tag}"] = plots
 
             data = items[1:]
-            name = prefix + " %s" % clean(tag)
-            plots[name] = self.make_plot, (
-                name,
-                list(range(len(data))),
-                data,
-                "step",
-                tag,
-            )
-            name = prefix + " %s hist" % clean(tag)
-            plots[name] = self.make_hist, (name, data, len(data) / 20, tag, "frequency")
-            probs = []
-            mu = numpy.mean(data)
-            sd = numpy.std(data)
-            probs = [
-                min(x, 1 - x) for x in [stats.norm.cdf((x - mu) / sd) for x in data]
-            ]
-            name = prefix + " %s probability" % clean(tag)
-            plots[name] = self.make_plot, (
-                name,
-                list(range(len(probs))),
-                probs,
-                "step",
-                "probability " + tag,
-            )
+            name = f"{prefix} {clean(tag)}"
+            plots[name] = self.make_plot, (name, list(range(len(data))), data, "step", tag)
+            name = f"{prefix} {clean(tag)} hist"
+            plots[name] = self.make_hist, (name, data, len(data) // 20, tag, "frequency")
+
+            mu = np.mean(data)
+            sd = np.std(data)
+            probs = [min(x, 1 - x) for x in [stats.norm.cdf((x - mu) / sd) for x in data]]
+            name = f"{prefix} {clean(tag)} probability"
+            plots[name] = self.make_plot, (name, list(range(len(probs))), probs, "step", f"probability {tag}")
 
     def plot_trails(self, filename):
         quants = {}
@@ -182,14 +161,8 @@ class IPlot:
         for items in csv_items(filename):
             tag = items[0]
             data = items[1:]
-            name = prefix + " %s" % clean(tag)
-            quants[name] = self.make_plot, (
-                name,
-                list(range(len(data))),
-                data,
-                "step",
-                tag,
-            )
+            name = f"{prefix} {clean(tag)}"
+            quants[name] = self.make_plot, (name, list(range(len(data))), data, "step", tag)
 
     def plot_samples(self, filename):
         quants = {}
@@ -198,18 +171,8 @@ class IPlot:
         for items in csv_items(filename):
             tag = items[0]
             data = items[1:]
-            name = prefix + " %s hist" % clean(tag)
-            quants[name] = self.make_hist, (
-                name,
-                data,
-                len(data) / 10,
-                tag,
-                "frequency",
-            )
-            # self.begin(filename[:-4]+'_%s_qq.ps' % clean(tag))
-            # r.qqnorm(data,xlab=tag+' quantiles',main='')
-            # r.qqline(data)
-            # self.end()
+            name = f"{prefix} {clean(tag)} hist"
+            quants[name] = self.make_hist, (name, data, len(data) // 10, tag, "frequency")
 
     def plot_min_mean_max(self, filename, xlab=None):
         if not xlab:
@@ -218,52 +181,34 @@ class IPlot:
         tags = lines[0]
         if not xlab or xlab[0] == "":
             xlab = [tags[1]]
-        index = -1
-        for i in range(1, len(tags) - 3):
-            if tags[i] == xlab[0]:
-                index = i - 1
+
+        index = next((i - 1 for i in range(1, len(tags) - 3) if tags[i] == xlab[0]), -1)
         if index < 0:
-            print("error", xlab)
+            print("Error: Unable to find xlab tag:", xlab)
             raise Exception
+
         sets = {}
         for items in lines[1:]:
             tag = items[0]
             data = items[1:]
-            legend = ""
-            for i in range(1, len(tags) - 3):
-                if not tags[i] in xlab:
-                    legend += "%s=%g " % (tags[i], data[i - 1])
-            if legend not in sets:
-                x, y, yminus, yplus = [], [], [], []
-                sets[legend] = (x, y, yminus, yplus)
-            else:
-                x, y, yminus, yplus = sets[legend]
+            legend = " ".join([f"{tags[i]}={data[i-1]}" for i in range(1, len(tags) - 3) if tags[i] not in xlab])
+            sets.setdefault(legend, ([], [], [], []))
+            x, y, yminus, yplus = sets[legend]
             t = data[index]
             x.append(t)
             y.append(data[-2])
             yminus.append(data[-3])
             yplus.append(data[-1])
 
-        # v=r.FALSE
         quants = {}
         prefix = get_name(filename, self.filename)
         self.plots[prefix] = quants
-        for legend in list(sets.keys()):
-            x, y, yminus, yplus = sets[legend]
-            # matplotlib takes offsets for errors, not absolute y positions
-            error_low = numpy.subtract(y, yminus)
-            error_high = numpy.subtract(yplus, y)
-            name = prefix + " %s" % clean(legend)
-            quants[name] = self.make_error_bar, (
-                name,
-                x,
-                y,
-                [error_low, error_high],
-                tags[index + 1],
-                tags[0],
-                filename,
-            )
-            # v=r.TRUE
+        for legend, (x, y, yminus, yplus) in sets.items():
+            error_low = np.subtract(y, yminus)
+            error_high = np.subtract(yplus, y)
+            name = f"{prefix} {clean(legend)}"
+            quants[name] = self.make_error_bar, (name, x, y, [error_low, error_high], tags[index + 1], tags[0], filename)
+
 
 
 def make_gui():
@@ -274,7 +219,6 @@ def make_gui():
     root.SetSizer(root_sizer)
 
     log_widget = wx.TextCtrl(root, -1, style=wx.TE_MULTILINE, size=(600, 600))
-
     root_sizer.Add(log_widget, 1, wx.ALL | wx.EXPAND)
 
     clear_id = wx.NewId()
@@ -283,7 +227,6 @@ def make_gui():
     root_sizer.Add(clear_button, 0, wx.RIGHT | wx.EXPAND)
 
     menubar = wx.MenuBar(style=wx.MENU_TEAROFF)
-
     file_menu = wx.Menu(style=wx.MENU_TEAROFF)
 
     file_new_id = wx.NewId()
@@ -303,9 +246,6 @@ def make_gui():
     root.Bind(wx.EVT_MENU, lambda e: sys.exit(0), id=file_exit_id)
 
     menubar.Append(file_menu, "&File")
-
-    # for name, val in sorted(menu_items):
-    #    main_menu.Append(val, name)
     root.SetMenuBar(menubar)
 
     def save_data():
@@ -313,15 +253,12 @@ def make_gui():
             dlg = wx.MessageDialog(None, "No data to save", style=wx.ICON_ERROR | wx.OK)
             dlg.ShowModal()
             return
-        fdialog = wx.FileDialog(
-            None, "Choose save file", os.getcwd(), style=wx.SAVE, wildcard="*.zip"
-        )
+        fdialog = wx.FileDialog(None, "Choose save file", os.getcwd(), style=wx.SAVE, wildcard="*.zip")
         if fdialog.ShowModal() == wx.ID_OK:
             zipfilename = fdialog.GetFilename()
-            zip = zipfile.ZipFile(str(zipfilename).rstrip(".zip") + ".zip", "w")
-            for filename in os.listdir(".data"):
-                zip.write(filename)
-            zip.close()
+            with zipfile.ZipFile(f"{zipfilename.rstrip('.zip')}.zip", "w") as zip_file:
+                for filename in os.listdir(".data"):
+                    zip_file.write(filename)
         fdialog.Destroy()
 
     def open_data():
@@ -344,12 +281,11 @@ def make_gui():
                     zip.read(filename)
                 )
             zip.close()
-            load_iplot(default_output_prefix)
+            load_iplot(DEFAULT_OUTPUT_PREFIX)
         fdialog.Destroy()
 
     def log_msg(msg):
-        t = datetime.datetime.now()
-        log_widget.AppendText("%s: %s\n" % (str(t), msg))
+        log_widget.AppendText(f"{datetime.datetime.now()}: {msg}\n")
 
     def to_wx_color(string_color):
         rgb = ColorConverter().to_rgb(string_color)
@@ -414,7 +350,7 @@ def make_gui():
                             fit.scatter_points = int(scatter_entry.GetValue())
                         if fit.scatter_points:
                             fit.iterative_fit(
-                                default_output_prefix + "_scatter.csv", **variables
+                                DEFAULT_OUTPUT_PREFIX + "_scatter.csv", **variables
                             )
                         for key, value in list(variables.items()):
                             log_msg("%s = %g" % (key, value))
@@ -549,79 +485,44 @@ def make_gui():
 
     def show_bootstrap_init():
         frame = wx.Frame(root, -1, "Select Bootstrap parameters")
-
         frame_box = wx.BoxSizer(wx.VERTICAL)
         frame.SetSizer(frame_box)
 
         param_panel = wx.Panel(frame, -1, style=wx.SUNKEN_BORDER)
-
         parameters = [
             ("filepattern", "File Pattern", str, "*.log"),
-            (
-                "expression",
-                "Expression",
-                str,
-                '"a[<t>]"/"b[<t>]"',
-            ),  # ('expression', 'Expression', str, '"3pt[<t1>][<t2>]"/"2pt[<t1>]"/"2pt[<t2>]"'), \
+            ("expression", "Expression", str, '"a[<t>]"/"b[<t>]"'),
             ("condition", "Condition", str, "True"),
-            (
-                "indices",
-                "Indices",
-                str,
-                "t",
-            ),  # ('condition', 'Condition', str, 't1==t2'), \
+            ("indices", "Indices", str, "t"),
             ("min_index", "Minimum Index", int, 0),
             ("max_index", "Maximum Index", int, 0),
             ("nsamples", "Number of samples", int, 100),
             ("percent", "Bootstrap percent", float, 0.158),
-            ("raw", "Raw", bool, False),  # ('advanced', 'Advanced', bool, False), \
-            ("import_module", "Import module", str, None),
+            ("raw", "Raw", bool, False),
+            ("import_module", "Import module", str, None)
         ]
 
         def empty_if_none(e):
-            if e == None:
-                return ""
-            return str(e)
+            return "" if e is None else str(e)
 
         psizer = wx.GridBagSizer(5, 10)
         entries = []
         for index, (pname, name, ptype, default) in enumerate(parameters):
-            psizer.Add(
-                wx.StaticText(param_panel, -1, name),
-                (index, 0),
-                wx.DefaultSpan,
-                wx.EXPAND,
-            )
-            # id = wx.NewId()
-            if ptype == bool:
-                entry = wx.CheckBox(param_panel, -1)
-                entry.SetValue(default)
-            else:
-                # entry = wx.TextCtrl(param_panel, -1, empty_if_none(default))
-                entry = wx.TextCtrl(
-                    param_panel, -1, empty_if_none(default), size=wx.Size(500, 20)
-                )
-            psizer.Add(entry, (index, 1), wx.DefaultSpan, wx.RIGHT | wx.EXPAND)
+            psizer.Add(wx.StaticText(param_panel, -1, name), (index, 0), wx.DefaultSpan, wx.EXPAND)
+            entry = wx.CheckBox(param_panel, -1) if ptype == bool else wx.TextCtrl(param_panel, -1, empty_if_none(default), size=wx.Size(500, 20))
             entries.append(entry)
+            psizer.Add(entry, (index, 1), wx.DefaultSpan, wx.RIGHT | wx.EXPAND)
 
         def bootstrap_run():
-            setup_data_dir()
-            param_dict = {}
-            for index, (pname, name, ptype, default) in enumerate(parameters):
-                if entries[index].GetValue():
-                    param_dict[pname] = ptype(entries[index].GetValue())
-            param_dict["output_prefix"] = default_output_prefix
+            param_dict = {pname: ptype(entry.GetValue()) for pname, entry, ptype in zip([p[0] for p in parameters], entries, [p[2] for p in parameters])}
+            param_dict["output_prefix"] = "DEFAULT_OUTPUT_PREFIX"
             try:
                 print(param_dict)
-                if "indices" in param_dict:
-                    IPlot.indices = param_dict["indices"]
-                else:
-                    IPlot.indices = "t"
                 bootstrap = ibootstrap.IBootstrap(**param_dict)
                 for msg in bootstrap.report:
                     log_msg("IBootstrap MSG:\t" + msg)
                 log_msg("IBootstrap status:\t" + bootstrap.status)
-                load_iplot(default_output_prefix)
+                load_iplot(DEFAULT_OUTPUT_PREFIX)
                 frame.Destroy()
             except Exception as e:
                 log_msg(str(e))
@@ -670,14 +571,14 @@ def make_gui():
     root.Fit()
     root.Show(True)
 
-    # load_iplot(default_output_prefix)
+    # load_iplot(DEFAULT_OUTPUT_PREFIX)
 
     app.MainLoop()
 
 
 def shell_iplot():
-    parser = OptionParser(usage, None, Option, version)
-    parser.description = description
+    parser = OptionParser(USAGE, None, OptionParser, VERSION)
+    parser.description = DESCRIPTION
     parser.add_option(
         "-d",
         "--dest_prefix",

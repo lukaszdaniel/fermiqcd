@@ -1,8 +1,6 @@
-from optparse import *
 import numpy
 from scipy import stats
 import tkinter as Tk
-from matplotlib.axes import Subplot
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.backends.backend_ps import FigureCanvasPS
@@ -11,28 +9,31 @@ from matplotlib.backends.backend_tkagg import (
     NavigationToolbar2TkAgg as NavigationToolbar2Tk,
 )
 
-import re
 import csv
+from optparse import OptionParser
+import re
+from rpy import r
 
-usage = "python iplot.py\n"
-version = ("iplotv1.0"
+# Script information
+USAGE = "python iplot.py\n"
+VERSION = ("iplot v1.0"
            "\n  Copyright (c) 2007 Massimo Di Pierro"
            "\n  All rights reserved"
            "\n  License: GPL 3.0"
            "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>")
-
-description = "plot the output of ibootstrap.py"
-
-# r.library('Hmisc')
+DESCRIPTION = "Plot the output of ibootstrap.py"
 
 
 def clean(text):
-    return re.sub("\s+", "", text.replace("/", "_div_"))
+    """Cleans the input text by removing spaces and replacing '/' with '_div_'."""
+    return re.sub(r"\s+", "", text.replace("/", "_div_"))
 
 
 def gen_plot(figure, plot_args):
+    """Generates a plot using the provided figure and arguments."""
     figure.clear()
-    plot = plot_args[0](figure, *plot_args[1])
+    plot_func = plot_args[0]
+    plot = plot_func(figure, *plot_args[1])
     figure.add_subplot(plot, 111)
     return plot
 
@@ -46,22 +47,21 @@ def gen_plot(figure, plot_args):
 
 
 class IPlot:
-
     def __init__(self, filename, plot_type, items=[], output_prefix=""):
         self.type = plot_type
-
         self.output_prefix = output_prefix
         self.figure = Figure((8.5, 11))
-        # self.figure = Figure((8.3,11.7))
+        
+        # Choose the canvas based on plot type
         if plot_type == "png":
             self.canvas = FigureCanvasAgg(self.figure)
             self.extension = ".png"
         else:
             self.canvas = FigureCanvasPS(self.figure)
             self.extension = ".ps"
+        
         self.plots = {}
 
-        # if self.type=='quartz': r.quartz()
         self.plot_raw_data(filename + "_raw_data.csv")
         self.plot_autocorrelations(filename + "_autocorrelations.csv")
         self.plot_trails(filename + "_trails.csv")
@@ -70,7 +70,7 @@ class IPlot:
         self.figure.clear()
 
     def print_all(self):
-
+        """Prints all plots."""
         def print_dict(d):
             for name, val in list(d.items()):
                 if isinstance(val, dict):
@@ -81,50 +81,40 @@ class IPlot:
         print_dict(self.plots)
 
     def print_plot(self, name, plot_args):
+        """Generates and saves a plot to a file."""
         plot = gen_plot(self.figure, plot_args)
         fname = self.output_prefix + name + self.extension
         self.canvas.print_figure(fname, 72)
         return fname
 
     def setup_plot(self, figure, name, xlabel, ylabel):
-        plot = Subplot(figure, 111, axisbg="white", frameon="False")
-        # plot.set_axis_bg_color('#000000')
+        """Sets up a basic plot with title and axis labels."""
+        plot = figure.add_subplot(111)
         plot.set_title(name)
         plot.set_xlabel(xlabel)
         plot.set_ylabel(ylabel)
         return plot
 
-    def make_error_bar(self, figure, name, xdata, ydata, errors, xlabel,
-                       ylabel):
+    def make_error_bar(self, figure, name, xdata, ydata, errors, xlabel, ylabel):
+        """Generates an error bar plot."""
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.errorbar(xdata, ydata, errors, fmt="ko", markerfacecolor=None)
         return plot
 
-    def make_hist(self,
-                  figure,
-                  name,
-                  data,
-                  length,
-                  xlabel="x",
-                  ylabel="y"):  # prob='T'
-        # be sure to add a 'rug', whatever that is
+    def make_hist(self, figure, name, data, length, xlabel="x", ylabel="y"):
+        """Generates a histogram plot."""
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.hist(data, length, facecolor="w", edgecolor="k")
         return plot
-        # plot.set_xticks(data) # was not a good 'rug'
 
-    def make_plot(self,
-                  figure,
-                  name,
-                  xdata,
-                  ydata,
-                  xlabel="x",
-                  ylabel="y"):  # type='p'
+    def make_plot(self, figure, name, xdata, ydata, xlabel="x", ylabel="y"):
+        """Generates a simple line plot."""
         plot = self.setup_plot(figure, name, xlabel, ylabel)
         plot.plot(xdata, ydata, "k-", markerfacecolor=None)
         return plot
 
     def plot_raw_data(self, filename):
+        """Plots raw data from the given CSV file."""
         quants = {}
         self.plots[filename[:-4]] = quants
         for line in open(filename, "r"):
@@ -145,11 +135,7 @@ class IPlot:
             )
             name = filename[:-4] + "_%s_hist" % clean(tag)
             plots[name] = self.make_hist, (name, data, 10, tag, "frequency")
-            # self.begin(filename[:-4]+'_%s_qq.ps' % clean(tag))
-            # r.qqnorm(data,xlab=tag+' quantiles',main='')
-            # r.qqline(data)
-            # self.end()
-            probs = []
+            
             mu = numpy.mean(data)
             sd = numpy.std(data)
             probs = [
@@ -166,6 +152,7 @@ class IPlot:
             )
 
     def plot_autocorrelations(self, filename):
+        """Plots autocorrelations from the given CSV file."""
         quants = {}
         self.plots[filename[:-4]] = quants
         for line in open(filename, "r"):
@@ -186,6 +173,7 @@ class IPlot:
             )
 
     def plot_trails(self, filename):
+        """Plots trails from the given CSV file."""
         quants = {}
         self.plots[filename[:-4]] = quants
         for line in open(filename, "r"):
@@ -202,6 +190,7 @@ class IPlot:
             )
 
     def plot_samples(self, filename):
+        """Plots samples from the given CSV file."""
         quants = {}
         self.plots[filename[:-4]] = quants
         for line in open(filename, "r"):
@@ -210,56 +199,39 @@ class IPlot:
             data = [float(x) for x in items[1:]]
             name = filename[:-4] + "_%s_hist" % clean(tag)
             quants[name] = self.make_hist, (name, data, 10, tag, "frequency")
-            # self.begin(filename[:-4]+'_%s_qq.ps' % clean(tag))
-            # r.qqnorm(data,xlab=tag+' quantiles',main='')
-            # r.qqline(data)
-            # self.end()
 
     def plot_min_mean_max(self, filename, xlab=None):
         """THIS NEEDS TO BE FIXED!!!!"""
         lines = list(
-            csv.reader(open(filename, "r"),
-                       delimiter=",",
-                       quoting=csv.QUOTE_NONNUMERIC))
+            csv.reader(open(filename, "r"), delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
+        )
         tags = lines[0]
         if not xlab or xlab[0] == "":
             xlab = [tags[1]]
-        k = index = 0
-        for tag in tags:
-            if tag == xlab:
-                index = k
-            if tag[0] == "[":
-                break
-            k += 1
-        xlab = tags[1:k]  # this kind of fixes the problem!!!
+        index = next(
+            (k for k, tag in enumerate(tags) if tag == xlab[0]), None
+        )
+        if index is None:
+            raise ValueError(f"Error: {xlab} not found in the tags.")
         sets = {}
         for items in lines[1:]:
             tag = items[0]
             data = items[1:]
-            legend = ""
-            for i in range(1, k):
-                if not tags[i] in xlab:
-                    legend += "%s=%g " % (tags[i], data[i - 1])
+            legend = "".join(f"{tags[i]}={data[i-1]} " for i in range(1, len(tags)) if tags[i] not in xlab)
             if legend not in sets:
-                x, y, yminus, yplus = [], [], [], []
-                sets[legend] = (x, y, yminus, yplus)
-            else:
-                x, y, yminus, yplus = sets[legend]
+                sets[legend] = ([], [], [], [])
+            x, y, yminus, yplus = sets[legend]
             t = data[index]
             x.append(t)
             y.append(data[-2])
             yminus.append(data[-3])
             yplus.append(data[-1])
-        # v=r.FALSE
-        quants = {}
-        self.plots[filename[:-4]] = quants
-        for legend in list(sets.keys()):
-            x, y, yminus, yplus = sets[legend]
-            # matplotlib takes offsets for errors, not absolute y positions
+
+        for legend, (x, y, yminus, yplus) in sets.items():
             error_low = numpy.subtract(y, yminus)
             error_high = numpy.subtract(yplus, y)
             name = filename[:-4] + "_%s" % clean(legend)
-            quants[name] = self.make_error_bar, (
+            self.plots[name] = self.make_error_bar, (
                 name,
                 x,
                 y,
@@ -267,25 +239,17 @@ class IPlot:
                 tags[index + 1],
                 tags[0],
             )
-            # v=r.TRUE
 
 
 def make_menu(iplot):
-    # win = Tk.Tk()
-    # win.wm_title("IPlot")
-
-    main_window = [None]
+    """Creates the menu interface for interacting with the plot."""
+    main_window = Tk.Tk()
 
     def show_plot(name, plot_args):
         pwin = Tk.Toplevel()
         pwin.wm_title(name)
-
-        # iplot.figure.clear() #delaxes(plot)
         figure = Figure(facecolor="#ffffff")
         plot = gen_plot(figure, plot_args)
-
-        # iplot.figure.clear()
-        # iplot.figure.add_axes(plot)
 
         frame_mpl = Tk.Frame(master=pwin)
         frame_mpl.pack(side=Tk.LEFT, fill=Tk.BOTH, expand=1)
@@ -396,8 +360,9 @@ def make_menu(iplot):
 
 
 def shell_iplot():
-    parser = OptionParser(usage, None, Option, version)
-    parser.description = description
+    """Main function to handle command-line arguments and execute plotting."""
+    parser = OptionParser(USAGE, None, OptionParser, VERSION)
+    parser.description = DESCRIPTION
     parser.add_option(
         "-d",
         "--dest_prefix",

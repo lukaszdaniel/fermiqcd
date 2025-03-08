@@ -1,224 +1,162 @@
-from optparse import *
-from rpy import *
-import re
-import urllib.request, urllib.parse, urllib.error
 import csv
+from optparse import OptionParser
+import re
+from rpy import r
 
-usage = "python iplot.py\n"
-version = ("iplotv1.0"
+# Script information
+USAGE = "python iplot.py\n"
+VERSION = ("iplot v1.0"
            "\n  Copyright (c) 2007 Massimo Di Pierro"
            "\n  All rights reserved"
            "\n  License: GPL 3.0"
            "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>")
+DESCRIPTION = "Plot the output of ibootstrap.py"
 
-description = "plot the output of ibootstrap.py"
-
+# R library initialization
 r.library("Hmisc")
 
 
 def clean(text):
-    return re.sub("\s+", "", text.replace("/", "_div_"))
+    """Cleans up text by replacing spaces with empty and slashes with '_div_'."""
+    return re.sub(r"\s+", "", text.replace("/", "_div_"))
 
 
 class IPlot:
-
-    def __init__(self, filename, plot_type, items=[]):
+    def __init__(self, filename, plot_type, items=None):
+        if items is None:
+            items = []
         self.type = plot_type
-
         if self.type == "quartz":
             r.quartz()
-        self.plot_raw_data(filename + "_raw_data.csv")
-        self.plot_autocorrelations(filename + "_autocorrelations.csv")
-        self.plot_trails(filename + "_trails.csv")
-        self.plot_samples(filename + "_samples.csv")
-        self.plot_min_mean_max(filename + "_min_mean_max.csv", items)
+
+        self.plot_raw_data(f"{filename}_raw_data.csv")
+        self.plot_autocorrelations(f"{filename}_autocorrelations.csv")
+        self.plot_trails(f"{filename}_trails.csv")
+        self.plot_samples(f"{filename}_samples.csv")
+        self.plot_min_mean_max(f"{filename}_min_mean_max.csv", items)
 
     def begin(self, filename):
+        """Starts the plotting device (ps or png)."""
         if self.type == "ps":
-            r.postscript(filename + ".ps")
-        if self.type == "png":
-            r.png(filename + ".png")
+            r.postscript(f"{filename}.ps")
+        elif self.type == "png":
+            r.png(f"{filename}.png")
 
     def end(self):
+        """Ends the plotting device."""
         if self.type == "ps":
             r.dev_off()
         else:
-            input("press enter to continue")
+            input("Press enter to continue")
+
+    def plot_data(self, filename, plot_function):
+        """Handles reading data from a CSV and plotting it using a specific plot function."""
+        with open(filename, "r") as file:
+            reader = csv.reader(file, delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
+            for items in reader:
+                tag = items[0]
+                data = items[1:]
+                plot_function(tag, data, filename)
 
     def plot_raw_data(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
-            self.begin(filename[:-4] + "_%s" % clean(tag))
-            r.plot(x=list(range(len(data))),
-                   y=data,
-                   xlab="step",
-                   ylab=tag,
-                   main="")
+        """Plots raw data and its corresponding histogram and probability plot."""
+        def plot_function(tag, data, filename):
+            # Raw data plot
+            self.begin(f"{filename[:-4]}_{clean(tag)}")
+            r.plot(x=list(range(len(data))), y=data, xlab="step", ylab=tag, main="")
             self.end()
-            self.begin(filename[:-4] + "_%s_hist" % clean(tag))
-            r.hist(data,
-                   n=len(data) / 20,
-                   xlab=tag,
-                   ylab="frequency",
-                   main="",
-                   prob="T")
+
+            # Histogram
+            self.begin(f"{filename[:-4]}_{clean(tag)}_hist")
+            r.hist(data, n=len(data) // 20, xlab=tag, ylab="frequency", main="", prob="T")
             r.rug(data)
             self.end()
-            # self.begin(filename[:-4]+'_%s_qq.ps' % clean(tag))
-            # r.qqnorm(data,xlab=tag+' quantiles',main='')
-            # r.qqline(data)
-            # self.end()
+
+            # Probability plot
             mu = r.mean(data)
             sd = r.sd(data)
-            probs = [
-                min(x, 1 - x) for x in [r.pnorm((x - mu) / sd) for x in data]
-            ]
-            self.begin(filename[:-4] + "_%s_probability" % clean(tag))
-            r.plot(
-                list(range(len(probs))),
-                probs,
-                xlab="step",
-                ylab="probability " + tag,
-                main="",
-                type="p",
-            )
+            probs = [min(x, 1 - x) for x in [r.pnorm((x - mu) / sd) for x in data]]
+            self.begin(f"{filename[:-4]}_{clean(tag)}_probability")
+            r.plot(list(range(len(probs))), probs, xlab="step", ylab=f"probability {tag}", main="", type="p")
             self.end()
+
+        self.plot_data(filename, plot_function)
 
     def plot_autocorrelations(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
-            self.begin(filename[:-4] + "_%s" % clean(tag))
-            r.plot(x=list(range(len(data))),
-                   y=data,
-                   xlab="step",
-                   ylab=tag,
-                   main="")
+        """Plots autocorrelations."""
+        def plot_function(tag, data, filename):
+            self.begin(f"{filename[:-4]}_{clean(tag)}")
+            r.plot(x=list(range(len(data))), y=data, xlab="step", ylab=tag, main="")
             self.end()
+
+        self.plot_data(filename, plot_function)
 
     def plot_trails(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
-            self.begin(filename[:-4] + "_%s" % clean(tag))
-            r.plot(
-                x=list(range(len(data))),
-                y=data,
-                xlab="step",
-                ylab=tag,
-                main="",
-                type="p",
-            )
+        """Plots trails."""
+        def plot_function(tag, data, filename):
+            self.begin(f"{filename[:-4]}_{clean(tag)}")
+            r.plot(x=list(range(len(data))), y=data, xlab="step", ylab=tag, main="", type="p")
             self.end()
+
+        self.plot_data(filename, plot_function)
 
     def plot_samples(self, filename):
-        for items in csv.reader(open(filename, "r"),
-                                delimiter=",",
-                                quoting=csv.QUOTE_NONNUMERIC):
-            tag = items[0]
-            data = items[1:]
-            self.begin(filename[:-4] + "_%s_hist" % clean(tag))
-            r.hist(data,
-                   n=len(data) / 10,
-                   xlab=tag,
-                   ylab="frequency",
-                   main="",
-                   prob="T")
+        """Plots samples and histograms."""
+        def plot_function(tag, data, filename):
+            self.begin(f"{filename[:-4]}_{clean(tag)}_hist")
+            r.hist(data, n=len(data) // 10, xlab=tag, ylab="frequency", main="", prob="T")
             r.rug(data)
             self.end()
-            # self.begin(filename[:-4]+'_%s_qq.ps' % clean(tag))
-            # r.qqnorm(data,xlab=tag+' quantiles',main='')
-            # r.qqline(data)
-            # self.end()
 
-    def plot_min_mean_max(self, filename, xlab=["t"]):
-        lines = list(
-            csv.reader(open(filename, "r"),
-                       delimiter=",",
-                       quoting=csv.QUOTE_NONNUMERIC))
+        self.plot_data(filename, plot_function)
+
+    def plot_min_mean_max(self, filename, xlab=None):
+        """Plots min, mean, and max values."""
+        if xlab is None or not xlab:
+            xlab = [""]
+        
+        with open(filename, "r") as file:
+            lines = list(csv.reader(file, delimiter=",", quoting=csv.QUOTE_NONNUMERIC))
+
         tags = lines[0]
-        if not xlab or xlab[0] == "":
-            xlab = [tags[1]]
-        index = 0
-        for tag in tags:
-            if tag[0] == "[":
-                break
+        index = next((i for i, tag in enumerate(tags) if tag[0] == "["), None)
+
         sets = {}
         for items in lines[1:]:
             tag = items[0]
             data = items[1:]
-            legend = ""
-            for i in range(1, len(tags) - 3):
-                if not tags[i] in xlab:
-                    legend += "%s=%g " % (tags[i], data[i - 1])
+            legend = " ".join(f"{tags[i]}={data[i - 1]}" for i in range(1, len(tags) - 3) if tags[i] not in xlab)
+
             if legend not in sets:
-                x, y, yminus, yplus = [], [], [], []
-                sets[legend] = (x, y, yminus, yplus)
-            else:
-                x, y, yminus, yplus = sets[legend]
+                sets[legend] = ([], [], [], [])
+            x, y, yminus, yplus = sets[legend]
             t = data[index]
             x.append(t)
             y.append(data[-2])
             yminus.append(data[-3])
             yplus.append(data[-1])
-        # v=r.FALSE
-        for legend in list(sets.keys()):
-            x, y, yminus, yplus = sets[legend]
-            self.begin(filename[:-4] + "_%s" % clean(legend))
-            r.errbar(x,
-                     y,
-                     yminus,
-                     yplus,
-                     xlab=tags[index + 1],
-                     ylab=tags[0],
-                     main="")
-            # v=r.TRUE
+
+        for legend, (x, y, yminus, yplus) in sets.items():
+            self.begin(f"{filename[:-4]}_{clean(legend)}")
+            r.errbar(x, y, yminus, yplus, xlab=tags[index + 1], ylab=tags[0], main="")
             self.end()
 
 
 def shell_iplot():
-    parser = OptionParser(usage, None, Option, version)
-    parser.description = description
+    """Handles command-line options and invokes IPlot."""
+    parser = OptionParser(USAGE, version=VERSION, description=DESCRIPTION)
     parser.add_option(
-        "-o",
-        "--origin_prefix",
-        default="ibootstrap",
-        dest="origin_prefix",
-        help="the prefix used to build input filenames",
+        "-o", "--origin_prefix", default="ibootstrap", dest="origin_prefix", help="Prefix for input filenames"
     )
-    parser.add_option("-p",
-                      "--plot_type",
-                      default="ps",
-                      dest="plot_type",
-                      help="ps or quartz")
-    parser.add_option(
-        "-v",
-        "--plot_variables",
-        default="",
-        dest="plot_variables",
-        help="plotting variables",
-    )
-    parser.add_option(
-        "-f",
-        "--fit",
-        default=[],
-        dest="fits",
-        action="append",
-        help="fits to be performs on results",
-    )
-    (options, args) = parser.parse_args()
-    if options.fits:
-        print("sorry -f not implemented yet!")
-    plot = IPlot(options.origin_prefix, options.plot_type,
-                 options.plot_variables.split(","))
+    parser.add_option("-p", "--plot_type", default="ps", dest="plot_type", help="Plot type: 'ps' or 'quartz'")
+    parser.add_option("-v", "--plot_variables", default="", dest="plot_variables", help="Variables to plot")
+    parser.add_option("-f", "--fit", default=[], dest="fits", action="append", help="Fits to be performed")
 
+    options, args = parser.parse_args()
+    if options.fits:
+        print("Sorry, -f not implemented yet!")
+
+    plot = IPlot(options.origin_prefix, options.plot_type, options.plot_variables.split
 
 if __name__ == "__main__":
     shell_iplot()

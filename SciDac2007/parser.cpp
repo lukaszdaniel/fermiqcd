@@ -15,9 +15,9 @@ void parse(int argc, char **argv)
   std::vector<Step> steps;
   Step step;
   std::string s;
-  int i, j;
+  int j;
 
-  for (i = 1; i < argc; i++)
+  for (int i = 1; i < argc; i++)
   {
     std::string s = std::string(argv[i]);
     if (argv[i][0] == '-')
