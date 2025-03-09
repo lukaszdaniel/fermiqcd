@@ -12,6 +12,7 @@
 #ifndef MDP_COMPLEX_FIELD_
 #define MDP_COMPLEX_FIELD_
 
+#include <memory>
 #include <cstdio>
 #include "mdp_global_vars.h"
 #include "mdp_field.h"
@@ -26,13 +27,12 @@ namespace MDP
                                  const mdp_lattice &lattice)
   {
     double *p = (double *)data;
-    float *q = (float *)malloc(psize / 2);
+    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
     for (mdp_uint i = 0; i < psize / sizeof(double); i++)
       q[i] = p[i];
     if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
-        fwrite(q, psize / 2, 1, fp) != 1)
+        fwrite(q.get(), psize / 2, 1, fp) != 1)
       return false;
-    free(q);
     return true;
   }
 
@@ -44,13 +44,12 @@ namespace MDP
                                 const mdp_lattice &lattice)
   {
     double *p = (double *)data;
-    float *q = (float *)malloc(psize / 2);
+    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
     if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
-        fread(q, psize / 2, 1, fp) != 1)
+        fread(q.get(), psize / 2, 1, fp) != 1)
       return false;
     for (mdp_uint i = 0; i < psize / sizeof(double); i++)
       p[i] = q[i];
-    free(q);
     return true;
   }
 
@@ -62,13 +61,12 @@ namespace MDP
                                  const mdp_lattice &lattice)
   {
     float *p = (float *)data;
-    double *q = (double *)malloc(psize * 2);
+    std::unique_ptr<double[]> q = std::make_unique<double[]>(psize * 2);
     for (mdp_uint i = 0; i < psize / sizeof(float); i++)
       q[i] = p[i];
     if (fseek(fp, position * psize * 2 + header_size, SEEK_SET) ||
-        fwrite(q, psize * 2, 1, fp) != 1)
+        fwrite(q.get(), psize * 2, 1, fp) != 1)
       return false;
-    free(q);
     return true;
   }
 
@@ -80,13 +78,12 @@ namespace MDP
                                 const mdp_lattice &lattice)
   {
     float *p = (float *)data;
-    double *q = (double *)malloc(psize * 2);
+    std::unique_ptr<double[]> q = std::make_unique<double[]>(psize * 2);
     if (fseek(fp, position * psize * 2 + header_size, SEEK_SET) ||
-        fread(q, psize * 2, 1, fp) != 1)
+        fread(q.get(), psize * 2, 1, fp) != 1)
       return false;
     for (mdp_uint i = 0; i < psize / sizeof(float); i++)
       p[i] = q[i];
-    free(q);
     return true;
   }
 
@@ -119,6 +116,9 @@ namespace MDP
 
     void operator=(const mdp_complex_field &psi)
     {
+      if (this == &psi)
+        return;
+
       if (&lattice() != &psi.lattice() ||
           m_size != psi.m_size ||
           m_field_components != psi.m_field_components)
@@ -145,10 +145,10 @@ namespace MDP
     {
       mdp_int i_min = physical_local_start(EVENODD);
       mdp_int i_max = physical_local_stop(EVENODD);
-      mdp_int i = i_min;
-      for (; i < i_max; i++)
+      for (mdp_int i = i_min; i < i_max; i++)
         m_data[i] *= alpha;
     }
+
     void operator/=(const mdp_complex alpha)
     {
       (*this) *= (1.0 / alpha);
@@ -156,12 +156,12 @@ namespace MDP
 
     void operator*=(const mdp_real alpha)
     {
+      if (alpha == 1)
+        return;
+
       mdp_int i_min = physical_local_start(EVENODD);
       mdp_int i_max = physical_local_stop(EVENODD);
       mdp_int i = i_min;
-
-      if (alpha == 1)
-        return;
 
 #if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
       static _sse_double c ALIGN16;

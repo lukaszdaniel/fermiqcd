@@ -9,10 +9,10 @@ int main(int argc, char **argv)
   int L[] = {20, 20, 20};
   mdp_lattice cube(3, L);
   mdp_site x(cube);
-  mdp_complex_field E(cube, 3);
-  mdp_complex_field B(cube, 3);
-  mdp_complex_field q(cube);
-  mdp_complex_field j(cube, 3);
+  mdp_complex_vector_field E(cube, 3);
+  mdp_complex_vector_field B(cube, 3);
+  mdp_complex_scalar_field q(cube);
+  mdp_complex_vector_field j(cube, 3);
 
   forallsites(x)
   {

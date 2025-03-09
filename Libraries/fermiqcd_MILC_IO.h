@@ -14,6 +14,7 @@
 #ifndef FERMIQCD_MILC_IO_
 #define FERMIQCD_MILC_IO_
 
+#include <memory>
 #include <string>
 #include <cstdio>
 #include "mdp_global_vars.h"
@@ -74,24 +75,25 @@ namespace MDP
     double *p = (double *)data;
     mdp_site x(lattice);
     x.set_global(position);
-#ifdef USE_DOUBLE_PRECISION
-    float *q = (float *)malloc(psize / 2);
     position = (((x(0) * lattice.size(3) + x(3)) * lattice.size(2) + x(2)) * lattice.size(1) + x(1));
+#ifdef USE_DOUBLE_PRECISION
+    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
+
     if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
-        fread(q, psize / 2, 1, fp) != 1)
+        fread(q.get(), psize / 2, 1, fp) != 1)
+    {
       return false;
+    }
     for (mdp_uint i = 0; i < psize / sizeof(double); i++)
     {
       switch_endianess_byte4(q[i]);
       p[i] = q[i];
     }
-    free(q);
 #else
-    float *q = (float *)malloc(psize);
-    position = (((x(0) * lattice.size(3) + x(3)) * lattice.size(2) + x(2)) * lattice.size(1) + x(1));
+    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize);
 
     if (fseek(fp, position * psize + header_size, SEEK_SET) ||
-        fread(q, psize, 1, fp) != 1)
+        fread(q.get(), psize, 1, fp) != 1)
     {
       return false;
     }
@@ -100,7 +102,6 @@ namespace MDP
       switch_endianess_byte4(q[i]);
       p[i] = q[i];
     }
-    free(q);
 #endif
     return true;
   }
@@ -132,7 +133,7 @@ namespace MDP
     bool ew = false;
     mdp_uint size = sizeof(milc_header);
     FILE *fp = fopen(filename.c_str(), "r");
-    if (fp == 0)
+    if (fp == nullptr)
       return false;
     if (fread(&milc_header, 1, size, fp) != size)
     {
