@@ -34,7 +34,7 @@ namespace MDP
   ///    gauge["beta"]=6.0;
   ///    WilsonGaugeAction::heatbath(U,gauge);
   /// @endverbatim
-  /// Please check the spalling of the variables you store into the
+  /// Please check the spelling of the variables you store into the
   /// coefficients object (each action has its own coefficients).
   ///
   /// Why? This allows the creating of new actions while reusing inverters
@@ -46,23 +46,6 @@ namespace MDP
     {
       return (find(s) != end());
     }
-#if 0
-    // for some reason the const declaration does not do anything. removing
-    const mdp_real &operator[](const std::string s) const
-    {
-      if (!has_key(s))
-      {
-        mdp << "coefficient " << s << " is undefined but required\n";
-        exit(1);
-      }
-      return static_cast<std::map<std::string, mdp_real>>(*this)[s];
-    }
-
-    mdp_real &operator[](const std::string s)
-    {
-      return static_cast<std::map<std::string, mdp_real> *>(this)->operator[](s);
-    }
-#endif
   };
 
   void dagger(coefficients &coeff)

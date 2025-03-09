@@ -25,7 +25,7 @@ namespace MDP
   class HypSmearing
   {
   public:
-    std::vector<float> alpha;
+    static std::vector<float> alpha;
 
     bool in(int x, std::vector<int> set)
     {
@@ -42,9 +42,9 @@ namespace MDP
     {
       mdp_site x(U.lattice());
       mdp_site y(U.lattice());
-      mdp_matrix A(U.nc(), U.nc())
-          mdp_matrix
-          staples(U.nc(), U.nc()) for (int m = 0; m < U.ndim() - 1; m++)
+      mdp_matrix A(U.nc(), U.nc());
+      mdp_matrix staples(U.nc(), U.nc());
+      for (int m = 0; m < U.ndim() - 1; m++)
       {
         forallsites(x)
         {
@@ -53,44 +53,50 @@ namespace MDP
             for (int i = 0; i < U.nc(); i++)
               for (int j = 0; j < U.nc(); j++)
                 staples(i, j) = 0;
+
             for (int nu = 0; nu < U.nc(); nu++)
+            {
               y = x + nu;
+              for (int i = 0; i < U.nc(); i++)
+                for (int j = 0; j < U.nc(); j++)
+                {
+                  A(i, j) = 0;
+                  for (int k = 0; k < U.nc(); k++)
+                    A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
+                }
+              for (int i = 0; i < U.nc(); i++)
+                for (int j = 0; j < U.nc(); j++)
+                {
+                  for (int k = 0; k < U.nc(); k++)
+                    staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
+                }
+              y = x - nu;
+              for (int i = 0; i < U.nc(); i++)
+                for (int j = 0; j < U.nc(); j++)
+                {
+                  A(i, j) = 0;
+                  for (int k = 0; k < U.nc(); k++)
+                    A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
+                }
+              for (int i = 0; i < U.nc(); i++)
+                for (int j = 0; j < U.nc(); j++)
+                {
+                  for (int k = 0; k < U.nc(); k++)
+                    staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
+                }
+            }
+
             for (int i = 0; i < U.nc(); i++)
               for (int j = 0; j < U.nc(); j++)
-              {
-                A(i, j) = 0;
-                for (int k = 0; k < U.nc(); k++)
-                  A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
-              }
-            for (int i = 0; i < U.nc(); i++)
-              for (int j = 0; j < U.nc(); j++)
-              {
-                for (int k = 0; k < U.nc(); k++)
-                  staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
-              }
-            y = x - nu;
-            for (int i = 0; i < U.nc(); i++)
-              for (int j = 0; j < U.nc(); j++)
-              {
-                A(i, j) = 0;
-                for (int k = 0; k < U.nc(); k++)
-                  A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
-              }
-            for (int i = 0; i < U.nc(); i++)
-              for (int j = 0; j < U.nc(); j++)
-              {
-                for (int k = 0; k < U.nc(); k++)
-                  staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
-              }
+                U(x, mu, i, j) = (1.0 - alpha[m]) * U(x, mu, i, j) + alpha[m] * staples(i, j);
+            U(x, mu) = ProjectSUN(U(x, mu));
           }
         }
-        for (int i = 0; i < U.nc(); i++)
-          for (int j = 0; j < U.nc(); j++)
-            U(x, mu, i, j) = (1.0 - alpha[m]) * U(x, mu, i, j) + alpha[m] * staples(i, j);
-        U(x, mu) = ProjectSUN(U(x, mu));
       }
     }
   };
+
+  std::vector<float> HypSmearing::alpha;
 #endif
 
   // from Bonnet et al. Phys Rev D 62, 094509

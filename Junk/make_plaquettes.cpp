@@ -11,7 +11,7 @@ mdp_real average_plaquette1(gauge_field &U, int mu, int nu)
       sum += real(trace(U(x, mu) * U(x + mu, nu) *
                         hermitian(U(x, nu) * U(x + nu, mu))));
   mdp.add(sum);
-  return sum / lattice.size();
+  return sum / (lattice.size() * U.nc());
 }
 
 mdp_real average_plaquette2(gauge_field &U, int mu, int nu)
@@ -32,10 +32,10 @@ int main(int argc, char **argv)
   mdp_lattice lattice(4, box);
   gauge_field U(lattice, nc);
   int mu = 0, nu = 1;
-  U.load(argv[1]);
-  mdp << "plaquette:" << average_plaquette(U, mu, nu) << "\n";
-  mdp << "plaquette:" << average_plaquette1(U, mu, nu) << "\n";
-  mdp << "plaquette:" << average_plaquette2(U, mu, nu) << "\n";
+  set_hot(U);
+  mdp << "average_plaquette  : " << average_plaquette(U, mu, nu) << "\n";
+  mdp << "average_plaquette1 : " << average_plaquette1(U, mu, nu) << "\n";
+  mdp << "average_plaquette2 : " << average_plaquette2(U, mu, nu) << "\n";
   mdp.close_wormholes();
   return 0;
 }
