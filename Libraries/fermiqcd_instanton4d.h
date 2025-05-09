@@ -16,6 +16,7 @@
 
 #include <vector>
 #include "mdp_global_vars.h"
+#include "mdp_epsilon.h"
 #include "mdp_matrix.h"
 #include "mdp_site.h"
 #include "fermiqcd_gamma_matrices.h"
@@ -24,26 +25,6 @@ namespace MDP
 {
   class Instanton4D
   {
-  private:
-    static int epsilon123(int i, int j, int k)
-    {
-      if (i == j || j == k || i == k)
-        return 0;
-      if (i == 1 && j == 2 && k == 3)
-        return 1;
-      if (i == 1 && j == 3 && k == 2)
-        return -1;
-      if (i == 2 && j == 1 && k == 3)
-        return -1;
-      if (i == 2 && j == 3 && k == 1)
-        return 1;
-      if (i == 3 && j == 1 && k == 2)
-        return 1;
-      if (i == 3 && j == 2 && k == 1)
-        return -1;
-      return 0;
-    }
-
   public:
     std::vector<mdp_real> p; // location of the instanton
     int nc;
@@ -91,7 +72,7 @@ namespace MDP
             T(sub_j, sub_j) = sigma_rot3[a](1, 1);
             if (a > 0 && mu > 0 && nu > 0)
             {
-              eta[mu][nu] += epsilon123(a, mu, nu) * T;
+              eta[mu][nu] += epsilon(a, mu, nu) * T;
             }
             else if (mu == 0 && a > 0 && a == nu)
             {
@@ -140,8 +121,8 @@ namespace MDP
                   }
                   else
                   {
-                    // eta[mu][nu](i,j) += epsilon123(a,mu,nu);
-                    eta[mu][nu](i, j) += sigma[a](i0, j0) * epsilon123(a, mu, nu);
+                    // eta[mu][nu](i,j) += epsilon(a,mu,nu);
+                    eta[mu][nu](i, j) += sigma[a](i0, j0) * epsilon(a, mu, nu);
                   }
                 }
               }
