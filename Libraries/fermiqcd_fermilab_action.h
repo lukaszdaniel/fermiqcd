@@ -285,7 +285,7 @@ namespace MDP
 
       mdp_matrix M(4, 4), SE[4], SB[4];
 
-      M = 1.0 + (2.0 * 42 * c3 + 2.0 * 18 * c4) * kappat + Gamma[0] * 2.0 * kappat * (mac1 - 2.0 * mac2 + 6.0 * mac4) + Gamma1 * 2.0 * kappat * mac5;
+      M = 1.0 + (2.0 * 42 * c3 + 2.0 * 18 * c4) * kappat + Gamma[0] * 2.0 * kappat * (mac1 - 2.0 * mac2 + 6.0 * mac4) + Gamma4 * 2.0 * kappat * mac5;
       for (a = 0; a < 4; a++)
         for (b = 0; b < 4; b++)
         {
@@ -306,14 +306,14 @@ namespace MDP
           c_d[16 * a + 4 * b] = M(b, a);
         }
 
-      M = Gamma[0] * 2.0 * kappat * (0.5 * mac3 + mac4) + Gamma1 * 2.0 * kappat * mac5 * (-0.5);
+      M = Gamma[0] * 2.0 * kappat * (0.5 * mac3 + mac4) + Gamma4 * 2.0 * kappat * mac5 * (-0.5);
       for (a = 0; a < 4; a++)
         for (b = 0; b < 4; b++)
         {
           c_uu[64 * a + 16 * b + 4 * 0 + 0] = M(b, a);
         }
 
-      M = Gamma[0] * 2.0 * kappat * (-0.5 * mac3 + mac4) + Gamma1 * 2.0 * kappat * mac5 * (-0.5);
+      M = Gamma[0] * 2.0 * kappat * (-0.5 * mac3 + mac4) + Gamma4 * 2.0 * kappat * mac5 * (-0.5);
       for (a = 0; a < 4; a++)
         for (b = 0; b < 4; b++)
         {

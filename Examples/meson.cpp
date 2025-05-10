@@ -261,7 +261,7 @@ int main(int argc, char **argv)
   switch (meson)
   {
   case s:
-    accumulate_c2(c2, Sl, Gamma1, Sh, Gamma1);
+    accumulate_c2(c2, Sl, Gamma4, Sh, Gamma4);
     break;
   case ps:
     accumulate_c2(c2, Sl, Gamma5, Sh, Gamma5);

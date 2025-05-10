@@ -89,7 +89,7 @@ int main(int argc, char **argv)
             prop = make_meson(U, V, Gamma5, Gamma[0], mass_a, mass_b,
                               wall_source, wall_source, 1e-5);
         if (strcmp(argv[1], "05xI") == 0)
-            prop = make_meson(U, V, Gamma[0] * Gamma5, Gamma1, mass_a, mass_b,
+            prop = make_meson(U, V, Gamma[0] * Gamma5, Gamma4, mass_a, mass_b,
                               wall_source, wall_source, 1e-5);
 
         for (int t = 0; t < Nt; t++)

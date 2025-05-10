@@ -41,7 +41,7 @@ namespace MDP
   int G16_idx[16][4];
   mdp_complex G16_val[16][4];
 
-  mdp_matrix Gamma[4], Gamma1, Gamma5, Pleft, Pright, Lambda[9];
+  mdp_matrix Gamma[4], Gamma4, Gamma5, Pleft, Pright, Lambda[9];
   mdp_matrix Sigma[4][4], sigma[4];
 
   /// @brief define convention for Gamma matrices and bases of SU(2) and SU(3)
@@ -68,152 +68,152 @@ namespace MDP
 
     if (convention == "UKQCD")
     {
-      Gamma[0](0, 0) = +1;
-      Gamma[0](1, 1) = +1;
-      Gamma[0](2, 2) = -1;
-      Gamma[0](3, 3) = -1;
+      Gamma[0](0, 0) = +1; // Gamma0 = [  1  0  0  0  ]
+      Gamma[0](1, 1) = +1; //          [  0  1  0  0  ]
+      Gamma[0](2, 2) = -1; //          [  0  0 -1  0  ]
+      Gamma[0](3, 3) = -1; //          [  0  0  0 -1  ]
 
-      Gamma[1](0, 3) = +I;
-      Gamma[1](1, 2) = +I;
-      Gamma[1](2, 1) = -I;
-      Gamma[1](3, 0) = -I;
+      Gamma[1](0, 3) = +I; // Gamma1 = [  0  0  0  I  ]
+      Gamma[1](1, 2) = +I; //          [  0  0  I  0  ]
+      Gamma[1](2, 1) = -I; //          [  0 -I  0  0  ]
+      Gamma[1](3, 0) = -I; //          [ -I  0  0  0  ]
 
-      Gamma[2](0, 3) = +1;
-      Gamma[2](1, 2) = -1;
-      Gamma[2](2, 1) = -1;
-      Gamma[2](3, 0) = +1;
+      Gamma[2](0, 3) = +1; // Gamma2 = [  0  0  0  1  ]
+      Gamma[2](1, 2) = -1; //          [  0  0 -1  0  ]
+      Gamma[2](2, 1) = -1; //          [  0 -1  0  0  ]
+      Gamma[2](3, 0) = +1; //          [  1  0  0  0  ]
 
-      Gamma[3](0, 2) = +I;
-      Gamma[3](1, 3) = -I;
-      Gamma[3](2, 0) = -I;
-      Gamma[3](3, 1) = +I;
+      Gamma[3](0, 2) = +I; // Gamma3 = [  0  0  I  0  ]
+      Gamma[3](1, 3) = -I; //          [  0  0  0 -I  ]
+      Gamma[3](2, 0) = -I; //          [ -I  0  0  0  ]
+      Gamma[3](3, 1) = +I; //          [  0  I  0  0  ]
       Gamma5 = Gamma[1] * Gamma[2] * Gamma[3] * Gamma[0];
     }
 
     else if (convention == "FERMILAB")
     {
-      Gamma[0](0, 0) = +1;
-      Gamma[0](1, 1) = +1;
-      Gamma[0](2, 2) = -1;
-      Gamma[0](3, 3) = -1;
+      Gamma[0](0, 0) = +1; // Gamma0 = [  1  0  0  0  ]
+      Gamma[0](1, 1) = +1; //          [  0  1  0  0  ]
+      Gamma[0](2, 2) = -1; //          [  0  0 -1  0  ]
+      Gamma[0](3, 3) = -1; //          [  0  0  0 -1  ]
 
-      Gamma[1](0, 3) = +1;
-      Gamma[1](1, 2) = +1;
-      Gamma[1](2, 1) = +1;
-      Gamma[1](3, 0) = +1;
+      Gamma[1](0, 3) = +1; // Gamma1 = [  0  0  0  1  ]
+      Gamma[1](1, 2) = +1; //          [  0  0  1  0  ]
+      Gamma[1](2, 1) = +1; //          [  0  1  0  0  ]
+      Gamma[1](3, 0) = +1; //          [  1  0  0  0  ]
 
-      Gamma[2](0, 3) = -I;
-      Gamma[2](1, 2) = +I;
-      Gamma[2](2, 1) = -I;
-      Gamma[2](3, 0) = +I;
+      Gamma[2](0, 3) = -I; // Gamma2 = [  0  0  0 -I  ]
+      Gamma[2](1, 2) = +I; //          [  0  0  I  0  ]
+      Gamma[2](2, 1) = -I; //          [  0 -I  0  0  ]
+      Gamma[2](3, 0) = +I; //          [  I  0  0  0  ]
 
-      Gamma[3](0, 2) = +1;
-      Gamma[3](1, 3) = -1;
-      Gamma[3](2, 0) = +1;
-      Gamma[3](3, 1) = -1;
+      Gamma[3](0, 2) = +1; // Gamma3 = [  0  0  1  0  ]
+      Gamma[3](1, 3) = -1; //          [  0  0  0 -1  ]
+      Gamma[3](2, 0) = +1; //          [  1  0  0  0  ]
+      Gamma[3](3, 1) = -1; //          [  0 -1  0  0  ]
 
       Gamma5 = Gamma[0] * Gamma[1] * Gamma[2] * Gamma[3];
     }
 
     else if (convention == "MILC")
     {
-      Gamma[0](0, 2) = +1;
-      Gamma[0](1, 3) = +1;
-      Gamma[0](2, 0) = +1;
-      Gamma[0](3, 1) = +1;
+      Gamma[0](0, 2) = +1; // Gamma0 = [  0  0  1  0  ]
+      Gamma[0](1, 3) = +1; //          [  0  0  0  1  ]
+      Gamma[0](2, 0) = +1; //          [  1  0  0  0  ]
+      Gamma[0](3, 1) = +1; //          [  0  1  0  0  ]
 
-      Gamma[1](0, 3) = +I;
-      Gamma[1](1, 2) = +I;
-      Gamma[1](2, 1) = -I;
-      Gamma[1](3, 0) = -I;
+      Gamma[1](0, 3) = +I; // Gamma1 = [  0  0  0  I  ]
+      Gamma[1](1, 2) = +I; //          [  0  0  I  0  ]
+      Gamma[1](2, 1) = -I; //          [  0 -I  0  0  ]
+      Gamma[1](3, 0) = -I; //          [ -I  0  0  0  ]
 
-      Gamma[2](0, 3) = -1;
-      Gamma[2](1, 2) = +1;
-      Gamma[2](2, 1) = +1;
-      Gamma[2](3, 0) = -1;
+      Gamma[2](0, 3) = -1; // Gamma2 = [  0  0  0 -1  ]
+      Gamma[2](1, 2) = +1; //          [  0  0  1  0  ]
+      Gamma[2](2, 1) = +1; //          [  0  1  0  0  ]
+      Gamma[2](3, 0) = -1; //          [ -1  0  0  0  ]
 
-      Gamma[3](0, 2) = +I;
-      Gamma[3](1, 3) = -I;
-      Gamma[3](2, 0) = -I;
-      Gamma[3](3, 1) = +I;
+      Gamma[3](0, 2) = +I; // Gamma3 = [  0  0  I  0  ]
+      Gamma[3](1, 3) = -I; //          [  0  0  0 -I  ]
+      Gamma[3](2, 0) = -I; //          [ -I  0  0  0  ]
+      Gamma[3](3, 1) = +I; //          [  0  I  0  0  ]
 
       Gamma5 = Gamma[1] * Gamma[2] * Gamma[3] * Gamma[0];
     }
 
     else if (convention == "Minkowsky-Dirac")
     {
-      Gamma[0](0, 0) = +1;
-      Gamma[0](1, 1) = +1;
-      Gamma[0](2, 2) = -1;
-      Gamma[0](3, 3) = -1;
+      Gamma[0](0, 0) = +1; // Gamma0 = [  1  0  0  0  ]
+      Gamma[0](1, 1) = +1; //          [  0  1  0  0  ]
+      Gamma[0](2, 2) = -1; //          [  0  0 -1  0  ]
+      Gamma[0](3, 3) = -1; //          [  0  0  0 -1  ]
 
-      Gamma[1](0, 3) = +1;
-      Gamma[1](1, 2) = +1;
-      Gamma[1](2, 1) = -1;
-      Gamma[1](3, 0) = -1;
+      Gamma[1](0, 3) = +1; // Gamma1 = [  0  0  0  1  ]
+      Gamma[1](1, 2) = +1; //          [  0  0  1  0  ]
+      Gamma[1](2, 1) = -1; //          [  0 -1  0  0  ]
+      Gamma[1](3, 0) = -1; //          [ -1  0  0  0  ]
 
-      Gamma[2](0, 3) = -I;
-      Gamma[2](1, 2) = +I;
-      Gamma[2](2, 1) = +I;
-      Gamma[2](3, 0) = -I;
+      Gamma[2](0, 3) = -I; // Gamma2 = [  0  0  0 -I  ]
+      Gamma[2](1, 2) = +I; //          [  0  0  I  0  ]
+      Gamma[2](2, 1) = +I; //          [  0  I  0  0  ]
+      Gamma[2](3, 0) = -I; //          [ -I  0  0  0  ]
 
-      Gamma[3](0, 2) = +1;
-      Gamma[3](1, 3) = -1;
-      Gamma[3](2, 0) = -1;
-      Gamma[3](3, 1) = +1;
+      Gamma[3](0, 2) = +1; // Gamma3 = [  0  0  1  0  ]
+      Gamma[3](1, 3) = -1; //          [  0  0  0 -1  ]
+      Gamma[3](2, 0) = -1; //          [ -1  0  0  0  ]
+      Gamma[3](3, 1) = +1; //          [  0  1  0  0  ]
       Gamma5 = I * Gamma[0] * Gamma[1] * Gamma[2] * Gamma[3];
     }
 
     else if (convention == "Minkowsky-Chiral")
     {
-      Gamma[0](0, 3) = -1;
-      Gamma[0](1, 2) = -1;
-      Gamma[0](2, 1) = -1;
-      Gamma[0](3, 0) = -1;
+      Gamma[0](0, 3) = -1; // Gamma0 = [  0  0  0 -1  ]
+      Gamma[0](1, 2) = -1; //          [  0  0 -1  0  ]
+      Gamma[0](2, 1) = -1; //          [  0 -1  0  0  ]
+      Gamma[0](3, 0) = -1; //          [ -1  0  0  0  ]
 
-      Gamma[1](0, 3) = +1;
-      Gamma[1](1, 2) = +1;
-      Gamma[1](2, 1) = -1;
-      Gamma[1](3, 0) = -1;
+      Gamma[1](0, 3) = +1; // Gamma1 = [  0  0  0  1  ]
+      Gamma[1](1, 2) = +1; //          [  0  0  1  0  ]
+      Gamma[1](2, 1) = -1; //          [  0 -1  0  0  ]
+      Gamma[1](3, 0) = -1; //          [ -1  0  0  0  ]
 
-      Gamma[2](0, 3) = -I;
-      Gamma[2](1, 2) = +I;
-      Gamma[2](2, 1) = +I;
-      Gamma[2](3, 0) = -I;
+      Gamma[2](0, 3) = -I; // Gamma2 = [  0  0  0 -I  ]
+      Gamma[2](1, 2) = +I; //          [  0  0  I  0  ]
+      Gamma[2](2, 1) = +I; //          [  0  I  0  0  ]
+      Gamma[2](3, 0) = -I; //          [ -I  0  0  0  ]
 
-      Gamma[3](0, 2) = +1;
-      Gamma[3](1, 3) = -1;
-      Gamma[3](2, 0) = -1;
-      Gamma[3](3, 1) = +1;
+      Gamma[3](0, 2) = +1; // Gamma3 = [  0  0  1  0  ]
+      Gamma[3](1, 3) = -1; //          [  0  0  0 -1  ]
+      Gamma[3](2, 0) = -1; //          [ -1  0  0  0  ]
+      Gamma[3](3, 1) = +1; //          [  0  1  0  0  ]
       Gamma5 = I * Gamma[0] * Gamma[1] * Gamma[2] * Gamma[3];
     }
 
     else if (convention == "CHIRAL")
     {
-      Gamma[0](0, 3) = -1;
-      Gamma[0](1, 2) = -1;
-      Gamma[0](2, 1) = -1;
-      Gamma[0](3, 0) = -1;
+      Gamma[0](0, 3) = -1; // Gamma0 = [  0  0  0 -1  ]
+      Gamma[0](1, 2) = -1; //          [  0  0 -1  0  ]
+      Gamma[0](2, 1) = -1; //          [  0 -1  0  0  ]
+      Gamma[0](3, 0) = -1; //          [ -1  0  0  0  ]
 
-      Gamma[1](0, 3) = +I;
-      Gamma[1](1, 2) = +I;
-      Gamma[1](2, 1) = -I;
-      Gamma[1](3, 0) = -I;
+      Gamma[1](0, 3) = +I; // Gamma1 = [  0  0  0  I  ]
+      Gamma[1](1, 2) = +I; //          [  0  0  I  0  ]
+      Gamma[1](2, 1) = -I; //          [  0 -I  0  0  ]
+      Gamma[1](3, 0) = -I; //          [ -I  0  0  0  ]
 
-      Gamma[2](0, 3) = +1;
-      Gamma[2](1, 2) = -1;
-      Gamma[2](2, 1) = -1;
-      Gamma[2](3, 0) = +1;
+      Gamma[2](0, 3) = +1; // Gamma2 = [  0  0  0  1  ]
+      Gamma[2](1, 2) = -1; //          [  0  0 -1  0  ]
+      Gamma[2](2, 1) = -1; //          [  0 -1  0  0  ]
+      Gamma[2](3, 0) = +1; //          [  1  0  0  0  ]
 
-      Gamma[3](0, 2) = +I;
-      Gamma[3](1, 3) = -I;
-      Gamma[3](2, 0) = -I;
-      Gamma[3](3, 1) = +I;
+      Gamma[3](0, 2) = +I; // Gamma3 = [  0  0  I  0  ]
+      Gamma[3](1, 3) = -I; //          [  0  0  0 -I  ]
+      Gamma[3](2, 0) = -I; //          [ -I  0  0  0  ]
+      Gamma[3](3, 1) = +I; //          [  0  I  0  0  ]
       Gamma5 = Gamma[0] * Gamma[1] * Gamma[2] * Gamma[3];
     }
-    Gamma1 = mdp_identity(4);
-    Pleft = mdp_complex(.5, 0) * (Gamma[0] * Gamma[0] - Gamma5);
-    Pright = mdp_complex(.5, 0) * (Gamma[0] * Gamma[0] + Gamma5);
+    Gamma4 = mdp_identity(4);
+    Pleft = mdp_complex(.5, 0) * (Gamma4 - Gamma5);
+    Pright = mdp_complex(.5, 0) * (Gamma4 + Gamma5);
 
     /* sigma matrices SU(2) generators */
 
@@ -359,7 +359,7 @@ namespace MDP
   mdp_matrix parse_gamma(std::string g)
   {
     if (g == "I")
-      return Gamma1;
+      return Gamma4;
     else if (g == "0")
       return Gamma[0];
     else if (g == "1")
