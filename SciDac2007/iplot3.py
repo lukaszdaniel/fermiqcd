@@ -201,7 +201,7 @@ class IPlot:
             quants[name] = self.make_hist, (name, data, 10, tag, "frequency")
 
     def plot_min_mean_max(self, filename, xlab=None):
-        """THIS NEEDS TO BE FIXED!!!!"""
+        """Plots min, mean, and max from the given CSV file."""
         lines = list(
             csv.reader(open(filename, "r"), delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
         )
