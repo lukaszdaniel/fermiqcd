@@ -1,57 +1,55 @@
 # Author: Antonio X. Garcia <antoniox.garcia@gmail.com>
 # Modified by: Massimo Di Pierro <mdipierro@cs.depaul.edu>
 # Copyright (c) 2007, DePaul University
-# All rights reserved.
 # License: BSD Style
 
 import os
-import wx
 import sys
 import glob
-
-# from optparse import *
+import wx
 from enthought.mayavi.app import Mayavi
 from enthought.mayavi.sources.vtk_file_reader import VTKFileReader
 from enthought.mayavi.modules.outline import Outline
 from enthought.mayavi.modules.text import Text
-from enthought.mayavi.modules.iso_surface import IsoSurface
 from enthought.mayavi.modules.surface import Surface
 from enthought.mayavi.modules.orientation_axes import OrientationAxes
 
-usage = "show.py FILE(s) [OPTION]"
+# usage: show.py FILE(s) [OPTION]
 
-version = ("Show.py v1.0"
-           "\nCopyright (c) 2007, DePaul University"
-           "\nAll rights reserved."
-           "\nLicense: BSD Style"
-           "\n\nWritten by Antonio X. Garcia <antonioxgarcia@gmail.com>"
-           "\n\nand Massimo Di Pierro <mdipierro@cs.depaul.edu>")
+VERSION_INFO = (
+    "Show.py v1.0\n"
+    "Copyright (c) 2007, DePaul University\n"
+    "All rights reserved.\n"
+    "License: BSD Style\n"
+    "Written by Antonio X. Garcia <antonioxgarcia@gmail.com>\n"
+    "and Massimo Di Pierro <mdipierro@cs.depaul.edu>"
+)
 
 
 def parse():
-    args = sys.argv[1:]
-    filepatterns = args[0]
-    files = [glob.glob(p) for p in filepatterns.split(",")]
-    files = [glob.glob(p) for p in [filepatterns]]
-    return files
+    """Parses file input from command-line arguments."""
+    if len(sys.argv) < 2:
+        print("Usage: show.py FILE(s)")
+        sys.exit(1)
+    filepatterns = sys.argv[1]
+    return [glob.glob(p) for p in filepatterns.split(",")]
 
 
 class Watcher(wx.Timer):
-
-    def __init__(self, interval, callable, *args, **kw_args):
-        wx.Timer.__init__(self)
-        self.callable = callable
+    def __init__(self, interval, callback, *args, **kwargs):
+        super().__init__()
+        self.callback = callback
         self.args = args
-        self.kw_args = kw_args
+        self.kwargs = kwargs
         self.Start(interval)
 
     def Notify(self):
-        self.callable(*self.args, **self.kw_args)
+        self.callback(*self.args, **self.kwargs)
 
 
 class MayaViShow(Mayavi):
-
     def __init__(self, filelists, title):
+        super().__init__()
         self.filelists = filelists
         self.title = title
         self.data = []
@@ -65,142 +63,122 @@ class MayaViShow(Mayavi):
         win = self.script.engine.application.gui.GetTopWindow()
         win.CenterOnScreen()
         self.script.new_scene()
-        for idx in range(len(self.filelists)):
-            f = self.filelists[idx][0]
-            d = VTKFileReader()
-            d.initialize(f)
-            self.data.append(d)
-            self.filestatus.append(os.stat(f)[-2])
-            mayavi.add_source(d)
-            self.addmodules(idx, idx == 0)
-        self.modifymenu()
 
-    def modifymenu(self):
-        window = mayavi.engine.application.gui.GetTopWindow()
+        for idx, filegroup in enumerate(self.filelists):
+            f = filegroup[0]
+            reader = VTKFileReader()
+            reader.initialize(f)
+            self.data.append(reader)
+            self.filestatus.append(os.stat(f).st_mtime)
+            self.script.add_source(reader)
+            self.add_modules(idx, add_text=(idx == 0))
+
+        self.add_animation_menu()
+
+    def add_animation_menu(self):
+        """Adds a custom 'Animations' menu to the GUI."""
+        window = self.script.engine.application.gui.GetTopWindow()
         menubar = window.GetMenuBar()
-        mnuVid = wx.Menu("")
+        animation_menu = wx.Menu()
         pos = menubar.GetMenuCount() - 1
-        menubar.Insert(pos, mnuVid, "Animations")
-        mnuAnimLoop = wx.MenuItem(mnuVid, wx.ID_ANY, "Loop")
-        mnuVid.AppendItem(mnuAnimLoop)
-        mnuAnimLoop.Enable(1)
-        window.Bind(wx.EVT_MENU, self.AnimLoop, mnuAnimLoop)
-        mnuAnimStop = wx.MenuItem(mnuVid, wx.ID_ANY, "Stop")
-        mnuVid.AppendItem(mnuAnimStop)
-        mnuAnimStop.Enable(1)
-        window.Bind(wx.EVT_MENU, self.AnimStop, mnuAnimStop)
-        mnuAnimWatch = wx.MenuItem(mnuVid, wx.ID_ANY, "Watch")
-        mnuVid.AppendItem(mnuAnimWatch)
-        mnuAnimWatch.Enable(1)
-        window.Bind(wx.EVT_MENU, self.AnimWatch, mnuAnimWatch)
-        mnuAnimMPEG = wx.MenuItem(mnuVid, wx.ID_ANY, "Save as MPEG")
-        mnuVid.AppendItem(mnuAnimMPEG)
-        mnuAnimMPEG.Enable(1)
-        # window.Bind(wx.EVT_MENU, self.AnimMPEG, mnuAnimMPEG)
+        menubar.Insert(pos, animation_menu, "Animations")
+
+        items = {
+            "Loop": self.AnimLoop,
+            "Stop": self.AnimStop,
+            "Watch": self.AnimWatch,
+            # "Save as MPEG": self.AnimMPEG  # Placeholder
+        }
+
+        for label, handler in items.items():
+            menu_item = wx.MenuItem(animation_menu, wx.ID_ANY, label)
+            animation_menu.AppendItem(menu_item)
+            window.Bind(wx.EVT_MENU, handler, menu_item)
 
     def AnimStop(self, evt):
         self.stop = True
 
     def AnimLoop(self, evt):
-        print("AnimLoop", self.stop)
         self.stop = False
         self.timestep = 0
-        mayavi.watcher = Watcher(1000, self.AnimLoopRec)
+        self.watcher = Watcher(1000, self.AnimLoopRec)
 
     def AnimLoopRec(self):
-        print("AnimLoopRec")
         if self.stop:
             self.watcher = None
             return
+
         filelist = self.filelists[0]
-        for idx in range(len(self.filelists)):
-            if self.timestep < len(self.filelists[idx]):
+        if self.timestep < len(filelist):
+            for idx, _ in enumerate(self.filelists):
                 self.data[idx].initialize(filelist[self.timestep])
-        strNextVal = str(self.timestep)
-        self.sceneTextCount.text = "          "
-        self.sceneTextCount.text = strNextVal
-        self.timestep += 1
-        if self.timestep >= len(filelist):
+
+            self.sceneTextCount.text = str(self.timestep)
+            self.timestep += 1
+        else:
             self.watcher = None
 
     def AnimWatch(self, evt):
-        print("AnimLoop", self.stop)
         self.stop = False
         self.frame = 0
-        mayavi.watcher = Watcher(1000, self.AnimWatchRec)
+        self.watcher = Watcher(1000, self.AnimWatchRec)
 
     def AnimWatchRec(self):
-        print("AnimLoopRec")
         if self.stop:
             self.watcher = None
             return
-        filelist = self.filelists[0]
+
         changed = False
-        for idx in range(len(self.filelists)):
-            k = 0
-            for f in self.filelists[idx][:1]:
-                if self.filestatus[idx] != os.stat(f)[-2]:
-                    self.data[idx].reader.modified()
-                    self.data[idx].update()
-                    self.data[idx].data_changed = True
-                    changed = True
-                k += 1
+        for idx, filegroup in enumerate(self.filelists):
+            f = filegroup[0]
+            if self.filestatus[idx] != os.stat(f).st_mtime:
+                self.data[idx].reader.modified()
+                self.data[idx].update()
+                self.data[idx].data_changed = True
+                changed = True
+
         if changed:
-            strNextVal = str(self.frame)
-            self.sceneTextCount.text = "          "
-            self.sceneTextCount.text = strNextVal
+            self.sceneTextCount.text = str(self.frame)
             self.frame += 1
 
-    def addmodules(self, idx, addTextIndexer):
-        # add Outline module
-        o = Outline()
-        mayavi.add_module(o)
-        # add OrientationAxes module
-        oa = OrientationAxes()
-        mayavi.add_module(oa)
-        """
-        #add IsoSurface module if requested
-        i = IsoSurface()
-        mayavi.add_module(i)
-        """
+    def add_modules(self, idx, add_text=False):
+        """Adds default modules for rendering."""
+        self.script.add_module(Outline())
+        self.script.add_module(OrientationAxes())
 
-        # add Surface module if requested
-        s = Surface()
-        s.enable_contours = True
-        s.actor.property.opacity = 0.5
-        mayavi.add_module(s)
+        surface = Surface()
+        surface.enable_contours = True
+        surface.actor.property.opacity = 0.5
+        self.script.add_module(surface)
 
-        # add Text module if requested
-        t1 = Text()
-        t1.text = self.title
-        t1.actor.scaled_text = False
-        t1.actor.text_property.font_size = 18
-        mayavi.add_module(t1)
-        t1.width = (1.0 * t1.actor.mapper.get_width(t1.scene.renderer) /
-                    t1.scene.renderer.size[0])
-        height = (1.0 * t1.actor.mapper.get_height(t1.scene.renderer) /
-                  t1.scene.renderer.size[1])
-        t1.x_position = 0.5 - t1.width / 2
-        t1.y_position = 1 - height
+        # Title Text
+        title_text = Text()
+        title_text.text = self.title
+        title_text.actor.scaled_text = False
+        title_text.actor.text_property.font_size = 18
+        self.script.add_module(title_text)
 
-        if addTextIndexer:
-            # add default Text module for indicating scene index
+        width = title_text.actor.mapper.get_width(title_text.scene.renderer) / title_text.scene.renderer.size[0]
+        height = title_text.actor.mapper.get_height(title_text.scene.renderer) / title_text.scene.renderer.size[1]
+        title_text.x_position = 0.5 - width / 2
+        title_text.y_position = 1 - height
+
+        if add_text:
             self.sceneTextCount = Text()
             self.sceneTextCount.text = "0"
-            mayavi.add_module(self.sceneTextCount)
             self.sceneTextCount.actor.scaled_text = False
             self.sceneTextCount.actor.text_property.font_size = 24
             self.sceneTextCount.x_position = 0.95
             self.sceneTextCount.y_position = 0.05
+            self.script.add_module(self.sceneTextCount)
 
     def snapshot(self):
-        # take snapshot
-        if len(self.outputdir) > 0:  # if a path was entered
-            e = mayavi.engine
-            s = mayavi.engine.current_scene
-            s.scene.save_png("%s/output%05d.png" %
-                             (self.outputdir, self.imagecount))
-            self.imagecount = self.imagecount + 1
+        """Saves a PNG snapshot of the current scene."""
+        if hasattr(self, 'outputdir') and self.outputdir:
+            scene = self.script.engine.current_scene.scene
+            path = os.path.join(self.outputdir, f"output{self.imagecount:05d}.png")
+            scene.save_png(path)
+            self.imagecount += 1
 
 
 if __name__ == "__main__":

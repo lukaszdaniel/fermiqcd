@@ -1,20 +1,36 @@
 #!/bin/sh
-# Do a little magic to run perl from anywhere in your path.
+# Wrapper to run the embedded Perl script from any path.
 
-lines=`cat $0 | wc -l`
-lines=`expr $lines - 16`
-if (test -z "$TMPDIR") then
-    TMPDIR=$HOME
-fi
-tail -$lines $0 1> $TMPDIR/visitfelperl$$ 2>/dev/null
-if (test $? -ne 0) then
-    tail --lines=$lines $0 1>> $TMPDIR/visitfelperl$$
-fi
-echo "__END__" >> $TMPDIR/visitfelperl$$
-echo "$0 $*" >> $TMPDIR/visitfelperl$$
-exec perl $TMPDIR/visitfelperl$$ $0 ${1+"$@"}
+# Get the number of lines in this script
+lines=$(wc -l < "$0")
+# Subtract lines above the Perl script; adjust if Perl part moves
+lines=$((lines - 22))
 
+# Set TMPDIR if not already set
+TMPDIR="${TMPDIR:-$HOME}"
+
+# Extract the embedded Perl script
+outfile="$TMPDIR/visitfelperl$$"
+tail -n "$lines" "$0" > "$outfile" 2>/dev/null || tail --lines="$lines" "$0" >> "$outfile"
+
+# Mark end of script and pass original command
+echo "__END__" >> "$outfile"
+echo "$0 $*" >> "$outfile"
+
+# Execute the Perl script
+exec perl "$outfile" "$0" "$@"
+
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+use File::Basename;
+use Cwd 'cwd';
+
+# Remove this script from disk
 unlink $0;
+
+# Update $0 to the actual program being run
 $0 = shift @ARGV;
 
 ###############################################################################
@@ -60,74 +76,66 @@ $0 = shift @ARGV;
 #
 ###############################################################################
 
-
 # -----------------------------------------------------------------------------
 #                                 Setup
 # -----------------------------------------------------------------------------
 
 # Set a secure and reasonable path
-$ENV{PATH} = join ':' , ("$ENV{PATH}","/bin","/usr/bin","/usr/sbin",
-                         "/usr/local/bin", "/usr/bsd","/usr/ucb" );
+$ENV{PATH} = join(':', $ENV{PATH}, qw(/bin /usr/bin /usr/sbin /usr/local/bin /usr/bsd /usr/ucb));
 
-# set base directory
-chomp( $progname= `basename $0`);
-chomp( $progdir = `dirname $0` );
-chomp( $cwd     = `pwd`        );
+# Get script name and path
+my $progname = basename($0);
+my $progdir  = dirname($0);
+my $cwd      = cwd();
 
-# Add the program directory to the path!
-$ENV{PATH} = join ':' , ("$progdir", "$ENV{PATH}");
+# Add the program directory to the PATH
+$ENV{PATH} = join(':', $progdir, $ENV{PATH});
 
-for ($progdir) {
-    /^\//  && do { $tmpdir = $progdir; last; }; # starts with `/'
-    /^\.$/ && do { $tmpdir = $cwd; last; };     # is exactly  `.'
+# Normalize progdir into absolute path
+my $tmpdir;
+if ($progdir =~ m|^/|) {
+    $tmpdir = $progdir;
+}
+elsif ($progdir eq '.') {
+    $tmpdir = $cwd;
+}
+else {
     $tmpdir = "$cwd/$progdir";
 }
 
-# strip single . paths
-while ($tmpdir =~ s|(/\./)|/|) {}
+# Normalize path by removing /./ and compressing /dir/..
+$tmpdir =~ s|/\./|/|g;
+$tmpdir =~ s|(/[^/]+/\.\.)||g;
 
-# compress out remaining /dir/.. forms
-while ($tmpdir =~ s|(/[^/]+/\.\.)||) {}
-
-# Note: the above ".."-compression is safe because we already determined we
-# had an absolute path, we know the substitution goes left-to-right, and
-# we cannot legally .. above the root of the directory tree.  If at some
-# point these assumptions change, we can use the following line instead,
-# which is more complex but makes sure not to compress out /../.. forms.
-#while ($tmpdir =~ s@(/([^/.][^/]*|[^/]*[^/.]|[^/]{3,})/\.\.)@@) {}
-
-chomp( $visitdir = `dirname $tmpdir` );
+my $visitdir = dirname($tmpdir);
 
 # -----------------------------------------------------------------------------
 #                            Parse the arguments
 # -----------------------------------------------------------------------------
 
-# Set some defaults.
-$want_version = 0;
-$ver          = "";
-$beta         = 0;
-$using_dev    = 0;
+my $want_version = 0;
+my $ver          = "";
+my $beta         = 0;
+my $using_dev    = 0;
+my $ver_set      = 0;
 
-# Parse the arguments 
-@legacyvisitargs = @ARGV;
-@visitargs = ();
-while (scalar(@ARGV) > 0) {
-    $arg = shift @ARGV;
-    if ($arg eq "-v")
-    {
-        $ver  = shift; $ver_set  = 1;
-        die "The '-v' version argument requires a value.\n" if (!defined $ver);
+my @legacyvisitargs = @ARGV;
+my @visitargs;
+
+while (@ARGV) {
+    my $arg = shift @ARGV;
+
+    if ($arg eq "-v") {
+        $ver = shift @ARGV // die "The '-v' version argument requires a value.\n";
+        $ver_set = 1;
     }
-    elsif ($arg eq "-beta")
-    {
+    elsif ($arg eq "-beta") {
         $beta = 1;
     }
-    elsif ($arg eq "-dv")
-    {
+    elsif ($arg eq "-dv") {
         $using_dev = 1;
     }
-    elsif ($arg eq "-version")
-    {
+    elsif ($arg eq "-version") {
         $want_version = 1;
     }
     elsif ($arg eq "-xml2atts"        or
@@ -147,28 +155,20 @@ while (scalar(@ARGV) > 0) {
            $arg eq "-silex"           or
            $arg eq "-surfcomp"        or
            $arg eq "-text2polys"      or
-           $arg eq "-time_annotation")
-    {
+           $arg eq "-time_annotation") {
         $progname = substr($arg, 1);
-        print STDERR "NOTE:  Specifying tools as an argument to VisIt is ";
-        print STDERR "no longer necessary.\nIn the future, you should ";
-        print STDERR "just run '$progname' instead.\n\n";
+        warn "NOTE: Use of 'visit $arg' is deprecated. Run '$progname' directly.\n";
     }
-    elsif ($arg eq "-mpeg2encode"     or
-           $arg eq "-mpeg_encode")
-    {
+    elsif ($arg =~ /^-(mpeg2encode|mpeg_encode)$/) {
         $progname = substr($arg, 1);
     }
-    elsif ($arg eq "-composite")
-    {
+    elsif ($arg eq "-composite") {
         $progname = "visit_composite";
     }
-    elsif ($arg eq "-transition")
-    {
+    elsif ($arg eq "-transition") {
         $progname = "visit_transition";
     }
-    else
-    {
+    else {
         push @visitargs, $arg;
     }
 }
@@ -178,12 +178,9 @@ while (scalar(@ARGV) > 0) {
 # -----------------------------------------------------------------------------
 # If we have a top-level "exe" directory, then don't bother looking
 # for versions to use; this is a development executable.
-if (-d "$visitdir/exe")
-{
-    if ($want_version)
-    {
-        print STDERR "The version of VisIt in the directory $visitdir/exe/ ".
-                     "will be launched.\n";
+if (-d "$visitdir/exe") {
+    if ($want_version) {
+        print "The version of VisIt in the directory $visitdir/exe/ will be launched.\n";
         exit 0;
     }
 
@@ -194,50 +191,30 @@ if (-d "$visitdir/exe")
     # We want to make sure we know if we are trying to launch a public
     # version from under a development version.  Keep track of this.
     # (Note -- don't add it on our own if we're launching a tool.)
-    if ($using_dev or $progname eq "visit")
-    {
-        push @visitargs, "-dv";
-    }
+    push @visitargs, "-dv" if $using_dev || $progname eq "visit";
 }
-else
-{
+else {
     # look for the version-specific visit script to determine viable versions
-    @exe = <$visitdir/*/bin/internallauncher>;
-    @exeversions = map {m|^$visitdir/(.*?)/|; $_ = $1;} @exe;
-    $current_version = readlink("$visitdir/current");
-    $beta_version    = readlink("$visitdir/beta");
+    my @exe = glob("$visitdir/*/bin/internallauncher");
+    my @exeversions = map { m|^$visitdir/(.*?)/|; $1 } @exe;
 
-    if ($want_version)
-    {
-        if (! defined $current_version)
-        {
-            print STDERR "There is no current version of VisIt.\n";
-            exit 1;
+    my $current_version = readlink("$visitdir/current");
+    my $beta_version    = readlink("$visitdir/beta");
+
+    if ($want_version) {
+        if (!$current_version) {
+            die "There is no current version of VisIt.\n";
         }
-
-        print STDERR "The current version of VisIt is $current_version.\n";
+        print "The current version of VisIt is $current_version.\n";
         exit 0;
     }
 
-    if (! $ver_set)
-    {
-        if ($beta)
-        {
-            if (! defined $beta_version)
-            {
-                print STDERR "There is no beta version of VisIt.\n";
-                exit 1;
-            }
+    if (!$ver_set) {
+        if ($beta) {
+            die "There is no beta version of VisIt.\n" unless $beta_version;
             $ver = $beta_version;
-        }
-        else
-        {
-            if (! defined $current_version)
-            {
-                print STDERR "There is no current version of VisIt.\n";
-                exit 1;
-            }
-
+        } else {
+            die "There is no current version of VisIt.\n" unless $current_version;
             $ver = $current_version;
         }
     }
@@ -245,12 +222,9 @@ else
     # If there was no internal laucher for that version, then either
     # that version wasn't installed, or it is an old version that
     # didn't have a version-specific launcher script.
-    if (! grep /^${ver}$/, @exeversions)
-    {
-        if (! -d "$visitdir/$ver")
-        {
-            print STDERR "There is no version '$ver' of VisIt.\n";
-            exit 1;
+    if (!grep { $_ eq $ver } @exeversions) {
+        unless (-d "$visitdir/$ver") {
+            die "There is no version '$ver' of VisIt.\n";
         }
 
         # Fall back to legacy here; we set a version and didn't have a
@@ -258,14 +232,12 @@ else
 
         # Legacy tools were launched using the visit script with
         # an argumnet specifying which tool to run.  Fake it here.
-        if ($progname ne "visit" and
-            grep(m|^\-${progname}|, @legacyvisitargs) == 0)
-        {
-            push @legacyvisitargs, "-${progname}";
+        if ($progname ne "visit" && !grep { /^-\Q$progname\E$/ } @legacyvisitargs) {
+            push @legacyvisitargs, "-$progname";
         }
 
-        @legacycmd = ("$visitdir/bin/legacylauncher", @legacyvisitargs);
-        exec @legacycmd or die "Can't execute visit legacy script: $!\n";
+        my @legacycmd = ("${visitdir}/bin/legacylauncher", @legacyvisitargs);
+        exec @legacycmd or die "Can't execute legacy launcher: $!\n";
 
         # If we ever stop supporting versions before 1.4.1, we can
         # change to the "right" behavior here.
@@ -274,12 +246,8 @@ else
     }
 
     # Warn if we mixed public and private development versions.
-    if ($using_dev)
-    {
-        print STDERR "\n";
-        print STDERR "WARNING: You are launching a public version of VisIt\n";
-        print STDERR "         from within a development version!\n";
-        print STDERR "\n";
+    if ($using_dev) {
+        warn "\nWARNING: You are launching a public version of VisIt from within a development version!\n\n";
         push @visitargs, "-dv";
     }
 
@@ -290,6 +258,7 @@ else
 # -----------------------------------------------------------------------------
 #     Set the environment variables needed for the internal visit launcher
 # -----------------------------------------------------------------------------
+
 $ENV{VISITVERSION} = $ver;
 $ENV{VISITPROGRAM} = $progname;
 $ENV{VISITDIR}     = $visitdir;
@@ -297,5 +266,6 @@ $ENV{VISITDIR}     = $visitdir;
 # -----------------------------------------------------------------------------
 #                       Run the internal launcher!
 # -----------------------------------------------------------------------------
-@visitcmd = ("${visitdir}/bin/internallauncher", @visitargs);
-exec @visitcmd or die "Can't execute visit launcher script: $!\n";
+
+my @visitcmd = ("${visitdir}/bin/internallauncher", @visitargs);
+exec @visitcmd or die "Can't execute internal launcher: $!\n";
