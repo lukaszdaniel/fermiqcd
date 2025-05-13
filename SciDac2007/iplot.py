@@ -20,7 +20,6 @@ def clean(text):
     """Cleans up text by replacing spaces with empty and slashes with '_div_'."""
     return re.sub(r"\s+", "", text.replace("/", "_div_"))
 
-
 class IPlot:
     def __init__(self, filename, plot_type, items=None):
         if items is None:
@@ -47,7 +46,7 @@ class IPlot:
         if self.type == "ps":
             r.dev_off()
         else:
-            input("Press enter to continue")
+            input("Press Enter to continue...")
 
     def plot_data(self, filename, plot_function):
         """Handles reading data from a CSV and plotting it using a specific plot function."""
@@ -129,6 +128,7 @@ class IPlot:
 
             if legend not in sets:
                 sets[legend] = ([], [], [], [])
+
             x, y, yminus, yplus = sets[legend]
             t = data[index]
             x.append(t)
@@ -140,7 +140,6 @@ class IPlot:
             self.begin(f"{filename[:-4]}_{clean(legend)}")
             r.errbar(x, y, yminus, yplus, xlab=tags[index + 1], ylab=tags[0], main="")
             self.end()
-
 
 def shell_iplot():
     """Handles command-line options and invokes IPlot."""
@@ -156,7 +155,7 @@ def shell_iplot():
     if options.fits:
         print("Sorry, -f not implemented yet!")
 
-    plot = IPlot(options.origin_prefix, options.plot_type, options.plot_variables.split
+    plot = IPlot(options.origin_prefix, options.plot_type, options.plot_variables.split(","))
 
 if __name__ == "__main__":
     shell_iplot()

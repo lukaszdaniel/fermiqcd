@@ -125,9 +125,10 @@ int main(int argc, char **argv)
 
   set_hot(U);
 #if 0
+  mdp_site x(lattice);
   forallsites(x)
   {
-    if (x(0) > L[0] / 2)
+    if (x(1) > L[1] / 2)
       for (int mu = 0; mu < 4; mu++)
         U(x, mu) = 1;
   }

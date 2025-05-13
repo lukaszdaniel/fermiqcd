@@ -16,7 +16,7 @@ version = ("iboostrap v1.0\n"
 
 description = (
     "This is program to scan the log files of a Markov Chain Monte Carlo\n"
-    "Algorithm, parse for expressions and compute the avarge and bootstrap errors\n"
+    "Algorithm, parse for expressions and compute the average and bootstrap errors\n"
     "of any function of those expressions."
     "It also compute the convergence trails of the averages.\n")
 
@@ -130,7 +130,7 @@ class IBootstrap:
         items_regex = self.items_regex
         if not items:
             self.report.append(
-                "your expressions does not containes items in quotes")
+                "your expressions does not contain items in quotes")
             raise IBootstrapException
         symbols = {}
         filenames = glob.glob(filename)
@@ -173,7 +173,7 @@ class IBootstrap:
                 length = ell
             if ell != length:
                 self.report.append(
-                    "warining, not all field with same occurrences")
+                    "warning, not all fields have the same occurrences")
             if ell < length:
                 length = ell
         for key in list(symbols.keys()):
@@ -247,7 +247,7 @@ class IBootstrap:
         self.variables = variables
 
     def compute_autocorrelations(self):
-        ### perhps this should compute Hurst exponent too
+        # Compute autocorrelations for the given symbols
         symbols = self.symbols
         self.autocorrelations = {}
         for key, sq in list(symbols.items()):
@@ -435,17 +435,16 @@ class IBootstrap:
 
 
 def test_ibootstrap():
-    file = open("test_samples.log", "w")
-    for i in range(100):
-        for t in range(16):
-            file.write("2pt[%.2i]: %f\n" %
-                       (t, (2.0 + random.gauss(0, 1)) * exp(-0.2 * t)))
-        for t in range(16):
-            for t1 in range(16):
-                file.write("3pt[%.2i][%.2i]: %f\n" %
-                           (t, t1,
-                            (4.0 + random.gauss(0, 1)) * exp(-0.2 * (t + t1))))
-    file.close()
+    with open("test_samples.log", "w") as file:
+        for i in range(100):
+            for t in range(16):
+                file.write("2pt[%.2i]: %f\n" %
+                           (t, (2.0 + random.gauss(0, 1)) * exp(-0.2 * t)))
+            for t in range(16):
+                for t1 in range(16):
+                    file.write("3pt[%.2i][%.2i]: %f\n" %
+                               (t, t1,
+                                (4.0 + random.gauss(0, 1)) * exp(-0.2 * (t + t1))))
     IBootstrap(
         "test_samples.log",
         '"3pt[<t1>][<t2>]"/"2pt[<t1>]"/"2pt[<t2>]"',
