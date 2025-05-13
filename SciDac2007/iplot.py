@@ -1,6 +1,6 @@
 import csv
-from optparse import OptionParser
 import re
+import argparse  # Use argparse instead of optparse
 from rpy import r
 
 # Script information
@@ -50,7 +50,7 @@ class IPlot:
 
     def plot_data(self, filename, plot_function):
         """Handles reading data from a CSV and plotting it using a specific plot function."""
-        with open(filename, "r") as file:
+        with open(filename, "r", newline='') as file:
             reader = csv.reader(file, delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
             for items in reader:
                 tag = items[0]
@@ -113,8 +113,8 @@ class IPlot:
         """Plots min, mean, and max values."""
         if xlab is None or not xlab:
             xlab = [""]
-        
-        with open(filename, "r") as file:
+
+        with open(filename, "r", newline='') as file:
             lines = list(csv.reader(file, delimiter=",", quoting=csv.QUOTE_NONNUMERIC))
 
         tags = lines[0]
@@ -143,15 +143,15 @@ class IPlot:
 
 def shell_iplot():
     """Handles command-line options and invokes IPlot."""
-    parser = OptionParser(USAGE, version=VERSION, description=DESCRIPTION)
-    parser.add_option(
+    parser = argparse.ArgumentParser(usage=USAGE, description=DESCRIPTION)
+    parser.add_argument(
         "-o", "--origin_prefix", default="ibootstrap", dest="origin_prefix", help="Prefix for input filenames"
     )
-    parser.add_option("-p", "--plot_type", default="ps", dest="plot_type", help="Plot type: 'ps' or 'quartz'")
-    parser.add_option("-v", "--plot_variables", default="", dest="plot_variables", help="Variables to plot")
-    parser.add_option("-f", "--fit", default=[], dest="fits", action="append", help="Fits to be performed")
+    parser.add_argument("-p", "--plot_type", default="ps", dest="plot_type", help="Plot type: 'ps' or 'quartz'")
+    parser.add_argument("-v", "--plot_variables", default="", dest="plot_variables", help="Variables to plot")
+    parser.add_argument("-f", "--fit", default=[], dest="fits", action="append", help="Fits to be performed")
 
-    options, args = parser.parse_args()
+    options = parser.parse_args()
     if options.fits:
         print("Sorry, -f not implemented yet!")
 

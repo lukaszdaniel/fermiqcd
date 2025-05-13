@@ -32,7 +32,7 @@ int main(int argc, char **argv)
       ApeSmearing::smear(U, 0.7, 1, 10);
       {
          float tc = topological_charge_vtk(U, "topological_charge_*.vtk", -1);
-         mdp << "topological_charge=" << tc << "\n";
+         mdp << "total topological charge=" << tc << "\n";
       }
    }
 
