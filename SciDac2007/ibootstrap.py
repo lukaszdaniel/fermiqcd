@@ -4,7 +4,7 @@ import copy
 import random
 import glob
 import csv
-import argparse
+from optparse import *
 from math import *
 
 usage = ("ibootstrap.py *.log 'x[<a>]/y[<b>]' 'abs(a-b)==1'\n"
@@ -502,6 +502,7 @@ def shell_ibootstrap():
         default="ibootstrap",
         help="path+prefix used to build output files",
     )
+
     (options, args) = parser.parse_args()
     if options.test:
         return test_ibootstrap()

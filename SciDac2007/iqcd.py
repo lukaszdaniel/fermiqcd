@@ -28,7 +28,7 @@ allowed_commands = {
         ["boost", r"\d(.\d+)+", "1.0"],
         ["steps", r"\d+", "20"],
         ["precision", r"\d+(.\d+)+(e\-\d+)*", "1e-6"],
-        ["z3", r"\d", 0],
+        ["z3", r"\d", "0"],
     ],
     "landau_gauge_fix": [
         ["boost", r"\d(.\d+)+", "1.0"],
@@ -124,8 +124,9 @@ def parse(argv=sys.argv[2:]):
 
         k = len(commands)
 
+    k = 0
     # Check the first algorithm is either -cold, -hot, or -load
-    if not commands[0].command in ["cold", "hot", "load"]:
+    if not commands or commands[0].command not in ["cold", "hot", "load"]:
         errors.append("The first algorithm must be -cold, -hot, or -load")
 
     # Validate each command
@@ -148,7 +149,7 @@ def parse(argv=sys.argv[2:]):
                     else:
                         s.args[a] = c
                         warnings.append(f"+{s.command} warning: assuming default argument {a}={c}")
-                elif re.sub(b, "", s.args[a]) != "":
+                elif not re.fullmatch(b, s.args[a]):
                     errors.append(f"+{s.command} error: invalid argument {a}={s.args[a]}")
 
             for a in s.args:
@@ -156,7 +157,7 @@ def parse(argv=sys.argv[2:]):
                     errors.append(f"+{s.command} error: unknown argument {a}=...")
 
         if s.command in ["cold", "hot"] and k > 0:
-            errors.append(f"+{s.command} error: must be the first algorithm!")
+            errors.append(f"+{s.command} error: cannot be used after the first algorithm!")
 
         k += 1
 
@@ -189,7 +190,7 @@ def generate_code(instruction, warnings, commands):
     program += "using namespace MDP;\n\n"
 
     program += "int main(int argc, char **argv) {\n"
-    program += "   mdp.open_wormholes(argc,argv);\n"
+    program += "   mdp.open_wormholes(argc, argv);\n"
     program += "   std::string filename;\n"
     program += "   coefficients coeff;\n"
 
@@ -204,67 +205,74 @@ def generate_code(instruction, warnings, commands):
         # Handle gauge field creation based on command type
         if not have_gauge:
             if s.command == "cold":
-                program += f"   int L[]={s.args['TxXxYxZ'].replace('x', ',')};\n"
+                dims = s.args.get('TxXxYxZ', '').replace('x', ',')
+                program += f"   int L[] = {{{dims}}};\n"
                 program += "   mdp_lattice spacetime(4, L);\n"
-                program += f"   int nc={s.args['nc']};\n"
+                program += f"   int nc = {s.args.get('nc', 3)};\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 program += "   set_cold(U);\n"
                 have_gauge = True
-            if s.command == "hot":
-                program += f"   int L[] = {s.args['TxXxYxZ'].replace('x', ',')};\n"
-                program += "   mdp_lattice spacetime(4,L);\n"
-                program += f"   int nc = {s.args['nc']};\n"
+            elif s.command == "hot":
+                dims = s.args.get('TxXxYxZ', '').replace('x', ',')
+                program += f"   int L[] = {{{dims}}};\n"
+                program += "   mdp_lattice spacetime(4, L);\n"
+                program += f"   int nc = {s.args.get('nc', 3)};\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 program += "   set_hot(U);\n"
                 have_gauge = True
-            if s.command == "load":
-                program += f"   mdp_field_file_header header = get_info({s.args['filename']});\n"
+            elif s.command == "load":
+                program += f"   mdp_field_file_header header = get_info(\"{s.args.get('filename', 'input.mdp')}\");\n"
                 program += "   int L[] = {header.box[0], header.box[1], header.box[2], header.box[3]};\n"
                 program += NC_SWITCH
                 program += "   mdp_lattice spacetime(4, L);\n"
+                program += f"   int nc = header.nc;\n"
                 program += "   gauge_field U(spacetime, nc);\n"
-                if s.args["precision"] == "float":
+                precision = s.args.get("precision", "double")
+                if precision == "float":
                     program += f'   U.load_as_float("{s.args["filename"]}");\n'
-                if s.args["precision"] == "double":
+                else:
                     program += f'   U.load_as_double("{s.args["filename"]}");\n'
                 have_gauge = True
         else:
             if s.command == "loop":
                 j = len(loops)
-                loops.append(s.args["end"])
-                program += f"{SPACE}for(int i{j} = 0; i{j} < {s.args['n']}; i{j}++) {{\n"
+                loops.append(int(s.args.get("end", s.args.get("n", 1))))
+                program += f"{SPACE}for(int i{j} = 0; i{j} < {s.args.get('n', 1)}; i{j}++) {{\n"
                 indent += 1
-            if s.command == "load":
-                if s.args["precision"] == "float":
+            elif s.command == "load":
+                precision = s.args.get("precision", "double")
+                if precision == "float":
                     program += f"{SPACE}U.load_as_float(\"{s.args['filename']}\");\n"
-                if s.args["precision"] == "double":
+                else:
                     program += f"{SPACE}U.load_as_double(\"{s.args['filename']}\");\n"
-            if s.command == "lload":
-                if s.args["precision"] == "float":
-                    program += f"{SPACE}U.load_as_float(glob(\"{s.args['filename']}\")[i{len(loops)-1}]);\n"
-                if s.args["precision"] == "double":
-                    program += f"{SPACE}U.load_as_double(glob(\"{s.args['filename']}\")[i{len(loops)-1}]);\n"
+            elif s.command == "lload":
+                precision = s.args.get("precision", "double")
+                index = len(loops) - 1
+                if precision == "float":
+                    program += f"{SPACE}U.load_as_float(glob(\"{s.args['filename']}\")[i{index}]);\n"
+                else:
+                    program += f"{SPACE}U.load_as_double(glob(\"{s.args['filename']}\")[i{index}]);\n"
             if s.command == "save_partitioning":
                 program += f"{SPACE}save_partitioning_vtk(spacetime, \"{s.args['filename']}\");\n"  # NOT IMPLEMENTED
             if s.command == "save":
                 program += f"{SPACE}U.save(\"{s.args['filename']}\");\n"
             if s.command == "plaquette":
-                program += f"{SPACE}mdp << \"plaquette = \" << average_plaquette(U) << endl;\n"
+                program += f"{SPACE}mdp << \"plaquette = \" << average_plaquette(U) << \"\\n\";\n"
             if s.command == "heatbath":
                 program += f"{SPACE}coeff[\"beta\"] = {s.args['beta']};\n"
                 program += f"{SPACE}WilsonGaugeAction::heatbath(U, coeff, {s.args['steps']});\n"
             if s.command == "ape_smear":
                 program += f"{SPACE}ApeSmearing::smear(U, {s.args['alpha']}, {s.args['steps']}, {s.args['cooling_steps']});\n"
             if s.command == "coulomb_gauge_fix":
-                program += f"{SPACE}GaugeFixing::fix(U,GaugeFixing::Coulomb, {s.args['steps']}, {s.args['precision']}, {s.args['boost']}, {s.args['z3']});\n"
+                program += f"{SPACE}GaugeFixing::fix(U, GaugeFixing::Coulomb, {s.args['steps']}, {s.args['precision']}, {s.args['boost']}, {s.args['z3']});\n"
             if s.command == "landau_gauge_fix":
-                program += f"{SPACE}GaugeFixing::fix(U,GaugeFixing::Landau,{s.args['steps']}, {s.args['precision']}, {s.args['boost']});\n"
+                program += f"{SPACE}GaugeFixing::fix(U, GaugeFixing::Landau, {s.args['steps']}, {s.args['precision']}, {s.args['boost']});\n"
             if s.command == "topological_charge":
-                program += f"{SPACE}{{float tc = topological_charge_vtk(U, \"{s.args['filename']}\", {s.args['t']});\n"
-                program += f"{SPACE}mdp << \"topological_charge = \" << tc << endl; }}\n"
+                program += f"{SPACE}{{ float tc = topological_charge_vtk(U, \"{s.args['filename']}\", {s.args['t']});\n"
+                program += f"{SPACE}  mdp << \"topological_charge = \" << tc << \"\\n\"; }}\n"
         k += 1
 
-        # Closing loops
+        # Close loops when needed
         if loops and k == loops[-1]:
             loops.pop()
             indent -= 1
