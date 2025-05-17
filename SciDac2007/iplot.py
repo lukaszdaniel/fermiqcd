@@ -1,7 +1,8 @@
 import csv
 import re
-import argparse  # Use argparse instead of optparse
+import argparse
 from rpy2.robjects import r
+from rpy2.robjects.packages import importr
 
 # Script information
 USAGE = "python iplot.py\n"
@@ -13,12 +14,11 @@ VERSION = ("iplot v1.0"
 DESCRIPTION = "Plot the output of ibootstrap.py"
 
 # R library initialization
-r.library("Hmisc")
-
+Hmisc = importr("Hmisc")
 
 def clean(text):
-    """Cleans up text by replacing spaces with empty and slashes with '_div_'."""
-    return re.sub(r"\s+", "", text.replace("/", "_div_"))
+    """Cleans up text by replacing spaces and slashes."""
+    return re.sub(r"\s+", "", text.strip().replace("/", "_div_"))
 
 class IPlot:
     def __init__(self, filename, plot_type, items=None):
@@ -61,22 +61,28 @@ class IPlot:
     def plot_raw_data(self, filename):
         """Plots raw data and its corresponding histogram and probability plot."""
         def plot_function(tag, data, filename):
+            base = f"{filename[:-4]}_{clean(tag)}"
+
             # Raw data plot
-            self.begin(f"{filename[:-4]}_{clean(tag)}")
+            self.begin(base)
             r.plot(x=list(range(len(data))), y=data, xlab="step", ylab=tag, main="")
             self.end()
 
             # Plot histogram
-            self.begin(f"{filename[:-4]}_{clean(tag)}_hist")
-            r.hist(data, n=len(data) // 20, xlab=tag, ylab="frequency", main="", prob="T")
+            self.begin(f"{base}_hist")
+            r.hist(data, n=max(1, len(data) // 20), xlab=tag, ylab="frequency", main="", prob=True)
             r.rug(data)
             self.end()
 
             # Plot probability data
-            mu = r.mean(data)
-            sd = r.sd(data)
-            probs = [min(x, 1 - x) for x in [r.pnorm((x - mu) / sd) for x in data]]
-            self.begin(f"{filename[:-4]}_{clean(tag)}_probability")
+            mu = r.mean(data)[0]
+            sd = r.sd(data)[0]
+
+            def pnorm_val(x):
+                return float(r.pnorm((x - mu) / sd)[0])
+
+            probs = [min(pnorm_val(x), 1 - pnorm_val(x)) for x in data]
+            self.begin(f"{base}_probability")
             r.plot(list(range(len(probs))), probs, xlab="step", ylab=f"probability {tag}", main="", type="p")
             self.end()
 
@@ -92,7 +98,7 @@ class IPlot:
         self.plot_data(filename, plot_function)
 
     def plot_trails(self, filename):
-        """Plots trails."""
+        """Plots trails from the given CSV file."""
         def plot_function(tag, data, filename):
             self.begin(f"{filename[:-4]}_{clean(tag)}")
             r.plot(x=list(range(len(data))), y=data, xlab="step", ylab=tag, main="", type="p")
@@ -101,31 +107,36 @@ class IPlot:
         self.plot_data(filename, plot_function)
 
     def plot_samples(self, filename):
-        """Plots samples and histograms."""
+        """Plots samples and histograms from the given CSV file."""
         def plot_function(tag, data, filename):
             self.begin(f"{filename[:-4]}_{clean(tag)}_hist")
-            r.hist(data, n=len(data) // 10, xlab=tag, ylab="frequency", main="", prob="T")
+            r.hist(data, n=max(1, len(data) // 10), xlab=tag, ylab="frequency", main="", prob=True)
             r.rug(data)
             self.end()
 
         self.plot_data(filename, plot_function)
 
     def plot_min_mean_max(self, filename, xlab=None):
-        """Plots min, mean, and max values."""
-        if xlab is None or not xlab:
-            xlab = [""]
+        """Plot min/mean/max with error bars from the given CSV file."""
+        if not xlab:
+            xlab = ["t"]
 
         with open(filename, "r", newline='') as file:
             lines = list(csv.reader(file, delimiter=",", quoting=csv.QUOTE_NONNUMERIC))
 
         tags = lines[0]
-        index = next((i for i, tag in enumerate(tags) if tag[0] == "["), None)
+        index = next((i for i, tag in enumerate(tags) if tag.startswith("[")), len(tags) - 3)
 
         sets = {}
         for items in lines[1:]:
             tag = items[0]
             data = items[1:]
-            legend = " ".join(f"{tags[i]}={data[i - 1]}" for i in range(1, len(tags) - 3) if tags[i] not in xlab)
+
+            legend = " ".join(
+                f"{tags[i]}={data[i - 1]}"
+                for i in range(1, len(tags) - 3)
+                if tags[i] not in xlab
+            )
 
             if legend not in sets:
                 sets[legend] = ([], [], [], [])
@@ -145,18 +156,19 @@ class IPlot:
 def shell_iplot():
     """Handles command-line options and invokes IPlot."""
     parser = argparse.ArgumentParser(usage=USAGE, description=DESCRIPTION)
-    parser.add_argument(
-        "-o", "--origin_prefix", default="ibootstrap", dest="origin_prefix", help="Prefix for input filenames"
-    )
-    parser.add_argument("-p", "--plot_type", default="ps", dest="plot_type", help="Plot type: 'ps' or 'quartz'")
-    parser.add_argument("-v", "--plot_variables", default="", dest="plot_variables", help="Variables to plot")
-    parser.add_argument("-f", "--fit", default=[], dest="fits", action="append", help="Fits to be performed")
+    parser.add_argument("-o", "--origin_prefix", default="ibootstrap", help="Prefix for input filenames")
+    parser.add_argument("-p", "--plot_type", default="ps", help="Plot type: 'ps', 'png', or 'quartz'")
+    parser.add_argument("-v", "--plot_variables", default="", help="Comma-separated list of variables to plot")
+    parser.add_argument("-f", "--fit", default=[], action="append", help="Fits to be performed (not implemented)")
 
     options = parser.parse_args()
-    if options.fits:
-        print("Sorry, -f not implemented yet!")
+    items = options.plot_variables.split(",") if options.plot_variables else []
 
-    plot = IPlot(options.origin_prefix, options.plot_type, options.plot_variables.split(","))
+    if options.fit:
+        print("Note: -f option is not implemented yet.")
+
+    IPlot(options.origin_prefix, options.plot_type, items)
 
 if __name__ == "__main__":
     shell_iplot()
+

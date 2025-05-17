@@ -107,7 +107,7 @@ plaquette:
 	python iqcd.py compile
 	./latest.exe > latest.log	
 	python ibootstrap.py latest.log '"plaquette"'
-	python iplot.py -p quartz
+	python iplot.py -p ps
 
 topological:
 	python iqcd.py code +hot +heatbath steps=100 +loop n=100 { +ape_smear steps=1 +topological_charge }

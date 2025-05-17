@@ -12,7 +12,6 @@ from matplotlib.backends.backend_tkagg import (
 import csv
 from optparse import OptionParser
 import re
-from rpy import r
 
 # Script information
 USAGE = "python iplot.py\n"
@@ -25,8 +24,8 @@ DESCRIPTION = "Plot the output of ibootstrap.py"
 
 
 def clean(text):
-    """Cleans up text by replacing spaces with empty and slashes with '_div_'."""
-    return re.sub(r"\s+", "", text.replace("/", "_div_"))
+    """Cleans up text by replacing spaces and slashes."""
+    return re.sub(r"\s+", "", text.strip().replace("/", "_div_"))
 
 
 def gen_plot(figure, plot_args):
@@ -53,7 +52,7 @@ class IPlot:
         self.type = plot_type
         self.output_prefix = output_prefix
         self.figure = Figure((8.5, 11))
-        
+
         # Choose the canvas based on plot type
         if plot_type == "png":
             self.canvas = FigureCanvasAgg(self.figure)
@@ -64,6 +63,7 @@ class IPlot:
         
         self.plots = {}
 
+        # Plot different data categories
         self.plot_raw_data(filename + "_raw_data.csv")
         self.plot_autocorrelations(filename + "_autocorrelations.csv")
         self.plot_trails(filename + "_trails.csv")
@@ -203,7 +203,7 @@ class IPlot:
             quants[name] = self.make_hist, (name, data, 10, tag, "frequency")
 
     def plot_min_mean_max(self, filename, xlab=None):
-        """Plots min, mean, and max from the given CSV file."""
+        """Plot min/mean/max with error bars from the given CSV file."""
         lines = list(
             csv.reader(open(filename, "r"), delimiter=",", quoting=csv.QUOTE_NONNUMERIC)
         )
@@ -219,9 +219,16 @@ class IPlot:
         for items in lines[1:]:
             tag = items[0]
             data = items[1:]
-            legend = "".join(f"{tags[i]}={data[i-1]} " for i in range(1, len(tags)) if tags[i] not in xlab)
+
+            legend = " ".join(
+                f"{tags[i]}={data[i - 1]}"
+                for i in range(1, len(tags) - 3)
+                if tags[i] not in xlab
+            )
+
             if legend not in sets:
                 sets[legend] = ([], [], [], [])
+
             x, y, yminus, yplus = sets[legend]
             t = data[index]
             x.append(t)
@@ -245,7 +252,7 @@ class IPlot:
 
 def make_menu(iplot):
     """Creates the menu interface for interacting with the plot."""
-    main_window = Tk.Tk()
+    #main_window = Tk.Tk()
 
     def show_plot(name, plot_args):
         pwin = Tk.Toplevel()
@@ -302,11 +309,7 @@ def make_menu(iplot):
         # button.pack(side=Tk.TOP, expand=0, fill=Tk.X)
 
     def make_dict_list(plot_dict, name):
-        if not main_window[0]:
-            main_window[0] = Tk.Tk()
-            lwin = main_window[0]
-        else:
-            lwin = Tk.Toplevel()
+        lwin = Tk.Toplevel()
         lwin.wm_title(name)
 
         scrollbar = Tk.Scrollbar(lwin, orient=Tk.VERTICAL)
@@ -363,7 +366,7 @@ def make_menu(iplot):
 
 def shell_iplot():
     """Main function to handle command-line arguments and execute plotting."""
-    parser = OptionParser(USAGE, None, OptionParser, VERSION)
+    parser = OptionParser(usage=USAGE, version=VERSION)
     parser.description = DESCRIPTION
     parser.add_option(
         "-d",
@@ -379,11 +382,13 @@ def shell_iplot():
         dest="origin_prefix",
         help="the prefix used to build input filenames",
     )
-    parser.add_option("-p",
-                      "--plot_type",
-                      default="ps",
-                      dest="plot_type",
-                      help="ps or png")
+    parser.add_option(
+        "-p",
+        "--plot_type",
+        default="ps",
+        dest="plot_type",
+        help="ps or png"
+    )
     parser.add_option(
         "-v",
         "--plot_variables",
@@ -414,3 +419,4 @@ def shell_iplot():
 
 if __name__ == "__main__":
     shell_iplot()
+

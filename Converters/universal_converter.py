@@ -986,8 +986,8 @@ formats = (
 
 
 def main():
-    usage = "usage: %prog [options] path"
-    parser = optparse.OptionParser(usage=usage)
+    USAGE = "usage: %prog [options] path"
+    parser = optparse.OptionParser(usage=USAGE)
     parser.add_option(
         "-f",
         "--format",

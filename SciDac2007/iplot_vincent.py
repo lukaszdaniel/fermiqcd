@@ -1,6 +1,6 @@
 # XXX - No class, just generate all plots into a list
 
-from optparse import *
+from optparse import OptionParser
 import numpy
 from scipy import stats
 import tkinter as Tk
@@ -13,14 +13,14 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg as FigureCanvasT
 # from rpy import *
 import re
 
-usage = "python iplot.py\n"
-version = ("iplotv1.0"
+USAGE = "python iplot.py\n"
+VERSION = ("iplotv1.0"
            "\n  Copyright (c) 2007 Massimo Di Pierro"
            "\n  All rights reserved"
            "\n  License: GPL 3.0"
            "\n\n  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>")
 
-description = "plot the output of ibootstrap.py"
+DESCRIPTION = "plot the output of ibootstrap.py"
 
 # r.library('Hmisc')
 
@@ -275,8 +275,8 @@ def make_window(iplot):
 
 
 def shell_iplot():
-    parser = OptionParser(usage, None, Option, version)
-    parser.description = description
+    parser = OptionParser(usage=USAGE, version=VERSION)
+    parser.description = DESCRIPTION
     parser.add_option(
         "-d",
         "--dest_prefix",

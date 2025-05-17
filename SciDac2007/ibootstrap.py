@@ -4,22 +4,22 @@ import copy
 import random
 import glob
 import csv
-from optparse import *
+from optparse import OptionParser
 from math import *
 
-usage = ("ibootstrap.py *.log 'x[<a>]/y[<b>]' 'abs(a-b)==1'\n"
+USAGE = ("ibootstrap.py *.log 'x[<a>]/y[<b>]' 'abs(a-b)==1'\n"
          "  scans all files *.log for expressions of the form\n"
          "    x[<a>]=<value> and y[<b>]=<value>\n"
          "  and computes the average and bootstrap errors of x[<a>]/y[<b>]\n"
          "  where <a> and <b> satisfy the condition abs(a-b)==1.\n")
 
-version = ("iboostrap v1.0\n"
+VERSION = ("iboostrap v1.0\n"
            "  Copyright (c) 2007 Massimo Di Pierro\n"
            "  All rights reserved\n"
            "  License: GPL 2.0\n\n"
            "  Written by Massimo Di Pierro <mdipierro@cs.depaul.edu>\n")
 
-description = (
+DESCRIPTION = (
     "This is program to scan the log files of a Markov Chain Monte Carlo\n"
     "Algorithm, parse for expressions and compute the average and bootstrap errors\n"
     "of any function of those expressions."
@@ -434,8 +434,8 @@ def test_ibootstrap():
 
 
 def shell_ibootstrap():
-    parser = OptionParser(usage, None, Option, version)
-    parser.description = description
+    parser = OptionParser(usage=USAGE, version=VERSION)
+    parser.description = DESCRIPTION
     parser.add_option(
         "-b",
         "--minimum_index",

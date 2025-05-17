@@ -1,5 +1,5 @@
 import csv
-from optparse import *
+from optparse import OptionParser
 import re
 import os
 import sys
@@ -571,7 +571,7 @@ def make_gui():
 
 
 def shell_iplot():
-    parser = OptionParser(USAGE, None, Option, VERSION)
+    parser = OptionParser(usage=USAGE, version=VERSION)
     parser.description = DESCRIPTION
     parser.add_option(
         "-d",
