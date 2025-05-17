@@ -1,7 +1,7 @@
 import csv
 import re
 import argparse  # Use argparse instead of optparse
-from rpy import r
+from rpy2.robjects import r
 
 # Script information
 USAGE = "python iplot.py\n"
@@ -28,6 +28,7 @@ class IPlot:
         if self.type == "quartz":
             r.quartz()
 
+        # Plot different data categories
         self.plot_raw_data(f"{filename}_raw_data.csv")
         self.plot_autocorrelations(f"{filename}_autocorrelations.csv")
         self.plot_trails(f"{filename}_trails.csv")
@@ -65,13 +66,13 @@ class IPlot:
             r.plot(x=list(range(len(data))), y=data, xlab="step", ylab=tag, main="")
             self.end()
 
-            # Histogram
+            # Plot histogram
             self.begin(f"{filename[:-4]}_{clean(tag)}_hist")
             r.hist(data, n=len(data) // 20, xlab=tag, ylab="frequency", main="", prob="T")
             r.rug(data)
             self.end()
 
-            # Probability plot
+            # Plot probability data
             mu = r.mean(data)
             sd = r.sd(data)
             probs = [min(x, 1 - x) for x in [r.pnorm((x - mu) / sd) for x in data]]

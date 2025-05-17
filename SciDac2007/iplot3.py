@@ -6,7 +6,7 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.backends.backend_ps import FigureCanvasPS
 from matplotlib.backends.backend_tkagg import (
     FigureCanvasTkAgg as FigureCanvasTk,
-    NavigationToolbar2TkAgg as NavigationToolbar2Tk,
+    NavigationToolbar2Tk as NavigationToolbar2Tk,
 )
 
 import csv
@@ -25,7 +25,7 @@ DESCRIPTION = "Plot the output of ibootstrap.py"
 
 
 def clean(text):
-    """Cleans the input text by removing spaces and replacing '/' with '_div_'."""
+    """Cleans up text by replacing spaces with empty and slashes with '_div_'."""
     return re.sub(r"\s+", "", text.replace("/", "_div_"))
 
 
@@ -47,7 +47,9 @@ def gen_plot(figure, plot_args):
 
 
 class IPlot:
-    def __init__(self, filename, plot_type, items=[], output_prefix=""):
+    def __init__(self, filename, plot_type, items=None, output_prefix=""):
+        if items is None:
+            items = []
         self.type = plot_type
         self.output_prefix = output_prefix
         self.figure = Figure((8.5, 11))

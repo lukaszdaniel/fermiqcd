@@ -7,7 +7,7 @@ import os
 import sys
 import glob
 import wx
-from enthought.mayavi.app import Mayavi
+from mayavi.core.api import Mayavi
 from enthought.mayavi.sources.vtk_file_reader import VTKFileReader
 from enthought.mayavi.modules.outline import Outline
 from enthought.mayavi.modules.text import Text
@@ -32,7 +32,11 @@ def parse():
         print("Usage: show.py FILE(s)")
         sys.exit(1)
     filepatterns = sys.argv[1]
-    return [glob.glob(p) for p in filepatterns.split(",")]
+    files = []
+    for pattern in filepatterns.split(","):
+        files.extend(glob.glob(pattern))
+    # Return a list of file lists for compatibility with rest of code
+    return [files]
 
 
 class Watcher(wx.Timer):
@@ -65,6 +69,8 @@ class MayaViShow(Mayavi):
         self.script.new_scene()
 
         for idx, filegroup in enumerate(self.filelists):
+            if not filegroup:
+                continue
             f = filegroup[0]
             reader = VTKFileReader()
             reader.initialize(f)
@@ -92,7 +98,7 @@ class MayaViShow(Mayavi):
 
         for label, handler in items.items():
             menu_item = wx.MenuItem(animation_menu, wx.ID_ANY, label)
-            animation_menu.AppendItem(menu_item)
+            animation_menu.Append(menu_item)  # Changed here for wxPython Phoenix
             window.Bind(wx.EVT_MENU, handler, menu_item)
 
     def AnimStop(self, evt):
@@ -113,7 +119,8 @@ class MayaViShow(Mayavi):
             for idx, _ in enumerate(self.filelists):
                 self.data[idx].initialize(filelist[self.timestep])
 
-            self.sceneTextCount.text = str(self.timestep)
+            if self.sceneTextCount:
+                self.sceneTextCount.text = str(self.timestep)
             self.timestep += 1
         else:
             self.watcher = None
@@ -130,14 +137,17 @@ class MayaViShow(Mayavi):
 
         changed = False
         for idx, filegroup in enumerate(self.filelists):
+            if not filegroup:
+                continue
             f = filegroup[0]
             if self.filestatus[idx] != os.stat(f).st_mtime:
                 self.data[idx].reader.modified()
                 self.data[idx].update()
                 self.data[idx].data_changed = True
+                self.filestatus[idx] = os.stat(f).st_mtime
                 changed = True
 
-        if changed:
+        if changed and self.sceneTextCount:
             self.sceneTextCount.text = str(self.frame)
             self.frame += 1
 

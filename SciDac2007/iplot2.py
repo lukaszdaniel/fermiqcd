@@ -1,7 +1,7 @@
 import csv
 from optparse import OptionParser
 import re
-from rpy import r
+from rpy2.robjects import r
 
 # Script information
 USAGE = "python iplot.py\n"
@@ -22,9 +22,10 @@ def clean(text):
 
 
 class IPlot:
-    def __init__(self, filename, plot_type, items=[]):
+    def __init__(self, filename, plot_type, items=None):
+        if items is None:
+            items = []
         self.type = plot_type
-
         if self.type == "quartz":
             r.quartz()
 
@@ -35,18 +36,18 @@ class IPlot:
         self.plot_min_mean_max(f"{filename}_min_mean_max.csv", items)
 
     def begin(self, filename):
-        """Begin a plot based on the specified type."""
+        """Starts the plotting device (ps or png)."""
         if self.type == "ps":
             r.postscript(f"{filename}.ps")
         elif self.type == "png":
             r.png(f"{filename}.png")
 
     def end(self):
-        """End the plot and handle user input."""
+        """Ends the plotting device."""
         if self.type == "ps":
             r.dev_off()
         else:
-            input("Press Enter to continue")
+            input("Press Enter to continue...")
 
     def plot_raw_data(self, filename):
         """Plot raw data and its histogram."""
@@ -62,12 +63,13 @@ class IPlot:
 
             # Plot histogram
             self.begin(f"{filename[:-4]}_{clean(tag)}_hist")
-            r.hist(data, n=len(data) / 20, xlab=tag, ylab="frequency", prob="T")
+            r.hist(data, n=len(data) // 20, xlab=tag, ylab="frequency", main="", prob="T")
             r.rug(data)
             self.end()
 
             # Plot probability data
-            mu, sd = r.mean(data), r.sd(data)
+            mu = r.mean(data)
+            sd = r.sd(data)
             probs = [min(x, 1 - x) for x in [r.pnorm((x - mu) / sd) for x in data]]
             self.begin(f"{filename[:-4]}_{clean(tag)}_probability")
             r.plot(list(range(len(probs))), probs, xlab="step", ylab=f"probability {tag}", type="p")
@@ -132,7 +134,6 @@ class IPlot:
             self.begin(f"{filename[:-4]}_{clean(legend)}")
             r.errbar(x, y, yminus, yplus, xlab=tags[index + 1], ylab=tags[0])
             self.end()
-
 
 def shell_iplot():
     """Main function to handle command-line arguments and execute plotting."""

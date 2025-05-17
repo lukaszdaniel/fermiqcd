@@ -21,7 +21,7 @@ description = ("This program takes data produced by ibootstrap and fits it\n"
 
 
 def clean(text):
-    return re.sub("\s+", "", text.replace("/", "_div_"))
+    return re.sub(r"\s+", "", text.replace("/", "_div_"))
 
 
 def invert_squared_matrix(A, checkpoint=None):
@@ -116,7 +116,7 @@ class IFit:
             exec(("from %s import *" % import_module), self.locals)
 
         ### parsing expression
-        e = re.compile("[a-zA-Z_]+\w*").findall(expression)
+        e = re.compile(r"[a-zA-Z_]+\w*").findall(expression)
         ### symbols like 'x' that are in the data
         self.required_symbols = [k for k in e if k in symbols]
         ### symbols like 'a' and 'b' that are intended to be variables
@@ -510,8 +510,7 @@ def main_ifit():
             key1, key2 = options.plot.split(",")
             ifit.plot2d(key1, key2)
         ifit.save_fit(options.input_prefix + "_fit_%s.csv" % clean(args[0]))
-        ifit.save_fit_trail(options.input_prefix +
-                            "_fit_%s_trail.csv" % clean(args[0]))
+        ifit.save_fit_trail(options.input_prefix + "_fit_%s_trail.csv" % clean(args[0]))
     except IFitException:
         for item in ifit.errors:
             print(item)

@@ -1,5 +1,5 @@
 import csv
-from optparse import OptionParser
+from optparse import *
 import re
 import os
 import sys
@@ -21,12 +21,6 @@ import os.path
 import zipfile
 import datetime
 import traceback
-from matplotlib.backends.backend_wxagg import FigureCanvasWx
-from matplotlib.figure import Figure
-from matplotlib.colors import rgb2hex
-from wx.lib.pubsub import pub
-from wx.lib.agw import flatnotebook as fnb
-from wx.lib.agw.aui import AuiManager
 
 import ibootstrap
 import ifit
@@ -212,7 +206,7 @@ class IPlot:
 
 
 def make_gui():
-    app = wx.PySimpleApp()
+    app = wx.App(False)
     root = wx.Frame(None, -1, "Iplot")
 
     root_sizer = wx.BoxSizer(wx.VERTICAL)
@@ -221,7 +215,7 @@ def make_gui():
     log_widget = wx.TextCtrl(root, -1, style=wx.TE_MULTILINE, size=(600, 600))
     root_sizer.Add(log_widget, 1, wx.ALL | wx.EXPAND)
 
-    clear_id = wx.NewId()
+    clear_id = wx.Window.NewControlId()
     clear_button = wx.Button(root, clear_id, "Clear Log Window")
     root.Bind(wx.EVT_BUTTON, lambda e: log_widget.Clear(), id=clear_id)
     root_sizer.Add(clear_button, 0, wx.RIGHT | wx.EXPAND)
@@ -229,19 +223,19 @@ def make_gui():
     menubar = wx.MenuBar(style=wx.MENU_TEAROFF)
     file_menu = wx.Menu(style=wx.MENU_TEAROFF)
 
-    file_new_id = wx.NewId()
+    file_new_id = wx.Window.NewControlId()
     file_menu.Append(file_new_id, "&New")
     root.Bind(wx.EVT_MENU, lambda e: show_bootstrap_init(), id=file_new_id)
 
-    file_save_id = wx.NewId()
+    file_save_id = wx.Window.NewControlId()
     file_menu.Append(file_save_id, "&Save")
     root.Bind(wx.EVT_MENU, lambda e: save_data(), id=file_save_id)
 
-    file_open_id = wx.NewId()
+    file_open_id = wx.Window.NewControlId()
     file_menu.Append(file_open_id, "Open")
     root.Bind(wx.EVT_MENU, lambda e: open_data(), id=file_open_id)
 
-    file_exit_id = wx.NewId()
+    file_exit_id = wx.Window.NewControlId()
     file_menu.Append(file_exit_id, "&Exit")
     root.Bind(wx.EVT_MENU, lambda e: sys.exit(0), id=file_exit_id)
 
@@ -328,7 +322,7 @@ def make_gui():
 
         def make_entry(name, default=""):
             grid_items.append((wx.StaticText(edit_panel, -1, name), 0, 0))
-            id = wx.NewId()
+            id = wx.Window.NewControlId()
             entry = wx.TextCtrl(edit_panel, id, default)  # , size=(150, -1))
             grid_items.append((entry, 1, wx.RIGHT | wx.EXPAND))
             return entry
@@ -436,12 +430,12 @@ def make_gui():
                 rgb = to_mpl_color(cdialog.GetColourData().GetColour())
                 background_entry.SetValue(rgb)
 
-        id = wx.NewId()
+        id = wx.Window.NewControlId()
         button = wx.Button(edit_panel, id, "Color Select")
         pwin.Bind(wx.EVT_BUTTON, color_dialog, id=id)
         grid_items.append(button)
 
-        id = wx.NewId()
+        id = wx.Window.NewControlId()
         button = wx.Button(edit_panel, id, "Set")
         pwin.Bind(wx.EVT_BUTTON, set_attributes, id=id)
         grid_items.append(button)
@@ -463,7 +457,7 @@ def make_gui():
 
     def set_menu(menu, d):
         for name, val in sorted(d):
-            id = wx.NewId()
+            id = wx.Window.NewControlId()
             if isinstance(val, wx.Menu):
                 menu.AppendMenu(id, name, val)
             else:
@@ -577,7 +571,7 @@ def make_gui():
 
 
 def shell_iplot():
-    parser = OptionParser(USAGE, None, OptionParser, VERSION)
+    parser = OptionParser(USAGE, None, Option, VERSION)
     parser.description = DESCRIPTION
     parser.add_option(
         "-d",
