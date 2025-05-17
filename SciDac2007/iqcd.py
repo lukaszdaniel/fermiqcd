@@ -205,7 +205,7 @@ def generate_code(instruction, warnings, commands):
         # Handle gauge field creation based on command type
         if not have_gauge:
             if s.command == "cold":
-                dims = s.args.get('TxXxYxZ', '').replace('x', ',')
+                dims = s.args.get("TxXxYxZ", "").replace("x", ",")
                 program += f"   int L[] = {{{dims}}};\n"
                 program += "   mdp_lattice spacetime(4, L);\n"
                 program += f"   int nc = {s.args.get('nc', 3)};\n"
@@ -213,7 +213,7 @@ def generate_code(instruction, warnings, commands):
                 program += "   set_cold(U);\n"
                 have_gauge = True
             elif s.command == "hot":
-                dims = s.args.get('TxXxYxZ', '').replace('x', ',')
+                dims = s.args.get("TxXxYxZ", "").replace("x", ",")
                 program += f"   int L[] = {{{dims}}};\n"
                 program += "   mdp_lattice spacetime(4, L);\n"
                 program += f"   int nc = {s.args.get('nc', 3)};\n"
@@ -257,7 +257,7 @@ def generate_code(instruction, warnings, commands):
             if s.command == "save":
                 program += f"{SPACE}U.save(\"{s.args['filename']}\");\n"
             if s.command == "plaquette":
-                program += f"{SPACE}mdp << \"plaquette = \" << average_plaquette(U) << \"\\n\";\n"
+                program += (f'{SPACE}mdp << "plaquette = " << average_plaquette(U) << "\\n";\n')
             if s.command == "heatbath":
                 program += f"{SPACE}coeff[\"beta\"] = {s.args['beta']};\n"
                 program += f"{SPACE}WilsonGaugeAction::heatbath(U, coeff, {s.args['steps']});\n"
@@ -269,7 +269,7 @@ def generate_code(instruction, warnings, commands):
                 program += f"{SPACE}GaugeFixing::fix(U, GaugeFixing::Landau, {s.args['steps']}, {s.args['precision']}, {s.args['boost']});\n"
             if s.command == "topological_charge":
                 program += f"{SPACE}{{ float tc = topological_charge_vtk(U, \"{s.args['filename']}\", {s.args['t']});\n"
-                program += f"{SPACE}  mdp << \"topological_charge = \" << tc << \"\\n\"; }}\n"
+                program += (f'{SPACE}  mdp << "topological_charge = " << tc << "\\n"; }}\n')
         k += 1
 
         # Close loops when needed
