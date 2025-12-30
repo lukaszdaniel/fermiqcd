@@ -37,7 +37,7 @@ namespace MDP
   /// coeff["c_E"]=1.0;
   /// coeff["c_B"]=1.0;
   /// default_fermi_action=FermiCloverActionSlow::mul_Q;
-  /// if(coeff["c_{sw}"]!=0) compute_em_field(U);
+  /// if (coeff["c_{sw}"]!=0) compute_em_field(U);
   /// mul_Q(chi,psi,U,coeff);
   /// @endverbatim
   /// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
@@ -174,7 +174,7 @@ namespace MDP
   /// coeff["c_E"]=1.0;
   /// coeff["c_B"]=1.0;
   /// default_fermi_action=FermiCloverActionFast::mul_Q;
-  /// if(coeff["c_{sw}"]!=0) compute_em_field(U);
+  /// if (coeff["c_{sw}"]!=0) compute_em_field(U);
   /// mul_Q(chi,psi,U,coeff);
   /// @endverbatim
   class FermiCloverActionFast

@@ -103,6 +103,22 @@ namespace MDP
       return *(address(x, (L5_ * m_nspin + a) * m_nc + i));
     }
 
+    dwfermi_field &operator=(const dwfermi_field &other)
+    {
+      if (this == &other)
+        return *this;
+
+      // base assignment
+      mdp_complex_field::operator=(other);
+
+      // derived fields assignment
+      m_nspin = other.m_nspin;
+      m_nc = other.m_nc;
+      m_L5 = other.m_L5;
+
+      return *this;
+    }
+
     void operator=(mdp_complex a)
     {
       for (mdp_uint i = 0; i < m_size; i++)

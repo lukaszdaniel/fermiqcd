@@ -123,7 +123,7 @@ namespace MDP
           B[2] = (i >> 1) & 0x1;
           B[3] = (i >> 0) & 0x1;
           y.set(x(0) - A[0] + B[0], x(1) - A[1] + B[1], x(2) - A[2] + B[2], x(3) - A[3] + B[3]);
-          // only for goldstone pion if(x!=y || phases(x,i)!=1) error("what!");
+          // only for goldstone pion if (x!=y || phases(x,i)!=1) error("what!");
           if (phases(x, i) != 0)
           {
             for (d = 0, mu = 0; mu < KS_NDIM; mu++)
@@ -271,8 +271,8 @@ namespace MDP
 
   mdp_matrix GoldstonBoson_5x5(gauge_field &U,         // input gauge field
                                gauge_field &V,         // input fat and link links
-                               coefficients &coeff,    // input quark mass
-                               float precision = 1e-6) // color source index
+                               coefficients &coeff/*,    // input quark mass
+                               float precision = 1e-6*/) // color source index
   {
     // // Local variable /////////////
     int i, j;                              //

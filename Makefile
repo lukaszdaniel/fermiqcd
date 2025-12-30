@@ -12,4 +12,10 @@ doc:
 	cd Doxygen; doxygen Doxyfile
 
 clean:
-	rm */*.exe */*.o */*~
+	cd Libraries; make clean
+	cd Examples; make clean
+	cd Converters; make clean
+	cd SciDac2007; make clean
+	cd Vegas; make clean
+	cd Junk; make clean
+	cd tests; make clean

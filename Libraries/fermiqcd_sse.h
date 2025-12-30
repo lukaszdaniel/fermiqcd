@@ -12,6 +12,12 @@
 #ifndef FERMIQCD_SSE_
 #define FERMIQCD_SSE_
 
+#ifdef SSE2
+#include <cstdint> // for uintptr_t
+#include "mdp_macros.h"
+#include "mdp_complex.h"
+#endif
+
 namespace MDP
 {
 #ifdef SSE2
@@ -74,15 +80,15 @@ namespace MDP
   _ASM("prefetcht0 %0 \n\t"                                  \
        "prefetcht0 %1"                                       \
        :                                                     \
-       : "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)))), \
-         "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)) + 128)))
+       : "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)))), \
+         "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)) + 128)))
 
 #define _sse_float_prefetch_su3(addr)                        \
   _ASM("prefetcht0 %0 \n\t"                                  \
        "prefetcht0 %1"                                       \
        :                                                     \
-       : "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)))), \
-         "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)) + 128)))
+       : "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)))), \
+         "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)) + 128)))
 
   // //////////////////////////////////////////////////////////////////////////
   //
@@ -698,22 +704,22 @@ namespace MDP
   _ASM("prefetcht0 %0 \n\t"                                  \
        "prefetcht0 %1"                                       \
        :                                                     \
-       : "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)))), \
-         "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)) + 128)))
+       : "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)))), \
+         "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)) + 128)))
 
 #define _sse_double_prefetch_nta_spinor(addr)                \
   _ASM("prefetchnta %0 \n\t"                                 \
        "prefetchnta %1"                                      \
        :                                                     \
-       : "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)))), \
-         "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)) + 128)))
+       : "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)))), \
+         "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)) + 128)))
 
 #define _sse_double_prefetch_su3(addr)                       \
   _ASM("prefetcht0 %0 \n\t"                                  \
        "prefetcht0 %1"                                       \
        :                                                     \
-       : "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)))), \
-         "m"(*(((char *)(((unsigned int)(addr)) & ~0x7f)) + 128)))
+       : "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)))), \
+         "m"(*(((char *)((reinterpret_cast<std::uintptr_t>(addr)) & ~0x7f)) + 128)))
 
   // //////////////////////////////////////////////////////////////////////////
   //
@@ -1217,7 +1223,7 @@ namespace MDP
   }
 
   // //////////////////////////////////////////////////////////////////////////
-  // r[0].c1=s[0].c1, r[0].2=s[0].c2+...+r[7].c2=s[7].c2;
+  // r[0].c1=s[0].c1, r[0].c2=s[0].c2+...+r[7].c2=s[7].c2;
   // //////////////////////////////////////////////////////////////////////////
 
 #define _sse_double_add_real_scalar_product_16(r, s, c) \
@@ -1386,7 +1392,7 @@ namespace MDP
   }
 
   // //////////////////////////////////////////////////////////////////////////
-  // r[0].c1=s[0].c1, r[0].2=s[0].c2+...+r[7].c2=s[7].c2;
+  // r[0].c1=s[0].c1, r[0].c2=s[0].c2+...+r[7].c2=s[7].c2;
   // //////////////////////////////////////////////////////////////////////////
 
 #define _sse_double_copy_16(r, s) \
@@ -1428,7 +1434,7 @@ namespace MDP
   }
 
   // //////////////////////////////////////////////////////////////////////////
-  // r[0].c1+=s[0].c1, r[0].2+=s[0].c2 ... r[7].c2+=s[7].c2;
+  // r[0].c1+=s[0].c1, r[0].c2+=s[0].c2 ... r[7].c2+=s[7].c2;
   // //////////////////////////////////////////////////////////////////////////
 
 #define _sse_double_add_16(r, s)  \
@@ -1488,7 +1494,7 @@ namespace MDP
   }
 
   // //////////////////////////////////////////////////////////////////////////
-  // r[0].c1-=s[0].c1, r[0].2-=s[0].c2 ... r[7].c2-=s[7].c2; CHECK MAY BE WRONG
+  // r[0].c1-=s[0].c1, r[0].c2-=s[0].c2 ... r[7].c2-=s[7].c2; CHECK MAY BE WRONG
   // //////////////////////////////////////////////////////////////////////////
 
 #define _sse_double_sub_16(r, s)  \
@@ -1548,7 +1554,7 @@ namespace MDP
   }
 
   // //////////////////////////////////////////////////////////////////////////
-  // r[0].c1=c*s[0].c1, r[0].2=c*s[0].c2 ... r[7].c2=c*s[7].c2;
+  // r[0].c1=c*s[0].c1, r[0].c2=c*s[0].c2 ... r[7].c2=c*s[7].c2;
   // //////////////////////////////////////////////////////////////////////////
 
 #define _sse_double_add_multiply_16(r, c, s) \

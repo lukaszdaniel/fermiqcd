@@ -42,32 +42,35 @@ namespace MDP
                       coefficients &coeff)
     {
 
-      if (psi_in.nspin != 4)
+      if (psi_in.nspin() != 4)
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: nspin!=4");
-      if (psi_in.nc != U_in.nc)
+      if (psi_in.nc() != U_in.nc())
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
-      int ndim = psi_in.lattice().ndim();
-      int nspin = psi_in.nspin();
-      int nc = psi_in.nc();
-      int L5 = psi_in.L5();
-      mdp_real m_5 = 0, m_f = 0, sign = 0;
-      if (coeff.has_key("m_5"))
-        m_5 = coeff["m_5"];
-      else
-        error("coefficients m_5 undeclared");
-      if (coeff.has_key("m_f"))
-        m_f = coeff["m_f"];
-      else
-        error("coefficients m_f undeclared");
+      // int ndim = psi_in.lattice().ndim();
+      // int nspin = psi_in.nspin();
+      // int nc = psi_in.nc();
+      // int L5 = psi_in.L5();
+      mdp_real /*m_5 = 0, m_f = 0, */sign = 0;
+      // if (coeff.has_key("m_5"))
+      //   m_5 = coeff["m_5"];
+      // else
+      //   error("coefficients m_5 undeclared");
+      // if (coeff.has_key("m_f"))
+      //   m_f = coeff["m_f"];
+      // else
+      //   error("coefficients m_f undeclared");
       if (coeff.has_key("sign"))
         sign = coeff["sign"];
       else
         sign = 1;
 
+      mdp_real r_t;
+      mdp_real kappa_s = 0;
+      mdp_real kappa_t = 0;
       // check the sign and the 6.0 here
-      mdp_real kappa5 = 0.5 / (m_5 - 6.0);
-      mdp_real kappaf = -m_f * kappa5;
+      // mdp_real kappa5 = 0.5 / (m_5 - 6.0);
+      // mdp_real kappaf = -m_f * kappa5;
 
 #ifndef USE_DOUBLE_PRECISION
 
@@ -77,8 +80,8 @@ namespace MDP
       _sse_check_alignment((void *)psi, 0xf);
       _sse_su3 *U = (_sse_su3 *)U_in.physical_address();
       _sse_check_alignment((void *)U, 0xf);
-      mdp_int **iup = U_in.lattice().up;
-      mdp_int **idw = U_in.lattice().dw;
+      mdp_int **iup = U_in.lattice().up();
+      mdp_int **idw = U_in.lattice().down();
       mdp_int start = U_in.lattice().start_index(ME, 0); // even
       mdp_int stop = U_in.lattice().stop_index(ME, 1);   // odd
 
@@ -338,9 +341,9 @@ namespace MDP
       _sse_spinor *chi = (_sse_spinor *)chi_out.physical_address();
       _sse_spinor *psi = (_sse_spinor *)psi_in.physical_address();
       _sse_su3 *U = (_sse_su3 *)U_in.physical_address();
-      _sse_su3 *uem = (_sse_su3 *)U_in.em.physical_address();
-      mdp_int **iup = U_in.lattice().up;
-      mdp_int **idw = U_in.lattice().dw;
+      // _sse_su3 *uem = (_sse_su3 *)U_in.em.physical_address();
+      mdp_int **iup = U_in.lattice().up();
+      mdp_int **idw = U_in.lattice().down();
       mdp_int start = U_in.lattice().start_index(ME, 0); // even
       mdp_int stop = U_in.lattice().stop_index(ME, 1);   // odd
 

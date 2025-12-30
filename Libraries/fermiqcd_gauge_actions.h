@@ -84,12 +84,12 @@ namespace MDP
       do
       {
         do
-          ;
-        while ((r1 = random.plain()) < 0.0001);
+        {
+        } while ((r1 = random.plain()) < 0.0001);
         r1 = -std::log(r1) / p0;
         do
-          ;
-        while ((r2 = random.plain()) < 0.0001);
+        {
+        } while ((r2 = random.plain()) < 0.0001);
         r2 = -std::log(r2) / p0;
         r3 = std::cos(2.0 * Pi * random.plain());
         r3 = r3 * r3;
@@ -148,7 +148,6 @@ namespace MDP
       else
         zeta = 1;
 
-      int i, j, k, iter, mu, parity;
       mdp_matrix M(U.nc(), U.nc());
       mdp_complex a[4], tmpUik;
       mdp_site x(U.lattice());
@@ -156,14 +155,14 @@ namespace MDP
 
       mdp << coeff;
 
-      for (iter = 0; iter < n_iter; iter++)
-        for (parity = 0; parity < 2; parity++)
-          for (mu = 0; mu < U.ndim(); mu++)
+      for (int iter = 0; iter < n_iter; iter++)
+        for (int parity = 0; parity < 2; parity++)
+          for (int mu = 0; mu < U.ndim(); mu++)
           {
             forallsitesofparity(x, parity)
             {
-              for (i = 0; i < U.nc() - 1; i++)
-                for (j = i + 1; j < U.nc(); j++)
+              for (int i = 0; i < U.nc() - 1; i++)
+                for (int j = i + 1; j < U.nc(); j++)
                 {
                   if (zeta == 1)
                     M = U(x, mu) * staple_H(U, x, mu);
@@ -174,7 +173,7 @@ namespace MDP
                   a[2] = M(j, i);
                   a[3] = M(j, j);
                   heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-                  for (k = 0; k < U.nc(); k++)
+                  for (int k = 0; k < U.nc(); k++)
                   {
                     tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                     U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
@@ -231,11 +230,10 @@ namespace MDP
       mdp_site y0(U.lattice());
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
-      int nu;
       tmp = 0;
       if (mu == 0)
       {
-        for (nu = 1; nu < U.ndim(); nu++)
+        for (int nu = 1; nu < U.ndim(); nu++)
         {
           y0 = x + mu;
           y1 = y0 + nu;
@@ -248,7 +246,7 @@ namespace MDP
       }
       else
       {
-        nu = 0;
+        int nu = 0;
         y0 = (x - mu) + nu;
         tmp += U(x + mu, nu) * hermitian(U(x - mu, nu) * U(y0, mu) * U(x + nu, mu)) * U(x - mu, mu);
         y0 = x - mu;
@@ -322,7 +320,6 @@ namespace MDP
     static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
     {
       int ndim = U.ndim();
-      int nu, rho;
       mdp_matrix tmp(U.nc(), U.nc());
       mdp_matrix b1(U.nc(), U.nc());
       mdp_matrix b2(U.nc(), U.nc());
@@ -333,9 +330,9 @@ namespace MDP
       mdp_site y4(U.lattice());
       mdp_site y5(U.lattice());
       tmp = 0;
-      for (nu = 0; nu < ndim; nu++)
+      for (int nu = 0; nu < ndim; nu++)
         if (nu != mu)
-          for (rho = 0; rho < ndim; rho++)
+          for (int rho = 0; rho < ndim; rho++)
             if ((rho != nu) && (rho != mu))
             {
               y1 = x + mu;

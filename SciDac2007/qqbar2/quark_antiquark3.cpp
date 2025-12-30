@@ -40,7 +40,7 @@ public:
           forallsitesofparity(x, parity)
           {
             if (mu == 0)
-              for (int q = 0; q < sites.size(); q++)
+              for (size_t q = 0; q < sites.size(); q++)
               {
                 if (x(1) == sites[q](1) &&
                     x(2) == sites[q](2) &&
@@ -95,7 +95,7 @@ void punched_ape_smearing(gauge_field &U,
       forallsites(x)
       {
         if (mu == 0)
-          for (int q = 0; q < sites.size(); q++)
+          for (size_t q = 0; q < sites.size(); q++)
           {
             if (x(1) == sites[q](1) &&
                 x(2) == sites[q](2) &&

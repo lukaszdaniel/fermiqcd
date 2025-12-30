@@ -25,7 +25,7 @@ namespace MDP
   ///   mdp_lattice lattice(3,box);
   ///   mdp_site x(lattice);
   ///   forallsites(x) cout << x << endl;
-  ///   if(on_which_process(lattice,1,1,1)==ME) {
+  ///   if (on_which_process(lattice,1,1,1)==ME) {
   ///      x.set(1,1,1);
   ///      cout << lattice.random(x).plain() << endl;
   ///   }
@@ -514,7 +514,7 @@ namespace MDP
   /// When compiled with TWISTED_BOUNDARY the mdp_site class keeps track of
   /// sites that moved around the boundary of the torus topology. this function
   /// returns false if this is one such site, true otherwise.
-  int in_block(mdp_site x)
+  int in_block([[maybe_unused]] mdp_site x)
   {
 #ifdef TWISTED_BOUNDARY
     for (mdp_int mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)

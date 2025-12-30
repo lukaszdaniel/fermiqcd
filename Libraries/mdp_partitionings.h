@@ -36,7 +36,7 @@ namespace MDP
    */
   template <int dim>
   int default_partitioning(const int x[],
-                           const int ndim,
+                           [[maybe_unused]] const int ndim,
                            const int nx[])
   {
     int partition_factor = std::ceil((1.0 * nx[dim]) / Nproc);

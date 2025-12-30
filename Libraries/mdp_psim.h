@@ -50,8 +50,8 @@ namespace MDP
   /// int main(int argc, char** argv) {
   ///    mdp_psim node(argc,argv);
   ///    int a=3, b=0;
-  ///    if(node.id()==0) node.send(1,a);
-  ///    if(node.id()==1) { node.recv(0,b); cout << b << endl;
+  ///    if (node.id()==0) node.send(1,a);
+  ///    if (node.id()==1) { node.recv(0,b); cout << b << endl;
   ///    return 0;
   /// }
   /// @endverbatim

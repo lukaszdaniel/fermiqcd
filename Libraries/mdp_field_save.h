@@ -27,7 +27,7 @@ namespace MDP
                               mdp_int psize,
                               mdp_int header_size,
                               mdp_int position,
-                              const mdp_lattice &lattice)
+                              [[maybe_unused]] const mdp_lattice &lattice)
   {
     if (fseek(fp, position * psize + header_size, SEEK_SET) ||
         fwrite(p, psize, 1, fp) != 1)
@@ -66,7 +66,7 @@ namespace MDP
                 << " (buffer = " << max_buffer_size << " sites)\n";
       fflush(stdout);
       FILE *fp = fopen(filename.c_str(), "wb+");
-      if (fp == 0)
+      if (fp == nullptr)
         error("Unable to open file");
 
       m_header.set_time();

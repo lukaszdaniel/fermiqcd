@@ -101,6 +101,17 @@ namespace MDP
       return mdp_complex(re, im);
     }
 
+    // Assignment operator
+    mdp_complex &operator=(const mdp_complex &other)
+    {
+      if (this != &other)
+      {
+        m_re = other.m_re;
+        m_im = other.m_im;
+      }
+      return *this;
+    }
+
     // Compound assignment operators
     void operator+=(const mdp_complex &c)
     {

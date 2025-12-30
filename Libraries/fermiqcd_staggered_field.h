@@ -59,11 +59,19 @@ namespace MDP
       return m_nc;
     }
 
-    void operator=(const staggered_field &chi)
+    staggered_field &operator=(const staggered_field &chi)
     {
-      m_nc = chi.m_nc;
-      m_nspin = chi.m_nspin;
+      if (this == &chi)
+        return *this;
+
+      // base assignment
       mdp_complex_field::operator=(chi);
+
+      // derived fields assignment
+      m_nspin = chi.m_nspin;
+      m_nc = chi.m_nc;
+
+      return *this;
     }
 
     /** @brief returns the vector stored at site x

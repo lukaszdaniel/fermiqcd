@@ -67,11 +67,19 @@ namespace MDP
       return m_nc;
     }
 
-    void operator=(const fermi_field &chi)
+    fermi_field &operator=(const fermi_field &chi)
     {
-      m_nc = chi.m_nc;
-      m_nspin = chi.m_nspin;
+      if (this == &chi)
+        return *this;
+
+      // base assignment
       mdp_complex_field::operator=(chi);
+
+      // derived fields assignment
+      m_nspin = chi.m_nspin;
+      m_nc = chi.m_nc;
+
+      return *this;
     }
 
     /** @brief returns the matrix stored at site x

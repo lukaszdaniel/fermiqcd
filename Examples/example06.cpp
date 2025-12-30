@@ -3,7 +3,7 @@
 
 using namespace MDP;
 
-float Q(float x, void *a)
+float Q(float x, [[maybe_unused]] void *a)
 {
    return sin(Pi * x);
 }

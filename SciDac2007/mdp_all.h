@@ -43,7 +43,7 @@
 #include <map>
 
 #ifndef HAVE_INET_NTOP
-#define inet_ntop(a, b) inet_ntoa(b)
+#define inet_ptoa(a, b) inet_ntoa(b)
 #define inet_pton(a, b, c) inet_aton(b, c)
 #endif
 
@@ -68,22 +68,36 @@ namespace MDP
   public:
     InternetAddress(std::string hostname = "127.0.0.1", int port = 0)
     {
+      struct addrinfo hints;
+      struct addrinfo *result = nullptr;
 
-      char tmp[16];
-      struct hostent *h = gethostbyname(hostname.c_str());
-      if (h == 0)
-        throw std::string("Invalid hostname");
-      if (h->h_length != 4)
-        throw std::string("Invalid hostname");
-      strncpy(tmp, inet_ntop(AF_INET, *((struct in_addr *)h->h_addr_list[0])), 16);
+      std::memset(&hints, 0, sizeof(hints));
+      hints.ai_family = AF_INET;       // IPv4 (use AF_UNSPEC for IPv6)
+      hints.ai_socktype = SOCK_STREAM; // TCP
 
-      m_ipaddress = tmp;
+      std::string port_str = std::to_string(port);
+
+      int ret = getaddrinfo(hostname.c_str(), port_str.c_str(), &hints, &result);
+      if (ret != 0)
+        throw std::string(gai_strerror(ret));
+
+      // take the first correct address
+      struct sockaddr_in *addr =
+          reinterpret_cast<struct sockaddr_in *>(result->ai_addr);
+
+      m_address = *addr;
       m_port = port;
-      memset(&m_address, 0, sizeof(m_address));
-      m_address.sin_family = AF_INET;
-      m_address.sin_port = htons(port);
-      if (!inet_pton(AF_INET, m_ipaddress.c_str(), &m_address.sin_addr))
+
+      char ipstr[INET_ADDRSTRLEN];
+      if (!inet_ntop(AF_INET, &addr->sin_addr, ipstr, sizeof(ipstr)))
+      {
+        freeaddrinfo(result);
         exit_message(1, "invalid IP address");
+      }
+
+      m_ipaddress = ipstr;
+
+      freeaddrinfo(result);
     }
 
     struct sockaddr_in address() const
@@ -98,7 +112,7 @@ namespace MDP
 
     std::string getIPAddress()
     {
-      return inet_ntop(AF_INET, m_address.sin_addr);
+      return inet_ptoa(AF_INET, m_address.sin_addr);
     }
 
     int Connect(int sfd, int timeout = 0)
@@ -265,7 +279,7 @@ namespace MDP
 
   int setSocketRecvBroadcast(int sfd, int on = 1)
   {
-    return setSocketReusable(sfd, 1);
+    return setSocketReusable(sfd, on);
   }
 
   int setSocketSendMulticast(int sfd, int ttl = 1)

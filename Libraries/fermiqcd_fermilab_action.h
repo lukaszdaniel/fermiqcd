@@ -32,13 +32,13 @@ namespace MDP
       if (parity != EVENODD)
         error("FermiFermilabAction::mul_Q\nparity must be EVENODD");
 
-      if (psi_in.nspin != 4)
+      if (psi_in.nspin() != 4)
         error("FermiFermilabAction::mul_Q\ndoes not work for nspin!=4");
-      if (psi_in.nc != U.nc())
+      if (psi_in.nc() != U.nc())
         error("FermiFermilabAction::mul_Q\nincompatible number of colors");
 
-      mdp_real sign, kappa, kappat, kappas, zeta, rs, rt, cSW, cE, cB;
-      mdp_real c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, mac1, mac2, mac3, mac4, mac5;
+      mdp_real sign, /*kappa, */kappat, kappas, zeta, rs, rt, cSW, cE, cB;
+      mdp_real c1, c2, c3, c4, c5, /*c6, c7, c8, c9, */c10, mac1, mac2, mac3, mac4, mac5;
 
       if (coeff.has_key("sign"))
         sign = coeff["sign"];
@@ -107,22 +107,22 @@ namespace MDP
         c5 = coeff["alpha_5"];
       else
         c5 = 0;
-      if (coeff.has_key("alpha_6"))
-        c6 = coeff["alpha_6"];
-      else
-        c6 = 0;
-      if (coeff.has_key("alpha_7"))
-        c7 = coeff["alpha_7"];
-      else
-        c7 = 0;
-      if (coeff.has_key("alpha_8"))
-        c8 = coeff["alpha_8"];
-      else
-        c8 = 0;
-      if (coeff.has_key("alpha_9"))
-        c9 = coeff["alpha_9"];
-      else
-        c9 = 0;
+      // if (coeff.has_key("alpha_6"))
+      //   c6 = coeff["alpha_6"];
+      // else
+      //   c6 = 0;
+      // if (coeff.has_key("alpha_7"))
+      //   c7 = coeff["alpha_7"];
+      // else
+      //   c7 = 0;
+      // if (coeff.has_key("alpha_8"))
+      //   c8 = coeff["alpha_8"];
+      // else
+      //   c8 = 0;
+      // if (coeff.has_key("alpha_9"))
+      //   c9 = coeff["alpha_9"];
+      // else
+      //   c9 = 0;
       if (coeff.has_key("alpha_10"))
         c10 = coeff["alpha_10"];
       else
@@ -272,10 +272,10 @@ namespace MDP
       mdp_complex c_ud[16 * 4 * 4]; // fermilabread_ud(c_ud);
       mdp_complex c_du[16 * 4 * 4]; // fermilabread_du(c_du);
       mdp_complex c_dd[16 * 4 * 4]; // fermilabread_dd(c_dd);
-      mdp_complex c_eu[16 * 4 * 4]; // fermilabread_eu(c_eu);
-      mdp_complex c_ed[16 * 4 * 4]; // fermilabread_ed(c_ed);
-      mdp_complex c_ue[16 * 4 * 4]; // fermilabread_ue(c_ue);
-      mdp_complex c_de[16 * 4 * 4]; // fermilabread_de(c_de);
+      // mdp_complex c_eu[16 * 4 * 4]; // fermilabread_eu(c_eu);
+      // mdp_complex c_ed[16 * 4 * 4]; // fermilabread_ed(c_ed);
+      // mdp_complex c_ue[16 * 4 * 4]; // fermilabread_ue(c_ue);
+      // mdp_complex c_de[16 * 4 * 4]; // fermilabread_de(c_de);
       mdp_complex c_bu[16 * 4 * 4]; // fermilabread_bu(c_bu);
       mdp_complex c_bd[16 * 4 * 4]; // fermilabread_bd(c_bd);
       mdp_complex c_ub[16 * 4 * 4]; // fermilabread_ub(c_ub);

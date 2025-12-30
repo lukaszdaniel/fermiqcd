@@ -57,6 +57,22 @@ namespace MDP
       return m_L5;
     }
 
+    sdwf_field &operator=(const sdwf_field &other)
+    {
+      if (this == &other)
+        return *this;
+
+      // base assignment
+      mdp_complex_field::operator=(other);
+
+      // derived fields assignment
+      m_nspin = other.m_nspin;
+      m_nc = other.m_nc;
+      m_L5 = other.m_L5;
+
+      return *this;
+    }
+
     /** @brief returns the \e x5 component of the vector stored at site x
      */
     mdp_matrix operator()(mdp_site x, int x5)

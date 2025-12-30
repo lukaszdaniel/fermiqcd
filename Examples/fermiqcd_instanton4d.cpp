@@ -24,11 +24,14 @@ int main(int argc, char **argv)
         p[1] = 30.0 - 0.25 * k;
         Instanton4D A2(3, 0, 1, 1.0, 3, p);
 
-        forallsites(x) for (int mu = 0; mu < U.ndim(); mu++)
-            U(x, mu) = exp(-I * (A1(x, mu) + A2(x, mu)));
+        forallsites(x)
+        {
+            for (int mu = 0; mu < U.ndim(); mu++)
+                U(x, mu) = exp(-I * (A1(x, mu) + A2(x, mu)));
+        }
 
         mdp << "k=" << k << "\n";
-        // if(k>0) ApeSmearing::smear(U,0.7,1,10);
+        // if (k>0) ApeSmearing::smear(U,0.7,1,10);
         snprintf(filename, 128, "%s.%i.vtk", argv[0], k);
         mdp << "top=" << topological_charge_vtk(U, filename) << "\n";
     }

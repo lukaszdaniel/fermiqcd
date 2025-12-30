@@ -41,7 +41,7 @@ namespace MDP
 				   filename, processIO, max_buffer_size);
 			fflush(stdout);
 			FILE *fp = fopen(filename, "rb");
-			if (fp == 0)
+			if (fp == nullptr)
 				error("Unable to open file");
 
 			// #ifdef INSERT_HEADER
@@ -166,7 +166,7 @@ namespace MDP
 				   filename, processIO, max_buffer_size);
 			fflush(stdout);
 			FILE *fp = fopen(filename, mode);
-			if (fp == 0)
+			if (fp == nullptr)
 				error("Unable to open file");
 
 			// #ifdef INSERT_HEADER

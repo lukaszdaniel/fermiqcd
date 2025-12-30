@@ -47,8 +47,8 @@ namespace MDP
 
       _sse_su3 *U = (_sse_su3 *)U_in.physical_address();
       _sse_su3 *LL = (_sse_su3 *)U_in.long_links.physical_address();
-      mdp_int **iup = U_in.lattice().up;
-      mdp_int **idw = U_in.lattice().dw;
+      mdp_int **iup = U_in.lattice().up();
+      mdp_int **idw = U_in.lattice().down();
 
       mdp_int start = U_in.lattice().start_index(ME, parity);
       mdp_int stop = U_in.lattice().stop_index(ME, parity);
@@ -88,7 +88,7 @@ namespace MDP
 
         s = psi + ix;
 
-        x.idx = ix;
+        x.set_local(ix);
 
         if (sign > 0)
         {
@@ -248,7 +248,7 @@ namespace MDP
         sn = chi + ix;
         _sse_float_prefetch_spinor(sn);
 
-        x.idx = ix;
+        x.set_local(ix);
         if (sign > 0)
         {
           sign0 = (int)(psi_in.eta(x, 0) + 1);
@@ -432,7 +432,7 @@ namespace MDP
 
         s = psi + ix;
 
-        x.idx = ix;
+        x.set_local(ix);
 
         if (sign > 0)
         {
@@ -592,7 +592,7 @@ namespace MDP
         sn = chi + ix;
         _sse_float_prefetch_spinor(sn);
 
-        x.idx = ix;
+        x.set_local(ix);
         if (sign > 0)
         {
           sign0 = (int)(psi_in.eta(x, 0) + 1);

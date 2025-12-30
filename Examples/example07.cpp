@@ -5,9 +5,9 @@ using namespace MDP;
 
 constexpr int n = 100;
 
-float f1(const float *x, const void *a) { return x[0] / x[1]; }
+float f1(const float *x, [[maybe_unused]] const void *a) { return x[0] / x[1]; }
 
-float f2(const float *x, const void *a) { return x[0] * x[1]; }
+float f2(const float *x, [[maybe_unused]] const void *a) { return x[0] * x[1]; }
 
 int main()
 {

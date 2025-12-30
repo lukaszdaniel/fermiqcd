@@ -55,9 +55,9 @@ PRG_SUFFIX_FLAG := 1
 # Flags for parallel (mpi) double precision and sse
 #CXXFLAGS = -DPARALLEL -DUSE_DOUBLE_PRECISION -DSSE2 -O2
 
-LDFLAGS := -L../Libraries -lm #-lmdpFermi
+LDFLAGS := -L../Libraries -lm -flto=4 #-lmdpFermi
 CXXFLAGS_INC := -I../Libraries
-CXXFLAGS := -g -DUSE_DOUBLE_PRECISION -O3 -std=c++17 -Wall -Werror -Wno-error=switch -Wno-error=sign-compare -Wno-error=attributes -pedantic $(CXXFLAGS_INC)
+CXXFLAGS := -g -flto=4 -DUSE_DOUBLE_PRECISION -O3 -std=c++17 -Wall -Werror -Wextra -pedantic $(CXXFLAGS_INC)
 #
 ## ==================- NOTHING TO CHANGE BELOW THIS LINE ===================
 ##
@@ -86,9 +86,9 @@ endif
 ##
 clean:
 ifeq ($(PRG_SUFFIX_FLAG),0)
-	$(RM) $(PRGS)
+	$(RM) $(PRGS) $(OBJS)
 else
-	$(RM) $(BINS)
+	$(RM) $(BINS) $(OBJS)
 endif
 ##
 rebuild: clean all

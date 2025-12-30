@@ -83,7 +83,7 @@ void test_size()
   std::cout << "sizeof(c) = " << sizeof(c) << "\n";
 }
 
-int main(int argc, char **argv)
+int main()
 {
   mdp_matrix_test();
   test_size();

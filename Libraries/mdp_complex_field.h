@@ -24,7 +24,7 @@ namespace MDP
                                  mdp_int psize,
                                  mdp_int header_size,
                                  mdp_int position,
-                                 const mdp_lattice &lattice)
+                                 [[maybe_unused]] const mdp_lattice &lattice)
   {
     double *p = (double *)data;
     std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
@@ -41,7 +41,7 @@ namespace MDP
                                 mdp_int psize,
                                 mdp_int header_size,
                                 mdp_int position,
-                                const mdp_lattice &lattice)
+                                [[maybe_unused]] const mdp_lattice &lattice)
   {
     double *p = (double *)data;
     std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
@@ -58,7 +58,7 @@ namespace MDP
                                  mdp_int psize,
                                  mdp_int header_size,
                                  mdp_int position,
-                                 const mdp_lattice &lattice)
+                                 [[maybe_unused]] const mdp_lattice &lattice)
   {
     float *p = (float *)data;
     std::unique_ptr<double[]> q = std::make_unique<double[]>(psize * 2);
@@ -75,7 +75,7 @@ namespace MDP
                                 mdp_int psize,
                                 mdp_int header_size,
                                 mdp_int position,
-                                const mdp_lattice &lattice)
+                                [[maybe_unused]] const mdp_lattice &lattice)
   {
     float *p = (float *)data;
     std::unique_ptr<double[]> q = std::make_unique<double[]>(psize * 2);
@@ -114,10 +114,10 @@ namespace MDP
     {
     }
 
-    void operator=(const mdp_complex_field &psi)
+    mdp_complex_field &operator=(const mdp_complex_field &psi)
     {
       if (this == &psi)
-        return;
+        return *this;
 
       if (&lattice() != &psi.lattice() ||
           m_size != psi.m_size ||
@@ -139,6 +139,8 @@ namespace MDP
 
       for (; i < m_size; i++)
         m_data[i] = psi.m_data[i];
+
+      return *this;
     }
 
     void operator*=(const mdp_complex alpha)

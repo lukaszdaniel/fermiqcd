@@ -27,7 +27,7 @@ namespace MDP
                              mdp_int psize,
                              mdp_int header_size,
                              mdp_int position,
-                             const mdp_lattice &lattice)
+                             [[maybe_unused]] const mdp_lattice &lattice)
   {
     if (fseek(fp, (size_t)position * psize + header_size, SEEK_SET) ||
         fread(p, psize, 1, fp) != 1)
@@ -74,7 +74,7 @@ namespace MDP
       stat(filename.c_str(), &statbuf);
       int total_size = statbuf.st_size;
       FILE *fp = fopen(filename.c_str(), "rb");
-      if (fp == 0)
+      if (fp == nullptr)
         error("Unable to open file");
 
       mdp_int i;

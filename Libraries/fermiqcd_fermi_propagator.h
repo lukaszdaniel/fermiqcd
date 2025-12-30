@@ -80,6 +80,21 @@ namespace MDP
       return m_nc;
     }
 
+    fermi_propagator &operator=(const fermi_propagator &other)
+    {
+      if (this == &other)
+        return *this;
+
+      // base assignment
+      mdp_complex_field::operator=(other);
+
+      // derived fields assignment
+      m_nspin = other.m_nspin;
+      m_nc = other.m_nc;
+
+      return *this;
+    }
+
     /** @brief returns the matrix \e alpha, \e beta stored at site x
      */
     mdp_matrix operator()(mdp_site x, int a, int b)

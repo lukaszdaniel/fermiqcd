@@ -5,7 +5,7 @@ using namespace MDP;
 
 float resistance(int x0, int x1, int mu)
 {
-  return (Pi / 100 * x0);
+  return (Pi / 100 * (x0 + 0 * x1 + 0 * mu));
 }
 
 int main(int argc, char **argv)

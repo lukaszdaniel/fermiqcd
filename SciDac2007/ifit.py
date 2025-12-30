@@ -168,9 +168,9 @@ class IFit:
             off = (ye - yo) * 2 / (p[-1] - p[-3])
             self.last_fit.append(p + [ye, off])
         for key, value in list(variables.items()):
-            if key in self.baesyan:
+            if key in self.bayesian:
                 least_squares += ((value - self.priors[key]) /
-                                  self.baesyan[key])**2
+                                  self.bayesian[key])**2
         return least_squares
 
     def move(self, **variables):
@@ -232,7 +232,7 @@ class IFit:
         variables define the starting point int the parameter space
         """
         self.variables_samples = None
-        self.apriori, self.baesyan = {}, {}
+        self.apriori, self.bayesian = {}, {}
         for key in self.undefined_symbols:
             if key not in variables:
                 self.errors.append("variable %s must be initialized" % key)
@@ -240,7 +240,7 @@ class IFit:
         for key, value in list(variables.items()):
             if key[0] == "_":
                 del variables[key]
-                self.baesyan[key[1:]] = value
+                self.bayesian[key[1:]] = value
         self.priors = copy.deepcopy(variables)
         self.last_trail = []
         for k in range(100):

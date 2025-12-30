@@ -121,7 +121,7 @@ namespace MDP
 
         // debug: cout << residue << endl;
 
-        // if((step>10) && (rresidue==old_rresidue))
+        // if ((step>10) && (rresidue==old_rresidue))
         //     error("not converging");
         step++;
 

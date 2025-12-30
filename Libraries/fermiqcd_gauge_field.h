@@ -198,10 +198,18 @@ namespace MDP
     {
     }
 
-    void operator=(const gauge_field &U)
+    gauge_field &operator=(const gauge_field &U)
     {
-      m_nc = U.m_nc;
+      if (this == &U)
+        return *this;
+
+      // base assignment
       mdp_complex_field::operator=(U);
+
+      // derived fields assignment
+      m_nc = U.m_nc;
+
+      return *this;
     }
 
     void allocate_gauge_field(mdp_lattice &a, int nc_)

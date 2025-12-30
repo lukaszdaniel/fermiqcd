@@ -16,6 +16,7 @@
 
 #if defined(SSE2) && !defined(__APPLE__)
 #include <cstdlib>
+#include <cstddef> // for std::size_t
 #endif
 
 #if defined(SSE2) && !defined(__APPLE__)
@@ -25,7 +26,7 @@
     return p;
   }
 
-  void operator delete(void *pointer)
+  void operator delete(void *pointer) noexcept
   {
     free(pointer);
   }
@@ -36,7 +37,17 @@
     return p;
   }
 
-  void operator delete[](void *pointer)
+  void operator delete[](void *pointer) noexcept
+  {
+    free(pointer);
+  }
+
+  void operator delete(void *pointer, std::size_t) noexcept
+  {
+    free(pointer);
+  }
+
+  void operator delete[](void *pointer, std::size_t) noexcept
   {
     free(pointer);
   }

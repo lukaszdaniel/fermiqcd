@@ -29,7 +29,7 @@ namespace MDP
   {
     mdp_site x(r.lattice());
 #if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-    if (r.nc == 3)
+    if (r.nc() == 3)
     {
       _sse_spinor *a;
       _sse_spinor *b;

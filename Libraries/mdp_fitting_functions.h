@@ -147,7 +147,7 @@ namespace MDP
   using BLM_function = float (*)(float, float *, mdp_int, void *);
 
   /** @brief This function is used by the BayesianLevenbergMarquardt
-   * It computes the chi_square (including the Baesyan term)
+   * It computes the chi_square (including the Bayesian term)
    * and fills alpha and beta
    *
    * \f$ \alpha(j,k)=\sum_i (Dy(x[i],a)/Da[j])*(Dy(x[i],a)/Da[k])/dy[i]^2\f$
@@ -213,7 +213,7 @@ namespace MDP
     return chi_square;
   }
 
-  /** @brief This implements the BaesyanLevenbergMarquardt
+  /** @brief This implements the BayesianLevenbergMarquardt
    *
    * It uses mdp_matrix.
    * Arguments are:
@@ -232,10 +232,10 @@ namespace MDP
    * nmax          : max number of iterations
    * junk          : junk to be passed to func
    *
-   * Return the Baesyan ChiSquare. To obtain the correct chi_square
-   *  rerun it with same ftting values and nmax=1;
+   * Return the Bayesian ChiSquare. To obtain the correct chi_square
+   *  rerun it with same fitting values and nmax=1;
    */
-  float BaesyanLevenbergMarquardt(float *x, mdp_measure *y,
+  float BayesianLevenbergMarquardt(float *x, mdp_measure *y,
                                   mdp_int i_min, mdp_int i_max,
                                   float *a, int ma,
                                   mdp_matrix &covar,

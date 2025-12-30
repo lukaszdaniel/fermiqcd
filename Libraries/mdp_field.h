@@ -312,11 +312,11 @@ namespace MDP
       }
     }
 
-    void operator=(const mdp_field &a)
+    mdp_field &operator=(const mdp_field &a)
     {
       if (this == &a)
-        return;
-    
+        return *this;
+
       if (&lattice() != &a.lattice() ||
           m_size != a.m_size ||
           m_field_components != a.m_field_components)
@@ -324,6 +324,8 @@ namespace MDP
 
       for (mdp_uint i = 0; i < m_size; i++)
         m_data[i] = a.m_data[i];
+
+      return *this;
     }
 
     void operator=(const T a)

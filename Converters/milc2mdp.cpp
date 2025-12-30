@@ -3,6 +3,7 @@
 #include <cstring>
 #include <complex>
 #include <ctime>
+#include <cstdint>
 #include <memory>
 
 using Complex = std::complex<float>;

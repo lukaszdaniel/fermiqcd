@@ -32,7 +32,7 @@ namespace MDP
   /// coeff["c_E"]=1.0;
   /// coeff["c_B"]=1.0;
   /// default_fermi_action=FermiCloverActionSSE2::mul_Q;
-  /// if(coeff["c_{sw}"]!=0) compute_em_field(U);
+  /// if (coeff["c_{sw}"]!=0) compute_em_field(U);
   /// mul_Q(chi,psi,U,coeff);
   /// @endverbatim
   /// Attention: uses always FERMILAB convention of Gamma matrices
@@ -46,13 +46,13 @@ namespace MDP
                       int parity = EVENODD)
     {
 
-      int ndim = psi_in.lattice().n_dimensions();
-      int nspin = psi_in.nspin();
-      int nc = psi_in.nc();
+      // int ndim = psi_in.lattice().n_dimensions();
+      // int nspin = psi_in.nspin();
+      // int nc = psi_in.nc();
       mdp_real kappa_t = 0;
       mdp_real kappa_s = 0;
       mdp_real r_t;
-      mdp_real r_s;
+      // mdp_real r_s;
       mdp_real cSW;
       mdp_real c_E;
       mdp_real c_B;
@@ -72,10 +72,10 @@ namespace MDP
         r_t = coeff["r_t"];
       else
         r_t = 1;
-      if (coeff.has_key("r_s"))
-        r_s = coeff["r_s"];
-      else
-        r_s = 1;
+      // if (coeff.has_key("r_s"))
+      //   r_s = coeff["r_s"];
+      // else
+      //   r_s = 1;
       if (coeff.has_key("c_{sw}"))
         cSW = coeff["c_{sw}"];
       else
@@ -109,8 +109,8 @@ namespace MDP
         uem = (_sse_su3 *)U_in.em.physical_address();
         _sse_check_alignment((void *)uem, 0xf);
       }
-      mdp_int **iup = U_in.lattice().up;
-      mdp_int **idw = U_in.lattice().dw;
+      mdp_int **iup = U_in.lattice().up();
+      mdp_int **idw = U_in.lattice().down();
       mdp_int start = U_in.lattice().start_index(ME, 0); // even
       mdp_int stop = U_in.lattice().stop_index(ME, 1);   // odd
 
@@ -789,8 +789,8 @@ namespace MDP
       _sse_spinor *psi = (_sse_spinor *)psi_in.physical_address();
       _sse_su3 *U = (_sse_su3 *)U_in.physical_address();
       _sse_su3 *uem = (_sse_su3 *)U_in.em.physical_address();
-      mdp_int **iup = U_in.lattice().up;
-      mdp_int **idw = U_in.lattice().dw;
+      mdp_int **iup = U_in.lattice().up(); 
+      mdp_int **idw = U_in.lattice().down();
       mdp_int start = U_in.lattice().start_index(ME, 0); // even
       mdp_int stop = U_in.lattice().stop_index(ME, 1);   // odd
 

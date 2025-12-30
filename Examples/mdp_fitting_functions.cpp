@@ -5,7 +5,7 @@ using namespace MDP;
 // Example of a program that uses the Leverberger-Marquardt
 
 // fitting function
-float f(float x, float *a, mdp_int ma, void *junk)
+float f(float x, float *a, [[maybe_unused]] mdp_int ma, [[maybe_unused]] void *junk)
 {
     return a[0] * (exp(-a[1] * x) + exp(-a[1] * (10.0 - x))) * sin(a[2] * x);
 }
@@ -27,7 +27,7 @@ int main()
     a[0] = 1;
     a[1] = 1.0, a[2] = 0.2;
 
-    BaesyanLevenbergMarquardt(x, y, 0, 10, a, ma, covar, f);
+    BayesianLevenbergMarquardt(x, y, 0, 10, a, ma, covar, f);
 
     for (i = 0; i < 10; i++)
         printf("%f %f (%f) %f\n",

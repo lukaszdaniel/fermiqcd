@@ -88,8 +88,8 @@ namespace MDP
                          mdp_real absolute_precision = fermi_inversion_precision,
                          mdp_real relative_precision = 0,
                          int max_steps = 2000,
-                         void (*smf)(staggered_field &, gauge_field &) = nullptr,
-                         int comp = 0)
+                         void (*smf)(staggered_field &, gauge_field &) = nullptr/*,
+                         int comp = 0*/)
     {
       staggered_field psi(S.lattice(), S.nc());
       staggered_field chi(S.lattice(), S.nc());

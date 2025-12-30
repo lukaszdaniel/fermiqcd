@@ -60,6 +60,22 @@ namespace MDP
       allocate_field(a, m_matrices * m_rows * m_columns);
     }
 
+    mdp_nmatrix_field &operator=(const mdp_nmatrix_field &other)
+    {
+      if (this == &other)
+        return *this;
+
+      // base assignment
+      mdp_field<mdp_complex>::operator=(other);
+
+      // derived fields assignment
+      m_matrices = other.m_matrices;
+      m_rows = other.m_rows;
+      m_columns = other.m_columns;
+
+      return *this;
+    }
+
     /** @brief returns the n-th matrix stored at site x
      */
     mdp_matrix operator()(mdp_site x, mdp_uint n)

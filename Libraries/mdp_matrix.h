@@ -18,6 +18,9 @@
 #include "mdp_global_vars.h"
 #include "mdp_communicator.h"
 #include "mdp_complex.h"
+#if defined(SSE2) && defined(USE_DOUBLE_PRECISION)
+#include "fermiqcd_sse.h"
+#endif
 
 namespace MDP
 {
@@ -49,7 +52,7 @@ namespace MDP
         {
           error("mdp_matrix::allocate()\nOut of memory");
         }
-        // memset(m_data.get(), 0, size() * sizeof(mdp_complex));
+        std::fill(m_data.get(), m_data.get() + size(), mdp_complex{});
       }
     }
 
@@ -298,10 +301,9 @@ namespace MDP
 
       for (mdp_uint i = 0; i < m_rows; i++)
       {
-        for (mdp_uint j = 0; j < x.m_cols; j++)
+        for (mdp_uint k = 0; k < m_cols; k++)
         {
-          z(i, j) = (*this)(i, 0) * x(0, j);
-          for (mdp_uint k = 1; k < m_cols; k++)
+          for (mdp_uint j = 0; j < x.m_cols; j++)
           {
             z(i, j) += (*this)(i, k) * x(k, j);
           }

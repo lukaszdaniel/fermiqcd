@@ -106,7 +106,7 @@ namespace MDP
     double m_IntegrationLimitsMax[MXDIM];
     int m_NumberOfDimensions;
 
-    void PrintInputParameters(int init, int ncalls, int niterations)
+    void PrintInputParameters(int ncalls, int niterations)
     {
       if (m_OutputFile && isMainProcess())
       {
@@ -181,7 +181,7 @@ namespace MDP
       xi[nd - 1] = 1.0;
     }
 
-    int is_local(int k, int nk)
+    int is_local(int k, [[maybe_unused]] int nk)
     {
       return (k % Nproc) == ME;
     }
@@ -425,7 +425,7 @@ namespace MDP
           }
           m_ndo = m_nd;
         }
-        PrintInputParameters(init, ncalls, niterations);
+        PrintInputParameters(ncalls, niterations);
       }
 
       // ////////////////////////////////////////////

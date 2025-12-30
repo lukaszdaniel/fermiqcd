@@ -788,6 +788,18 @@ namespace MDP
       return m_dw[idx][mu];
     }
 
+#ifdef SSE2
+    mdp_int **up()
+    {
+      return m_up;
+    }
+
+    mdp_int **down()
+    {
+      return m_dw;
+    }
+#endif
+
     mdp_int local(mdp_int global_idx) const
     {
 #ifndef MDP_NO_LG

@@ -46,7 +46,7 @@ namespace MDP
     }
 
     // Overloading [] operator to access elements in array style
-    const int operator[](mdp_suint index) const
+    int operator[](mdp_suint index) const
     {
       return m_x[index];
     }

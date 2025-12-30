@@ -92,7 +92,7 @@ namespace MDP
     }
 
     template <class T>
-    void put(T &obj, int destination, mdp_request &r)
+    void put(T &obj, int destination, [[maybe_unused]] mdp_request &r)
     {
 #ifdef PARALLEL
       MPI_Isend(&obj, sizeof(T) / sizeof(char), MPI_CHAR, destination,
@@ -120,7 +120,7 @@ namespace MDP
     }
 
     template <class T>
-    void put(T *objptr, mdp_int length, int destination, mdp_request &r)
+    void put(T *objptr, mdp_int length, int destination, [[maybe_unused]] mdp_request &r)
     {
 #ifdef PARALLEL
       if (MPI_Isend(objptr, length * sizeof(T) / sizeof(char), MPI_CHAR, destination,
@@ -368,7 +368,7 @@ namespace MDP
 #endif
     }
 
-    void wait(mdp_request &r)
+    void wait([[maybe_unused]] mdp_request &r)
     {
 #ifdef PARALLEL
       MPI_Status status;
@@ -376,7 +376,7 @@ namespace MDP
 #endif
     }
 
-    void wait(mdp_request *r, int length)
+    void wait([[maybe_unused]] mdp_request *r, [[maybe_unused]] int length)
     {
 #ifdef PARALLEL
       MPI_Status status;
@@ -386,14 +386,14 @@ namespace MDP
 
     /** @brief Returns the unique id of this process
      */
-    const int me()
+    int me()
     {
       return my_id;
     }
 
     /** @brief Returns the total number of parallel processes for this job
      */
-    const int nproc()
+    int nproc()
     {
       return my_nproc;
     }

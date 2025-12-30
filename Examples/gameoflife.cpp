@@ -21,8 +21,8 @@ int ruleofgame(int a00, int a01, int a02,
 
 // parallelize by diagonal stripes and punch hole in board
 int myownpartitioning(const int x[],
-                      const int ndim,
-                      const int nx[])
+                      [[maybe_unused]] const int ndim,
+                      [[maybe_unused]] const int nx[])
 {
   if (x[0] == 2 && x[1] == 3)
     return NOWHERE;

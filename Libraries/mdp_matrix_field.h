@@ -51,6 +51,17 @@ namespace MDP
       allocate_mdp_nmatrix_field(a, 1, i, j);
     }
 
+    mdp_matrix_field &operator=(const mdp_matrix_field &other)
+    {
+      if (this == &other)
+        return *this;
+
+      // base assignment
+      mdp_nmatrix_field::operator=(other);
+
+      return *this;
+    }
+
     /** @brief returns the matrix stored at site x
      */
     mdp_matrix operator()(mdp_site x)
