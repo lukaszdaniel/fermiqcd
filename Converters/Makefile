@@ -44,9 +44,9 @@ PRG_SUFFIX_FLAG := 1
 # If you know how to write a better makefile send it to me please!
 #
 
-LDFLAGS := -L../Libraries -lm -flto=4 #-lmdpFermi
+LDFLAGS := -L../Libraries -lm -flto #-lmdpFermi
 CXXFLAGS_INC := -I../Libraries
-CXXFLAGS := -g -flto=4 -DUSE_DOUBLE_PRECISION -O3 -std=c++17 -Wall -Werror -Wextra -pedantic $(CXXFLAGS_INC)
+CXXFLAGS := -g -flto -DUSE_DOUBLE_PRECISION -O3 -std=c++17 -Wall -Werror -Wextra -pedantic $(CXXFLAGS_INC)
 #
 ## ==================- NOTHING TO CHANGE BELOW THIS LINE ===================
 ##

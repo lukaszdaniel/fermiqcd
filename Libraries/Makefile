@@ -7,11 +7,11 @@
 # Flags for parallel (mpi) double precision and sse
 #CXXFLAGS = -DPARALLEL -DUSE_DOUBLE_PRECISION -DSSE2 -O2
 
-LDFLAGS := -flto=4
+LDFLAGS := -flto
 SOURCES_CXX := libfermiqcd.cpp
 MDP_SOURCES_CXX := libmdp.cpp
 CXXFLAGS_INC := -I./Libraries
-CXXFLAGS := -g -flto=4 -DUSE_DOUBLE_PRECISION -O3 -std=c++17 -Wall -Werror -Wextra -pedantic $(CXXFLAGS_INC)
+CXXFLAGS := -g -flto -DUSE_DOUBLE_PRECISION -O3 -std=c++17 -Wall -Werror -Wextra -pedantic $(CXXFLAGS_INC)
 OBJS = $(SOURCES_CXX:.cpp=.o)
 OBJS_MDP = $(MDP_SOURCES_CXX:.cpp=.o)
 
