@@ -44,7 +44,7 @@ namespace MDP
 
     char time_string[128];
 
-    if ((current_time = time(NULL)) != -1)
+    if ((current_time = time(NULL)) != time_t(-1))
       strftime(time_string, 64, "%d.%m.%y %H:%M:%S", localtime(&current_time));
     else
     {
@@ -54,7 +54,7 @@ namespace MDP
 
     time_finish = current_time;
 
-    if ((CPU_finish = clock()) == -1)
+    if ((CPU_finish = clock()) == clock_t(-1))
     {
       CPU_ok = false;
     }
@@ -85,7 +85,7 @@ namespace MDP
       exit(1);
     }
 
-    if ((current_time = time(NULL)) != -1)
+    if ((current_time = time(NULL)) != time_t(-1))
     {
       strftime(time_string, 64, "%d.%m.%y %H:%M:%S",
                localtime(&current_time));
@@ -96,7 +96,7 @@ namespace MDP
 
     time_start = current_time;
 
-    if ((CPU_start = clock()) != -1)
+    if ((CPU_start = clock()) != clock_t(-1))
     {
       CPU_ok = true;
     }

@@ -25,7 +25,7 @@ public:
     else
       zeta = 1;
 
-    int iter, parity;
+    int iter, parity = 0;
     int mu = 0;
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
