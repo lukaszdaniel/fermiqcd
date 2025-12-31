@@ -1,121 +1,31 @@
 #ifndef MY_PARAMETERS_
 #define MY_PARAMETERS_
 
-#include <string>
 #include <map>
+#include <string>
+#include <fstream>
+#include <sstream>
 #include <iostream>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
+#include <iomanip>
+#include <stdexcept>
 
 namespace MDP
 {
-  class parameter
+  class Parameter
   {
-  private:
-    std::map<std::string, double> _d_rep;
-    std::map<std::string, int> _i_rep;
-    std::map<std::string, std::string> _s_rep;
-
-    int fscanf(FILE *fin)
-    {
-      constexpr int LENGTH = 64;
-      constexpr int LINE_LENGTH = 256;
-      constexpr char white_char[] = " \t\n";
-      char line[LINE_LENGTH];
-
-      char type[LENGTH];
-      char name[LENGTH];
-      char value[LENGTH];
-
-      int line_number = 0;
-
-      while (fgets(line, LINE_LENGTH, fin))
-      {
-        if (strspn(line, white_char) != strlen(line) && line[0] != '#')
-        {
-          ++line_number;
-
-          if (sscanf(line, "%s %s %s", type, name, value) == 3)
-          {
-            if (strncmp(type, "int", LENGTH) == 0)
-            {
-              _i_rep[std::string(name)] = std::atoi(value);
-            }
-            else if (strncmp(type, "double", LENGTH) == 0)
-            {
-              _d_rep[std::string(name)] = std::atof(value);
-            }
-            else if (strncmp(type, "string", LENGTH) == 0)
-            {
-              _s_rep[std::string(name)] = std::string(value);
-            }
-            else
-            {
-              std::cerr << "Unknown type " << type << std::endl;
-              throw std::runtime_error("Unknown parameter type");
-            }
-          }
-          else
-          {
-            std::cerr << "Error reading line " << line_number << std::endl;
-            throw std::runtime_error("Error reading configuration file");
-          }
-        }
-      }
-      return 0;
-    }
-
   public:
-    explicit parameter(FILE *fin)
+    explicit Parameter(const std::string &file)
     {
+      std::ifstream fin(file);
       if (!fin)
-      {
-        std::cerr << "File pointer is null." << std::endl;
-        throw std::invalid_argument("Invalid file pointer");
-      }
-      fscanf(fin);
+        throw std::ios_base::failure("Cannot open file: " + file);
+
+      read(fin);
     }
 
-    explicit parameter(const char *file)
+    explicit Parameter(std::istream &in)
     {
-      FILE *fin = fopen(file, "r");
-      if (!fin)
-      {
-        std::cerr << "Cannot open file " << file << std::endl;
-        throw std::ios_base::failure("File not found");
-      }
-      fscanf(fin);
-      fclose(fin);
-    }
-
-    ~parameter() = default;
-
-    int fprint(FILE *fout) const
-    {
-      if (!fout)
-      {
-        std::cerr << "File pointer is null." << std::endl;
-        throw std::invalid_argument("Invalid file pointer");
-      }
-
-      for (const auto &p : _i_rep)
-      {
-        fprintf(fout, "int    %s =  %d\n", p.first.c_str(), p.second);
-      }
-
-      for (const auto &p : _d_rep)
-      {
-        fprintf(fout, "double %s =  %.12g\n", p.first.c_str(), p.second);
-      }
-
-      for (const auto &p : _s_rep)
-      {
-        fprintf(fout, "string %s =  %s\n", p.first.c_str(), p.second.c_str());
-      }
-
-      fflush(fout);
-      return 0;
+      read(in);
     }
 
     double d(const std::string &name) const
@@ -135,30 +45,89 @@ namespace MDP
 
     bool defined_d(const std::string &name) const
     {
+#if __cplusplus >= 202002L
+      return _d_rep.contains(name);
+#else
       return _d_rep.find(name) != _d_rep.end();
+#endif
     }
 
     bool defined_i(const std::string &name) const
     {
+#if __cplusplus >= 202002L
+      return _i_rep.contains(name);
+#else
       return _i_rep.find(name) != _i_rep.end();
+#endif
     }
 
     bool defined_s(const std::string &name) const
     {
+#if __cplusplus >= 202002L
+      return _s_rep.contains(name);
+#else
       return _s_rep.find(name) != _s_rep.end();
+#endif
+    }
+
+    friend std::ostream &operator<<(std::ostream &os, const Parameter &p)
+    {
+      for (const auto &[name, value] : p._i_rep)
+        os << "int    " << name << " =  " << value << '\n';
+
+      for (const auto &[name, value] : p._d_rep)
+        os << "double " << name << " =  " << std::setprecision(12) << value << '\n';
+
+      for (const auto &[name, value] : p._s_rep)
+        os << "string " << name << " =  " << value << '\n';
+
+      return os;
     }
 
   private:
-    template <typename T>
-    T get_param(const std::map<std::string, T> &rep, const std::string &name, const char *type) const
+    std::map<std::string, double> _d_rep;
+    std::map<std::string, int> _i_rep;
+    std::map<std::string, std::string> _s_rep;
+
+    void read(std::istream &in)
     {
-      const auto &p = rep.find(name);
-      if (p == rep.end())
+      std::string line;
+      std::size_t line_number = 0;
+
+      while (std::getline(in, line))
       {
-        std::cerr << type << " parameter " << name << " was not defined" << std::endl;
-        throw std::runtime_error("Parameter not defined");
+        ++line_number;
+
+        auto pos = line.find_first_not_of(" \t");
+        if (pos == std::string::npos || line[pos] == '#')
+          continue;
+
+        std::istringstream iss(line);
+        std::string type, name, value;
+
+        if (!(iss >> type >> name >> value))
+          throw std::runtime_error("Syntax error in line " + std::to_string(line_number));
+
+        if (type == "int")
+          _i_rep[name] = std::stoi(value);
+        else if (type == "double")
+          _d_rep[name] = std::stod(value);
+        else if (type == "string")
+          _s_rep[name] = value;
+        else
+          throw std::runtime_error("Unknown parameter type: " + type);
       }
-      return p->second;
+    }
+
+    template <typename T>
+    static T get_param(const std::map<std::string, T> &rep,
+                       const std::string &name,
+                       const char *type)
+    {
+      auto it = rep.find(name);
+      if (it == rep.end())
+        throw std::runtime_error(std::string(type) + " parameter '" + name + "' not defined");
+      return it->second;
     }
   };
 } // namespace MDP

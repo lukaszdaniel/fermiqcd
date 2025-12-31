@@ -10,4 +10,10 @@ progs/qcdsun
 .project
 .settings/
 Libraries/libmdpFermi.a
+Libraries/libfermiqcd.a
+Libraries/libmdp.a
 tests/*.out
+tests/make_tHooft.exe.flat.vtk
+tests/gauge.hot
+tests/make_tHooft.exe.sum.vtk
+tests/make_tHooft.exe.vtk

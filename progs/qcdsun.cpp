@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 
 	mdp.open_wormholes(argc, argv);
 
-	parameter par(argv[1]);
+	Parameter par(argv[1]);
 
 	string tag = par.s("tag");
 	string logFileName = "log." + tag;
@@ -94,8 +94,7 @@ int main(int argc, char **argv)
 	gauge_field U(lattice, ncolors);
 	coefficients coeff;
 	coeff["beta"] = par.d("beta");
-	FILE *stdlog = nullptr;
-	stdlog = fopen(logFileName.c_str(), "w");
+	Logger log(logFileName, argc, argv, "");
 
 	if (par.defined_s("start-config-file"))
 	{
@@ -106,15 +105,13 @@ int main(int argc, char **argv)
 	else
 		set_hot(U); // sets all U matrices by random from SU(Nc) group
 
-	openlog(logFileName.c_str());
-	header(argc, argv, "");
-	par.fprint(stdlog);
+	log << par << "\n";
 
 	//	THERMALISATION
 	if (!field_loaded)
 	{
-		fprintf(stdlog, "Thermalisation: %d sweeps.\n", ntherm);
-		fflush(stdlog);
+		log << "Thermalisation: " << ntherm << " sweeps.\n";
+		log.flush();
 		for (mdp_uint i = 1; i <= ntherm; i++)
 		{
 			WilsonGaugeAction::heatbath(U, coeff);
@@ -122,14 +119,14 @@ int main(int argc, char **argv)
 			if ((unit_freq > 0) and (i % unit_freq == 0))
 			{
 				stats = unitarize(U);
-				fprintf(stdlog, "%d %.12lg\n", i, stats);
+				log << i << " " << std::setprecision(12) << stats << "\n";
 			}
-			fflush(stdlog);
+			log.flush();
 			U.save(cfgFileName);
 		}
 	}
 	else
-		fprintf(stdlog, "Field has been loaded. Skipping thermalisation.\n");
+		log << "Field has been loaded. Skipping thermalisation.\n";
 
 	ofstream plaqfile(plaqFileName);
 	plaqfile << setprecision(16);
@@ -152,8 +149,8 @@ int main(int argc, char **argv)
 	mdp_complex polyakov;
 
 	//	SWEEPING
-	fprintf(stdlog, "Production: %d sweeps.\n", nsweeps);
-	fflush(stdlog);
+	log << "Production: " << nsweeps << " sweeps.\n";
+	log.flush();
 	for (mdp_uint i = 1; i <= nsweeps; i++)
 	{
 		WilsonGaugeAction::heatbath(U, coeff);
@@ -211,10 +208,10 @@ int main(int argc, char **argv)
 		{
 
 			stats = unitarize(U);
-			fprintf(stdlog, "%d %.12lg\n", i, stats);
+			log << i << " " << std::setprecision(12) << stats << "\n";
 			plaqfile << flush;
 			polyfile << flush;
-			fflush(stdlog);
+			log.flush();
 			U.save(cfgFileName);
 		}
 	}
@@ -223,7 +220,6 @@ int main(int argc, char **argv)
 
 	mdp.close_wormholes();
 
-	//  closelog();
 	plaqfile.close();
 	polyfile.close();
 	polycorfile.close();

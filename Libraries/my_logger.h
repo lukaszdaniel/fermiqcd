@@ -1,126 +1,156 @@
 #ifndef MY_LOGGER_
 #define MY_LOGGER_
 
-#include <cstdio>
+#include <iostream>
+#include <fstream>
+#include <chrono>
 #include <ctime>
-#include <cstring>
+#include <iomanip>
+#include <sstream>
+#include <string>
 #include <cstdlib>
-#include <unistd.h>
+#include <cassert>
 
 namespace MDP
 {
-  FILE *stdlog = NULL;
-  static time_t time_start;
-  static time_t time_finish;
-
-  static clock_t CPU_start;
-  static clock_t CPU_finish;
-
-  static bool time_ok = false;
-  static bool CPU_ok = false;
-
-  int openlog(const char log[])
+  class Logger
   {
-    if (strncmp(log, "stderr", 7) == 0)
-      stdlog = stderr;
-    else if (strncmp(log, "stdout", 7) == 0)
-      stdlog = stdout;
-    else if ((stdlog = fopen(log, "w")) == NULL)
+  public:
+    explicit Logger(const std::string &target,
+                    int argc,
+                    char *argv[],
+                    const std::string &id)
     {
-      fprintf(stderr, "cannot open log file %s\n", log);
-      exit(1);
-    }
-    return 0;
-  }
-
-  int closelog()
-  {
-    return fclose(stdlog);
-  }
-
-  void footer()
-  {
-    time_t current_time;
-
-    char time_string[128];
-
-    if ((current_time = time(NULL)) != time_t(-1))
-      strftime(time_string, 64, "%d.%m.%y %H:%M:%S", localtime(&current_time));
-    else
-    {
-      time_ok = false;
-      strncpy(time_string, " time not available\n", 128);
+      open(target);
+      header(argc, argv, id);
     }
 
-    time_finish = current_time;
+    Logger(const Logger &) = delete;
+    Logger &operator=(const Logger &) = delete;
+    Logger(Logger &&) = default;
+    Logger &operator=(Logger &&) = default;
 
-    if ((CPU_finish = clock()) == clock_t(-1))
+    ~Logger() noexcept
     {
-      CPU_ok = false;
+      try
+      {
+        footer();
+        close();
+      }
+      catch (...)
+      {
+        // destructors must not throw
+      }
     }
 
-    if (CPU_ok)
+    template <typename T>
+    Logger &operator<<(const T &value)
     {
-      fprintf(stdlog, "# CPU time %12li   sec\n", (CPU_finish - CPU_start) / CLOCKS_PER_SEC);
+      assert(out_);
+      (*out_) << value;
+      return *this;
     }
 
-    if (time_ok)
+    Logger &flush()
     {
-      fprintf(stdlog, "# user time %13.1f sec\n", difftime(time_finish, time_start));
-    }
-    fprintf(stdlog, "# time stop  %s\n", time_string);
-
-    fflush(stdlog);
-  }
-
-  void header(int argc, char *argv[], const char id[])
-  {
-    time_t current_time;
-    char time_string[128];
-    char host_name[128];
-
-    if (stdlog == NULL)
-    {
-      fprintf(stderr, "stdlog not opened\n");
-      exit(1);
+      assert(out_);
+      out_->flush();
+      return *this;
     }
 
-    if ((current_time = time(NULL)) != time_t(-1))
+  private:
+    std::ostream *out_ = nullptr;
+    std::ofstream file_;
+
+    std::chrono::system_clock::time_point time_start_;
+    std::clock_t cpu_start_{};
+
+    bool cpu_ok_ = false;
+    bool footer_done_ = false;
+
+    static std::string format_time(const std::chrono::system_clock::time_point &tp)
     {
-      strftime(time_string, 64, "%d.%m.%y %H:%M:%S",
-               localtime(&current_time));
-      time_ok = true;
-    }
-    else
-      strncpy(time_string, " time not available\n", 128);
+      std::time_t t = std::chrono::system_clock::to_time_t(tp);
+      std::tm tm{};
 
-    time_start = current_time;
+      if (auto *ptm = std::localtime(&t))
+        tm = *ptm;
+      else
+        return "time not available";
 
-    if ((CPU_start = clock()) != clock_t(-1))
-    {
-      CPU_ok = true;
-    }
-
-    fprintf(stdlog, "# program    %s   %s\n", argv[0], id);
-    fprintf(stdlog, "# time start %s\n", time_string);
-
-    if (gethostname(host_name, 128) == 0)
-    {
-      fprintf(stdlog, "# host %s\n", host_name);
-    }
-
-    for (int i = 0; i < argc; i++)
-      fprintf(stdlog, "# argv %2d %s\n", i, argv[i]);
-
-    fprintf(stdlog, "# header end\n");
-
-    if (atexit(footer))
-    {
-      fprintf(stdlog, "could not register function footer()\n");
+      std::ostringstream oss;
+      oss << std::put_time(&tm, "%d.%m.%y %H:%M:%S");
+      return oss.str();
     }
 
-    fflush(stdlog);
-  }
+    void open(const std::string &target)
+    {
+      if (target == "stderr")
+      {
+        out_ = &std::cerr;
+      }
+      else if (target == "stdout")
+      {
+        out_ = &std::cout;
+      }
+      else
+      {
+        file_.open(target);
+        if (!file_)
+        {
+          std::cerr << "cannot open log file " << target << "\n";
+          std::abort();
+        }
+        out_ = &file_;
+      }
+    }
+
+    void close()
+    {
+      if (file_.is_open())
+        file_.close();
+    }
+
+    void header(int argc, char *argv[], const std::string &id)
+    {
+      assert(out_);
+
+      time_start_ = std::chrono::system_clock::now();
+      cpu_start_ = std::clock();
+      cpu_ok_ = (cpu_start_ != static_cast<std::clock_t>(-1));
+
+      (*out_) << "# program    " << argv[0] << "   " << id << "\n";
+      (*out_) << "# time start " << format_time(time_start_) << "\n";
+
+      for (int i = 0; i < argc; ++i)
+        (*out_) << "# argv " << std::setw(2) << i << " " << argv[i] << "\n";
+
+      (*out_) << "# header end\n";
+      out_->flush();
+    }
+
+    void footer()
+    {
+      if (!out_ || footer_done_)
+        return;
+
+      footer_done_ = true;
+
+      const auto time_finish = std::chrono::system_clock::now();
+      const auto cpu_finish = std::clock();
+
+      if (cpu_ok_)
+      {
+        const double cpu_time = static_cast<double>(cpu_finish - cpu_start_) / CLOCKS_PER_SEC;
+        (*out_) << "# CPU time  " << std::setw(12) << cpu_time << " sec\n";
+      }
+
+      const double wall_time = std::chrono::duration<double>(time_finish - time_start_).count();
+      (*out_) << "# user time " << std::setw(12) << wall_time << " sec\n";
+      (*out_) << "# time stop " << format_time(time_finish) << "\n";
+      out_->flush();
+    }
+  };
 } // namespace MDP
 
 #endif /* MY_LOGGER_ */
