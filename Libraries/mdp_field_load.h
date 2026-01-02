@@ -35,9 +35,32 @@ namespace MDP
     return true;
   }
 
+  bool mdp_default_user_read(std::ifstream &file,
+                             void *p,
+                             mdp_int psize,
+                             mdp_int header_size,
+                             mdp_int position,
+                             [[maybe_unused]] const mdp_lattice &lattice)
+  {
+    // Offset in bytes
+    std::streamoff offset = static_cast<std::streamoff>(position) * psize + header_size;
+
+    // Move pointer to the correct position
+    file.seekg(offset, std::ios::beg);
+    if (!file)
+      return false;
+
+    // Read data
+    file.read(reinterpret_cast<char *>(p), psize);
+    if (!file)
+      return false;
+
+    return true;
+  }
+
   /// Best way to load a field
   template <class T>
-  bool mdp_field<T>::load(std::string filename,
+  bool mdp_field<T>::load_old(std::string filename,
                           int processIO,
                           mdp_int max_buffer_size,
                           bool load_header,
@@ -62,9 +85,9 @@ namespace MDP
 
     if (isSubProcess(processIO))
     {
-      mdp_int *buffer_size = new mdp_int[Nproc];
+      auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
-      T *short_buffer = new T[m_field_components];
+      auto short_buffer = std::make_unique<T[]>(m_field_components);
       mdp_request request;
 
       for (int process = 0; process < Nproc; process++)
@@ -145,7 +168,7 @@ namespace MDP
         {
           if (user_read)
           {
-            if (!user_read(fp, short_buffer,
+            if (!user_read(fp, short_buffer.get(),
                            m_field_components * sizeof(T),
                            skip_bytes,
                            idx_gl, lattice()))
@@ -159,7 +182,7 @@ namespace MDP
               error("unexpected end of file");
             }
 
-            if (fread(short_buffer, psize, 1, fp) != 1)
+            if (fread(short_buffer.get(), psize, 1, fp) != 1)
             {
               std::cout << "failure to read" << std::endl;
               error("unexpected end of file");
@@ -210,14 +233,12 @@ namespace MDP
         }
       }
 
-      delete[] buffer_size;
-      delete[] short_buffer;
       fclose(fp);
     }
     else
     {
       mdp_int buffer_size = 0;
-      mdp_int *local_index = new mdp_int[max_buffer_size];
+      auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
@@ -240,8 +261,6 @@ namespace MDP
           buffer_size = 0;
         }
       }
-
-      delete[] local_index;
     }
 
     update();
@@ -266,7 +285,7 @@ namespace MDP
   }
 
   template <class T>
-  bool mdp_field<T>::load_new(std::string filename,
+  bool mdp_field<T>::load(std::string filename,
                           int processIO,
                           mdp_int max_buffer_size,
                           bool load_header,
@@ -291,9 +310,9 @@ namespace MDP
 
     if (isSubProcess(processIO))
     {
-      mdp_int *buffer_size = new mdp_int[Nproc];
+      auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
-      T *short_buffer = new T[m_field_components];
+      auto short_buffer = std::make_unique<T[]>(m_field_components);
       mdp_request request;
 
       for (int process = 0; process < Nproc; process++)
@@ -374,7 +393,7 @@ namespace MDP
         {
           if (user_read)
           {
-            if (!user_read(fp, short_buffer,
+            if (!user_read(fp, short_buffer.get(),
                            m_field_components * sizeof(T),
                            skip_bytes,
                            idx_gl, lattice()))
@@ -388,7 +407,7 @@ namespace MDP
               error("unexpected end of file");
             }
 
-            if (!fp.read(reinterpret_cast<char *>(short_buffer), psize))
+            if (!fp.read(reinterpret_cast<char *>(short_buffer.get()), psize))
             {
               std::cout << "failure to read" << std::endl;
               error("unexpected end of file");
@@ -438,14 +457,11 @@ namespace MDP
             dst[k] = short_buffer[k];
         }
       }
-
-      delete[] buffer_size;
-      delete[] short_buffer;
     }
     else
     {
       mdp_int buffer_size = 0;
-      mdp_int *local_index = new mdp_int[max_buffer_size];
+      auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
@@ -468,8 +484,6 @@ namespace MDP
           buffer_size = 0;
         }
       }
-
-      delete[] local_index;
     }
 
     update();

@@ -25,33 +25,33 @@ namespace MDP
                               int processIO,
                               bool ASCII)
   {
-
     filename = next_to_latest_file(filename);
     std::string filename_tmp = filename + ".tmp";
 
     int max_buffer_size = 1024;
-    int timeslice;
     mdp_int nvol_gl = lattice().global_volume();
     double mytime = mdp.time();
     m_header.reset();
+
     if (lattice().n_dimensions() < 3 || lattice().n_dimensions() > 4)
       error("mdp_field::save_vtk only works for ndim=3 and 4");
+
     if (isSubProcess(processIO))
     {
       mdp_int *buffer_size = new mdp_int[Nproc];
       mdp_int *buffer_ptr = new mdp_int[Nproc];
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
       T *short_buffer = new T[m_field_components];
-      int process;
-      for (process = 0; process < Nproc; process++)
+
+      for (int process = 0; process < Nproc; process++)
         buffer_ptr[process] = 0;
+
       std::cout << "Saving file " << filename
                 << " from process " << processIO
                 << " (buffer = " << max_buffer_size << " sites)\n";
       fflush(stdout);
       FILE *fp = nullptr;
 
-      float fval;
       char tmp[1024];
       char header[1024];
 
@@ -86,7 +86,9 @@ namespace MDP
 
       for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        process = where_global(idx_gl);
+        int process = where_global(idx_gl);
+
+        // --- Fill short_buffer ---
         if ((process != NOWHERE) && (process != processIO))
         {
           if (buffer_ptr[process] == 0)
@@ -101,14 +103,16 @@ namespace MDP
           if (buffer_ptr[process] == buffer_size[process])
             buffer_ptr[process] = 0;
         }
+
         if (process == processIO)
         {
           for (mdp_uint k = 0; k < m_field_components; k++)
             short_buffer[k] = *(m_data.get() + lattice().local(idx_gl) * m_field_components + k);
         }
+
         if (process != NOWHERE)
         {
-          timeslice = idx_gl / space_volume;
+          int timeslice = idx_gl / space_volume;
           if (idx_gl % space_volume == 0 && (t < 0 || timeslice == t))
           {
             snprintf(header, 1024, "\nSCALARS scalars_t%i float\nLOOKUP_TABLE default\n", timeslice);
@@ -119,7 +123,7 @@ namespace MDP
             for (mdp_uint fc = 0; fc < m_field_components; fc++)
               if (component == -1 || fc == mdp_uint(component))
               {
-                fval = (float)short_buffer[fc];
+                float fval = static_cast<float>(short_buffer[fc]);
                 if (!ASCII)
                 {
                   switch_endianess_byte4(fval);
@@ -148,14 +152,15 @@ namespace MDP
     }
     else
     {
-      int process;
+      // --- Subprocess handling ---
       mdp_int buffer_size = 0;
       mdp_int *local_index = new mdp_int[max_buffer_size];
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       mdp_request request;
+
       for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        process = where_global(idx_gl);
+        int process = where_global(idx_gl);
         if (process == ME)
         {
           local_index[buffer_size] = lattice().local(idx_gl);
@@ -167,6 +172,7 @@ namespace MDP
           for (mdp_int idx = 0; idx < buffer_size; idx++)
             for (mdp_uint k = 0; k < m_field_components; k++)
               local_buffer(idx, k) = *(m_data.get() + local_index[idx] * m_field_components + k);
+
           mdp.put(buffer_size, processIO, request);
           mdp.wait(request);
           mdp.put(&(local_buffer(0, 0)), buffer_size * m_field_components,
@@ -177,6 +183,7 @@ namespace MDP
       }
       delete[] local_index;
     }
+
     if (isMainProcess() && !mdp_shutup)
     {
       printf("... Saving time: %f (sec)\n", mdp.time() - mytime);

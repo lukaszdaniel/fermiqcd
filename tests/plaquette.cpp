@@ -14,7 +14,7 @@ void compute_plaquette(mdp_int nt, mdp_int nx, const std::string &filename)
   mdp_real_scalar_field q(lattice);
   mdp_site x(lattice);
 
-  U.load_new(filename);
+  U.load(filename);
   forallsites(x)
   {
     if (x(0) == 0)

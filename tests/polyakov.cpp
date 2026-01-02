@@ -24,7 +24,7 @@ void polyakov(int nt, int nx, std::string filename)
   forallsites(y)
       V(y) = 1;
 
-  U.load_new(filename);
+  U.load(filename);
 
   for (int t = 0; t < L[0]; t++)
   {

@@ -491,14 +491,14 @@ namespace MDP
      *   should fit in the memory of processIO.
      *   By default buffersize=1024 and it works reasonably fast.
      */
-    bool load(std::string filename,
+    bool load_old(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
               bool load_header = true,
               mdp_int skip_bytes = 0,
               bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr,
               bool try_switch_endianess = true);
-    bool load_new(std::string filename,
+    bool load(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
               bool load_header = true,
@@ -508,13 +508,13 @@ namespace MDP
 
     /** @brief Best way to save a field
      */
-    bool save(std::string filename,
+    bool save_old(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
               bool load_header = true,
               mdp_int skip_bytes = 0,
               bool (*user_write)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr);
-    bool save_new(std::string filename,
+    bool save(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
               bool load_header = true,

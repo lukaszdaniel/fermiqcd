@@ -35,9 +35,32 @@ namespace MDP
     return true;
   }
 
+  bool mdp_default_user_write(std::ofstream &file,
+                              void *p,
+                              mdp_int psize,
+                              mdp_int header_size,
+                              mdp_int position,
+                              [[maybe_unused]] const mdp_lattice &lattice)
+  {
+    // Offset in bytes
+    std::streamoff offset = static_cast<std::streamoff>(position) * psize + header_size;
+
+    // Move pointer to the correct position
+    file.seekp(offset, std::ios::beg);
+    if (!file)
+      return false;
+
+    // Write data
+    file.write(reinterpret_cast<char *>(p), psize);
+    if (!file)
+      return false;
+
+    return true;
+  }
+
   /// Best way to save a field
   template <class T>
-  bool mdp_field<T>::save(std::string filename,
+  bool mdp_field<T>::save_old(std::string filename,
                           int processIO,
                           mdp_int max_buffer_size,
                           bool save_header,
@@ -55,11 +78,11 @@ namespace MDP
 
     if (isSubProcess(processIO))
     {
-      mdp_int *buffer_size = new mdp_int[Nproc];
-      mdp_int *buffer_ptr = new mdp_int[Nproc];
+      auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
+      auto buffer_ptr = std::make_unique<mdp_int[]>(Nproc);
 
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
-      T *short_buffer = new T[m_field_components];
+      auto short_buffer = std::make_unique<T[]>(m_field_components);
 
       for (int process = 0; process < Nproc; process++)
       {
@@ -126,7 +149,7 @@ namespace MDP
         {
           if (user_write)
           {
-            if (!user_write(fp, short_buffer,
+            if (!user_write(fp, short_buffer.get(),
                             m_field_components * sizeof(T),
                             skip_bytes,
                             idx_gl, lattice()))
@@ -139,7 +162,7 @@ namespace MDP
               error("probably out of disk space");
             }
 
-            if (fwrite(short_buffer, psize, 1, fp) != 1)
+            if (fwrite(short_buffer.get(), psize, 1, fp) != 1)
             {
               error("probably out of disk space");
             }
@@ -151,15 +174,12 @@ namespace MDP
         }
       }
 
-      delete[] buffer_size;
-      delete[] buffer_ptr;
-      delete[] short_buffer;
       fclose(fp);
     }
     else
     {
       mdp_int buffer_size = 0;
-      mdp_int *local_index = new mdp_int[max_buffer_size];
+      auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       mdp_request request;
 
@@ -187,8 +207,6 @@ namespace MDP
           buffer_size = 0;
         }
       }
-
-      delete[] local_index;
     }
 
     if (isMainProcess() && !mdp_shutup)
@@ -201,7 +219,7 @@ namespace MDP
   }
 
   template <class T>
-  bool mdp_field<T>::save_new(std::string filename,
+  bool mdp_field<T>::save(std::string filename,
                           int processIO,
                           mdp_int max_buffer_size,
                           bool save_header,
@@ -219,11 +237,11 @@ namespace MDP
 
     if (isSubProcess(processIO))
     {
-      mdp_int *buffer_size = new mdp_int[Nproc];
-      mdp_int *buffer_ptr = new mdp_int[Nproc];
+      auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
+      auto buffer_ptr = std::make_unique<mdp_int[]>(Nproc);
 
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
-      T *short_buffer = new T[m_field_components];
+      auto short_buffer = std::make_unique<T[]>(m_field_components);
 
       for (int process = 0; process < Nproc; process++)
       {
@@ -291,7 +309,7 @@ namespace MDP
         {
           if (user_write)
           {
-            if (!user_write(fp, short_buffer,
+            if (!user_write(fp, short_buffer.get(),
                             m_field_components * sizeof(T),
                             skip_bytes,
                             idx_gl, lattice()))
@@ -304,7 +322,7 @@ namespace MDP
               error("probably out of disk space");
             }
 
-            fp.write(reinterpret_cast<const char *>(short_buffer), psize);
+            fp.write(reinterpret_cast<const char *>(short_buffer.get()), psize);
 
             if (!fp)
               error("probably out of disk space");
@@ -315,15 +333,11 @@ namespace MDP
           exception = true;
         }
       }
-
-      delete[] buffer_size;
-      delete[] buffer_ptr;
-      delete[] short_buffer;
     }
     else
     {
       mdp_int buffer_size = 0;
-      mdp_int *local_index = new mdp_int[max_buffer_size];
+      auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       mdp_request request;
 
@@ -351,8 +365,6 @@ namespace MDP
           buffer_size = 0;
         }
       }
-
-      delete[] local_index;
     }
 
     if (isMainProcess() && !mdp_shutup)

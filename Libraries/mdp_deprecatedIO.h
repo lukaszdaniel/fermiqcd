@@ -104,40 +104,43 @@ namespace MDP
 		}
 		else
 		{
-			int process;
-			mdp_int buffer_size = 0, idx;
+			mdp_int buffer_size = 0;
 			mdp_int *local_index = new mdp_int[max_buffer_size];
 			mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
-				process = where_global(idx_gl);
+				int process = where_global(idx_gl);
 				if (process == ME)
 				{
 					local_index[buffer_size] = lattice().local(idx_gl);
 					buffer_size++;
 				}
-				if ((buffer_size == max_buffer_size) ||
-					((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
+
+				if ((buffer_size == max_buffer_size) || ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
 				{
 					mdp.get(&(local_buffer(0, 0)), buffer_size * m_field_components, processIO);
-					for (idx = 0; idx < buffer_size; idx++)
+					for (mdp_int idx = 0; idx < buffer_size; idx++)
 						for (mdp_uint k = 0; k < m_field_components; k++)
-							*(m_data.get() + local_index[idx] * m_field_components + k) = local_buffer(idx, k);
+							m_data[local_index[idx] * m_field_components + k] = local_buffer(idx, k);
+
 					buffer_size = 0;
 				}
 			}
 			delete[] local_index;
 		}
+
 		update();
+
 		if (isMainProcess() && !mdp_shutup)
 		{
 			printf("... Loading time: %f (sec)\n", mdp.time() - mytime);
 			fflush(stdout);
 		}
-		if (try_switch_endianess == true && auto_switch_endianess == true)
+
+		if (try_switch_endianess && auto_switch_endianess)
 		{
 			if (isMainProcess())
-				printf("Trying to switch endianess.");
+				printf("Trying to switch endianess.\n");
 			switch_endianess_4bytes();
 		}
 	}
@@ -151,16 +154,17 @@ namespace MDP
 							mdp_int (*sort_x)(mdp_lattice &, mdp_int),
 							const char *mode)
 	{
-		mdp_int idx_gl, nvol_gl = lattice().global_volume();
+		mdp_int nvol_gl = lattice().global_volume();
 		double mytime = mdp.time();
+
 		if (isSubProcess(processIO))
 		{
 			mdp_int *buffer_size = new mdp_int[Nproc];
 			mdp_int *buffer_ptr = new mdp_int[Nproc];
 			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
 			T *short_buffer = new T[m_field_components];
-			int process;
-			for (process = 0; process < Nproc; process++)
+
+			for (int process = 0; process < Nproc; process++)
 				buffer_ptr[process] = 0;
 			printf("Saving file %s from process %i (buffer = %li sites)\n",
 				   filename, processIO, max_buffer_size);
@@ -169,7 +173,7 @@ namespace MDP
 			if (fp == nullptr)
 				error("Unable to open file");
 
-			// #ifdef INSERT_HEADER
+			// Write optional header
 			if (strcmp(header, "NATIVE") == 0)
 			{
 				error("NATIVE HEADER IN DEPRECATED FUNCTION NOT SUPPORTED ANY MORE");
@@ -180,10 +184,13 @@ namespace MDP
 					header_size)
 					error("Unable to write file header");
 			}
-			// #endif
-			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+
+			// Loop over global sites
+			for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
-				process = where_global(idx_gl);
+				int process = where_global(idx_gl);
+
+				// Receive data from other processes
 				if ((process != NOWHERE) && (process != processIO))
 				{
 					if (buffer_ptr[process] == 0)
@@ -192,17 +199,24 @@ namespace MDP
 						mdp.get(&(large_buffer(process, 0, 0)),
 								buffer_size[process] * m_field_components, process);
 					}
+
 					for (mdp_uint k = 0; k < m_field_components; k++)
 						short_buffer[k] = large_buffer(process, buffer_ptr[process], k);
+
 					buffer_ptr[process]++;
 					if (buffer_ptr[process] == buffer_size[process])
 						buffer_ptr[process] = 0;
 				}
+
+				// Local data
 				if (process == processIO)
 				{
+					mdp_int local_idx = lattice().local(idx_gl);
 					for (mdp_uint k = 0; k < m_field_components; k++)
-						short_buffer[k] = *(m_data.get() + lattice().local(idx_gl) * m_field_components + k);
+						short_buffer[k] = m_data[local_idx * m_field_components + k];
 				}
+
+				// Write to file
 				if (process != NOWHERE)
 				{
 					if (sort_x != 0)
@@ -213,6 +227,7 @@ namespace MDP
 						error("I cannot write on the file. I am confused !?!?");
 				}
 			}
+
 			if (strcmp(header, "NATIVE") == 0)
 				fprintf(fp, "\n\n [ MDP Standard File Format ]\n");
 			delete[] buffer_size;
@@ -220,27 +235,28 @@ namespace MDP
 			delete[] short_buffer;
 			fclose(fp);
 		}
-		else
+		else // Main process
 		{
-			int process;
-			mdp_int buffer_size = 0, idx, idx_gl;
+			mdp_int buffer_size = 0;
 			mdp_int *local_index = new mdp_int[max_buffer_size];
 			mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 			mdp_request request;
-			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+
+			for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
-				process = where_global(idx_gl);
+				int process = where_global(idx_gl);
 				if (process == ME)
 				{
 					local_index[buffer_size] = lattice().local(idx_gl);
 					buffer_size++;
 				}
-				if ((buffer_size == max_buffer_size) ||
-					((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
+
+				if ((buffer_size == max_buffer_size) || ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))
 				{
-					for (idx = 0; idx < buffer_size; idx++)
+					for (mdp_int idx = 0; idx < buffer_size; idx++)
 						for (mdp_uint k = 0; k < m_field_components; k++)
-							local_buffer(idx, k) = *(m_data.get() + local_index[idx] * m_field_components + k);
+							local_buffer(idx, k) = m_data[local_index[idx] * m_field_components + k];
+
 					mdp.put(buffer_size, processIO, request);
 					mdp.wait(request);
 					mdp.put(&(local_buffer(0, 0)), buffer_size * m_field_components,
@@ -251,6 +267,7 @@ namespace MDP
 			}
 			delete[] local_index;
 		}
+
 		if (isMainProcess() && !mdp_shutup)
 		{
 			printf("... Saving time: %f (sec)\n", mdp.time() - mytime);

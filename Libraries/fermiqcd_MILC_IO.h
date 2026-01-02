@@ -17,99 +17,90 @@
 #include <memory>
 #include <string>
 #include <cstdio>
+#include <fstream>
 #include "mdp_global_vars.h"
 #include "mdp_site.h"
 #include "fermiqcd_gauge_field.h"
 
 namespace MDP
 {
-  bool milc_read_as_float_noswitch(FILE *fp,
-                                   void *data,
-                                   mdp_int psize,
-                                   mdp_int header_size,
-                                   mdp_int position,
-                                   const mdp_lattice &lattice)
+  struct NoEndianSwitch
   {
-    std::cout << position << "\n";
-    double *p = (double *)data;
-    mdp_site x(lattice);
-    x.set_global(position);
-#ifdef USE_DOUBLE_PRECISION
-    float *q = (float *)malloc(psize / 2);
-    position = (((x(0) * lattice.size(3) + x(3)) * lattice.size(2) + x(2)) * lattice.size(1) + x(1));
-    if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
-        fread(q, psize / 2, 1, fp) != 1)
-    {
-      return false;
-    }
-    for (mdp_uint i = 0; i < psize / sizeof(double); i++)
-    {
-      p[i] = q[i];
-    }
-    free(q);
-#else
-    float *q = (float *)malloc(psize);
-    position = (((x(0) * lattice.size(3) + x(3)) * lattice.size(2) + x(2)) * lattice.size(1) + x(1));
-    if (fseek(fp, position * psize + header_size, SEEK_SET) ||
-        fread(q, psize, 1, fp) != 1)
-    {
-      return false;
-    }
-    for (mdp_uint i = 0; i < psize / sizeof(float); i++)
-    {
-      p[i] = q[i];
-    }
-    free(q);
-#endif
-    return true;
-  }
+    static inline void apply(float &) noexcept {}
+  };
 
-  bool milc_read_as_float_switch(FILE *fp,
-                                 void *data,
-                                 mdp_int psize,
-                                 mdp_int header_size,
-                                 mdp_int position,
-                                 const mdp_lattice &lattice)
+  struct EndianSwitch
   {
-    std::cout << "switch" << position << "\n";
-    double *p = (double *)data;
+    static inline void apply(float &v) noexcept
+    {
+      switch_endianess_byte4(v);
+    }
+  };
+
+  template <typename EndianPolicy>
+  bool milc_read_as_float(std::ifstream &fp,
+                          void *data,
+                          mdp_int psize,
+                          mdp_int header_size,
+                          mdp_int position,
+                          const mdp_lattice &lattice)
+  {
+    auto *out = static_cast<double *>(data);
+
     mdp_site x(lattice);
     x.set_global(position);
     position = (((x(0) * lattice.size(3) + x(3)) * lattice.size(2) + x(2)) * lattice.size(1) + x(1));
+
+    constexpr std::size_t float_size = sizeof(float);
 #ifdef USE_DOUBLE_PRECISION
-    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
-
-    if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
-        fread(q.get(), psize / 2, 1, fp) != 1)
-    {
-      return false;
-    }
-    for (mdp_uint i = 0; i < psize / sizeof(double); i++)
-    {
-      switch_endianess_byte4(q[i]);
-      p[i] = q[i];
-    }
+    const std::size_t bytes_to_read = psize / 2;
 #else
-    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize);
+    const std::size_t bytes_to_read = psize;
+#endif
+    const std::size_t float_count = bytes_to_read / float_size;
 
-    if (fseek(fp, position * psize + header_size, SEEK_SET) ||
-        fread(q.get(), psize, 1, fp) != 1)
+    // zero-copy: we read directly into the float buffer
+    auto *buffer = static_cast<float *>(data);
+
+    fp.seekg(static_cast<std::streamoff>(position * bytes_to_read + header_size), std::ios::beg);
+    if (!fp.read(reinterpret_cast<char *>(buffer), static_cast<std::streamsize>(bytes_to_read)))
     {
       return false;
     }
-    for (mdp_uint i = 0; i < psize / sizeof(float); i++)
+
+    // in-place conversion from end (to not overwrite data)
+    for (std::size_t i = float_count; i-- > 0;)
     {
-      switch_endianess_byte4(q[i]);
-      p[i] = q[i];
+      EndianPolicy::apply(buffer[i]);
+      out[i] = static_cast<double>(buffer[i]);
     }
-#endif
+
     return true;
   }
 
-  bool load_milc(gauge_field &U, std::string filename,
+  inline bool milc_read_as_float_noswitch(std::ifstream &fp,
+                                          void *data,
+                                          mdp_int psize,
+                                          mdp_int header_size,
+                                          mdp_int position,
+                                          const mdp_lattice &lattice)
+  {
+    return milc_read_as_float<NoEndianSwitch>(fp, data, psize, header_size, position, lattice);
+  }
+
+  inline bool milc_read_as_float_switch(std::ifstream &fp,
+                                        void *data,
+                                        mdp_int psize,
+                                        mdp_int header_size,
+                                        mdp_int position,
+                                        const mdp_lattice &lattice)
+  {
+    return milc_read_as_float<EndianSwitch>(fp, data, psize, header_size, position, lattice);
+  }
+
+  bool load_milc(gauge_field &U, const std::string &filename,
                  mdp_int max_buffer_size = 128, int processIO = 0)
   {
-
     struct
     {
       mdp_uint magic_number; /* Identifies file format */
@@ -130,7 +121,7 @@ namespace MDP
       // mdp_int boo;
     } milc_header;
 
-    bool ew = false;
+    bool endian_swap = false;
     mdp_uint size = sizeof(milc_header);
     FILE *fp = fopen(filename.c_str(), "r");
     if (fp == nullptr)
@@ -141,13 +132,14 @@ namespace MDP
       return false;
     }
 
+    // Check magic number for endianess
     if (milc_header.magic_number == 0x874e0000)
     {
       switch_endianess_byte4(milc_header.dims[0]);
       switch_endianess_byte4(milc_header.dims[1]);
       switch_endianess_byte4(milc_header.dims[2]);
       switch_endianess_byte4(milc_header.dims[3]);
-      ew = true;
+      endian_swap = true;
     }
 
     if (U.lattice().ndim() != 4 ||
@@ -161,7 +153,7 @@ namespace MDP
     }
     fclose(fp);
 
-    if (ew)
+    if (endian_swap)
       return U.load(filename, processIO, max_buffer_size, false, size,
                     milc_read_as_float_switch, false);
     else
