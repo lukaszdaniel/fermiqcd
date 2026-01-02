@@ -12,10 +12,10 @@ int main(int argc, char **argv)
 
   gauge_field U(lattice, nc);
   set_hot(U);
-  U.save("gauge.hot");
+  U.save_new("gauge.hot");
 
   gauge_field V(lattice, nc);
-  V.load("gauge.hot");
+  V.load_new("gauge.hot");
 
   x.set(3, 2, 1, 0);
   // std::cout << "U(x) = " << U(x, 1) << std::endl;

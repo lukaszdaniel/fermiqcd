@@ -67,7 +67,7 @@ namespace MDP
       open(filename);
     }
 
-    virtual ~mdp_postscript()
+    ~mdp_postscript()
     {
       if (m_fp)
         close();

@@ -26,7 +26,7 @@ int main(int argc, char **argv)
   // create lattice and read it in
   mdp_lattice lattice(4, L);  // make a 4D lattice
   gauge_field U(lattice, nc); // make a gauge field U
-  U.load(gauge_filename);
+  U.load_new(gauge_filename);
 
   int length = 2 * size1 + 2 * size2;
   // int path[length][2];

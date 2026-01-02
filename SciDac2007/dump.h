@@ -38,14 +38,13 @@ namespace MDP
     fwrite(header, sizeof(char), strlen(header), file);
     mdp_site p(s.lattice());
 
-    float fval = 0.0F;
     for (int k = 0; k < LZ + 1; k++)
       for (int j = 0; j < LY + 1; j++)
         for (int i = 0; i < LX + 1; i++)
         {
           p.set(i % LX, j % LY, k % LZ);
 
-          fval = (float)s(p, site_idx);
+          float fval = (float)s(p, site_idx);
           if (bASCII)
           {
             memset(number, 0, sizeof(number));
@@ -62,7 +61,6 @@ namespace MDP
     file = NULL;
     remove(filename.c_str());
     rename(tempfile, filename.c_str());
-    return;
   }
 } // namespace MDP
 

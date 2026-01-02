@@ -15,6 +15,7 @@
 #include <filesystem>
 #include <string>
 #include <vector>
+#include <fstream>
 #ifndef _WIN64
 #include "glob.h"
 #endif
@@ -63,21 +64,21 @@ namespace MDP
     return pattern.replace(i, 1, std::to_string(k).c_str());
   }
 
-  mdp_field_file_header get_info(std::string filename, int proc = 0)
+  mdp_field_file_header get_info(const std::string &filename, int proc = 0)
   {
     mdp_field_file_header myheader;
     if (isSubProcess(proc))
     {
-      FILE *fp = fopen(filename.c_str(), "r");
-      if (fp == nullptr)
+      std::ifstream in(filename, std::ios::binary);
+      if (!in)
         error("Unable to open file");
-      size_t count = sizeof(mdp_field_file_header) / sizeof(char);
-      if (fread(&myheader, sizeof(char), count, fp) != count)
-      {
+
+      in.read(reinterpret_cast<char *>(&myheader), sizeof(mdp_field_file_header));
+
+      if (!in)
         error("Error while reading file");
-      }
+
       mdp_field_file_header::switch_header_endianess(myheader);
-      fclose(fp); // fixed by Lucky [lucky@sfu.ca]
     }
     mdp.broadcast(myheader, proc);
     return myheader;

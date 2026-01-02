@@ -14,6 +14,7 @@
 
 #include <memory>
 #include <cstring>
+#include <fstream>
 #include "mdp_global_vars.h"
 #include "mdp_complex.h"
 #include "mdp_endianess_converter.h"
@@ -497,6 +498,13 @@ namespace MDP
               mdp_int skip_bytes = 0,
               bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr,
               bool try_switch_endianess = true);
+    bool load_new(std::string filename,
+              int processIO = 0,
+              mdp_int max_buffer_size = 1024,
+              bool load_header = true,
+              mdp_int skip_bytes = 0,
+              bool (*user_read)(std::ifstream &, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr,
+              bool try_switch_endianess = true);
 
     /** @brief Best way to save a field
      */
@@ -506,6 +514,12 @@ namespace MDP
               bool load_header = true,
               mdp_int skip_bytes = 0,
               bool (*user_write)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr);
+    bool save_new(std::string filename,
+              int processIO = 0,
+              mdp_int max_buffer_size = 1024,
+              bool load_header = true,
+              mdp_int skip_bytes = 0,
+              bool (*user_write)(std::ofstream &, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr);
 
     /** @brief Best way to save a field to a VTK file
      *

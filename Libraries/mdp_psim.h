@@ -37,7 +37,7 @@
 namespace MDP
 {
 #ifndef FERMIQCD
-  using mdp_int =  int; // this in case this lib is used without fermiqcd
+  using mdp_int = int; // this in case this lib is used without fermiqcd
 #endif
 
   /// @brief Parallel SIMulator used by class mdp_communicator
@@ -70,26 +70,26 @@ namespace MDP
     // Typed Constants
     static constexpr int PROCESS_COUNT_MIN = 1;        // minimum number of processes
     static constexpr int PROCESS_COUNT_MAX = 128;      // maximum number of processes
-    static constexpr int CONN_LIST_IGNORE = -1;        // connections that cannot occur
+    // static constexpr int CONN_LIST_IGNORE = -1;     // connections that cannot occur
     static constexpr int PROCESS_PARENT = 0;           // The parent process ID number
     static constexpr int COMM_RECV = 0;                // socket array indicator for reading
     static constexpr int COMM_SEND = 1;                // socket array indicator for writing
     static constexpr int COMM_TIMEOUT_DEFAULT = 86400; // 1 day default
 
     // common enum values for logging routines
-    enum enumBegEnd
+    enum BegEnd
     {
       LOG_BEGIN,
       LOG_END
     };
 
-    enum enumSendRecv
+    enum SendRecv
     {
       LOG_SR_SEND,
       LOG_SR_RECV
     };
 
-    enum enumSendRecvStep
+    enum SendRecvStep
     {
       LOG_SR_START,
       LOG_SR_FAIL,
@@ -347,8 +347,8 @@ namespace MDP
      */
     void logSendRecv(int sourcedestProcessID,
                      std::string tag,
-                     enumSendRecv method,
-                     enumSendRecvStep step)
+                     SendRecv method,
+                     SendRecvStep step)
     {
 
       char buffer[256];
@@ -500,7 +500,7 @@ namespace MDP
     // ***                                                             ***
     // *******************************************************************
 
-    void doBegEndLog(std::string method, enumBegEnd begEnd)
+    void doBegEndLog(std::string method, BegEnd begEnd)
     {
       char buffer[256];
       char *be;

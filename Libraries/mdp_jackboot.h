@@ -92,7 +92,7 @@ namespace MDP
       dimension(nconf_, narg_);
     }
 
-    virtual ~mdp_jackboot()
+    ~mdp_jackboot()
     {
     }
 
