@@ -12,7 +12,9 @@
 #ifndef MDP_TIMER_
 #define MDP_TIMER_
 
+#include <fstream>
 #include <string>
+#include <sstream>
 #include <unistd.h>
 #include <sys/time.h>
 #include "mdp_global_vars.h"
@@ -69,34 +71,46 @@ namespace MDP
   void getcpuusage(double &user, double &total)
   {
 #ifdef NO_POSIX
-    user = total = 0;
+    user = total = 0.0;
 #else
-    static mdp_int t[4], s[4];
-    double sum, usage[4];
-    FILE *fp;
-    s[0] = t[0];
-    s[1] = t[1];
-    s[2] = t[2];
-    s[3] = t[3];
-    fp = fopen("/proc/stat", "r");
-    if (!fp)
+    static mdp_int curr[4] = {0, 0, 0, 0};
+    static mdp_int prev[4] = {0, 0, 0, 0};
+
+    for (int i = 0; i < 4; ++i)
+      prev[i] = curr[i];
+
+    std::ifstream file("/proc/stat");
+    if (!file)
+    {
+      user = total = 0.0;
       return;
-    if (fscanf(fp, "cpu  %i%i%i%i", &t[0], &t[1], &t[2], &t[3]) != 4)
+    }
+
+    std::string cpu;
+    file >> cpu;
+
+    if (cpu != "cpu")
+      return;
+
+    if (!(file >> curr[0] >> curr[1] >> curr[2] >> curr[3]))
     {
       error("Error while reading cpu stats");
     }
-    fclose(fp);
-    usage[0] = (t[0] - s[0]);
-    usage[1] = (t[1] - s[1]);
-    usage[2] = (t[2] - s[2]);
-    usage[3] = (t[3] - s[3]);
-    sum = usage[0] + usage[1] + usage[2] + usage[3];
-    usage[0] /= sum;
-    usage[1] /= sum;
-    usage[2] /= sum;
-    usage[3] /= sum;
-    user = 100.0 * (usage[0]);                        // user usage
-    total = 100.0 * (usage[0] + usage[1] + usage[2]); // cpu usage
+
+    double usage[4];
+    double sum = 0.0;
+
+    for (int i = 0; i < 4; ++i)
+    {
+      usage[i] = 1.0 * (curr[i] - prev[i]);
+      sum += usage[i];
+    }
+
+    for (int i = 0; i < 4; ++i)
+      usage[i] /= sum;
+
+    user = 100.0 * usage[0];                          // user usage
+    total = 100.0 * (usage[0] + usage[1] + usage[2]); // total cpu usage
 #endif
   }
 } // namespace MDP

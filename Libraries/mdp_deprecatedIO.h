@@ -24,7 +24,7 @@ namespace MDP
 							mdp_int (*sort_x)(mdp_lattice &, mdp_int),
 							int auto_switch_endianess)
 	{
-		mdp_int idx_gl, nvol_gl = lattice().global_volume();
+		mdp_int nvol_gl = lattice().global_volume();
 		double mytime = mdp.time();
 		bool try_switch_endianess = false;
 
@@ -33,82 +33,104 @@ namespace MDP
 			auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
 			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
 			auto short_buffer = std::make_unique<T[]>(m_field_components);
-			int process;
-			mdp_request request;
 
-			for (process = 0; process < Nproc; process++)
+			for (int process = 0; process < Nproc; process++)
 				buffer_size[process] = 0;
+
 			printf("Loading file %s from process %i (buffer = %li sites)\n",
 				   filename, processIO, max_buffer_size);
 			fflush(stdout);
-			FILE *fp = fopen(filename, "rb");
-			if (fp == nullptr)
+
+			std::ifstream file(filename, std::ios::binary);
+			if (!file)
 				error("Unable to open file");
 
-			// #ifdef INSERT_HEADER
-			if (strcmp(header, "NATIVE") == 0)
+			if (header && std::strcmp(header, "NATIVE") == 0)
 			{
 				error("NATIVE HEADER IN DEPRECATED FUNCTION NOT SUPPORTED ANY MORE");
 			}
-			else if (header != nullptr && strcmp(header, "NOHEADER") != 0)
+			else if (header && std::strcmp(header, "NOHEADER") != 0)
 			{
-				if (fread(header, sizeof(char), header_size, fp) !=
-					header_size)
+				file.read(const_cast<char *>(header), header_size);
+				if (!file)
 					error("Unable to read file header");
 			}
-			// #endif
-			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+
+			for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
-				process = where_global(idx_gl);
+				int process = where_global(idx_gl);
+
 				if (process != NOWHERE)
 				{
-					if (sort_x != 0)
-						if (fseek(fp, sort_x(lattice(), idx_gl) * sizeof(T) * m_field_components + header_size, SEEK_SET) < 0)
+					if (sort_x)
+					{
+						std::streamoff offset =
+							static_cast<std::streamoff>(sort_x(lattice(), idx_gl)) *
+								sizeof(T) * m_field_components +
+							header_size;
+
+						file.seekg(offset, std::ios::beg);
+						if (!file)
 							error("unexpected end of file");
-					if ((fread(short_buffer.get(), sizeof(T), m_field_components, fp) -
-						 m_field_components) != 0)
+					}
+
+					file.read(reinterpret_cast<char *>(short_buffer.get()),
+							  sizeof(T) * m_field_components);
+					if (!file)
 						error("unexpected end of file");
 				}
+
 				if ((process != NOWHERE) && (process != processIO))
 				{
 					for (mdp_uint k = 0; k < m_field_components; k++)
 						large_buffer(process, buffer_size[process], k) = short_buffer[k];
+
 					buffer_size[process]++;
+
 					if (buffer_size[process] == max_buffer_size)
 					{
+						mdp_request request;
 						mdp.put(&(large_buffer(process, 0, 0)),
-								max_buffer_size * m_field_components, process, request);
+								max_buffer_size * m_field_components,
+								process, request);
 						mdp.wait(request);
 						buffer_size[process] = 0;
 					}
+
 					if (idx_gl == nvol_gl - 1)
+					{
 						for (process = 0; process < Nproc; process++)
 							if ((process != ME) &&
 								(buffer_size[process] != max_buffer_size) &&
 								(buffer_size[process] > 0))
 							{
+								mdp_request request;
 								mdp.put(&(large_buffer(process, 0, 0)),
 										buffer_size[process] * m_field_components,
 										process, request);
 								mdp.wait(request);
 							}
+					}
 				}
+
 				if (process == processIO)
 				{
+					mdp_int local_idx = lattice().local(idx_gl);
 					for (mdp_uint k = 0; k < m_field_components; k++)
-						*(m_data.get() + lattice().local(idx_gl) * m_field_components + k) = short_buffer[k];
+						m_data[local_idx * m_field_components + k] = short_buffer[k];
 				}
 			}
-			fclose(fp);
 		}
 		else
 		{
 			mdp_int buffer_size = 0;
 			auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
 			mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
-			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+
+			for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
 				int process = where_global(idx_gl);
+
 				if (process == ME)
 				{
 					local_index[buffer_size] = lattice().local(idx_gl);
@@ -164,22 +186,30 @@ namespace MDP
 
 			for (int process = 0; process < Nproc; process++)
 				buffer_ptr[process] = 0;
+
 			printf("Saving file %s from process %i (buffer = %li sites)\n",
 				   filename, processIO, max_buffer_size);
 			fflush(stdout);
-			FILE *fp = fopen(filename, mode);
-			if (fp == nullptr)
+
+			std::ios::openmode open_mode = std::ios::binary;
+			if (mode && std::strchr(mode, 'a'))
+				open_mode |= std::ios::app;
+			else
+				open_mode |= std::ios::out | std::ios::trunc;
+
+			std::ofstream file(filename, open_mode);
+			if (!file)
 				error("Unable to open file");
 
 			// Write optional header
-			if (strcmp(header, "NATIVE") == 0)
+			if (header && std::strcmp(header, "NATIVE") == 0)
 			{
 				error("NATIVE HEADER IN DEPRECATED FUNCTION NOT SUPPORTED ANY MORE");
 			}
-			else if (header != nullptr && strcmp(header, "NOHEADER") != 0)
+			else if (header && std::strcmp(header, "NOHEADER") != 0)
 			{
-				if (fwrite(header, sizeof(char), header_size, fp) !=
-					header_size)
+				file.write(header, header_size);
+				if (!file)
 					error("Unable to write file header");
 			}
 
@@ -217,19 +247,29 @@ namespace MDP
 				// Write to file
 				if (process != NOWHERE)
 				{
-					if (sort_x != 0)
-						if (fseek(fp, sort_x(lattice(), idx_gl) * sizeof(T) * m_field_components + header_size, SEEK_SET) < 0)
+					if (sort_x)
+					{
+						std::streamoff offset =
+							static_cast<std::streamoff>(sort_x(lattice(), idx_gl)) *
+								sizeof(T) * m_field_components +
+							header_size;
+
+						file.seekp(offset, std::ios::beg);
+						if (!file)
 							error("unexpected end of file");
-					if ((fwrite(short_buffer.get(), sizeof(T), m_field_components, fp) -
-						 m_field_components) != 0)
-						error("I cannot write on the file. I am confused !?!?");
+					}
+
+					file.write(reinterpret_cast<char *>(short_buffer.get()),
+							   sizeof(T) * m_field_components);
+					if (!file)
+						error("I cannot write on the file. Unexpected error!");
 				}
 			}
 
-			if (strcmp(header, "NATIVE") == 0)
-				fprintf(fp, "\n\n [ MDP Standard File Format ]\n");
-
-			fclose(fp);
+			if (header && std::strcmp(header, "NATIVE") == 0)
+			{
+				file << "\n\n [ MDP Standard File Format ]\n";
+			}
 		}
 		else // Main process
 		{
@@ -241,6 +281,7 @@ namespace MDP
 			for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
 				int process = where_global(idx_gl);
+
 				if (process == ME)
 				{
 					local_index[buffer_size] = lattice().local(idx_gl);

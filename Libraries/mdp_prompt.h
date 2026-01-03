@@ -14,34 +14,42 @@
 #define MDP_PROMPT_
 
 #include <string>
-#include <cstring>
+#include <string_view>
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <algorithm>
 #include "mdp_macros.h"
 #include "mdp_communicator.h"
 
 namespace MDP
 {
-  const char STD_INPUT[] = "";
-  const char STD_INPUT_FILE[] = "<stdin>";
+  inline constexpr std::string_view STD_INPUT = "";
+  inline constexpr std::string_view STD_INPUT_FILE = "<stdin>";
 
   /// Converts string to float
-  double val(std::string s)
+  double val(const std::string &s)
   {
-    return atof(s.c_str());
+    return std::stod(s);
+  }
+
+  static std::string trim(const std::string &s)
+  {
+    const auto begin = s.find_first_not_of(" \t\r\n");
+    if (begin == std::string::npos)
+      return "";
+    const auto end = s.find_last_not_of(" \t\r\n");
+    return s.substr(begin, end - begin + 1);
   }
 
   /// Try prompt("<stdin>","VALUE","4.0")
   /// It will prompt the user for variable VALUE and take 4.0 as default
-  std::string prompt(std::string filename,
-                     std::string variable,
-                     std::string def_val = "0.0",
+  std::string prompt(const std::string &filename,
+                     const std::string &variable,
+                     const std::string &def_val = "0.0",
                      int p = 0)
   {
-    FILE *fp = 0;
-    static char tmp[1024];
-    int active, length;
-    char c, d;
-    char response[1024];
+    std::string response = def_val;
 
 #ifdef PARALLEL
     mdp.barrier();
@@ -51,111 +59,69 @@ namespace MDP
     {
       if (filename == STD_INPUT)
       {
-        printf("Input value of %s (default is `%s'): ",
-               variable.c_str(), def_val.c_str());
+        std::cout << "Input value of " << variable << " (default is '" << def_val << "'): ";
         std::cin >> response;
       }
       else
       {
+        std::istream *in = nullptr;
+        std::ifstream file;
+
         if (filename == STD_INPUT_FILE)
         {
-          fp = stdin;
-          printf("Input variable (default is `%s %s')...\n",
-                 variable.c_str(), def_val.c_str());
+          std::cout << "Input variable (default is '" << variable << " " << def_val << "')...\n";
+          in = &std::cin;
         }
         else
         {
-          fp = fopen(filename.c_str(), "r");
+          file.open(filename);
+          if (!file)
+            error("Unable to open file");
+          in = &file;
         }
-        fseek(fp, 0, 0);
-        active = 1;
-        length = 0;
-        d = 0;
-        tmp[0] = '\0';
-        response[0] = '\0';
-        do
+
+        std::string line;
+        while (std::getline(*in, line))
         {
-          c = fgetc(fp);
-          switch (active)
+          // ignore comments
+          line = trim(line);
+          if (line.empty() || line[0] == '#')
+            continue;
+
+          if (auto pos = line.find('#'); pos != std::string::npos)
+            line = trim(line.substr(0, pos));
+
+          std::istringstream iss(line);
+          std::string name, value, eq;
+
+          if (!(iss >> name))
+            continue;
+
+          if (name != variable)
+            continue;
+
+          // handle: name value  OR  name = value
+          if (iss >> eq && eq == "=")
+            iss >> value;
+          else
+            value = eq;
+
+          if (!value.empty())
           {
-          case 0:
-            if (c == '\n')
-            {
-              active = 1;
-              length = 0;
-            }
-            break;
-          case 1:
-            if (c == '#')
-            {
-              active = 0;
-            }
-            else if ((length > 0) && ((c == ' ') || (c == '\t')))
-            {
-              active = 2;
-              length = 0;
-            }
-            else if ((length > 0) && (c == '\n'))
-            {
-              active = 1;
-              length = 0;
-              if (variable == tmp)
-                c = EOF;
-            }
-            else if ((c != ' ') && (c != '\t') && (c != '\n'))
-            {
-              tmp[length] = c;
-              tmp[length + 1] = '\0';
-              length++;
-            }
-            break;
-          case 2:
-            if (c == '#')
-            {
-              active = 0;
-            }
-            else if ((c == '\n') || (c == EOF))
-            {
-              active = 1;
-              length = 0;
-              if (variable == tmp)
-                d = 1;
-            }
-            else if ((length == 0) && ((c == ' ') || (c == '\t') || (c == '=')))
-            {
-              // do nothing
-            }
-            else if ((c == ' ') || (c == '\t'))
-            {
-              active = 0;
-              if (variable == tmp)
-                d = 1;
-            }
-            else
-            {
-              response[length] = c;
-              response[length + 1] = '\0';
-              length++;
-            }
+            response = value;
             break;
           }
-          // printf("%i %c %s %s\n", active, c, tmp, response);
-        } while ((c != EOF) && (d != 1));
-
-        if ((d == 0) || (strcmp(response, "") == 0))
-          strcpy(response, def_val.c_str());
-
-        if (fp != stdin && fp != nullptr)
-          fclose(fp);
+        }
       }
-      printf("... Adopting %s equal to \"%s\"\n\n", variable.c_str(), response);
+
+      std::cout << "... Adopting " << variable << " equal to \"" << response << "\"\n\n";
     }
 
 #ifdef PARALLEL
-    mdp.broadcast(response, 1024, p);
+    mdp.broadcast(response.data(), response.size() + 1, p);
 #endif
-    std::string s(response);
-    return s;
+
+    return response;
   }
 } // namespace MDP
 

@@ -13,78 +13,113 @@
 #define MDP_COMPLEX_FIELD_
 
 #include <memory>
-#include <cstdio>
+#include <fstream>
+#include <vector>
 #include "mdp_global_vars.h"
 #include "mdp_field.h"
 
 namespace MDP
 {
-  bool mdp_write_double_as_float(FILE *fp,
-                                 void *data,
-                                 mdp_int psize,
-                                 mdp_int header_size,
-                                 mdp_int position,
-                                 [[maybe_unused]] const mdp_lattice &lattice)
+  template <typename Src, typename Dst>
+  bool mdp_write_convert(std::ofstream &file,
+                         void *data,
+                         mdp_int psize,
+                         mdp_int header_size,
+                         mdp_int position,
+                         [[maybe_unused]] const mdp_lattice &lattice)
   {
-    double *p = (double *)data;
-    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
-    for (mdp_uint i = 0; i < psize / sizeof(double); i++)
-      q[i] = p[i];
-    if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
-        fwrite(q.get(), psize / 2, 1, fp) != 1)
+    auto *src = static_cast<Src *>(data);
+
+    const size_t src_count = psize / sizeof(Src);
+    const size_t bytes_to_write = src_count * sizeof(Dst);
+
+    auto buffer = std::make_unique<Dst[]>(src_count);
+
+    for (mdp_uint i = 0; i < src_count; ++i)
+      buffer[i] = static_cast<Dst>(src[i]);
+
+    const std::streamoff offset = static_cast<std::streamoff>(position) * bytes_to_write + header_size;
+
+    file.seekp(offset, std::ios::beg);
+    if (!file)
       return false;
+
+    file.write(reinterpret_cast<const char *>(buffer.get()), bytes_to_write);
+    if (!file)
+      return false;
+
     return true;
   }
 
-  bool mdp_read_double_as_float(FILE *fp,
-                                void *data,
-                                mdp_int psize,
-                                mdp_int header_size,
-                                mdp_int position,
-                                [[maybe_unused]] const mdp_lattice &lattice)
+  inline bool mdp_write_double_as_float(std::ofstream &file,
+                                        void *data,
+                                        mdp_int psize,
+                                        mdp_int header_size,
+                                        mdp_int position,
+                                        const mdp_lattice &lattice)
   {
-    double *p = (double *)data;
-    std::unique_ptr<float[]> q = std::make_unique<float[]>(psize / 2);
-    if (fseek(fp, position * psize / 2 + header_size, SEEK_SET) ||
-        fread(q.get(), psize / 2, 1, fp) != 1)
+    return mdp_write_convert<double, float>(file, data, psize, header_size, position, lattice);
+  }
+
+  inline bool mdp_write_float_as_double(std::ofstream &file,
+                                        void *data,
+                                        mdp_int psize,
+                                        mdp_int header_size,
+                                        mdp_int position,
+                                        const mdp_lattice &lattice)
+  {
+    return mdp_write_convert<float, double>(file, data, psize, header_size, position, lattice);
+  }
+
+  template <typename Dst, typename Src>
+  bool mdp_read_convert(std::ifstream &file,
+                        void *data,
+                        mdp_int psize,
+                        mdp_int header_size,
+                        mdp_int position,
+                        [[maybe_unused]] const mdp_lattice &lattice)
+  {
+    auto *dst = static_cast<Dst *>(data);
+
+    const size_t dst_count = psize / sizeof(Dst);
+    const size_t bytes_to_read = dst_count * sizeof(Src);
+
+    auto buffer = std::make_unique<Src[]>(dst_count);
+
+    const std::streamoff offset = static_cast<std::streamoff>(position) * bytes_to_read + header_size;
+
+    file.seekg(offset, std::ios::beg);
+    if (!file)
       return false;
-    for (mdp_uint i = 0; i < psize / sizeof(double); i++)
-      p[i] = q[i];
+
+    file.read(reinterpret_cast<char *>(buffer.get()), bytes_to_read);
+    if (!file)
+      return false;
+
+    for (mdp_uint i = 0; i < dst_count; ++i)
+      dst[i] = static_cast<Dst>(buffer[i]);
+
     return true;
   }
 
-  bool mdp_write_float_as_double(FILE *fp,
-                                 void *data,
-                                 mdp_int psize,
-                                 mdp_int header_size,
-                                 mdp_int position,
-                                 [[maybe_unused]] const mdp_lattice &lattice)
+  inline bool mdp_read_double_as_float(std::ifstream &file,
+                                       void *data,
+                                       mdp_int psize,
+                                       mdp_int header_size,
+                                       mdp_int position,
+                                       const mdp_lattice &lattice)
   {
-    float *p = (float *)data;
-    std::unique_ptr<double[]> q = std::make_unique<double[]>(psize * 2);
-    for (mdp_uint i = 0; i < psize / sizeof(float); i++)
-      q[i] = p[i];
-    if (fseek(fp, position * psize * 2 + header_size, SEEK_SET) ||
-        fwrite(q.get(), psize * 2, 1, fp) != 1)
-      return false;
-    return true;
+    return mdp_read_convert<double, float>(file, data, psize, header_size, position, lattice);
   }
 
-  bool mdp_read_float_as_double(FILE *fp,
-                                void *data,
-                                mdp_int psize,
-                                mdp_int header_size,
-                                mdp_int position,
-                                [[maybe_unused]] const mdp_lattice &lattice)
+  inline bool mdp_read_float_as_double(std::ifstream &file,
+                                       void *data,
+                                       mdp_int psize,
+                                       mdp_int header_size,
+                                       mdp_int position,
+                                       const mdp_lattice &lattice)
   {
-    float *p = (float *)data;
-    std::unique_ptr<double[]> q = std::make_unique<double[]>(psize * 2);
-    if (fseek(fp, position * psize * 2 + header_size, SEEK_SET) ||
-        fread(q.get(), psize * 2, 1, fp) != 1)
-      return false;
-    for (mdp_uint i = 0; i < psize / sizeof(float); i++)
-      p[i] = q[i];
-    return true;
+    return mdp_read_convert<float, double>(file, data, psize, header_size, position, lattice);
   }
 
   /// @brief field of complex numbers or vectors of complex numbers
@@ -238,7 +273,7 @@ namespace MDP
     {
 #ifdef USE_DOUBLE_PRECISION
       m_header.bytes_per_site /= 2;
-      save_old(filename, processIO, max_buffer_size, load_header, skip_bytes,
+      save(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_write_double_as_float);
       m_header.bytes_per_site *= 2;
 #else
@@ -256,7 +291,7 @@ namespace MDP
 
 #ifdef USE_DOUBLE_PRECISION
       m_header.bytes_per_site /= 2;
-      load_old(filename, processIO, max_buffer_size, load_header, skip_bytes,
+      load(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_read_double_as_float, true);
       m_header.bytes_per_site *= 2;
 #else
@@ -273,7 +308,7 @@ namespace MDP
     {
 #ifndef USE_DOUBLE_PRECISION
       m_header.bytes_per_site *= 2;
-      load_old(filename, processIO, max_buffer_size, load_header, skip_bytes,
+      load(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_read_float_as_double, true);
       m_header.bytes_per_site /= 2;
 #else
