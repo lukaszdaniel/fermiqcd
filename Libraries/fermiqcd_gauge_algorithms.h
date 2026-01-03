@@ -757,7 +757,7 @@ namespace MDP
       y = x - d[0][1];
     else
       y = x + d[0][1];
-    for (int i = 1; i < d.length(); i++)
+    for (size_t i = 1; i < d.length(); i++)
     {
       tmp = tmp * U(y, d[i][0], d[i][1]);
       if (d[i][0] < 0)
