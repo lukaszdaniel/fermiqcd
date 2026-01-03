@@ -13,6 +13,7 @@
 #define MDP_COMMUNICATOR_
 
 #include <ctime>
+#include <memory>
 #ifdef PARALLEL
 #include "mpi.h"
 #endif
@@ -37,7 +38,7 @@ namespace MDP
   /// int main(int argc, char**argv) {
   ///    mdp.open_wormholes(argc,argv);
   ///    // your code here
-  ///    mdp << 3.14 << endl;  // only process 0 prints
+  ///    mdp << 3.14 << "\n";  // only process 0 prints
   ///    mdp.close_wormholes();
   ///    return 0;
   /// }
@@ -268,50 +269,46 @@ namespace MDP
 #ifdef PARALLEL
     void add(mdp_int *obj1, mdp_int length)
     {
-      mdp_int *obj2 = new mdp_int[length];
+      auto obj2 = std::make_unique<mdp_int[]>(length);
       for (mdp_int i = 0; i < length; i++)
         obj2[i] = 0;
-      MPI_Allreduce(obj1, obj2, length, MPI_LONG, MPI_SUM, communicator);
+      MPI_Allreduce(obj1, obj2.get(), length, MPI_LONG, MPI_SUM, communicator);
       for (mdp_int i = 0; i < length; i++)
         obj1[i] = obj2[i];
-      delete[] obj2;
     }
 
     void add(float *obj1, mdp_int length)
     {
-      float *obj2 = new float[length];
+      auto obj2 = std::make_unique<float[]>(length);
       for (mdp_int i = 0; i < length; i++)
         obj2[i] = 0;
-      MPI_Allreduce(obj1, obj2, length, MPI_FLOAT, MPI_SUM, communicator);
+      MPI_Allreduce(obj1, obj2.get(), length, MPI_FLOAT, MPI_SUM, communicator);
       for (mdp_int i = 0; i < length; i++)
         obj1[i] = obj2[i];
-      delete[] obj2;
     }
 
     void add(double *obj1, mdp_int length)
     {
-      double *obj2 = new double[length];
+      auto obj2 = std::make_unique<double[]>(length);
       for (mdp_int i = 0; i < length; i++)
         obj2[i] = 0;
-      MPI_Allreduce(obj1, obj2, length, MPI_DOUBLE, MPI_SUM, communicator);
+      MPI_Allreduce(obj1, obj2.get(), length, MPI_DOUBLE, MPI_SUM, communicator);
       for (mdp_int i = 0; i < length; i++)
         obj1[i] = obj2[i];
-      delete[] obj2;
     }
 
     void add(mdp_complex *obj1, mdp_int length)
     {
-      mdp_complex *obj2 = new mdp_complex[length];
+      auto obj2 = std::make_unique<mdp_complex[]>(length);
       for (mdp_int i = 0; i < length; i++)
         obj2[i] = 0;
 #ifndef USE_DOUBLE_PRECISION
-      MPI_Allreduce(obj1, obj2, 2 * length, MPI_FLOAT, MPI_SUM, communicator);
+      MPI_Allreduce(obj1, obj2.get(), 2 * length, MPI_FLOAT, MPI_SUM, communicator);
 #else
-      MPI_Allreduce(obj1, obj2, 2 * length, MPI_DOUBLE, MPI_SUM, communicator);
+      MPI_Allreduce(obj1, obj2.get(), 2 * length, MPI_DOUBLE, MPI_SUM, communicator);
 #endif
       for (mdp_int i = 0; i < length; i++)
         obj1[i] = obj2[i];
-      delete[] obj2;
     }
 #else // not PARALLEL
     template <typename T>
@@ -485,16 +482,16 @@ namespace MDP
     void print_stats()
     {
 #ifndef NO_POSIX
-      double *a = new double[nproc()];
-      double *b = new double[nproc()];
-      double *c = new double[nproc()];
+      auto a = std::make_unique<double[]>(nproc());
+      auto b = std::make_unique<double[]>(nproc());
+      auto c = std::make_unique<double[]>(nproc());
       for (int i = 0; i < nproc(); i++)
         a[i] = b[i] = c[i] = 0;
       getcpuusage(a[me()], b[me()]);
       c[me()] = 100.0 * comm_time / (time());
-      add(a, nproc());
-      add(b, nproc());
-      add(c, nproc());
+      add(a.get(), nproc());
+      add(b.get(), nproc());
+      add(c.get(), nproc());
       char buffer[256];
       for (int i = 0; i < nproc(); i++)
       {
@@ -504,9 +501,6 @@ namespace MDP
         (*this) << buffer;
       }
       (*this) << "* (above numbers make no sense under windows)\n";
-      delete[] a;
-      delete[] b;
-      delete[] c;
 #endif
     }
 

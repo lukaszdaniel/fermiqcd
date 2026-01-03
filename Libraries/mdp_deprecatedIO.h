@@ -29,9 +29,9 @@ namespace MDP
 		int try_switch_endianess = false;
 		if (isSubProcess(processIO))
 		{
-			mdp_int *buffer_size = new mdp_int[Nproc];
+			auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
 			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
-			T *short_buffer = new T[m_field_components];
+			auto short_buffer = std::make_unique<T[]>(m_field_components);
 			int process;
 			mdp_request request;
 
@@ -64,7 +64,7 @@ namespace MDP
 					if (sort_x != 0)
 						if (fseek(fp, sort_x(lattice(), idx_gl) * sizeof(T) * m_field_components + header_size, SEEK_SET) < 0)
 							error("unexpected end of file");
-					if ((fread(short_buffer, sizeof(T), m_field_components, fp) -
+					if ((fread(short_buffer.get(), sizeof(T), m_field_components, fp) -
 						 m_field_components) != 0)
 						error("unexpected end of file");
 				}
@@ -98,14 +98,12 @@ namespace MDP
 						*(m_data.get() + lattice().local(idx_gl) * m_field_components + k) = short_buffer[k];
 				}
 			}
-			delete[] buffer_size;
-			delete[] short_buffer;
 			fclose(fp);
 		}
 		else
 		{
 			mdp_int buffer_size = 0;
-			mdp_int *local_index = new mdp_int[max_buffer_size];
+			auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
 			mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 			for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
 			{
@@ -126,7 +124,6 @@ namespace MDP
 					buffer_size = 0;
 				}
 			}
-			delete[] local_index;
 		}
 
 		update();
@@ -159,10 +156,10 @@ namespace MDP
 
 		if (isSubProcess(processIO))
 		{
-			mdp_int *buffer_size = new mdp_int[Nproc];
-			mdp_int *buffer_ptr = new mdp_int[Nproc];
+			auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
+			auto buffer_ptr = std::make_unique<mdp_int[]>(Nproc);
 			mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
-			T *short_buffer = new T[m_field_components];
+			auto short_buffer = std::make_unique<T[]>(m_field_components);
 
 			for (int process = 0; process < Nproc; process++)
 				buffer_ptr[process] = 0;
@@ -222,7 +219,7 @@ namespace MDP
 					if (sort_x != 0)
 						if (fseek(fp, sort_x(lattice(), idx_gl) * sizeof(T) * m_field_components + header_size, SEEK_SET) < 0)
 							error("unexpected end of file");
-					if ((fwrite(short_buffer, sizeof(T), m_field_components, fp) -
+					if ((fwrite(short_buffer.get(), sizeof(T), m_field_components, fp) -
 						 m_field_components) != 0)
 						error("I cannot write on the file. I am confused !?!?");
 				}
@@ -230,15 +227,13 @@ namespace MDP
 
 			if (strcmp(header, "NATIVE") == 0)
 				fprintf(fp, "\n\n [ MDP Standard File Format ]\n");
-			delete[] buffer_size;
-			delete[] buffer_ptr;
-			delete[] short_buffer;
+
 			fclose(fp);
 		}
 		else // Main process
 		{
 			mdp_int buffer_size = 0;
-			mdp_int *local_index = new mdp_int[max_buffer_size];
+			auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
 			mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
 			mdp_request request;
 
@@ -265,7 +260,6 @@ namespace MDP
 					buffer_size = 0;
 				}
 			}
-			delete[] local_index;
 		}
 
 		if (isMainProcess() && !mdp_shutup)

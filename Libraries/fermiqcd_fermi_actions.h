@@ -248,11 +248,11 @@ namespace MDP
       mdp_complex coeff_dif = 0;
       mdp_complex coeff_clover = 0;
       mdp_complex psi_up, psi_dw, psi_loc;
-      mdp_complex *psi_tmp = new mdp_complex[nspin * nc];
+      auto psi_tmp = std::make_unique<mdp_complex[]>(nspin * nc);
       mdp_complex *Fem, *Fpsi_in;
       mdp_complex *FU_up, *Fpsi_in_up;
       mdp_complex *FU_dw, *Fpsi_in_dw;
-      mdp_complex *FHU_dw = new mdp_complex[nc * nc];
+      auto FHU_dw = std::make_unique<mdp_complex[]>(nc * nc);
 
       // =================================================================
       //  The signs are now in accord with the definitions of
@@ -340,8 +340,6 @@ namespace MDP
           for (mdp_int i = 0; i < nc; i++)
             psi_out(x, a, i) += psi_tmp[anc = a * nc + i];
       }
-      delete[] psi_tmp;
-      delete[] FHU_dw;
     }
   };
 } // namespace MDP

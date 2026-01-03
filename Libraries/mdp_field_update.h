@@ -26,7 +26,6 @@ namespace MDP
   void mdp_field<T>::update(int np, int d, mdp_uint ncomp)
   {
     T *dynamic_buffer = nullptr;
-    T *where_to = nullptr;
     mdp.comm_time -= mdp.time();
     mdp_request request;
     mdp_int start_to_send = 0;
@@ -98,21 +97,19 @@ namespace MDP
       {
         if (ncomp == m_field_components)
         {
-          where_to = m_data.get() + lattice().start0(process, ni) * m_field_components;
+          T *where_to = m_data.get() + lattice().start0(process, ni) * m_field_components;
           mdp.get(where_to, length * m_field_components, process);
-          where_to = nullptr;
         }
         else
         {
-          where_to = new T[length * ncomp];
-          mdp.get(where_to, length * ncomp, process);
+          auto where_to = std::make_unique<T[]>(length * ncomp);
+          mdp.get(where_to.get(), length * ncomp, process);
           for (mdp_int idx = 0; idx < length; idx++)
             for (mdp_uint k = 0; k < ncomp; k++)
             {
               *(m_data.get() + (lattice().start0(process, ni) + idx) * m_field_components +
                 d * ncomp + k) = where_to[idx * ncomp + k];
             }
-          delete[] where_to;
         }
       }
 

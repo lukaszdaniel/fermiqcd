@@ -38,10 +38,10 @@ namespace MDP
 
     if (isSubProcess(processIO))
     {
-      mdp_int *buffer_size = new mdp_int[Nproc];
-      mdp_int *buffer_ptr = new mdp_int[Nproc];
+      auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
+      auto buffer_ptr = std::make_unique<mdp_int[]>(Nproc);
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
-      T *short_buffer = new T[m_field_components];
+      auto short_buffer = std::make_unique<T[]>(m_field_components);
 
       for (int process = 0; process < Nproc; process++)
         buffer_ptr[process] = 0;
@@ -146,15 +146,12 @@ namespace MDP
         remove(filename.c_str());
         rename(filename_tmp.c_str(), filename.c_str());
       }
-      delete[] buffer_size;
-      delete[] buffer_ptr;
-      delete[] short_buffer;
     }
     else
     {
       // --- Subprocess handling ---
       mdp_int buffer_size = 0;
-      mdp_int *local_index = new mdp_int[max_buffer_size];
+      auto local_index = std::make_unique<mdp_int[]>(max_buffer_size);
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       mdp_request request;
 
@@ -181,7 +178,6 @@ namespace MDP
           buffer_size = 0;
         }
       }
-      delete[] local_index;
     }
 
     if (isMainProcess() && !mdp_shutup)

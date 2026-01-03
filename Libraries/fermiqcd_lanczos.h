@@ -29,7 +29,7 @@ namespace MDP
   /// coefficients coeff;
   /// coeff["kappa"]=1.12;
   /// for(int k=0; k<100; k++)
-  ///    mdp << Lanczos::step(psi,U,coeff) << endl;
+  ///    mdp << Lanczos::step(psi,U,coeff) << "\n";
   /// @endverbatim
   /// return mdp_complex(alpha,eta)
   template <class fieldT>
