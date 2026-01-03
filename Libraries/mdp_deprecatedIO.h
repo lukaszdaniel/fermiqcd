@@ -26,7 +26,8 @@ namespace MDP
 	{
 		mdp_int idx_gl, nvol_gl = lattice().global_volume();
 		double mytime = mdp.time();
-		int try_switch_endianess = false;
+		bool try_switch_endianess = false;
+
 		if (isSubProcess(processIO))
 		{
 			auto buffer_size = std::make_unique<mdp_int[]>(Nproc);

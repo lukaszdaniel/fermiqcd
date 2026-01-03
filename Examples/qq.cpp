@@ -31,9 +31,8 @@ int main(int argc, char **argv)
   gauge_field U(lattice, nc); // make a gauge field U
   U.load(gauge_filename);
 
-  int length = 2 * size1 + 2 * size2;
-  // int path[length][2];
-  auto path = new int[length][2];
+  size_t length = 2 * size1 + 2 * size2;
+  Path path(length);
 
   // make a generic path
   for (int i = 0; i < size1; i++)
@@ -56,10 +55,9 @@ int main(int argc, char **argv)
       for (int i = size1; i < size1 + size2; i++)
         path[i][1] = path[i + size1 + size2][1] = nu;
 
-      result += real(average_path(U, length, path)) / 6;
+      result += real(average_path(U, path)) / 6;
     }
   std::cout << "average loop " << size1 << "x" << size2 << " = " << result << std::endl;
-  delete[] path;
 
   mdp.close_wormholes(); // STOP
   return 0;
