@@ -1,10 +1,12 @@
 #include <cstdlib>
+#include <cstdint>
 #include <cstdio>
 #include <cmath>
 #include <cstring>
 #include <ctime>
 #include <complex>
 #include <memory>
+#include <fstream>
 
 #ifndef USE_DOUBLE_PRECISION
 using Complex = std::complex<float>;
@@ -44,17 +46,32 @@ public:
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  unsigned int endianess;
-  int ndim;
-  int box_size[10];
-  long bytes_per_site;
-  long sites;
+  uint32_t endianess;
+  int32_t ndim;
+  int32_t box[10];
+  int32_t bytes_per_site;
+  int32_t sites;
 
   _generic_field_file_header()
   {
     strcpy(file_id, "File Type: MDP FIELD\n");
   }
 };
+
+_generic_field_file_header get_info(const std::string &filename)
+{
+  _generic_field_file_header myheader;
+  std::ifstream in(filename, std::ios::binary);
+  if (!in)
+    error("Unable to open file");
+
+  in.read(reinterpret_cast<char *>(&myheader), sizeof(_generic_field_file_header));
+
+  if (!in)
+    error("Error while reading file");
+
+  return myheader;
+}
 
 class short_field
 {
@@ -92,26 +109,43 @@ public:
   }
 };
 
-void write_header(FILE *MDP_fp, int bytes_per_site, const char *program_version, int nx[4])
+void write_header(std::ofstream &MDP_fp,
+                  int bytes_per_site,
+                  const char *program_version,
+                  int nx[4],
+                  const char *creation_date = nullptr)
 {
-  _generic_field_file_header myheader;
+  _generic_field_file_header myheader{};
+
   myheader.ndim = 4;
-  for (int ii = 0; ii < 4; ii++)
-    myheader.box_size[ii] = nx[ii];
-  for (int ii = 4; ii < 10; ii++)
-    myheader.box_size[ii] = 0;
+
+  for (int i = 0; i < 4; ++i)
+    myheader.box[i] = nx[i];
+
+  for (int i = 4; i < 10; ++i)
+    myheader.box[i] = 0;
+
   myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
+
   myheader.bytes_per_site = bytes_per_site;
   myheader.endianess = 0x87654321;
-  strcpy(myheader.program_version, program_version);
-  time_t time_and_date;
-  time(&time_and_date);
-  strcpy(myheader.creation_date, ctime(&time_and_date));
-  int offset = sizeof(_generic_field_file_header) / sizeof(char);
-  fwrite(&myheader, sizeof(char), offset, MDP_fp);
+
+  std::strcpy(myheader.program_version, program_version);
+
+  if (creation_date)
+  {
+    std::strcpy(myheader.creation_date, creation_date);
+  }
+  else
+  {
+    std::time_t t = std::time(nullptr);
+    std::strcpy(myheader.creation_date, std::ctime(&t));
+  }
+
+  MDP_fp.write(reinterpret_cast<const char *>(&myheader), sizeof(_generic_field_file_header));
 }
 
-void process_gauge(FILE *LUIGI_fp, FILE *MDP_fp, int nx[4], int nc)
+void process_gauge(std::ifstream &LUIGI_fp, std::ofstream &MDP_fp, int nx[4], int nc)
 {
   short_field U;
   U.initialize(nx[1], nx[2], nx[3], 4, nc, nc);
@@ -123,11 +157,23 @@ void process_gauge(FILE *LUIGI_fp, FILE *MDP_fp, int nx[4], int nc)
       for (int x2 = 0; x2 < nx[2]; x2++)
         for (int x1 = 0; x1 < nx[1]; x1++)
           for (int mu = 0; mu < 4; mu++)
-            if (fread(&U(x1, x2, x3, (4 - mu) % 4, 0, 0), matrix_size, 1, LUIGI_fp) != matrix_size)
+          {
+            auto *ptr = reinterpret_cast<char *>(&U(x1, x2, x3, (4 - mu) % 4, 0, 0));
+
+            LUIGI_fp.read(ptr, matrix_size);
+
+            if (!LUIGI_fp)
             {
               error("Error while reading from file");
             }
-    fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
+          }
+    MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
+                 static_cast<std::streamsize>(U.size * sizeof(Complex)));
+
+    if (!MDP_fp)
+    {
+      error("Error while writing to file");
+    }
   }
 }
 
@@ -151,16 +197,15 @@ int main(int argc, char **argv)
   sscanf(argv[2], "%ix%ix%ix%i,%i", nx, nx + 1, nx + 2, nx + 3, &nc);
   long time0 = clock() / CLOCKS_PER_SEC;
 
-  FILE *LUIGI_fp = fopen(argv[3], "r");
+  std::ifstream LUIGI_fp(argv[3]);
   if (!LUIGI_fp)
   {
     error("Cannot open input file");
   }
 
-  FILE *MDP_fp = fopen(argv[4], "w");
+  std::ofstream MDP_fp(argv[4], std::ios::binary);
   if (!MDP_fp)
   {
-    fclose(LUIGI_fp);
     error("Cannot open output file");
   }
 
@@ -173,7 +218,7 @@ int main(int argc, char **argv)
   //                       = 576
   // quark: bytes_per_site = 4(spin)*3(color)*2(cplx)*8(bytes_per_double)
   //                       = 192
-  long bytes_per_site;
+  int32_t bytes_per_site;
   if (strcmp(argv[1], "-gauge") == 0)
     bytes_per_site = 576;
   else
@@ -189,14 +234,18 @@ int main(int argc, char **argv)
     printf("I am sorry, but conversion of propagators is not implemented yet!\n");
   }
 
-  fclose(LUIGI_fp);
-  fclose(MDP_fp);
+  printf("Reading back the MDP file named %s for sanity check...\n", argv[4]);
+  _generic_field_file_header header = get_info(argv[4]);
 
-  printf("\nAll sites are OK.\n");
-  printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
   printf("Header size is %i bytes.\n", offset);
-  printf("Output file size is %li bytes.\n", bytes_per_site * nx[0] * nx[1] * nx[2] * nx[3] + offset);
+  printf("Endianess = %x\n", header.endianess);
+  printf("Dimensions = %i\n", header.ndim);
+  printf("Lattice: %i x %i x %i x %i\n", header.box[0], header.box[1], header.box[2], header.box[3]);
+  printf("Total sites = %i\n", header.sites);
+  printf("Bytes per site = %i\n", header.bytes_per_site);
+  printf("Output file size is %i bytes.\n", bytes_per_site * header.box[0] * header.box[1] * header.box[2] * header.box[3] + offset);
   printf("Output file name is: %s\n", argv[4]);
+  printf("\nAll sites are OK.\n");
   printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
 
   return 0;

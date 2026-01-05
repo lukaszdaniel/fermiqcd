@@ -1,1 +1,11 @@
 these are all deprecated!!! you should use fermiqcd/Tools/qcdfetch.py
+
+
+MDP -> ASCII MILC converter
+./mdp2asciimilc.exe gauge_8x4x4x4_3.mdp gauge_8x4x4x4_3.asciimilc
+
+ASCII MILC -> MDP converter
+./asciimilc2mdp.exe -gauge 8x4x4x4 gauge_8x4x4x4_3.asciimilc gauge_8x4x4x4_3_back_to_mdp.mdp
+
+MDP -> ASCII MILC converter (check)
+./mdp2asciimilc.exe gauge_8x4x4x4_3_back_to_mdp.mdp gauge_8x4x4x4_3_back_to_asciimilc.asciimilc

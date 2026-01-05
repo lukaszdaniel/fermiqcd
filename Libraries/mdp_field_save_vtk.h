@@ -12,6 +12,10 @@
 #ifndef MDP_FIELD_SAVE_VTK_
 #define MDP_FIELD_SAVE_VTK_
 
+#include <fstream>
+#include <iomanip>
+#include <iostream>
+#include <string>
 #include "mdp_field.h"
 #include "mdp_utils.h"
 #include "mdp_array.h"
@@ -49,11 +53,10 @@ namespace MDP
       std::cout << "Saving file " << filename
                 << " from process " << processIO
                 << " (buffer = " << max_buffer_size << " sites)\n";
-      fflush(stdout);
-      FILE *fp = nullptr;
 
-      char tmp[1024];
-      char header[1024];
+      std::ofstream ofs(filename_tmp, std::ios::binary);
+      if (!ofs)
+        error("Unable to open temporary VTK file for writing");
 
       int space_volume = lattice().size() / lattice().size(0);
       int LZ = lattice().size(1);
@@ -68,21 +71,15 @@ namespace MDP
         t = -1;
       }
 
-      snprintf(header, 1024,
-               "# vtk DataFile Version 2.0\n"
-               "%s\n"
-               "%s\n"
-               "DATASET STRUCTURED_POINTS\n"
-               "DIMENSIONS %i %i %i\n"
-               "ORIGIN     0   0   0\n"
-               "SPACING    1   1   1\n"
-               "POINT_DATA %i",
-               filename.c_str(),
-               ((ASCII) ? "ASCII" : "BINARY"),
-               LX, LY, LZ, LX * LY * LZ);
-
-      fp = fopen(filename_tmp.c_str(), "wb");
-      fwrite(header, sizeof(char), strlen(header), fp);
+      // VTK header
+      ofs << "# vtk DataFile Version 2.0\n"
+          << filename << "\n"
+          << (ASCII ? "ASCII" : "BINARY") << "\n"
+          << "DATASET STRUCTURED_POINTS\n"
+          << "DIMENSIONS " << LX << " " << LY << " " << LZ << "\n"
+          << "ORIGIN 0 0 0\n"
+          << "SPACING 1 1 1\n"
+          << "POINT_DATA " << LX * LY * LZ << "\n";
 
       for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
@@ -114,38 +111,35 @@ namespace MDP
         {
           int timeslice = idx_gl / space_volume;
           if (idx_gl % space_volume == 0 && (t < 0 || timeslice == t))
-          {
-            snprintf(header, 1024, "\nSCALARS scalars_t%i float\nLOOKUP_TABLE default\n", timeslice);
-            fwrite(header, sizeof(char), strlen(header), fp);
-          }
+            ofs << "\nSCALARS scalars_t" << timeslice << " float\nLOOKUP_TABLE default\n";
+
           if (t < 0 || timeslice == t || lattice().n_dimensions() == 3)
           {
             for (mdp_uint fc = 0; fc < m_field_components; fc++)
+            {
               if (component == -1 || fc == mdp_uint(component))
               {
                 float fval = static_cast<float>(short_buffer[fc]);
                 if (!ASCII)
                 {
                   switch_endianess_byte4(fval);
-                  if (fwrite(&fval, sizeof(fval), 1, fp) != 1)
+                  ofs.write(reinterpret_cast<char *>(&fval), sizeof(fval));
+                  if (!ofs)
                     error("probably out of disk space");
                 }
                 else
                 {
-                  snprintf(tmp, 1024, "%e\n", fval);
-                  if (fwrite(tmp, strlen(tmp), 1, fp) != 1)
-                    error("probably out of disk space");
+                  ofs << std::scientific << fval << "\n";
                 }
               }
+            }
           }
         }
       }
-      if (fp)
-      {
-        fclose(fp);
-        remove(filename.c_str());
-        rename(filename_tmp.c_str(), filename.c_str());
-      }
+
+      ofs.close();
+      std::remove(filename.c_str());
+      std::rename(filename_tmp.c_str(), filename.c_str());
     }
     else
     {
@@ -181,10 +175,8 @@ namespace MDP
     }
 
     if (isMainProcess() && !mdp_shutup)
-    {
-      printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
-      fflush(stdout);
-    }
+      std::cout << "... Saving time: " << (mdp.time() - mytime) << " (sec)\n";
+
     return true;
   }
 

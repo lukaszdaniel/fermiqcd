@@ -24,12 +24,20 @@ protected:
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
+
   MyFunction myfunction;
-  mdp << "Exact value = " << std::sin(1) * (1 - std::cos(1)) << "\n";
+  // std::ofstream basic_stream("basic_output.log");
+  // std::ofstream advanced_stream("advanced_output.log");
+  // myfunction.SetBasicOutput(basic_stream);
+  // myfunction.SetAdvancedOutput(advanced_stream);
   myfunction.setDimension(2);
   myfunction.setIntegrationLimits(0, 0, 1);
   myfunction.setIntegrationLimits(1, 0, 1);
-  mdp << "Intergal = " << myfunction.Integrate();
+  double result = myfunction.Integrate();
+  mdp << "Intergal = " << result << "\n";
+  mdp << "Exact value = " << std::sin(1) * (1 - std::cos(1)) << "\n";
+
   mdp.close_wormholes();
+
   return 0;
 }

@@ -32,10 +32,10 @@
   iterations are rarely useful. The input flag init signals
   whether this call is a new start, or a subsequent call for
   additional iterations.
-  The member variable m_OutputFile (by default = stdout) is the
-  (FILE*) were the basic output is directed.
-  The member variable m_OutputFileAdvanced (normally = stdout) is
-  the (FILE*) were the advanced output is directed.
+  The member variable m_BasicOutput (by default = stdout) is the
+  (std::ostream *) were the basic output is directed.
+  The member variable m_AdvancedOutput (by default = nullptr) is
+  the (std::ostream *) were the advanced output is directed.
 
   The main function for integration is
 
@@ -52,13 +52,14 @@
   double m_StandardDeviation;
   double m_ChiSquare;
 
-  m_Integral is also return by Vegas.Integrate()
+  m_Integral is also returned by Vegas.Integrate()
 
 */
 
 #ifndef MDP_PVEGAS_
 #define MDP_PVEGAS_
 
+#include <fstream>
 #include <algorithm>
 #include <cstdio>
 #include <cmath>
@@ -82,7 +83,7 @@ namespace MDP
     // allow restart
     // ////////////////////////////////////////////
 
-    // variables for VegasBase:Integrate
+    // variables for VegasBase::Integrate
     int m_it, m_it1, m_it2, m_mds, m_nd, m_ndo, m_ng, m_npg;
     int m_ia[MXDIM], m_kg[MXDIM];
     double m_calls, m_dv2g, m_dxg, m_ti, m_tsi, m_xjac, m_xnd;
@@ -93,60 +94,61 @@ namespace MDP
     double m_xi[MXDIM][NDMX], m_xin[NDMX];
     double m_Integral;
     double m_StandardDeviation;
-    enum
+    enum ConvergenceCriteria
     {
       RelativePrecision,
       AbsolutePrecision
     } m_ConvergenceCriteria;
     double m_TargetPrecision;
     double m_ChiSquare;
-    FILE *m_OutputFile;
-    FILE *m_OutputFileAdvanced;
+    std::ostream *m_BasicOutput;
+    std::ostream *m_AdvancedOutput;
     double m_IntegrationLimitsMin[MXDIM];
     double m_IntegrationLimitsMax[MXDIM];
     int m_NumberOfDimensions;
 
     void PrintInputParameters(int ncalls, int niterations)
     {
-      if (m_OutputFile && isMainProcess())
+      if (m_BasicOutput && isMainProcess())
       {
-        fprintf(m_OutputFile, "======================================\n");
-        fprintf(m_OutputFile, "Vegas Montecarlo Numerical Integration\n");
-        fprintf(m_OutputFile, "======================================\n");
-        fprintf(m_OutputFile, "Input Parameters:\n");
-        fprintf(m_OutputFile, "Number of dimensions     = %i\n", m_NumberOfDimensions);
-        fprintf(m_OutputFile, "Present iteration        = %i\n", m_it);
-        fprintf(m_OutputFile, "Number of iterations     = %i\n", niterations);
-        fprintf(m_OutputFile, "Number of function calls = %i\n", ncalls);
-        fprintf(m_OutputFile, "ALPHA                    = %f\n", ALPHA);
-        fprintf(m_OutputFile, "mds(?)                   = %i\n", m_mds);
-        fprintf(m_OutputFile, "nd                       = %i\n\n", m_nd);
-        fprintf(m_OutputFile, "Integration Limits: i\tmin(x[i])\tmax(x[i])\n");
-        fprintf(m_OutputFile, "=================================================\n");
+        (*m_BasicOutput) << "======================================\n";
+        (*m_BasicOutput) << "Vegas Montecarlo Numerical Integration\n";
+        (*m_BasicOutput) << "======================================\n";
+        (*m_BasicOutput) << "Input Parameters:\n";
+        (*m_BasicOutput) << "Number of dimensions     = " << m_NumberOfDimensions << "\n";
+        (*m_BasicOutput) << "Present iteration        = " << m_it << "\n";
+        (*m_BasicOutput) << "Number of iterations     = " << niterations << "\n";
+        (*m_BasicOutput) << "Number of function calls = " << ncalls << "\n";
+        (*m_BasicOutput) << "ALPHA                    = " << ALPHA << "\n";
+        (*m_BasicOutput) << "mds(?)                   = " << m_mds << "\n";
+        (*m_BasicOutput) << "nd                       = " << m_nd << "\n\n";
+        (*m_BasicOutput) << "Integration Limits: i\tmin(x[i])\tmax(x[i])\n";
+        (*m_BasicOutput) << "=================================================\n";
+
         for (int j = 0; j < m_NumberOfDimensions; j++)
         {
-          fprintf(m_OutputFile, "                    %i\t%f\t%f\n", j, m_IntegrationLimitsMin[j], m_IntegrationLimitsMax[j]);
+          (*m_BasicOutput) << "                    " << j << "\t" << m_IntegrationLimitsMin[j] << "\t" << m_IntegrationLimitsMax[j] << "\n";
         }
-        fprintf(m_OutputFile, "\n");
-        fflush(m_OutputFile);
+        (*m_BasicOutput) << "\n";
+        (*m_BasicOutput) << std::flush;
       }
     }
 
     void PrintOutputParameters()
     {
-      if (m_OutputFile && isMainProcess())
+      if (m_BasicOutput && isMainProcess())
       {
         if (m_it == m_it1)
         {
-          fprintf(m_OutputFile, "Iteration    Integral    StandardDeviation ChiSquare\n");
-          fprintf(m_OutputFile, "====================================================\n");
+          (*m_BasicOutput) << "Iteration    Integral    StandardDeviation ChiSquare\n";
+          (*m_BasicOutput) << "====================================================\n";
         }
-        fprintf(m_OutputFile, "%3d\t%14.7f\t%14.7f\t%10.3f\n", m_it, m_Integral, m_StandardDeviation, m_ChiSquare);
+        (*m_BasicOutput) << m_it << "\t" << m_Integral << "\t" << m_StandardDeviation << "\t" << m_ChiSquare << "\n";
         if (m_it == m_it2 - 1)
         {
-          fprintf(m_OutputFile, "====================================================\n");
+          (*m_BasicOutput) << "====================================================\n";
         }
-        fflush(m_OutputFile);
+        (*m_BasicOutput) << std::flush;
         PrintGrid();
       }
     }
@@ -181,12 +183,12 @@ namespace MDP
       xi[nd - 1] = 1.0;
     }
 
-    int is_local(int k, [[maybe_unused]] int nk)
+    bool is_local(int k, [[maybe_unused]] int nk) const
     {
       return (k % Nproc) == ME;
     }
 
-    bool converged()
+    bool converged() const
     {
       switch (m_ConvergenceCriteria)
       {
@@ -202,10 +204,20 @@ namespace MDP
   public:
     VegasBase()
     {
-      m_OutputFile = stdout;
-      m_OutputFileAdvanced = 0;
+      m_BasicOutput = &std::cout;
+      m_AdvancedOutput = nullptr;
       m_ConvergenceCriteria = RelativePrecision;
       m_TargetPrecision = 1e-4;
+    }
+
+    void SetBasicOutput(std::ostream &os)
+    {
+      m_BasicOutput = &os;
+    }
+
+    void SetAdvancedOutput(std::ostream &os)
+    {
+      m_AdvancedOutput = &os;
     }
 
     void setDimension(int dim)
@@ -213,7 +225,7 @@ namespace MDP
       m_NumberOfDimensions = dim;
     }
 
-    void setIntegrationLimits(int axis, int lowerBound, int upperBound)
+    void setIntegrationLimits(int axis, double lowerBound, double upperBound)
     {
       m_IntegrationLimitsMin[axis] = lowerBound;
       m_IntegrationLimitsMax[axis] = upperBound;
@@ -235,45 +247,45 @@ namespace MDP
     {
       if (isMainProcess())
       {
-        FILE *fp = fopen(filename, "w");
-        fwrite(this, sizeof(VegasBase) / sizeof(char), 1, fp);
-        fclose(fp);
+        std::ofstream fp(filename, std::ios::binary);
+        fp.write(reinterpret_cast<char *>(this), sizeof(VegasBase));
+        fp.close();
       }
     }
 
     void LoadGrid(const char filename[])
     {
-      FILE *fp = fopen(filename, "r");
-      fread(this, sizeof(VegasBase) / sizeof(char), 1, fp);
-      fclose(fp);
+      std::ifstream fp(filename, std::ios::binary);
+      fp.read(reinterpret_cast<char *>(this), sizeof(VegasBase));
+      fp.close();
     }
 
     void PrintGrid()
     {
-      if (m_OutputFileAdvanced && isMainProcess())
+      if (m_AdvancedOutput && isMainProcess())
       {
         for (int j = 0; j < m_NumberOfDimensions; j++)
         {
-          fprintf(m_OutputFileAdvanced, "DATA FOR axis %2d\n", j);
-          fprintf(m_OutputFileAdvanced, "Dim\ti\t x\t\tDelta_i\n");
-          fprintf(m_OutputFileAdvanced, "=============================================\n");
+          (*m_AdvancedOutput) << "DATA FOR axis " << j << "\n";
+          (*m_AdvancedOutput) << "Dim\ti\t x\t\tDelta_i\n";
+          (*m_AdvancedOutput) << "=============================================\n";
           for (int i = 0; i < m_nd; i++)
           {
-            fprintf(m_OutputFileAdvanced, "%d\t%d\t%8.5f\t%12.4f\n", j, i, m_xi[j][i], m_di[i][j]);
+            (*m_AdvancedOutput) << j << "\t" << i << "\t" << m_xi[j][i] << "\t\t" << m_di[i][j] << "\n";
           }
         }
       }
-      fflush(m_OutputFile);
+      (*m_BasicOutput) << std::flush;
     }
 
     void PrintOutput()
     {
-      if (m_OutputFile && isMainProcess())
+      if (m_BasicOutput && isMainProcess())
       {
-        fprintf(m_OutputFile, "Integral           = %f\n", m_Integral);
-        fprintf(m_OutputFile, "Standard Deviation = %f\n", m_StandardDeviation);
-        fprintf(m_OutputFile, "Chi^2              = %f\n", m_ChiSquare);
-        fflush(m_OutputFile);
+        (*m_BasicOutput) << "Integral           = " << m_Integral << "\n";
+        (*m_BasicOutput) << "Standard Deviation = " << m_StandardDeviation << "\n";
+        (*m_BasicOutput) << "Chi^2              = " << m_ChiSquare << "\n";
+        (*m_BasicOutput) << std::flush;
       }
     }
 
@@ -359,6 +371,7 @@ namespace MDP
         for (int j = 0; j < m_NumberOfDimensions; j++)
           m_xi[j][0] = 1.0;
       }
+
       if (init <= 1)
       {
         // ////////////////////////////////////////////
@@ -368,6 +381,7 @@ namespace MDP
         m_it = 0;
         m_si = m_swgt = m_schi = 0.0;
       }
+
       if (init <= 2)
       {
         // ////////////////////////////////////////////
@@ -376,10 +390,12 @@ namespace MDP
         // ////////////////////////////////////////////
         m_nd = NDMX;
         m_ng = 1;
+
         if (m_mds)
         { // Set up for stratification.
           m_ng = (int)std::pow(ncalls / 2.0 + 0.25, 1.0 / m_NumberOfDimensions);
           m_mds = 1;
+
           if ((2 * m_ng - NDMX) >= 0)
           {
             m_mds = -1;
@@ -388,22 +404,26 @@ namespace MDP
             m_ng = m_npg * m_nd;
           }
         }
+
         k = 1;
         for (int i = 0; i < m_NumberOfDimensions; i++)
         {
           k *= m_ng;
         }
+
         m_npg = std::max(ncalls / k, 2);
         m_calls = m_npg * k;
         m_dxg = 1.0 / m_ng;
-        m_dv2g = 1;
+        m_dv2g = 1.0;
         for (int i = 0; i < m_NumberOfDimensions; i++)
         {
           m_dv2g *= m_dxg;
         }
+
         m_dv2g = std::pow(m_calls * m_dv2g / m_npg, 2.0) / (m_npg - 1.0);
         m_xnd = m_nd;
         m_dxg *= m_xnd;
+
         m_xjac = 1.0 / m_calls;
         for (int j = 0; j < m_NumberOfDimensions; j++)
         {
@@ -435,22 +455,27 @@ namespace MDP
       // ////////////////////////////////////////////
       m_it1 = m_it;
       m_it2 = m_it + niterations;
+
       for (; m_it < m_it2; m_it++)
       {
         m_ti = m_tsi = 0.0;
+
         for (int j = 0; j < m_NumberOfDimensions; j++)
         {
           m_kg[j] = 1;
           for (int i = 0; i < m_nd; i++)
             m_d[i][j] = m_di[i][j] = 0.0;
         }
+
         do
         {
           parallel_loop(fb, f2b);
+
           f2b = std::sqrt(f2b * m_npg);
           f2b = (f2b - fb) * (f2b + fb);
           if (f2b <= 0.0)
             f2b = TINY;
+
           m_ti += fb;
           m_tsi += f2b;
 
@@ -459,6 +484,7 @@ namespace MDP
             for (int j = 0; j < m_NumberOfDimensions; j++)
               m_d[m_ia[j]][j] += f2b;
           }
+
           for (k = m_NumberOfDimensions - 1; k >= 0; k--)
           {
             m_kg[k] %= m_ng;
@@ -477,6 +503,7 @@ namespace MDP
         m_si += wgt * m_ti;
         m_schi += wgt * m_ti * m_ti;
         m_swgt += wgt;
+
         m_Integral = m_si / m_swgt;
         if (m_it == 0)
           m_ChiSquare = 0.0;
@@ -510,6 +537,7 @@ namespace MDP
           m_d[m_nd - 1][j] = (xo + xn) / 2.0;
           m_dt[j] += m_d[m_nd - 1][j];
         }
+
         for (int j = 0; j < m_NumberOfDimensions; j++)
         {
           rc = 0.0;
@@ -522,12 +550,14 @@ namespace MDP
           }
           rebin(rc / m_xnd, m_nd, m_r, m_xin, m_xi[j]);
         }
+
         if (converged())
           return m_Integral;
       }
+
       if (!converged() && isMainProcess())
       {
-        fprintf(m_OutputFile, "Vegas failed to reach target precision.\n");
+        (*m_BasicOutput) << "Vegas failed to reach target precision.\n";
       }
       return m_Integral;
     }

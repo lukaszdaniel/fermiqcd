@@ -5,11 +5,13 @@
 // run program with no arguments for help
 
 #include <cstdlib>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <complex>
 #include <ctime>
 #include <memory>
+#include <fstream>
 
 using Complex = std::complex<float>;
 #define Nspace nx[1] * nx[2] * nx[3]
@@ -116,14 +118,12 @@ void read_t_gauge(short_field &U, char fileprefix[],
 {
 
   char filename[200];
-  std::unique_ptr<unsigned char[]> buffer;      // array to store the raw data
   long file_length = Ndim * 12 * sizeof(float); // file length in bytes (one time slice)
   long bytes_read;                              // monitor how many bytes we read
   int x1, x2, x3, mu, a, b, muf;
   // int c;
   long buf_index; // indices for the temporary buffer
   // long site_index;
-  FILE *fp; // pointer to input file
 
   // Check input makes sense -- ie that precision is correct
   if ((precision != 'F') && (precision != 'D'))
@@ -147,16 +147,23 @@ void read_t_gauge(short_field &U, char fileprefix[],
 
   // Open, read, check and close the file! Allocate storage space in
   // buffer[].
-  buffer = std::make_unique<unsigned char[]>(file_length);
+  auto buffer = std::make_unique<unsigned char[]>(file_length);
   if (buffer == nullptr)
     error("Unable to allocate memory");
-  fp = fopen(filename, "rb");
-  if (fp == nullptr)
+  std::ifstream fp(filename, std::ios::binary);
+  if (!fp)
     error("Unable to open file");
-  bytes_read = fread(buffer.get(), sizeof(unsigned char), file_length, fp);
+  fp.read(reinterpret_cast<char *>(buffer.get()), static_cast<std::streamsize>(file_length));
+
+  if (!fp)
+  {
+    error("Error while reading file");
+  }
+
+  bytes_read = static_cast<std::size_t>(fp.gcount());
+
   if (bytes_read != file_length)
     error("Read wrong number of bytes");
-  fclose(fp);
 
   // Do block swapping if necessary
   if (swap == 'Y')
@@ -256,7 +263,6 @@ void read_t_prop(short_field &S, char fileprefix[],
                  char precision, char swap, int time)
 {
   char filename[200];
-  FILE *fp;
   std::unique_ptr<unsigned char[]> buffer;
   long bytes_to_read;
   long bytes_read;
@@ -294,13 +300,18 @@ void read_t_prop(short_field &S, char fileprefix[],
       printf("Opening file: %s\n", filename);
 
       // Open, read, check and close file
-      fp = fopen(filename, "rb");
-      if (fp == nullptr)
+      std::ifstream fp(filename, std::ios::binary);
+      if (!fp)
         error("Unable to open file");
-      bytes_read = fread(buffer.get(), sizeof(unsigned char), bytes_to_read, fp);
+      fp.read(reinterpret_cast<char *>(buffer.get()), static_cast<std::streamsize>(bytes_to_read));
+      if (!fp)
+      {
+        error("Error while reading file");
+      }
+      bytes_read = static_cast<std::size_t>(fp.gcount());
+
       if (bytes_read != bytes_to_read)
         error("Wrong number of bytes read");
-      fclose(fp);
 
       // Do block swapping if necessary
       if (swap == 'Y')
@@ -351,11 +362,11 @@ public:
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  unsigned int endianess;
-  int ndim;
-  int box_size[10];
-  long bytes_per_site;
-  long sites;
+  uint32_t endianess;
+  int32_t ndim;
+  int32_t box[10];
+  int32_t bytes_per_site;
+  int32_t sites;
 
   _generic_field_file_header()
   {
@@ -363,23 +374,55 @@ public:
   }
 };
 
-void write_header(FILE *MDP_fp, int bytes_per_site, const char *program_version, int nx[4])
+_generic_field_file_header get_info(const std::string &filename)
 {
   _generic_field_file_header myheader;
+  std::ifstream in(filename, std::ios::binary);
+  if (!in)
+    error("Unable to open file");
+
+  in.read(reinterpret_cast<char *>(&myheader), sizeof(_generic_field_file_header));
+
+  if (!in)
+    error("Error while reading file");
+
+  return myheader;
+}
+
+void write_header(std::ofstream &MDP_fp,
+                  int bytes_per_site,
+                  const char *program_version,
+                  int nx[4],
+                  const char *creation_date = nullptr)
+{
+  _generic_field_file_header myheader{};
+
   myheader.ndim = 4;
-  for (int ii = 0; ii < 4; ii++)
-    myheader.box_size[ii] = nx[ii];
-  for (int ii = 4; ii < 10; ii++)
-    myheader.box_size[ii] = 0;
+
+  for (int i = 0; i < 4; ++i)
+    myheader.box[i] = nx[i];
+
+  for (int i = 4; i < 10; ++i)
+    myheader.box[i] = 0;
+
   myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
+
   myheader.bytes_per_site = bytes_per_site;
   myheader.endianess = 0x87654321;
-  strcpy(myheader.program_version, program_version);
-  time_t time_and_date;
-  time(&time_and_date);
-  strcpy(myheader.creation_date, ctime(&time_and_date));
-  int offset = sizeof(_generic_field_file_header) / sizeof(char);
-  fwrite(&myheader, sizeof(char), offset, MDP_fp);
+
+  std::strcpy(myheader.program_version, program_version);
+
+  if (creation_date)
+  {
+    std::strcpy(myheader.creation_date, creation_date);
+  }
+  else
+  {
+    std::time_t t = std::time(nullptr);
+    std::strcpy(myheader.creation_date, std::ctime(&t));
+  }
+
+  MDP_fp.write(reinterpret_cast<const char *>(&myheader), sizeof(_generic_field_file_header));
 }
 
 int main(int argc, char **argv)
@@ -411,14 +454,14 @@ int main(int argc, char **argv)
 
   printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
   printf("opening the MDP file: %s (write) \n", argv[4]);
-  FILE *MDP_fp = fopen(argv[4], "w");
+  std::ofstream MDP_fp(argv[4], std::ios::binary);
 
   int offset = sizeof(_generic_field_file_header) / sizeof(char);
   // gauge: bytes_per_site = 4(mu)*9(SU3 matrix)*2(cplx)*4(bytes_per_float)
   //                       = 288
   // fermi: bytes_per_site = 16(spin-sq)*9(color-sq)*2(cplx)*4(bytes_per_float)
   //                       = 1152
-  long bytes_per_site;
+  int32_t bytes_per_site;
   if (strcmp(argv[1], "-gauge") == 0)
     bytes_per_site = 288;
   else
@@ -433,8 +476,10 @@ int main(int argc, char **argv)
     for (int x0 = 0; x0 < nx[0]; x0++)
     {
       read_t_gauge(U, argv[3], PRECISION, SWAP, x0);
-      fseek(MDP_fp, bytes_per_site * Nspace * x0 + offset, SEEK_SET);
-      fwrite(U.m_data.get(), sizeof(Complex), U.size, MDP_fp);
+      const std::streamoff byte_pos = static_cast<std::streamoff>(bytes_per_site) * Nspace * x0 + static_cast<std::streamoff>(offset);
+      MDP_fp.seekp(byte_pos, std::ios::beg);
+      MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
+                   static_cast<std::streamsize>(U.size * sizeof(Complex)));
     }
   }
   else if (strcmp(argv[1], "-fermi") == 0)
@@ -444,18 +489,25 @@ int main(int argc, char **argv)
     for (int x0 = 0; x0 < nx[0]; x0++)
     {
       read_t_prop(U, argv[3], PRECISION, SWAP, x0);
-      fseek(MDP_fp, bytes_per_site * Nspace * x0 + offset, SEEK_SET);
-      fwrite(U.m_data.get(), sizeof(Complex), U.size, MDP_fp);
+      const std::streamoff byte_pos = static_cast<std::streamoff>(bytes_per_site) * Nspace * x0 + static_cast<std::streamoff>(offset);
+      MDP_fp.seekp(byte_pos, std::ios::beg);
+      MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
+                   static_cast<std::streamsize>(U.size * sizeof(Complex)));
     }
   }
 
-  fclose(MDP_fp);
+  printf("Reading back the MDP file named %s for sanity check...\n", argv[4]);
+  _generic_field_file_header header = get_info(argv[4]);
 
-  printf("\nAll sites are OK.\n");
-  printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
   printf("Header size is %i bytes.\n", offset);
-  printf("Output file size is %li bytes.\n", bytes_per_site * nx[0] * nx[1] * nx[2] * nx[3] + offset);
+  printf("Endianess = %x\n", header.endianess);
+  printf("Dimensions = %i\n", header.ndim);
+  printf("Lattice: %i x %i x %i x %i\n", header.box[0], header.box[1], header.box[2], header.box[3]);
+  printf("Total sites = %i\n", header.sites);
+  printf("Bytes per site = %i\n", header.bytes_per_site);
+  printf("Output file size is %i bytes.\n", bytes_per_site * header.box[0] * header.box[1] * header.box[2] * header.box[3] + offset);
   printf("Output file name is: %s\n", argv[4]);
+  printf("\nAll sites are OK.\n");
   printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
 
   return 0;

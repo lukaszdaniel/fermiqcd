@@ -123,12 +123,14 @@ namespace MDP
 
     bool endian_swap = false;
     mdp_uint size = sizeof(milc_header);
-    FILE *fp = fopen(filename.c_str(), "r");
-    if (fp == nullptr)
+
+    std::ifstream fp(filename, std::ios::binary);
+    if (!fp)
       return false;
-    if (fread(&milc_header, 1, size, fp) != size)
+
+    // Read header
+    if (fp.read(reinterpret_cast<char *>(&milc_header), size).gcount() != size)
     {
-      fclose(fp);
       return false;
     }
 
@@ -148,10 +150,8 @@ namespace MDP
         milc_header.dims[2] != U.lattice().size(3) ||
         milc_header.dims[3] != U.lattice().size(0))
     {
-      fclose(fp);
       return false;
     }
-    fclose(fp);
 
     if (endian_swap)
       return U.load(filename, processIO, max_buffer_size, false, size,

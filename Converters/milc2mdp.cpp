@@ -5,6 +5,7 @@
 #include <ctime>
 #include <cstdint>
 #include <memory>
+#include <fstream>
 
 using Complex = std::complex<float>;
 
@@ -89,17 +90,32 @@ public:
   char file_id[60];
   char program_version[60];
   char creation_date[60];
-  unsigned int endianess;
-  int ndim;
-  int box_size[10];
-  long bytes_per_site;
-  long sites;
+  uint32_t endianess;
+  int32_t ndim;
+  int32_t box[10];
+  int32_t bytes_per_site;
+  int32_t sites;
 
   _generic_field_file_header()
   {
     strcpy(file_id, "File Type: MDP FIELD\n");
   }
 };
+
+_generic_field_file_header get_info(const std::string &filename)
+{
+  _generic_field_file_header myheader;
+  std::ifstream in(filename, std::ios::binary);
+  if (!in)
+    error("Unable to open file");
+
+  in.read(reinterpret_cast<char *>(&myheader), sizeof(_generic_field_file_header));
+
+  if (!in)
+    error("Error while reading file");
+
+  return myheader;
+}
 
 class short_field
 {
@@ -137,24 +153,43 @@ public:
   }
 };
 
-void write_header(FILE *MDP_fp, int bytes_per_site, const char *program_version, const char *creation_date, int nx[4])
+void write_header(std::ofstream &MDP_fp,
+                  int bytes_per_site,
+                  const char *program_version,
+                  int nx[4],
+                  const char *creation_date = nullptr)
 {
-  _generic_field_file_header myheader;
+  _generic_field_file_header myheader{};
+
   myheader.ndim = 4;
-  for (int ii = 0; ii < 4; ii++)
-    myheader.box_size[ii] = nx[ii];
-  for (int ii = 4; ii < 10; ii++)
-    myheader.box_size[ii] = 0;
+
+  for (int i = 0; i < 4; ++i)
+    myheader.box[i] = nx[i];
+
+  for (int i = 4; i < 10; ++i)
+    myheader.box[i] = 0;
+
   myheader.sites = nx[0] * nx[1] * nx[2] * nx[3];
+
   myheader.bytes_per_site = bytes_per_site;
   myheader.endianess = 0x87654321;
-  strcpy(myheader.program_version, program_version);
-  strcpy(myheader.creation_date, creation_date);
-  int offset = sizeof(_generic_field_file_header) / sizeof(char);
-  fwrite(&myheader, sizeof(char), offset, MDP_fp);
+
+  std::strcpy(myheader.program_version, program_version);
+
+  if (creation_date)
+  {
+    std::strcpy(myheader.creation_date, creation_date);
+  }
+  else
+  {
+    std::time_t t = std::time(nullptr);
+    std::strcpy(myheader.creation_date, std::ctime(&t));
+  }
+
+  MDP_fp.write(reinterpret_cast<const char *>(&myheader), sizeof(_generic_field_file_header));
 }
 
-void process_gauge(FILE *MILC_fp, FILE *MDP_fp, int nx[4], bool switch_endianess)
+void process_gauge(std::ifstream &MILC_fp, std::ofstream &MDP_fp, int nx[4], bool switch_endianess)
 {
   short_field U;
   U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
@@ -166,10 +201,16 @@ void process_gauge(FILE *MILC_fp, FILE *MDP_fp, int nx[4], bool switch_endianess
       for (int x2 = 0; x2 < nx[2]; x2++)
         for (int x1 = 0; x1 < nx[1]; x1++)
           for (int mu = 0; mu < 4; mu++)
-            if (fread(&U(x1, x2, x3, (mu + 1) % 4, 0, 0), matrix_size, 1, MILC_fp) != matrix_size)
+          {
+            char *dst = reinterpret_cast<char *>(&U(x1, x2, x3, (mu + 1) % 4, 0, 0));
+
+            MILC_fp.read(dst, matrix_size);
+
+            if (!MILC_fp)
             {
-              error("Error while reading from file");
+              error("Error while reading from MILC file");
             }
+          }
 
     if (switch_endianess)
     {
@@ -180,7 +221,13 @@ void process_gauge(FILE *MILC_fp, FILE *MDP_fp, int nx[4], bool switch_endianess
       }
     }
 
-    fwrite(U.m_data.get(), U.size, sizeof(Complex), MDP_fp);
+    MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
+        static_cast<std::streamsize>(U.size * sizeof(Complex)));
+
+    if (!MDP_fp)
+    {
+      error("Error while writing to MDP file");
+    }
   }
 }
 
@@ -204,16 +251,15 @@ int main(int argc, char **argv)
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
   long time0 = clock() / CLOCKS_PER_SEC;
 
-  FILE *MILC_fp = fopen(argv[3], "r");
+  std::ifstream MILC_fp(argv[3]);
   if (!MILC_fp)
   {
     error("Cannot open input file");
   }
 
-  FILE *MDP_fp = fopen(argv[4], "w");
+  std::ofstream MDP_fp(argv[4], std::ios::binary);
   if (!MDP_fp)
   {
-    fclose(MILC_fp);
     error("Cannot open output file");
   }
 
@@ -226,7 +272,7 @@ int main(int argc, char **argv)
   //                       = 288
   // fermi: bytes_per_site = 16(spin-sq)*9(color-sq)*2(cplx)*4(bytes_per_float)
   //                       = 1152
-  long bytes_per_site;
+  int32_t bytes_per_site;
   if (strcmp(argv[3], "-gauge") == 0)
     bytes_per_site = 288;
   else
@@ -235,8 +281,9 @@ int main(int argc, char **argv)
   if (strcmp(argv[1], "-gauge") == 0)
   {
     gauge_header MILC_header;
-    size_t gauge_header_size = sizeof(gauge_header) / sizeof(char);
-    if (fread(&MILC_header, gauge_header_size, 1, MILC_fp) != gauge_header_size)
+    MILC_fp.read(reinterpret_cast<char *>(&MILC_header), sizeof(gauge_header));
+
+    if (!MILC_fp)
     {
       error("Error while reading from file");
     }
@@ -267,7 +314,7 @@ int main(int argc, char **argv)
       exit(1);
     }
 
-    write_header(MDP_fp, bytes_per_site, "Converted from MILC", MILC_header.time_stamp, nx);
+    write_header(MDP_fp, bytes_per_site, "Converted from MILC", nx, MILC_header.time_stamp);
     process_gauge(MILC_fp, MDP_fp, nx, switch_endianess);
   }
   else if (strcmp(argv[1], "-quark") == 0)
@@ -275,14 +322,18 @@ int main(int argc, char **argv)
     printf("I am sorry, but conversion of propagators is not implemented yet!\n");
   }
 
-  fclose(MILC_fp);
-  fclose(MDP_fp);
+  printf("Reading back the MDP file named %s for sanity check...\n", argv[4]);
+  _generic_field_file_header header = get_info(argv[4]);
 
-  printf("\nAll sites are OK.\n");
-  printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
   printf("Header size is %i bytes.\n", offset);
-  printf("Output file size is %li bytes.\n", bytes_per_site * nx[0] * nx[1] * nx[2] * nx[3] + offset);
+  printf("Endianess = %x\n", header.endianess);
+  printf("Dimensions = %i\n", header.ndim);
+  printf("Lattice: %i x %i x %i x %i\n", header.box[0], header.box[1], header.box[2], header.box[3]);
+  printf("Total sites = %i\n", header.sites);
+  printf("Bytes per site = %i\n", header.bytes_per_site);
+  printf("Output file size is %i bytes.\n", bytes_per_site * header.box[0] * header.box[1] * header.box[2] * header.box[3] + offset);
   printf("Output file name is: %s\n", argv[4]);
+  printf("\nAll sites are OK.\n");
   printf("Done in %li secs.\n", clock() / CLOCKS_PER_SEC - time0);
 
   return 0;

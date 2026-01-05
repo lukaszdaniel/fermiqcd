@@ -1003,6 +1003,6 @@ def main():
 
 if __name__ == "__main__":
     print(
-        "ATTENTION! This file is deprectade, you should use fermiqcd/Tools/qcdfetch.py"
+        "ATTENTION! This file is deprecated, you should use fermiqcd/Tools/qcdfetch.py"
     )
     main()
