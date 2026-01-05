@@ -13,10 +13,11 @@
 #define MDP_LATTICE_
 
 #define MDP_LATTICE
-// #define MDP_NO_LG
 
 #include <memory>
 #include <string>
+#include <algorithm>
+#include <fstream>
 #include "mdp_global_vars.h"
 #include "mdp_prng.h"
 #include "mdp_partitionings.h"
@@ -53,7 +54,7 @@ namespace MDP
     mdp_int *m_global_from_local; /* map local to global        */
     mdp_int *m_local_from_global; /* map global to local        */
 #ifdef MDP_NO_LG
-    FILE *m_lg_file; /* temporary file to store local_from_global map if not enough memory */
+    mutable std::fstream m_lg_file; /* temporary file to store local_from_global map if not enough memory */
 #endif
     mdp_int **m_up; /* move up in local index     */
     mdp_int **m_dw; /* move dw in local index     */
@@ -236,8 +237,8 @@ namespace MDP
      */
     mdp_lattice(int ndim_,
                 int nx_[],
-                int (*where_)(const int [], const int, const int []) = default_partitioning0,
-                void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
+                int (*where_)(const int[], const int, const int[]) = default_partitioning0,
+                void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice()
@@ -260,8 +261,8 @@ namespace MDP
     mdp_lattice(int ndim_,
                 int ndir_,
                 int nx_[],
-                int (*where_)(const int [], const int, const int []) = default_partitioning0,
-                void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
+                int (*where_)(const int[], const int, const int[]) = default_partitioning0,
+                void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice()
@@ -282,8 +283,8 @@ namespace MDP
      */
     void allocate_lattice(int ndim_,
                           int nx_[],
-                          int (*where_)(const int [], const int, const int []) = default_partitioning0,
-                          void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
+                          int (*where_)(const int[], const int, const int[]) = default_partitioning0,
+                          void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
                           mdp_int random_seed_ = 0,
                           int next_next_ = 1,
                           bool local_random_ = true)
@@ -306,8 +307,8 @@ namespace MDP
     void allocate_lattice(int ndim_,
                           int ndir_,
                           int nx_[],
-                          int (*where_)(const int [], const int, const int []) = default_partitioning0,
-                          void (*neighbour_)(const int, int [], const int [], int [], const int, const int []) = torus_topology,
+                          int (*where_)(const int[], const int, const int[]) = default_partitioning0,
+                          void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
                           mdp_int random_seed_ = 0,
                           int next_next_ = 1,
                           bool local_random_ = true)
@@ -359,8 +360,13 @@ namespace MDP
       mdp_int *local_mdp_sites = new mdp_int[m_global_volume];
 #else
       mdp_int lms_tmp = 0;
-      FILE *lms_file = tmpfile();
-      if (lms_file == nullptr)
+      std::string lms_filename(8, '\0');
+      std::generate(lms_filename.begin(), lms_filename.end(), []()
+                    { return "abcdef123456"[rand() % 12]; });
+      std::fstream lms_file;
+      lms_file.open(lms_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+
+      if (!lms_file)
         error("mdp_lattice::mdp_lattice()\n"
               "Unable to create temporary lms file");
 #endif
@@ -390,8 +396,10 @@ namespace MDP
 #ifndef MDP_NO_LG
           local_mdp_sites[m_local_volume] = global_idx;
 #else
-          if (fseek(lms_file, m_local_volume * sizeof(mdp_int), SEEK_SET) != 0 ||
-              fwrite(&global_idx, sizeof(mdp_int), 1, lms_file) != 1)
+          lms_file.seekp(m_local_volume * sizeof(mdp_int), std::ios::beg);
+          lms_file.write(reinterpret_cast<const char *>(&global_idx), sizeof(mdp_int));
+
+          if (!lms_file)
             error("mdp_lattice::allocate_lattice()\n"
                   "Unable to write to temporary file");
 #endif
@@ -463,8 +471,10 @@ namespace MDP
 #ifndef MDP_NO_LG
             local_mdp_sites[m_local_volume] = global_idx;
 #else
-            if (fseek(lms_file, m_local_volume * sizeof(mdp_int), SEEK_SET) != 0 ||
-                fwrite(&global_idx, sizeof(mdp_int), 1, lms_file) != 1)
+            lms_file.seekp(m_local_volume * sizeof(mdp_int), std::ios::beg);
+            lms_file.write(reinterpret_cast<const char *>(&global_idx), sizeof(mdp_int));
+
+            if (!lms_file)
               error("mdp_lattice::allocate_lattice()\n"
                     "Unable to write to temporary file");
 #endif
@@ -498,21 +508,29 @@ namespace MDP
 #ifndef MDP_NO_LG
       m_local_from_global = new mdp_int[m_global_volume];
 #else
-      m_lg_file = tmpfile();
-      if (m_lg_file == nullptr)
+      std::string lg_filename(6, '\0');
+      std::generate(lg_filename.begin(), lg_filename.end(), []()
+                    { return "abcdef123456"[rand() % 12]; });
+      m_lg_file.open(lg_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+
+      if (!m_lg_file)
         error("mdp_lattice::mdp_lattice()\n"
               "Unable to create temporary m_local_from_global file");
 #endif
       m_wh = new mdp_int[m_local_volume];
       for (int global_idx = 0; global_idx < m_global_volume; global_idx++)
+      {
 #ifndef MDP_NO_LG
         m_local_from_global[global_idx] = NOWHERE;
 #else
-        if (fseek(m_lg_file, global_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
-            fwrite(&NOWHERE, sizeof(mdp_int), 1, m_lg_file) != 1)
+        m_lg_file.seekp(global_idx * sizeof(mdp_int), std::ios::beg);
+        m_lg_file.write(reinterpret_cast<const char *>(&NOWHERE), sizeof(mdp_int));
+
+        if (!m_lg_file)
           error("mdp_lattice::allocate_lattice()\n"
                 "Unable to write to temporary file");
 #endif
+      }
       m_parity = new int[m_local_volume];
       // /////////////////////////////////////////////////////////////////
       m_start[0][0] = m_stop[0][0] = 0;
@@ -535,8 +553,10 @@ namespace MDP
 #ifndef MDP_NO_LG
             translate_to_coordinates(local_mdp_sites[old_idx], x);
 #else
-            if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
-                fread(&lms_tmp, sizeof(mdp_int), 1, lms_file) != 1)
+            lms_file.seekg(old_idx * sizeof(mdp_int), std::ios::beg);
+            lms_file.read(reinterpret_cast<char *>(&lms_tmp), sizeof(mdp_int));
+
+            if (!lms_file)
               error("mdp_lattice::allocate_lattice()\n"
                     "Unable to read from temporary file");
             translate_to_coordinates(lms_tmp, x);
@@ -549,12 +569,17 @@ namespace MDP
               m_global_from_local[new_idx] = local_mdp_sites[old_idx];
 #else
 
-              if (fseek(lms_file, old_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
-                  fread(&lms_tmp, sizeof(mdp_int), 1, lms_file) != 1)
+              lms_file.seekg(old_idx * sizeof(mdp_int), std::ios::beg);
+              lms_file.read(reinterpret_cast<char *>(&lms_tmp), sizeof(mdp_int));
+
+              if (!lms_file)
                 error("mdp_lattice::allocate_lattice()\n"
                       "Unable to read from temporary file");
-              if (fseek(m_lg_file, lms_tmp * sizeof(mdp_int), SEEK_SET) != 0 ||
-                  fwrite(&new_idx, sizeof(mdp_int), 1, m_lg_file) != 1)
+
+              m_lg_file.seekp(lms_tmp * sizeof(mdp_int), std::ios::beg);
+              m_lg_file.write(reinterpret_cast<const char *>(&new_idx), sizeof(mdp_int));
+
+              if (!m_lg_file)
                 error("mdp_lattice::allocate_lattice()\n"
                       "Unable to write to temporary file");
               m_global_from_local[new_idx] = lms_tmp;
@@ -570,7 +595,7 @@ namespace MDP
 #ifndef MDP_NO_LG
       delete[] local_mdp_sites;
 #else
-      fclose(lms_file);
+      lms_file.close();
 #endif
       // /////////////////////////
       for (int new_idx = 0; new_idx < m_local_volume; new_idx++)
@@ -610,20 +635,25 @@ namespace MDP
       {
         if (isMainProcess())
         {
-          FILE *fp = fopen(mdp_random_seed_filename, "r");
-          if (fp != nullptr)
           {
-            if (fread(&random_seed_, sizeof(random_seed_), 1, fp) != 1)
-              random_seed_ = 0;
-            fclose(fp);
-          };
-          fp = fopen(mdp_random_seed_filename, "w");
-          if (fp != nullptr)
+            std::ifstream fp(mdp_random_seed_filename, std::ios::binary);
+            if (fp)
+            {
+              fp.read(reinterpret_cast<char *>(&random_seed_), sizeof(random_seed_));
+              if (!fp)
+              {
+                random_seed_ = 0;
+              }
+            }
+          }
+
           {
-            random_seed_ += 1;
-            fwrite(&random_seed_, sizeof(random_seed_), 1, fp);
-            random_seed_ -= 1;
-            fclose(fp);
+            std::ofstream fp(mdp_random_seed_filename, std::ios::binary | std::ios::trunc);
+            if (fp)
+            {
+              mdp_int tmp = random_seed_ + 1;
+              fp.write(reinterpret_cast<char *>(&tmp), sizeof(tmp));
+            }
           }
           mdp << "Reading from file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ << "\n";
           mdp << "Writing to   file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ + 1 << "\n";
@@ -681,7 +711,7 @@ namespace MDP
 #ifndef MDP_NO_LG
       delete[] m_local_from_global;
 #else
-      fclose(m_lg_file);
+      m_lg_file.close();
 #endif
       delete[] m_parity;
       // delete[] m_random_obj;
@@ -806,10 +836,13 @@ namespace MDP
       return m_local_from_global[global_idx];
 #else
       mdp_int lg_tmp;
-      if (fseek(m_lg_file, global_idx * sizeof(mdp_int), SEEK_SET) != 0 ||
-          fread(&lg_tmp, sizeof(mdp_int), 1, m_lg_file) != 1)
+      m_lg_file.seekg(global_idx * sizeof(mdp_int), std::ios::beg);
+      m_lg_file.read(reinterpret_cast<char *>(&lg_tmp), sizeof(mdp_int));
+
+      if (!m_lg_file)
         error("mdp_lattice::allocate_lattice()\n"
               "Unable to read from temporary file");
+
       return lg_tmp;
 #endif
     }
