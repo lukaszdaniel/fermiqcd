@@ -34,6 +34,7 @@ namespace MDP
     // #define AIX
     // #define BLOCKSITE 100
     // #define TWISTED_BOUNDARY
+    // #define LATTICE_DEBUG
 
 #ifdef TWISTED_BOUNDARY
 #ifndef BLOCKSITE

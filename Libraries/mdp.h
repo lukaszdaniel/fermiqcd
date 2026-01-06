@@ -35,7 +35,7 @@
 #include <deque>
 #include <climits>
 #ifndef _WIN64
-#include "glob.h"
+#include "glob.h" // for glob_t
 #endif
 #ifndef NO_POSIX
 #include <unistd.h>
@@ -46,7 +46,7 @@
 #ifndef _WIN64
 #include "sys/socket.h"
 #endif
-#include <fcntl.h>
+#include <fcntl.h> // for open()
 #endif
 
 // ///////////////////////////////////////////////////////////////////////////

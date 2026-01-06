@@ -33,7 +33,6 @@ namespace MDP
       int nc = U.nc();
       int ndim = U.ndim();
       int L5 = chi_in.L5();
-      int x5;
 
       mdp_real mass;
       mdp_real m_5 = 0.5;
@@ -62,7 +61,6 @@ namespace MDP
       if (!U.swirls.allocated())
         error("fermiqcd_sdwf_algorithms/sdwf_mul_Q_TWO: no swirls?");
 
-      int i, j, mu;
       mdp_site x(chi_in.lattice());
       mdp_site x_up(chi_in.lattice());
       mdp_site x_dw(chi_in.lattice());
@@ -72,25 +70,25 @@ namespace MDP
       mdp_complex *Fchi_up;
       mdp_complex *Fchi_dw;
 
-      for (x5 = 0; x5 < L5; x5++)
+      for (int x5 = 0; x5 < L5; x5++)
       {
         if (two_mass != 0)
           forallsitesofparity(x, parity)
           {
-            for (i = 0; i < nc; i++)
+            for (int i = 0; i < nc; i++)
               chi_out(x, x5, i) = two_mass * chi_in(x, x5, i);
           }
         else
           forallsitesofparity(x, parity)
           {
-            for (i = 0; i < nc; i++)
+            for (int i = 0; i < nc; i++)
               chi_out(x, x5, i) = 0;
           }
 
         // version non-optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mu = 0; mu < ndim; mu++)
+          for (int mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;
@@ -99,8 +97,8 @@ namespace MDP
             Fchi_up = &(chi_in(x_up, x5, 0));
             Fchi_dw = &(chi_in(x_dw, x5, 0));
             phase = (mdp_real)sign * chi_in.eta(x, mu);
-            for (i = 0; i < nc; i++)
-              for (j = 0; j < nc; j++)
+            for (int i = 0; i < nc; i++)
+              for (int j = 0; j < nc; j++)
                 chi_out(x, x5, i) += phase *
                                      (FU_up[nc * i + j] * Fchi_up[j] - conj(FU_dw[nc * j + i]) * Fchi_dw[j]);
           }
@@ -112,15 +110,15 @@ namespace MDP
             // Pleft = (1-Gamma5) (x) 1
 
             phase = m_5; // 1 (x) 1
-            for (i = 0; i < nc; i++)
+            for (int i = 0; i < nc; i++)
               chi_out(x, x5, i) += phase * chi_in(x, x5 - 1, i);
 
             phase = chi_in.chiral_phase(x) * m_5; // Gamma5 (x) 1
             x_dw = chi_in.chiral_shift(x);
             FU_dw = &(U.swirls(x, 0, 0));
             Fchi_dw = &(chi_in(x_dw, x5 - 1, 0));
-            for (i = 0; i < nc; i++)
-              for (j = 0; j < nc; j++)
+            for (int i = 0; i < nc; i++)
+              for (int j = 0; j < nc; j++)
                 chi_out(x, x5, i) -= phase * FU_dw[nc * i + j] * Fchi_dw[j];
           }
 
@@ -129,15 +127,15 @@ namespace MDP
             // Pright = (1+Gamma5) (x) 1
 
             phase = m_5; // 1 (x) 1
-            for (i = 0; i < nc; i++)
+            for (int i = 0; i < nc; i++)
               chi_out(x, x5, i) += phase * chi_in(x, x5 + 1, i);
 
             phase = chi_in.chiral_phase(x) * m_5; // + Gamma5 (x) 1
             x_up = chi_in.chiral_shift(x);
             FU_up = &(U.swirls(x, 0, 0));
             Fchi_up = &(chi_in(x_up, x5 + 1, 0));
-            for (i = 0; i < nc; i++)
-              for (j = 0; j < nc; j++)
+            for (int i = 0; i < nc; i++)
+              for (int j = 0; j < nc; j++)
                 chi_out(x, x5, i) += phase * FU_up[nc * i + j] * Fchi_up[j];
           }
 #endif
@@ -150,46 +148,46 @@ namespace MDP
         // Pleft = (1-Gamma5) (x) 1
 
         phase = mass; // 1 (x) 1
-        for (i = 0; i < nc; i++)
+        for (int i = 0; i < nc; i++)
           chi_out(x, 0, i) += phase * chi_in(x, L5 - 1, i);
 
         phase = chi_in.chiral_phase(x) * mass; // Gamma5 (x) 1
         x_dw = chi_in.chiral_shift(x);
         FU_dw = &(U.swirls(x, 0, 0));
         Fchi_dw = &(chi_in(x_dw, L5 - 1, 0));
-        for (i = 0; i < nc; i++)
-          for (j = 0; j < nc; j++)
+        for (int i = 0; i < nc; i++)
+          for (int j = 0; j < nc; j++)
             chi_out(x, 0, i) -= phase * FU_dw[nc * i + j] * Fchi_dw[j];
 
         // Pright = (1+Gamma5) (x) 1
 
         phase = mass; // 1 (x) 1
-        for (i = 0; i < nc; i++)
+        for (int i = 0; i < nc; i++)
           chi_out(x, L5 - 1, i) += phase * chi_in(x, 0, i);
 
         phase = chi_in.chiral_phase(x) * mass; // + Gamma5 (x) 1
         x_up = chi_in.chiral_shift(x);
         FU_up = &(U.swirls(x, 0, 0));
         Fchi_up = &(chi_in(x_up, 0, 0));
-        for (i = 0; i < nc; i++)
-          for (j = 0; j < nc; j++)
+        for (int i = 0; i < nc; i++)
+          for (int j = 0; j < nc; j++)
             chi_out(x, L5 - 1, i) + phase *FU_up[nc * i + j] * Fchi_up[j];
       }
 
 #if 0
       // NORMALIZE NOW
-      double norm = 0;
+      double norm = 0.0;
       forallsites(x)
       {
-        for (x5 = 0; x5 < L5; x5++)
-          for (i = 0; i < nc; i++)
+        for (int x5 = 0; x5 < L5; x5++)
+          for (int i = 0; i < nc; i++)
             norm += std::pow(abs(chi_out(x, x5, i)), 2);
       }
       norm = std::sqrt(norm);
       forallsites(x)
       {
-        for (x5 = 0; x5 < L5; x5++)
-          for (i = 0; i < nc; i++)
+        for (int x5 = 0; x5 < L5; x5++)
+          for (int i = 0; i < nc; i++)
             chi_out(x, x5, i) /= norm;
       }
 #endif

@@ -19,7 +19,7 @@
 
 namespace MDP
 {
-#if 0
+#if 1
   // Under development - DOES NOT WORK!!!!
 
   class HypSmearing
@@ -29,7 +29,7 @@ namespace MDP
 
     bool in(int x, std::vector<int> set)
     {
-      for (int i = 0; i < set.size(); i++)
+      for (size_t i = 0; i < set.size(); i++)
         if (x == set[i])
           return true;
       return false;
@@ -37,7 +37,7 @@ namespace MDP
 
   public:
     static void smear_aux(gauge_field &U,
-                          std::vector<int> set,
+                          // std::vector<int> set,
                           int cooling_steps = 10)
     {
       mdp_site x(U.lattice());
@@ -89,7 +89,7 @@ namespace MDP
             for (int i = 0; i < U.nc(); i++)
               for (int j = 0; j < U.nc(); j++)
                 U(x, mu, i, j) = (1.0 - alpha[m]) * U(x, mu, i, j) + alpha[m] * staples(i, j);
-            U(x, mu) = ProjectSUN(U(x, mu));
+            U(x, mu) = project_SU(U(x, mu), cooling_steps);
           }
         }
       }

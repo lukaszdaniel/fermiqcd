@@ -17,7 +17,7 @@
 #include <vector>
 #include <fstream>
 #ifndef _WIN64
-#include "glob.h"
+#include "glob.h" // for glob_t
 #endif
 #include "mdp_field.h"
 

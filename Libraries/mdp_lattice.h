@@ -76,13 +76,13 @@ namespace MDP
       mdp_int buffer[2];
       mdp_int length;
       int process;
-#if 0
+#ifdef LATTICE_DEBUG
     int process2;
 #endif
       mdp_request request;
 
       // sending length ///////////////////////////
-#if 0 // debugging code below
+#ifdef LATTICE_DEBUG // debugging code below
     if (Nproc % 2 == 1 || m_where != default_partitioning0)
     {
 #endif
@@ -111,7 +111,7 @@ namespace MDP
           m_to_send[process][idx] = local(m_to_send[process][idx]);
         mdp.wait(request);
       }
-#if 0 // debugging code below
+#ifdef LATTICE_DEBUG // debugging code below
     }
     else
     {

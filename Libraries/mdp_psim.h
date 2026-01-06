@@ -24,14 +24,18 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
 // #include <sys/types.h>
-#include <sys/stat.h>
+#include <sys/stat.h> // for mkfifo()
 #ifndef _WIN64
 #include <sys/socket.h>
 #include <sys/errno.h>
 #endif
 #include <sys/file.h> // for flock()
-#include <fcntl.h>
+#include <fcntl.h> // for open()
+#ifndef _WIN64
+#include "glob.h" // for glob_t
+#endif
 #include "mdp_global_vars.h"
 
 namespace MDP
@@ -103,7 +107,7 @@ namespace MDP
     int _processCount;        // Holds the number of processes
     std::string _logFileName; // filename of the log file
     bool _doLogging;          // do logging or not?
-    FILE *_logfileFD;         // file descriptor for the logging file
+    std::ofstream _logfileFD; // file descriptor for the logging file
     int _processID;           // process ID of "this" process
 
     /** @brief 2D array to hold all of the sockets
@@ -252,6 +256,7 @@ namespace MDP
           log(buffer);
         }
     }
+
     void close_sockets()
     {
       for (int source = 0; source < _processCount; source++)
@@ -271,9 +276,9 @@ namespace MDP
       _processID = 0;
       for (int i = 1; i < _processCount; i++)
       {
-        int pid = fork();
+        pid_t pid = fork();
 
-        if (pid == -1)
+        if (pid < 0)
         {
           log("PSIM ERROR: fork");
           throw("PSIM ERROR: fork");
@@ -310,27 +315,19 @@ namespace MDP
      */
     void open_log()
     {
-      _doLogging = false;
       if (_logFileName.length() == 0)
       {
         return;
       }
 
       // open and reset file
-      if ((_logfileFD = fopen(_logFileName.c_str(), "w")) == NULL)
+      _logfileFD.open(_logFileName, std::ios::out | std::ios::trunc);
+      if (!_logfileFD)
       {
         log("PSIM ERROR: unable to create logfile");
         throw std::string("PSIM ERROR: unable to create logfile");
       }
-      // close the log file
-      close_log();
 
-      // reopen the log file in append mode
-      if ((_logfileFD = fopen(_logFileName.c_str(), "a")) == NULL)
-      {
-        log("PSIM ERROR: unable to open logfile");
-        throw std::string("PSIM ERROR: unable to open logfile");
-      }
       _doLogging = true;
     }
 
@@ -339,7 +336,7 @@ namespace MDP
     void close_log()
     {
       if (_doLogging)
-        fclose(_logfileFD);
+        _logfileFD.close();
     }
 
     /** @brief Centralizes the repetitive task of logging the steps
@@ -534,7 +531,7 @@ namespace MDP
     /** @brief Deallocates space that was created within the process,
      * releases sockets, closes the log, etc.
      */
-    virtual ~mdp_psim()
+    ~mdp_psim()
     {
       psim_end();
     }
@@ -554,15 +551,10 @@ namespace MDP
     {
       if (_doLogging)
       {
-        int fd = fileno(_logfileFD);
-        flock(fd, LOCK_EX);
-        fwrite("PSIM LOG: ", 10, 1, _logfileFD);
-        fwrite(message.c_str(), message.length(), 1, _logfileFD);
-        fwrite("\n", 1, 1, _logfileFD);
-        // Clear out the file buffer
-        fflush(_logfileFD);
-        flock(fd, LOCK_UN);
+        _logfileFD << "PSIM LOG: " << message << std::endl;
+        _logfileFD.flush();
       }
+
       if (_verbatim >= level)
       {
         std::cout << "PSIM LOG: " << message << std::endl;
@@ -573,7 +565,7 @@ namespace MDP
     /** @brief Returns an integer identifying which process is currently
      * executing.
      */
-    int id()
+    int id() const
     {
       return _processID;
     }
@@ -581,7 +573,7 @@ namespace MDP
     /** @brief Returns an integer identifying the current number of
      * active processes.
      */
-    int nprocs()
+    int nprocs() const
     {
       return _processCount;
     }
