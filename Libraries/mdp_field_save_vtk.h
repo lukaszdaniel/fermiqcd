@@ -122,7 +122,7 @@ namespace MDP
                 float fval = static_cast<float>(short_buffer[fc]);
                 if (!ASCII)
                 {
-                  switch_endianess_byte4(fval);
+                  switch_endianess(fval);
                   ofs.write(reinterpret_cast<char *>(&fval), sizeof(fval));
                   if (!ofs)
                     error("probably out of disk space");

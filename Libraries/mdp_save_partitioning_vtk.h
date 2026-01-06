@@ -18,7 +18,7 @@
 
 namespace MDP
 {
-  void save_partitioning_vtk(mdp_lattice &lattice, std::string filename)
+  void save_partitioning_vtk(mdp_lattice &lattice, const std::string &filename)
   {
     mdp_field<int> where(lattice);
     mdp_site x(lattice);

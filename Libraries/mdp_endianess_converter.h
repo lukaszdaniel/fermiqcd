@@ -19,38 +19,29 @@ namespace MDP
 {
   /// Converts endianess of object passed by reference
   template <class T>
-  void switch_endianess_byte4(T &a)
+  void switch_endianess(T &a)
   {
-    constexpr unsigned int size = 4;
-    if (sizeof(T) != size)
-      error("switch_endianess_byte: sizeof(T) mismatch");
-    char *p = (char *)&a;
-    static char q[size];
-    for (unsigned int i = 0; i < size; ++i)
-    {
-      q[i] = p[i];
-    }
-    for (unsigned int i = 0; i < size; ++i)
-    {
-      p[i] = q[size - 1 - i];
-    }
-  }
+    constexpr size_t size = sizeof(T);
 
-  template <class T>
-  void switch_endianess_byte8(T &a)
-  {
-    constexpr unsigned int size = 8;
-    if (sizeof(T) != size)
-      error("switch_endianess_byte: sizeof(T) mismatch");
-    char *p = (char *)&a;
-    static char q[size];
-    for (unsigned int i = 0; i < size; ++i)
+    // Supported size is either 4 or 8 bytes
+    if (size == 4 || size == 8)
     {
-      q[i] = p[i];
+      char *p = reinterpret_cast<char *>(&a);
+      char q[size];
+
+      for (size_t i = 0; i < size; ++i)
+      {
+        q[i] = p[i];
+      }
+
+      for (size_t i = 0; i < size; ++i)
+      {
+        p[i] = q[size - 1 - i];
+      }
     }
-    for (unsigned int i = 0; i < size; ++i)
+    else
     {
-      p[i] = q[size - 1 - i];
+      error("switch_endianess: sizeof(T) mismatch");
     }
   }
 } // namespace MDP

@@ -74,29 +74,29 @@ namespace MDP
       if (header.endianess == mdp_local_endianess)
         return false;
 
-      switch_endianess_byte4(header.endianess);
+      switch_endianess(header.endianess);
 
       if (header.endianess == mdp_local_endianess)
       {
-        switch_endianess_byte4(header.endianess);
-        switch_endianess_byte4(header.ndim);
-        switch_endianess_byte4(header.box[0]);
-        switch_endianess_byte4(header.box[1]);
-        switch_endianess_byte4(header.box[2]);
-        switch_endianess_byte4(header.box[3]);
-        switch_endianess_byte4(header.box[4]);
-        switch_endianess_byte4(header.box[5]);
-        switch_endianess_byte4(header.box[6]);
-        switch_endianess_byte4(header.box[7]);
-        switch_endianess_byte4(header.box[8]);
-        switch_endianess_byte4(header.box[9]);
-        switch_endianess_byte4(header.bytes_per_site);
-        switch_endianess_byte4(header.sites);
+        switch_endianess(header.endianess);
+        switch_endianess(header.ndim);
+        switch_endianess(header.box[0]);
+        switch_endianess(header.box[1]);
+        switch_endianess(header.box[2]);
+        switch_endianess(header.box[3]);
+        switch_endianess(header.box[4]);
+        switch_endianess(header.box[5]);
+        switch_endianess(header.box[6]);
+        switch_endianess(header.box[7]);
+        switch_endianess(header.box[8]);
+        switch_endianess(header.box[9]);
+        switch_endianess(header.bytes_per_site);
+        switch_endianess(header.sites);
         return true;
       }
       else
       {
-        switch_endianess_byte4(header.endianess);
+        switch_endianess(header.endianess);
         return false;
       }
     }
@@ -410,7 +410,7 @@ namespace MDP
         p = (mdp_int *)address(x);
         for (mdp_uint i = 0; i < sizeof(T) * m_field_components / 4; i++)
         {
-          switch_endianess_byte4(*(p + i));
+          switch_endianess(*(p + i));
         }
       }
     }
@@ -428,7 +428,7 @@ namespace MDP
         p = (int64_t *)address(x);
         for (mdp_uint i = 0; i < (sizeof(T) * m_field_components / 8); i++)
         {
-          switch_endianess_byte8(*(p + i));
+          switch_endianess(*(p + i));
         }
       }
     }

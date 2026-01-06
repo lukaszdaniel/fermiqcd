@@ -33,7 +33,7 @@ namespace MDP
   {
     static inline void apply(float &v) noexcept
     {
-      switch_endianess_byte4(v);
+      switch_endianess(v);
     }
   };
 
@@ -137,10 +137,10 @@ namespace MDP
     // Check magic number for endianess
     if (milc_header.magic_number == 0x874e0000)
     {
-      switch_endianess_byte4(milc_header.dims[0]);
-      switch_endianess_byte4(milc_header.dims[1]);
-      switch_endianess_byte4(milc_header.dims[2]);
-      switch_endianess_byte4(milc_header.dims[3]);
+      switch_endianess(milc_header.dims[0]);
+      switch_endianess(milc_header.dims[1]);
+      switch_endianess(milc_header.dims[2]);
+      switch_endianess(milc_header.dims[3]);
       endian_swap = true;
     }
 

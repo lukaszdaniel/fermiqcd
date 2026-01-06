@@ -28,7 +28,7 @@ namespace MDP
     return std::filesystem::exists(filename);
   }
 
-  std::vector<std::string> glob(std::string pattern)
+  std::vector<std::string> glob(const std::string &pattern)
   {
     std::vector<std::string> v;
     glob_t pglob;
@@ -42,7 +42,7 @@ namespace MDP
     return v;
   }
 
-  std::string latest_file(std::string pattern)
+  std::string latest_file(const std::string &pattern)
   {
     std::vector<std::string> v = glob(pattern);
     return v[v.size() - 1];
@@ -84,7 +84,7 @@ namespace MDP
     return myheader;
   }
 
-  int mail(std::string email, std::string message)
+  int mail(const std::string &email, const std::string &message)
   {
     static int ret;
     if (isMainProcess())
@@ -96,7 +96,7 @@ namespace MDP
     return ret;
   }
 
-  int mail_file(std::string email, std::string filename)
+  int mail_file(const std::string &email, const std::string &filename)
   {
     static int ret;
     if (isMainProcess())
@@ -108,12 +108,12 @@ namespace MDP
     return ret;
   }
 
-  bool startswith(std::string a, std::string b)
+  bool startswith(const std::string &a, const std::string &b)
   {
     return (a.substr(0, b.length()) == b);
   }
 
-  bool endswith(std::string a, std::string b)
+  bool endswith(const std::string &a, const std::string &b)
   {
     int i = a.length();
     int j = b.length();
@@ -122,7 +122,7 @@ namespace MDP
     return (a.substr(i - j, j) == b);
   }
 
-  int parse_int(std::string a, std::string b, int value = 0)
+  int parse_int(const std::string &a, const std::string &b, int value = 0)
   {
     int i = a.find(std::string(":") + b);
     if (i < 0)
@@ -138,7 +138,7 @@ namespace MDP
     }
   }
 
-  mdp_uint parse_uint(std::string a, std::string b, mdp_uint value = 0)
+  mdp_uint parse_uint(const std::string &a, const std::string &b, mdp_uint value = 0)
   {
     int i = a.find(std::string(":") + b);
     if (i < 0)
@@ -154,7 +154,7 @@ namespace MDP
     }
   }
 
-  float parse_float(std::string a, std::string b, float value = 0.0)
+  float parse_float(const std::string &a, const std::string &b, float value = 0.0)
   {
     int i = a.find(std::string(":") + b);
     if (i < 0)
@@ -170,7 +170,7 @@ namespace MDP
     }
   }
 
-  std::string parse_string(std::string a, std::string b, std::string value = "")
+  std::string parse_string(const std::string &a, const std::string &b, const std::string &value = "")
   {
     int i = a.find(std::string(":") + b);
     if (i < 0)
