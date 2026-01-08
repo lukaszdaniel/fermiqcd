@@ -3,7 +3,6 @@
 #include <memory>
 #include "fermiqcd.h"
 #include "my_parameters.h"
-#include "my_logger.h"
 
 using namespace std;
 using namespace MDP;
@@ -94,7 +93,7 @@ int main(int argc, char **argv)
 	gauge_field U(lattice, ncolors);
 	coefficients coeff;
 	coeff["beta"] = par.d("beta");
-	Logger log(logFileName, argc, argv, "");
+	mdp_log log(logFileName, argc, argv, "");
 
 	if (par.defined_s("start-config-file"))
 	{

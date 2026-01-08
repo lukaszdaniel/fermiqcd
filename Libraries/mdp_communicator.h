@@ -458,7 +458,7 @@ namespace MDP
       my_nproc = 1;
 #endif
 #endif
-      m_print = (me() == 0);
+      setPrinting(me() == 0);
 
       begin_function("PROGRAM");
       begin_function("open_wormholes");
