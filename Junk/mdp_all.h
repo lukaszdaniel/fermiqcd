@@ -1,32 +1,46 @@
 #ifndef MDP_ALL_
 #define MDP_ALL_
 
-// BEGIN FILE: mdp_all.h
-// C headers
-// #include "sys/types.h"
-#ifndef _WIN64
-#include "sys/socket.h"
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX 1
 #endif
-#include "sys/time.h"
-#include <ctime>
-#include "netinet/in.h"
-#include "arpa/inet.h"
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
+#include <process.h> // _getpid
+#include <io.h>
+
+#else
+
+#include <unistd.h>
+#include <fcntl.h>
+#include <csignal>
+#include <pthread.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <sys/uio.h>
+#include <sys/wait.h>
+#include <sys/file.h>
+#include <sys/un.h>
+#include <sys/select.h>
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#include <poll.h>
+#endif
+
 #include <cerrno>
-#include "fcntl.h"
-#include "netdb.h"
-#include "signal.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include "sys/stat.h"
-#include "sys/uio.h"
-#include "unistd.h"
-#include "sys/wait.h"
-#include "sys/un.h"
-#include "sys/select.h"
-#include "poll.h"
-#include "strings.h"
-#include "pthread.h"
+#include <ctime>
 
 // C++ headers and STL headers
 #include <iostream>
@@ -36,19 +50,19 @@
 #include <map>
 
 #ifndef HAVE_INET_NTOP
-#define inet_ntop(a, b) inet_ntoa(b)
+#define inet_ptoa(a, b) inet_ntoa(b)
 #define inet_pton(a, b, c) inet_aton(b, c)
 #endif
 
 namespace MDP
 {
-  void exit_message(int en, std::string message)
+  void exit_message(int en, const std::string &message)
   {
     std::cerr << "FROM PROCESS PID: " << getpid() << std::endl;
     std::cerr << "CHILD OF PROCESS PID: " << getppid() << std::endl;
     std::cerr << "FATAL ERROR: " << message << std::endl;
     std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
-    exit(en);
+    std::exit(en);
   }
 } // namespace MDP
 

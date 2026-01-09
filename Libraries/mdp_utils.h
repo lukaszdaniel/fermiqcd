@@ -16,8 +16,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#ifndef _WIN64
-#include "glob.h" // for glob_t
+#ifndef _WIN32
+#include <glob.h> // for glob_t
 #endif
 #include "mdp_field.h"
 
@@ -33,11 +33,17 @@ namespace MDP
     std::vector<std::string> v;
     glob_t pglob;
     pglob.gl_offs = 2;
-    if (glob(pattern.c_str(), 0, 0, &pglob) != 0)
+
+    if (glob(pattern.c_str(), 0, nullptr, &pglob) != 0)
+    {
       v.push_back("?");
+    }
     else
-      for (mdp_uint i = 0; i < pglob.gl_pathc; i++)
-        v.push_back(std::string(pglob.gl_pathv[i]));
+    {
+      for (size_t i = 0; i < pglob.gl_pathc; ++i)
+        v.emplace_back(pglob.gl_pathv[i]);
+    }
+
     globfree(&pglob);
     return v;
   }

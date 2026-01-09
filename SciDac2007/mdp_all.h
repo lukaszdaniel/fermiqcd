@@ -1,39 +1,46 @@
 #ifndef MDP_ALL_
 #define MDP_ALL_
 
-// BEGIN FILE: mdp_all.h
-// C headers
-// #include "sys/types.h"
-#ifndef _WIN64
-#include "sys/socket.h"
+#ifdef _WIN32
+#ifndef NOMINMAX
+#define NOMINMAX 1
 #endif
-#include "sys/time.h"
-#include <ctime>
-#include "netinet/in.h"
-#include "arpa/inet.h"
+
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#include <windows.h>
+#include <process.h> // _getpid
+#include <io.h>
+
+#else
+
+#include <unistd.h>
+#include <fcntl.h>
+#include <csignal>
+#include <pthread.h>
+
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/time.h>
+#include <sys/stat.h>
+#include <sys/uio.h>
+#include <sys/wait.h>
+#include <sys/file.h>
+#include <sys/un.h>
+#include <sys/select.h>
+
+#include <netinet/in.h>
+#include <arpa/inet.h>
+#include <netdb.h>
+
+#include <poll.h>
+#endif
+
 #include <cerrno>
-#include "fcntl.h"
-#include "netdb.h"
-#include "signal.h"
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include "sys/stat.h"
-#include "sys/uio.h"
-#include "unistd.h"
-#include "sys/wait.h"
-#include "sys/file.h"
-#include "sys/un.h"
-#include "poll.h"
-#include "strings.h"
-#include "pthread.h"
-
-#ifdef HAWK
-#define socklen_t int
-#define FASYNC 020000
-#else
-#include "sys/select.h"
-#endif
+#include <ctime>
 
 // C++ headers and STL headers
 #include <iostream>
@@ -47,15 +54,23 @@
 #define inet_pton(a, b, c) inet_aton(b, c)
 #endif
 
+#ifdef _WIN32
+#define DATA_CAST (char *)
+#define CONST_DATA_CAST (const char *)
+#else
+#define DATA_CAST
+#define CONST_DATA_CAST
+#endif
+
 namespace MDP
 {
-  void exit_message(int en, std::string message)
+  void exit_message(int en, const std::string &message)
   {
     std::cerr << "FROM PROCESS PID: " << getpid() << std::endl;
     std::cerr << "CHILD OF PROCESS PID: " << getppid() << std::endl;
     std::cerr << "FATAL ERROR: " << message << std::endl;
     std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
-    exit(en);
+    std::exit(en);
   }
 
   class InternetAddress
@@ -117,7 +132,7 @@ namespace MDP
 
     int Connect(int sfd, int timeout = 0)
     {
-      if (!timeout)
+      if (timeout == 0)
       {
         return connect(sfd, (struct sockaddr *)&m_address,
                        (socklen_t)sizeof(m_address));
@@ -170,7 +185,7 @@ namespace MDP
 
     int sendTo(int sfd, void *data, int size, int options = 0)
     {
-      return sendto(sfd, data, size, options,
+      return sendto(sfd, CONST_DATA_CAST data, size, options,
                     (struct sockaddr *)&m_address,
                     (socklen_t)sizeof(m_address));
     }
@@ -178,7 +193,7 @@ namespace MDP
     int recvFrom(int sfd, void *data, int size, int options = 0)
     {
       socklen_t address_size = sizeof(m_address);
-      return recvfrom(sfd, data, size, options,
+      return recvfrom(sfd, DATA_CAST data, size, options,
                       (struct sockaddr *)&m_address,
                       (socklen_t *)&address_size);
     }
@@ -208,7 +223,11 @@ namespace MDP
         close(sfd);
         return -1;
       }
-      sleep(sleep_time);
+#ifdef _WIN32
+      Sleep(sleep_time * 1000); // Windows Sleep in ms
+#else
+      sleep(sleep_time); // POSIX sleep in s
+#endif
     }
   }
 
@@ -225,7 +244,7 @@ namespace MDP
 
   int setSocketKeepAlive(int sfd, int on = 1)
   {
-    return setsockopt(sfd, SOL_SOCKET, SO_KEEPALIVE, &on, sizeof(on));
+    return setsockopt(sfd, SOL_SOCKET, SO_KEEPALIVE, CONST_DATA_CAST &on, sizeof(on));
   }
 
   int setFileLock(int sfd)
@@ -247,9 +266,9 @@ namespace MDP
   {
     int flags = fcntl(sfd, F_GETFL, 0);
     if (on)
-      flags = flags | O_NONBLOCK;
+      flags |= O_NONBLOCK;
     else
-      flags = flags & (~O_NONBLOCK);
+      flags &= ~O_NONBLOCK;
     return fcntl(sfd, F_SETFL, flags);
   }
 
@@ -269,12 +288,12 @@ namespace MDP
 
   int setSocketReusable(int sfd, int on = 1)
   {
-    return setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+    return setsockopt(sfd, SOL_SOCKET, SO_REUSEADDR, CONST_DATA_CAST &on, sizeof(on));
   }
 
   int setSocketSendBroadcast(int sfd, int on = 1)
   {
-    return setsockopt(sfd, SOL_SOCKET, SO_BROADCAST, &on, sizeof(on));
+    return setsockopt(sfd, SOL_SOCKET, SO_BROADCAST, CONST_DATA_CAST &on, sizeof(on));
   }
 
   int setSocketRecvBroadcast(int sfd, int on = 1)
@@ -284,7 +303,7 @@ namespace MDP
 
   int setSocketSendMulticast(int sfd, int ttl = 1)
   {
-    return setsockopt(sfd, IPPROTO_IP, IP_MULTICAST_TTL, &ttl, sizeof(ttl));
+    return setsockopt(sfd, IPPROTO_IP, IP_MULTICAST_TTL, CONST_DATA_CAST &ttl, sizeof(ttl));
   }
 
   int setSocketRecvMulticast(int sfd, std::string from)
@@ -293,37 +312,38 @@ namespace MDP
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = InternetAddress(from, 0).address().sin_addr.s_addr;
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
-    return setsockopt(sfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, &mreq, sizeof(mreq));
+    return setsockopt(sfd, IPPROTO_IP, IP_ADD_MEMBERSHIP, CONST_DATA_CAST &mreq, sizeof(mreq));
   }
 
   int forkTwice()
   {
     pid_t pid;
     int status;
+
     pid = fork();
-    if (!pid)
+    if (pid == 0)
     {
       int pid2 = fork();
       switch (pid2)
       {
       case 0:
-        return 0;
+        return 0; // subprocess
       case -1:
         _exit(errno); // assumes all errnos are <256
       default:
-        _exit(0);
+        _exit(0); // parent of first fork
       }
     }
-    if (pid > 0)
+    else if (pid > 0)
     {
       if (waitpid(pid, &status, 0) < 0)
         return -1;
       else
-        return 1;
+        return 1; // parent
     }
-    if (pid < 0)
+    else
     {
-      return -1;
+      return -1; // fork error
     }
     return -1;
   }
@@ -461,6 +481,9 @@ namespace MDP
     sigprocmask(SIG_BLOCK, &set, &oset);
     return oset;
   }
+
+#undef DATA_CAST
+#undef CONST_DATA_CAST
 } // namespace MDP
 
 #endif /* MDP_ALL_ */

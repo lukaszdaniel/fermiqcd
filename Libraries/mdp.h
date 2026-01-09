@@ -34,17 +34,16 @@
 #include <map>
 #include <deque>
 #include <climits>
-#ifndef _WIN64
-#include "glob.h" // for glob_t
+#ifndef _WIN32
+#include <glob.h> // for glob_t
 #endif
 #ifndef NO_POSIX
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/file.h>
-// #include <sys/types.h>
 #include <sys/stat.h>
-#ifndef _WIN64
-#include "sys/socket.h"
+#ifndef _WIN32
+#include <sys/socket.h>
 #endif
 #include <fcntl.h> // for open()
 #endif

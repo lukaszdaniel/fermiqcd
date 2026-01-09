@@ -14,28 +14,31 @@
 
 #ifndef NO_POSIX
 
+#ifndef _WIN32
 #include <unistd.h> // for getpid()
+#include <sys/socket.h>
+#include <sys/stat.h> // for mkfifo()
+#include <sys/file.h> // for flock()
+#include <fcntl.h> // for open()
+#include <cerrno>
+#include <glob.h> // for glob_t
+using socket_fd_t = int;
+#else
+#include <winsock2.h>
+#include <windows.h>
+using socket_fd_t = HANDLE;
+#endif
+
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
 #include <cstring>
-#include <string>
+
 #include <iostream>
 #include <string>
 #include <vector>
 #include <map>
 #include <fstream>
-// #include <sys/types.h>
-#include <sys/stat.h> // for mkfifo()
-#ifndef _WIN64
-#include <sys/socket.h>
-#include <sys/errno.h>
-#endif
-#include <sys/file.h> // for flock()
-#include <fcntl.h> // for open()
-#ifndef _WIN64
-#include "glob.h" // for glob_t
-#endif
 #include "mdp_global_vars.h"
 
 namespace MDP
@@ -115,7 +118,7 @@ namespace MDP
      * First entry is the table of processes
      * Second entry is the socket array indicator for reading/writing
      */
-    int (*_socketFD)[2];
+    socket_fd_t (*_socketFD)[2];
 
     /** @brief defaults to COMM_TIMEOUT_DEFAULT
      */
@@ -202,7 +205,7 @@ namespace MDP
         throw std::string("PSIM ERROR: failure to allocate hash");
       }
 
-      _socketFD = new int[_processCount * _processCount][2];
+      _socketFD = new socket_fd_t[_processCount * _processCount][2];
       if (!_socketFD)
       {
         log("PSIM ERROR: failed to create socket array");
@@ -225,7 +228,6 @@ namespace MDP
       {
         for (int dest = 0; dest < _processCount; dest++)
         {
-
           snprintf(filename, 512, ".fifo.%i.%i", source, dest);
           while (mkfifo(filename, 0666) < 0)
           {
@@ -234,10 +236,12 @@ namespace MDP
             else
               throw std::string("PSIM ERROR: unable to mkfifo ") + filename;
           }
+
           _socketFD[_processCount * source + dest][COMM_RECV] = open(filename, O_RDONLY | O_NONBLOCK);
           _socketFD[_processCount * source + dest][COMM_SEND] = open(filename, O_WRONLY);
           int flags = fcntl(_socketFD[_processCount * source + dest][COMM_RECV], F_GETFL, 0);
           fcntl(_socketFD[_processCount * source + dest][COMM_RECV], F_SETFL, flags & ~O_NONBLOCK);
+
           if (_socketFD[_processCount * source + dest][COMM_SEND] <= 0 ||
               _socketFD[_processCount * source + dest][COMM_RECV] <= 0)
           {
