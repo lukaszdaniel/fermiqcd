@@ -16,6 +16,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <chrono>
 #include <iomanip>
 
