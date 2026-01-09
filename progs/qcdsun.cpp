@@ -2,7 +2,6 @@
 #include <iostream>
 #include <memory>
 #include "fermiqcd.h"
-#include "my_parameters.h"
 
 using namespace std;
 using namespace MDP;
@@ -18,7 +17,7 @@ int main(int argc, char **argv)
 
 	mdp.open_wormholes(argc, argv);
 
-	Parameter par(argv[1]);
+	mdp_parameter par(argv[1]);
 
 	string tag = par.s("tag");
 	string logFileName = "log." + tag;

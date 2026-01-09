@@ -257,6 +257,6 @@
 #include "mdp_nvector_field.h"
 #include "mdp_prng_sfmt.h"
 #include "mdp_swap.h"
-#include "my_parameters.h"
+#include "mdp_parameter.h"
 
 #endif /* MDP_ */
