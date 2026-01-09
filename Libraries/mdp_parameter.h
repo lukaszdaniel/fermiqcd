@@ -171,9 +171,12 @@ namespace MDP
 
     friend std::ostream &operator<<(std::ostream &os, const mdp_parameter &p)
     {
-      for (const auto &[name, value] : p.m_map)
+      for (const auto &elem : p.m_map)
       {
-        std::visit([&](const auto &v)
+        const auto &name = elem.first;
+        const auto &value = elem.second;
+
+        std::visit([&os, &name](const auto &v)
                    {
         using T = std::decay_t<decltype(v)>;
 
