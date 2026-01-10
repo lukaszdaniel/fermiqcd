@@ -1,21 +1,23 @@
+.PHONY: all clean doc
+
 all:
-	cd Libraries; make all
-	cd Examples; make all
-	cd Converters; make all
-	cd SciDac2007; make all
-	cd Vegas; make all
-	cd Junk; make all
-	cd tests; make all
-	cd tests; make check
+	$(MAKE) -C Libraries
+	$(MAKE) -C Examples
+	$(MAKE) -C Converters
+	$(MAKE) -C SciDac2007
+	$(MAKE) -C Vegas
+	$(MAKE) -C Junk
+	$(MAKE) -C tests
+	$(MAKE) -C tests check
 
 doc:
-	cd Doxygen; doxygen Doxyfile
+	cd Doxygen && doxygen Doxyfile
 
 clean:
-	cd Libraries; make clean
-	cd Examples; make clean
-	cd Converters; make clean
-	cd SciDac2007; make clean
-	cd Vegas; make clean
-	cd Junk; make clean
-	cd tests; make clean
+	$(MAKE) -C Libraries clean
+	$(MAKE) -C Examples clean
+	$(MAKE) -C Converters clean
+	$(MAKE) -C SciDac2007 clean
+	$(MAKE) -C Vegas clean
+	$(MAKE) -C Junk clean
+	$(MAKE) -C tests clean

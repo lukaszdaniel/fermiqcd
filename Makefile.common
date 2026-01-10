@@ -37,9 +37,6 @@
 #
 ###########################################################################
 #
-PRG_SUFFIX_FLAG := 1
-#
-#
 #
 # -DUSE_DOUBLE_PRECISION for double precision (the most efficient option)
 # -DSSE2 -O3 for pentium4 optimizations
@@ -55,24 +52,38 @@ PRG_SUFFIX_FLAG := 1
 # Flags for parallel (mpi) double precision and sse
 #CXXFLAGS = -DPARALLEL -DUSE_DOUBLE_PRECISION -DSSE2 -O2
 
-# ================== Configuration ==================
-#LIB_DIR := $(CURDIR)/Libraries
+COMMON_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+LIB_DIR ?= $(COMMON_DIR)/Libraries
+PRG_SUFFIX_FLAG ?= 1
+AR      ?= ar
+RANLIB  ?= ranlib
 
-# ================== Common rules & flags ===========
-CUSTOM_CLEAN  := 1
-include ../Makefile.common
+# ================== Platform ======================
+ifeq ($(OS),Windows_NT)
+    PRG_SUFFIX := .exe
+    LDFLAGS   += -L$(LIB_DIR) -flto -lws2_32
+else
+    PRG_SUFFIX := .exe
+    LDFLAGS   += -L$(LIB_DIR) -flto -lm
+endif
 
-# ================== Subdirectories =================
-SUBDIRS := ising meson meson_wave qqbar2 run1 staggered_quark wilson_quark
+LDLIBS += -lfermiqcd -lmdp
+
+# ================== Compiler flags =================
+CXXFLAGS_INC += -I$(LIB_DIR)
+CXXFLAGS     += -g -O3 -flto -DUSE_DOUBLE_PRECISION \
+                -std=c++17 -Wall -Wextra -Werror -pedantic \
+                $(CXXFLAGS_INC)
+
+# ================== Sources ========================
+SRCS := $(wildcard *.cpp)
+PRGS := $(basename $(SRCS))
+BINS := $(addsuffix $(PRG_SUFFIX),$(PRGS))
 
 # ================== Default target =================
-all: $(BINS) $(SUBDIRS)
-
-.PHONY: all clean rebuild plaquette topological ising3d $(SUBDIRS)
-
-# ================== Recursive make =================
-$(SUBDIRS):
-	$(MAKE) -C $@
+ifndef LIBRARY_BUILD
+all: $(BINS)
+endif
 
 # ================== Build rules ====================
 .SECONDEXPANSION:
@@ -83,39 +94,20 @@ else
     BIN = $@
 endif
 
-# One cpp -> one binary
+# One .cpp -> one binary
 %$(PRG_SUFFIX): %.o
-	$(CXX) $< $(LDFLAGS) -o $(BIN)
+	$(CXX) $< $(LDFLAGS) $(LDLIBS) -o $@
 
 # ================== Cleaning =======================
+ifndef CUSTOM_CLEAN
 clean:
-	@for dir in $(SUBDIRS); do \
-		$(MAKE) -C $$dir clean; \
-	done
 ifeq ($(PRG_SUFFIX_FLAG),0)
 	$(RM) $(PRGS) *.o
 else
 	$(RM) $(BINS) *.o
 endif
+endif
 
 rebuild: clean all
-
-
-plaquette:
-	python iqcd.py code +cold +loop n=100 { +heatbath +plaquette }
-	python iqcd.py compile
-	./latest.exe > latest.log	
-	python ibootstrap.py latest.log '"plaquette"'
-	python iplot.py -p quartz
-
-topological:
-	python iqcd.py code +hot +heatbath steps=100 +loop n=100 { +ape_smear steps=1 +topological_charge }
-	python iqcd.py compile
-	./latest.exe > latest.log
-	python ibootstrap.py latest.log '"topological_charge"'
-	python isee.py topological_charge_00000.vtk
-
-ising3d:
-	./ising3d.exe > ising3d.log &
-	python isee.py ising3d.vtk
-
+##
+## eof Generic_Multi_Main_PWD.makefile

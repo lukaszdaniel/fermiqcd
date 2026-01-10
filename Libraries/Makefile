@@ -7,23 +7,32 @@
 # Flags for parallel (mpi) double precision and sse
 #CXXFLAGS = -DPARALLEL -DUSE_DOUBLE_PRECISION -DSSE2 -O2
 
-LDFLAGS := -flto
-SOURCES_CXX := libfermiqcd.cpp
-MDP_SOURCES_CXX := libmdp.cpp
-CXXFLAGS_INC := -I./Libraries
-CXXFLAGS := -g -flto -DUSE_DOUBLE_PRECISION -O3 -std=c++17 -Wall -Werror -Wextra -pedantic $(CXXFLAGS_INC)
-OBJS = $(SOURCES_CXX:.cpp=.o)
-OBJS_MDP = $(MDP_SOURCES_CXX:.cpp=.o)
+# ================== Configuration ==================
+LIB_DIR := $(CURDIR)
 
+# ================== Common flags ===================
+LIBRARY_BUILD := 1
+CUSTOM_CLEAN  := 1
+include ../Makefile.common
+
+# ================== Sources ========================
+SOURCES_CXX     := libfermiqcd.cpp
+MDP_SOURCES_CXX := libmdp.cpp
+
+OBJS     := $(SOURCES_CXX:.cpp=.o)
+OBJS_MDP := $(MDP_SOURCES_CXX:.cpp=.o)
+
+# ================== Libraries ======================
 all: libmdp.a libfermiqcd.a
 
 libmdp.a: $(OBJS_MDP)
-	ar rc $@ $(OBJS_MDP)
-	ranlib $@
+	$(AR) rc $@ $^
+	$(RANLIB) $@
 
 libfermiqcd.a: $(OBJS)
-	ar rc $@ $(OBJS)
-	ranlib $@
+	$(AR) rc $@ $^
+	$(RANLIB) $@
 
+# ================== Cleaning =======================
 clean:
-	rm -f *.o *.a
+	$(RM) *.o *.a
