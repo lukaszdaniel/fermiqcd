@@ -128,6 +128,67 @@ namespace MDP
      */
     std::map<std::string, std::vector<char>> *_hash;
 
+    inline ssize_t ipc_write(socket_fd_t fd, const void *buffer, size_t size)
+    {
+#ifdef _WIN32
+      if (!fd || fd == INVALID_HANDLE_VALUE)
+        return -1;
+
+      DWORD written = 0;
+      BOOL ok = WriteFile(fd, buffer, static_cast<DWORD>(size), &written, NULL);
+
+      if (!ok)
+        return -1;
+
+      return static_cast<ssize_t>(written);
+
+#else
+      ssize_t ret;
+      do
+      {
+        ret = write(fd, buffer, size);
+      } while (ret < 0 && errno == EINTR);
+
+      return ret;
+#endif
+    }
+
+    inline ssize_t ipc_read(socket_fd_t fd, void *buffer, size_t size)
+    {
+#ifdef _WIN32
+      if (!fd || fd == INVALID_HANDLE_VALUE)
+        return -1;
+
+      DWORD read = 0;
+      BOOL ok = ReadFile(fd, buffer, static_cast<DWORD>(size), &read, NULL);
+
+      if (!ok)
+        return -1;
+
+      return static_cast<ssize_t>(read);
+
+#else
+      ssize_t ret;
+      do
+      {
+        ret = read(fd, buffer, size);
+      } while (ret < 0 && errno == EINTR);
+
+      return ret;
+#endif
+    }
+
+    inline void ipc_close(socket_fd_t fd)
+    {
+#ifdef _WIN32
+      if (fd && fd != INVALID_HANDLE_VALUE)
+        CloseHandle(fd);
+#else
+      if (fd > 0)
+        close(fd);
+#endif
+    }
+
     /** @brief Initialise processes
      *
      * @note Used by the constructor ONLY
@@ -165,9 +226,9 @@ namespace MDP
         for (int dest = 0; dest < _processCount; dest++)
         {
           if (dest == _processID)
-            close(_socketFD[_processCount * source + dest][COMM_SEND]);
+            ipc_close(_socketFD[_processCount * source + dest][COMM_SEND]);
           if (source == _processID)
-            close(_socketFD[_processCount * source + dest][COMM_RECV]);
+            ipc_close(_socketFD[_processCount * source + dest][COMM_RECV]);
         }
       }
 
@@ -229,6 +290,7 @@ namespace MDP
         for (int dest = 0; dest < _processCount; dest++)
         {
           snprintf(filename, 512, ".fifo.%i.%i", source, dest);
+#ifndef _WIN32
           while (mkfifo(filename, 0666) < 0)
           {
             if (errno == EEXIST)
@@ -247,16 +309,46 @@ namespace MDP
           {
             throw std::string("PSIM ERROR: unable to open fifo");
           }
+
+#else
+          std::string pipeName = R"(\\.\pipe\)" + std::string(filename);
+
+          HANDLE hPipe = CreateNamedPipeA(
+              pipeName.c_str(),
+              PIPE_ACCESS_DUPLEX,
+              PIPE_TYPE_BYTE | PIPE_READMODE_BYTE | PIPE_WAIT,
+              1,
+              4096, 4096,
+              0,
+              NULL);
+
+          if (hPipe == INVALID_HANDLE_VALUE)
+          {
+            throw std::string("PSIM ERROR: unable to create named pipe ") + filename;
+          }
+
+          _socketFD[_processCount * source + dest][COMM_RECV] = hPipe;
+          _socketFD[_processCount * source + dest][COMM_SEND] = hPipe;
+#endif
         }
       }
+
       char buffer[256];
       for (int source = 0; source < _processCount; source++)
         for (int dest = 0; dest < _processCount; dest++)
         {
+          int idx = _processCount * source + dest;
+#ifndef _WIN32
           snprintf(buffer, 256, "_socketFD[%i*%i+%i]={%i,%i}",
                    source, _processCount, dest,
-                   _socketFD[_processCount * source + dest][COMM_SEND],
-                   _socketFD[_processCount * source + dest][COMM_RECV]);
+                   _socketFD[idx][COMM_SEND],
+                   _socketFD[idx][COMM_RECV]);
+#else
+          snprintf(buffer, 256, "_socketFD[%i*%i+%i]={%p,%p}",
+                   source, _processCount, dest,
+                   (void *)_socketFD[idx][COMM_SEND],
+                   (void *)_socketFD[idx][COMM_RECV]);
+#endif
           log(buffer);
         }
     }
@@ -267,9 +359,9 @@ namespace MDP
         for (int dest = 0; dest < _processCount; dest++)
         {
           if (dest != _processID)
-            close(_socketFD[_processCount * source + dest][COMM_RECV]);
+            ipc_close(_socketFD[_processCount * source + dest][COMM_RECV]);
           if (source != _processID)
-            close(_socketFD[_processCount * source + dest][COMM_SEND]);
+            ipc_close(_socketFD[_processCount * source + dest][COMM_SEND]);
         }
     }
 
@@ -278,6 +370,7 @@ namespace MDP
     void fork_processes()
     {
       _processID = 0;
+#ifndef _WIN32
       for (int i = 1; i < _processCount; i++)
       {
         pid_t pid = fork();
@@ -293,6 +386,9 @@ namespace MDP
           break;
         }
       }
+#else
+      log("PSIM WARNING: fork() not supported on Windows, running in single-process mode");
+#endif
     }
 
     /** @brief Verifies that the destination process ID is valid. This
@@ -394,7 +490,7 @@ namespace MDP
         log("PSIM ERROR: failure to write to socket");
         throw std::string("PSIM ERROR: failure to write to socket");
       }
-      if (write(_socketFD[destIndex][COMM_SEND], &counter, sizeof(counter)) != sizeof(counter))
+      if (ipc_write(_socketFD[destIndex][COMM_SEND], &counter, sizeof(counter)) != sizeof(counter))
       {
         log("PSIM ERROR: failure to write to socket");
         throw std::string("PSIM ERROR: failure to write to socket");
@@ -425,7 +521,7 @@ namespace MDP
       char filename[512];
       int counter;
       int sourceIndex = get_source_index(sourceProcessID);
-      if (read(_socketFD[sourceIndex][COMM_RECV], &counter, sizeof(counter)) != sizeof(counter))
+      if (ipc_read(_socketFD[sourceIndex][COMM_RECV], &counter, sizeof(counter)) != sizeof(counter))
       {
         log("PSIM ERROR: timeout error in reading from socket");
         throw std::string("PSIM ERROR: timeout error in reading from socket");

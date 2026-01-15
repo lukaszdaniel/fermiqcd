@@ -15,7 +15,12 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#ifdef _WIN32
+#include <winsock2.h>
+#include <ws2tcpip.h>
+#else
 #include <unistd.h>
+#endif
 #include <sys/time.h>
 #include "mdp_global_vars.h"
 #include "mdp_macros.h"
@@ -62,8 +67,18 @@ namespace MDP
 #ifdef NO_POSIX
     return std::string("localhost");
 #else
+#ifdef _WIN32
+    WSADATA wsaData;
+    WSAStartup(MAKEWORD(2, 2), &wsaData); // Winsock initialisation
+#endif
+
     static char tmp[1024];
-    gethostname(tmp, 1024);
+    gethostname(tmp, sizeof(tmp));
+
+#ifdef _WIN32
+    WSACleanup(); // optional in case Winsock is no longer needed
+#endif
+
     return std::string(tmp);
 #endif
   }

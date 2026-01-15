@@ -66,8 +66,14 @@ namespace MDP
 {
   void exit_message(int en, const std::string &message)
   {
+#ifdef _WIN32
+    std::cerr << "FROM PROCESS PID: " << _getpid() << std::endl;
+    std::cerr << "CHILD OF PROCESS PID: (unsupported on Windows)" << std::endl;
+#else
     std::cerr << "FROM PROCESS PID: " << getpid() << std::endl;
     std::cerr << "CHILD OF PROCESS PID: " << getppid() << std::endl;
+#endif
+
     std::cerr << "FATAL ERROR: " << message << std::endl;
     std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
     std::exit(en);
@@ -134,47 +140,85 @@ namespace MDP
     {
       if (timeout == 0)
       {
+#ifdef _WIN32
+        return connect(sfd, (struct sockaddr *)&m_address,
+                       (int)sizeof(m_address));
+#else
         return connect(sfd, (struct sockaddr *)&m_address,
                        (socklen_t)sizeof(m_address));
+#endif
       }
-      else
+
+#ifdef _WIN32
+      u_long mode = 1; // non-blocking
+      ioctlsocket(sfd, FIONBIO, &mode);
+
+      int ret = connect(sfd, (struct sockaddr *)&m_address,
+                        (int)sizeof(m_address));
+
+      if (ret == SOCKET_ERROR)
       {
-        int arg = fcntl(sfd, F_GETFL, NULL);
-        arg |= (O_NONBLOCK);
-        fcntl(sfd, F_SETFL, arg);
-        pollfd fds;
+        int err = WSAGetLastError();
+        if (err != WSAEWOULDBLOCK && err != WSAEINPROGRESS)
+          return ECONNREFUSED;
+
+        WSAPOLLFD fds;
         fds.fd = sfd;
         fds.events = POLLWRNORM;
-        int ret = connect(sfd, (struct sockaddr *)&m_address,
-                          (socklen_t)sizeof(m_address));
-        if (ret < 0)
-        {
-          if (errno != EINPROGRESS)
-            return ECONNREFUSED;
-          ret = poll(&fds, 1, timeout);
-          arg = fcntl(sfd, F_GETFL, NULL);
-          arg &= (~O_NONBLOCK);
-          fcntl(sfd, F_SETFL, arg);
-          int valopt;
-          socklen_t lon = sizeof(int);
-          if (getsockopt(sfd, SOL_SOCKET, SO_ERROR, (void *)&valopt, &lon) < 0 ||
-              valopt)
-            return ECONNREFUSED;
-          if (ret > 0)
-            return 0;
-          if (ret == 0)
-            return ETIMEDOUT;
-          return ECONNREFUSED;
-        }
-        else
-        {
-          arg = fcntl(sfd, F_GETFL, NULL);
-          arg &= (~O_NONBLOCK);
-          fcntl(sfd, F_SETFL, arg);
-          return ret;
-        }
+        fds.revents = 0;
+
+        ret = WSAPoll(&fds, 1, timeout);
+        if (ret <= 0)
+          return ETIMEDOUT;
       }
+
+      // back to blocking
+      mode = 0;
+      ioctlsocket(sfd, FIONBIO, &mode);
+
+      int valopt = 0;
+      int lon = sizeof(valopt);
+      if (getsockopt(sfd, SOL_SOCKET, SO_ERROR,
+                     (char *)&valopt, &lon) < 0 ||
+          valopt != 0)
+        return ECONNREFUSED;
+
       return 0;
+
+#else
+      int arg = fcntl(sfd, F_GETFL, NULL);
+      fcntl(sfd, F_SETFL, arg | O_NONBLOCK);
+
+      pollfd fds;
+      fds.fd = sfd;
+      fds.events = POLLWRNORM;
+      fds.revents = 0;
+
+      int ret = connect(sfd, (struct sockaddr *)&m_address,
+                        (socklen_t)sizeof(m_address));
+
+      if (ret < 0)
+      {
+        if (errno != EINPROGRESS)
+          return ECONNREFUSED;
+
+        ret = poll(&fds, 1, timeout);
+        if (ret <= 0)
+          return ETIMEDOUT;
+      }
+
+      // back to blocking
+      fcntl(sfd, F_SETFL, arg);
+
+      int valopt = 0;
+      socklen_t lon = sizeof(valopt);
+      if (getsockopt(sfd, SOL_SOCKET, SO_ERROR,
+                     (void *)&valopt, &lon) < 0 ||
+          valopt != 0)
+        return ECONNREFUSED;
+
+      return 0;
+#endif
     }
 
     int Accept(int fd)
@@ -249,41 +293,107 @@ namespace MDP
 
   int setFileLock(int sfd)
   {
+#ifdef _WIN32
+    HANDLE h = (HANDLE)_get_osfhandle(sfd);
+    if (h == INVALID_HANDLE_VALUE)
+      return -1;
+
+    OVERLAPPED ov = {};
+    return LockFileEx(
+               h,
+               LOCKFILE_EXCLUSIVE_LOCK,
+               0,
+               MAXDWORD,
+               MAXDWORD,
+               &ov)
+               ? 0
+               : -1;
+#else
     return flock(sfd, LOCK_EX);
+#endif
   }
 
   int setFileLockShared(int sfd)
   {
+#ifdef _WIN32
+    HANDLE h = (HANDLE)_get_osfhandle(sfd);
+    if (h == INVALID_HANDLE_VALUE)
+      return -1;
+
+    OVERLAPPED ov = {};
+    return LockFileEx(
+               h,
+               0, // shared
+               0,
+               MAXDWORD,
+               MAXDWORD,
+               &ov)
+               ? 0
+               : -1;
+#else
     return flock(sfd, LOCK_SH);
+#endif
   }
 
   int setFileUnlock(int sfd)
   {
+#ifdef _WIN32
+    HANDLE h = (HANDLE)_get_osfhandle(sfd);
+    if (h == INVALID_HANDLE_VALUE)
+      return -1;
+
+    OVERLAPPED ov = {};
+    return UnlockFileEx(
+               h,
+               0,
+               MAXDWORD,
+               MAXDWORD,
+               &ov)
+               ? 0
+               : -1;
+#else
     return flock(sfd, LOCK_UN);
+#endif
   }
 
   int setSocketNonblock(int sfd, int on = 1)
   {
+#ifdef _WIN32
+    u_long mode = on ? 1 : 0;
+    return ioctlsocket(sfd, FIONBIO, &mode);
+#else
     int flags = fcntl(sfd, F_GETFL, 0);
+    if (flags < 0)
+      return flags;
     if (on)
       flags |= O_NONBLOCK;
     else
       flags &= ~O_NONBLOCK;
     return fcntl(sfd, F_SETFL, flags);
+#endif
   }
 
   int setSocketAsync(int sfd, int owner = 0, int on = 1)
   {
+#ifdef _WIN32
+    // Windows doesn't support FASYNC/F_SETOWN
+    return setSocketNonblock(sfd + 0 * owner, on);
+#else
     if (owner == 0)
       owner = getpid();
     int flags = fcntl(sfd, F_GETFL, 0);
+    if (flags < 0)
+      return flags;
     if (on)
-      flags = flags | O_NONBLOCK | FASYNC;
+      flags |= O_NONBLOCK | FASYNC;
     else
-      flags = flags & (~O_NONBLOCK) & (~FASYNC);
-    fcntl(sfd, F_SETFL, flags);
-    fcntl(sfd, F_SETOWN, owner);
+      flags &= ~(O_NONBLOCK | FASYNC);
+    if (fcntl(sfd, F_SETFL, flags) < 0)
+      return -1;
+    if (fcntl(sfd, F_SETOWN, owner) < 0)
+      return -1;
     return 1;
+#endif
   }
 
   int setSocketReusable(int sfd, int on = 1)
@@ -306,9 +416,11 @@ namespace MDP
     return setsockopt(sfd, IPPROTO_IP, IP_MULTICAST_TTL, CONST_DATA_CAST &ttl, sizeof(ttl));
   }
 
-  int setSocketRecvMulticast(int sfd, std::string from)
+  int setSocketRecvMulticast(int sfd, const std::string &from)
   {
-    setSocketReusable(sfd, 1);
+    if (setSocketReusable(sfd, 1) < 0)
+      return -1;
+
     struct ip_mreq mreq;
     mreq.imr_multiaddr.s_addr = InternetAddress(from, 0).address().sin_addr.s_addr;
     mreq.imr_interface.s_addr = htonl(INADDR_ANY);
@@ -317,6 +429,7 @@ namespace MDP
 
   int forkTwice()
   {
+#ifndef _WIN32
     pid_t pid;
     int status;
 
@@ -345,6 +458,7 @@ namespace MDP
     {
       return -1; // fork error
     }
+#endif
     return -1;
   }
 
@@ -356,7 +470,6 @@ namespace MDP
 
   public:
     Thread();
-    pthread_t threadNumber();
     void threadStart();
     void threadStop();
     void threadSetJoinable();
@@ -400,24 +513,50 @@ namespace MDP
 
   class SignalHandler
   {
-  private:
-    struct sigaction action;
-
   public:
-    void catch_signal(int signalnum = SIGALRM);
-    virtual void handler(int s) = 0;
+    virtual void handler(int s) = 0; // metoda wirtualna
+
+    void catch_signal(int signalnum);
+
+  private:
+#ifndef _WIN32
+    struct sigaction action;
+#endif
+
+    static void _handler(int s);
   };
 
-  std::map<int, SignalHandler *> _signal_handlers;
+  static std::map<int, SignalHandler *> _signal_handlers;
+
+  void SignalHandler::_handler(int s)
+  {
+    auto it = _signal_handlers.find(s);
+    if (it != _signal_handlers.end() && it->second)
+    {
+      it->second->handler(s);
+    }
+  }
+
   void SignalHandler::catch_signal(int signalnum)
   {
+#ifndef _WIN32
     if (sigemptyset(&action.sa_mask) != 0)
-      throw std::string("sigemptyset");
+      throw std::runtime_error("sigemptyset failed");
+
     if (sigaddset(&action.sa_mask, signalnum) != 0)
-      throw std::string("sigaddset");
+      throw std::runtime_error("sigaddset failed");
+
     action.sa_handler = _handler;
-    if (sigaction(signalnum, &action, NULL) != 0)
-      throw std::string("sigaction");
+    action.sa_flags = 0;
+
+    if (sigaction(signalnum, &action, nullptr) != 0)
+      throw std::runtime_error("sigaction failed");
+#else
+    // Windows doesn't have sigaction, using signal()
+    if (signal(signalnum, _handler) == SIG_ERR)
+      throw std::runtime_error("signal failed");
+#endif
+
     _signal_handlers[signalnum] = this;
   }
 
@@ -426,12 +565,14 @@ namespace MDP
     _signal_handlers[s]->handler(s);
   }
 
+#ifndef _WIN32
   //
   // send the signum signal to the process pid
   //
   void signalSend(pid_t pid, int signum)
   {
-    kill(pid, signum);
+    if (kill(pid, signum) < 0)
+      throw std::runtime_error("kill failed");
   }
 
   //
@@ -440,11 +581,12 @@ namespace MDP
   sigset_t signalBlock(int signum)
   {
     sigset_t set, oset;
-    if (sigemptyset(&set) < 0)
-      throw std::string("sigemptyset");
-    if (sigaddset(&set, signum) < 0)
-      throw std::string("sigaddset");
-    sigprocmask(SIG_BLOCK, &set, &oset);
+    if (sigemptyset(&set) != 0)
+      throw std::runtime_error("sigemptyset failed");
+    if (sigaddset(&set, signum) != 0)
+      throw std::runtime_error("sigaddset failed");
+    if (sigprocmask(SIG_BLOCK, &set, &oset) != 0)
+      throw std::runtime_error("sigprocmask failed");
     return oset;
   }
 
@@ -454,7 +596,8 @@ namespace MDP
   bool signalPending(int signum)
   {
     sigset_t set;
-    sigpending(&set);
+    if (sigpending(&set) != 0)
+      throw std::runtime_error("sigpending failed");
     return sigismember(&set, signum);
   }
 
@@ -464,11 +607,12 @@ namespace MDP
   sigset_t signalUnblock(int signum)
   {
     sigset_t set, oset;
-    if (sigemptyset(&set) < 0)
-      throw std::string("sigemptyset");
-    if (sigaddset(&set, signum) < 0)
-      throw std::string("sigaddset");
-    sigprocmask(SIG_UNBLOCK, &set, &oset);
+    if (sigemptyset(&set) != 0)
+      throw std::runtime_error("sigemptyset failed");
+    if (sigaddset(&set, signum) != 0)
+      throw std::runtime_error("sigaddset failed");
+    if (sigprocmask(SIG_UNBLOCK, &set, &oset) != 0)
+      throw std::runtime_error("sigprocmask failed");
     return oset;
   }
 
@@ -478,9 +622,11 @@ namespace MDP
   sigset_t signalRestoreBlocks(sigset_t set)
   {
     sigset_t oset;
-    sigprocmask(SIG_BLOCK, &set, &oset);
+    if (sigprocmask(SIG_SETMASK, &set, &oset) != 0)
+      throw std::runtime_error("sigprocmask failed");
     return oset;
   }
+#endif
 
 #undef DATA_CAST
 #undef CONST_DATA_CAST
