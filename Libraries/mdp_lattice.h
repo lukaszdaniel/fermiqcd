@@ -77,75 +77,75 @@ namespace MDP
       mdp_int length;
       int process;
 #ifdef LATTICE_DEBUG
-    int process2;
+      int process2;
 #endif
       mdp_request request;
 
       // sending length ///////////////////////////
 #ifdef LATTICE_DEBUG // debugging code below
-    if (Nproc % 2 == 1 || m_where != default_partitioning0)
-    {
+      if (Nproc % 2 == 1 || m_where != default_partitioning0)
+      {
 #endif
-      for (int dp = 1; dp < Nproc; dp++)
-      {
-        process = (ME + dp) % Nproc;
-        for (int np = 0; np < 2; np++)
+        for (int dp = 1; dp < Nproc; dp++)
         {
-          buffer[np] = m_stop[process][np] - m_start[process][np];
-        }
-        mdp.put(buffer, 2, process, request);
-        process = (ME - dp + Nproc) % Nproc;
-        mdp.get(m_len_to_send[process], 2, process);
-        mdp.wait(request);
-        process = (ME + dp) % Nproc;
-        length = m_stop[process][1] - m_start[process][0];
-        std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
-        for (int idx = 0; idx < length; idx++)
-          dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-        mdp.put(dynamic_buffer.get(), length, process, request);
-        process = (ME - dp + Nproc) % Nproc;
-        length = m_len_to_send[process][0] + m_len_to_send[process][1];
-        m_to_send[process] = new mdp_int[length];
-        mdp.get(m_to_send[process], length, process);
-        for (int idx = 0; idx < length; idx++)
-          m_to_send[process][idx] = local(m_to_send[process][idx]);
-        mdp.wait(request);
-      }
-#ifdef LATTICE_DEBUG // debugging code below
-    }
-    else
-    {
-      for (int dp = 1; dp < Nproc; dp++)
-      {
-        for (int k = 0; k < 2; k++)
-        {
-
           process = (ME + dp) % Nproc;
-          process2 = (ME - dp + Nproc) % Nproc;
-
-          if ((k + ME) % 2 == 0)
+          for (int np = 0; np < 2; np++)
           {
-            for (int np = 0; np < 2; np++)
-              buffer[np] = m_stop[process][np] - m_start[process][np];
-            mdp.put(buffer, 2, process, request);
-            length = m_stop[process][1] - m_start[process][0];
-            std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
-            for (int idx = 0; idx < length; idx++)
-              dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-            mdp.put(dynamic_buffer.get(), length, process, request);
+            buffer[np] = m_stop[process][np] - m_start[process][np];
           }
-          else
+          mdp.put(buffer, 2, process, request);
+          process = (ME - dp + Nproc) % Nproc;
+          mdp.get(m_len_to_send[process], 2, process);
+          mdp.wait(request);
+          process = (ME + dp) % Nproc;
+          length = m_stop[process][1] - m_start[process][0];
+          std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
+          for (int idx = 0; idx < length; idx++)
+            dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
+          mdp.put(dynamic_buffer.get(), length, process, request);
+          process = (ME - dp + Nproc) % Nproc;
+          length = m_len_to_send[process][0] + m_len_to_send[process][1];
+          m_to_send[process] = new mdp_int[length];
+          mdp.get(m_to_send[process], length, process);
+          for (int idx = 0; idx < length; idx++)
+            m_to_send[process][idx] = local(m_to_send[process][idx]);
+          mdp.wait(request);
+        }
+#ifdef LATTICE_DEBUG // debugging code below
+      }
+      else
+      {
+        for (int dp = 1; dp < Nproc; dp++)
+        {
+          for (int k = 0; k < 2; k++)
           {
-            mdp.get(m_len_to_send[process2], 2, process2);
-            length = m_len_to_send[process2][0] + m_len_to_send[process2][1];
-            m_to_send[process2] = new mdp_int[length];
-            mdp.get(m_to_send[process2], length, process);
-            for (int idx = 0; idx < length; idx++)
-              m_to_send[process2][idx] = local(m_to_send[process2][idx]);
+
+            process = (ME + dp) % Nproc;
+            process2 = (ME - dp + Nproc) % Nproc;
+
+            if ((k + ME) % 2 == 0)
+            {
+              for (int np = 0; np < 2; np++)
+                buffer[np] = m_stop[process][np] - m_start[process][np];
+              mdp.put(buffer, 2, process, request);
+              length = m_stop[process][1] - m_start[process][0];
+              std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
+              for (int idx = 0; idx < length; idx++)
+                dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
+              mdp.put(dynamic_buffer.get(), length, process, request);
+            }
+            else
+            {
+              mdp.get(m_len_to_send[process2], 2, process2);
+              length = m_len_to_send[process2][0] + m_len_to_send[process2][1];
+              m_to_send[process2] = new mdp_int[length];
+              mdp.get(m_to_send[process2], length, process);
+              for (int idx = 0; idx < length; idx++)
+                m_to_send[process2][idx] = local(m_to_send[process2][idx]);
+            }
           }
         }
       }
-    }
 #endif
     }
 

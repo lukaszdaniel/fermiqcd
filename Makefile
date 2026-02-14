@@ -2,6 +2,7 @@
 
 all:
 	$(MAKE) -C Libraries
+	$(MAKE) -C progs
 	$(MAKE) -C Examples
 	$(MAKE) -C Converters
 	$(MAKE) -C SciDac2007
@@ -15,6 +16,7 @@ doc:
 
 clean:
 	$(MAKE) -C Libraries clean
+	$(MAKE) -C progs clean
 	$(MAKE) -C Examples clean
 	$(MAKE) -C Converters clean
 	$(MAKE) -C SciDac2007 clean
