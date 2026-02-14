@@ -21,16 +21,19 @@ int main(int argc, char **argv)
   if (header.ndim != 4)
     error("sorry, only in 4D");
   int nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
-  int *L = header.box; // lattice size
+  int LT = header.box[0];
+  int LX = header.box[1];
+  int LY = header.box[2];
+  int LZ = header.box[3];
+  const Box L = {LT, LX, LY, LZ}; // lattice size
 
   // create lattice and read it in
-  mdp_lattice lattice(4, L);  // make a 4D lattice
+  mdp_lattice lattice(L);     // make a 4D lattice
   gauge_field U(lattice, nc); // make a gauge field U
   U.load(gauge_filename);
 
   int length = 2 * size1 + 2 * size2;
-  // int path[length][2];
-  auto path = new int[length][2];
+  Path path(length);
 
   // make a generic path
   for (int i = 0; i < size1; i++)
@@ -53,10 +56,9 @@ int main(int argc, char **argv)
       for (int i = size1; i < size1 + size2; i++)
         path[i][1] = path[i + size1 + size2][1] = nu;
 
-      result += real(average_path(U, length, path)) / 6;
+      result += real(average_path(U, path)) / 6;
     }
   std::cout << "average loop " << size1 << "x" << size2 << " = " << result << std::endl;
-  delete[] path;
 
   mdp.close_wormholes(); // STOP
   return 0;

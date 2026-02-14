@@ -83,11 +83,11 @@ int main(int argc, char **argv)
   mdp_uint Lt = par.i("L_time");
   mdp_real stats;
 
-  mdp_int mybox[10] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+  Box mybox = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
   mybox[0] = Lt;
   for (mdp_suint i = 1; i < dim; i++)
     mybox[i] = Ls;
-  mdp_lattice lattice(dim, mybox, default_partitioning0, torus_topology, seed, local_random);
+  mdp_lattice lattice(mybox, default_partitioning0, torus_topology, seed, local_random);
   gauge_field U(lattice, ncolors);
   coefficients coeff;
   coeff["beta"] = par.d("beta");

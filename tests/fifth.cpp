@@ -21,7 +21,7 @@ int main(int argc, char **argv)
       U(x, mu) = lattice.random(x).SU(3);
   }
 
-  int d[4][2];
+  Path d(4);
 
   U.update();
   for (int k = 0; k < 1; k++)
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
             d[3][0] = -1;
             d[3][1] = nu;
             // s+=trace(U(x,mu)*U(x+mu,nu)*hermitian(U(x+nu,mu))*hermitian(U(x,nu)));
-            s += trace(build_path(U, x, 4, d)); // d={{1,mu},{1,nu},{-1,mu},{-1,nu}}
+            s += trace(build_path(U, x, d)); // d={{1,mu},{1,nu},{-1,mu},{-1,nu}}
           }
     }
   }

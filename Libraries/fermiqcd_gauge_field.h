@@ -24,8 +24,8 @@ namespace MDP
   /// Example:
   /// @verbatim
   ///    int nc=3;
-  ///    int box[]={10,8,8,8};
-  ///    mdp_lattice lattice(4,box);
+  ///    constexpr Box box = {10,8,8,8};
+  ///    mdp_lattice lattice(box);
   ///    gauge_field U(lattice,nc);
   ///    mdp_site x(lattice);
   ///    U.load("myfield");
@@ -33,7 +33,7 @@ namespace MDP
   ///    forallsites(x)
   ///      for(int mu=0; mu<U.ndim(); mu++)
   ///        for(int nu=mu+1; nu<U.ndim(); nu++)
-  ///          cout << U.em(x,mu,nu) << endl;
+  ///          std::cout << U.em(x,mu,nu) << std::endl;
   /// @endverbatim
   /// Note that U.em(x,mu,nu) is \f$ a^2 G_{\mu\nu} \f$ and
   /// it is a color matrix in SU(nc). \f$a\f$ is the lattice spacing.
@@ -150,8 +150,8 @@ namespace MDP
   /// Example:
   /// @verbatim
   ///    int nc=3;
-  ///    int box[]={10,8,8,8};
-  ///    mdp_lattice lattice(4,box);
+  ///    constexpr Box box = {10,8,8,8};
+  ///    mdp_lattice lattice(box);
   ///    gauge_field U(lattice,nc);
   ///    mdp_site x(lattice);
   ///    // set_cold(U);

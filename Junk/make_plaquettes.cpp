@@ -19,8 +19,8 @@ mdp_real average_plaquette2(gauge_field &U, int mu, int nu)
   mdp_lattice &lattice = U.lattice();
   mdp_site x(lattice);
   mdp_complex sum = 0.0;
-  int path[4][2] = {{+1, mu}, {+1, nu}, {-1, mu}, {-1, nu}};
-  sum = average_path(U, 4, path);
+  Path path = {{+1, mu}, {+1, nu}, {-1, mu}, {-1, nu}};
+  sum = average_path(U, path);
   return real(sum);
 }
 

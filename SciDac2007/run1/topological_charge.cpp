@@ -79,8 +79,8 @@ public:
 void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tmax)
 {
   mdp_lattice &lattice = U.lattice();
-  int L[3] = {lattice.size(1), lattice.size(2), lattice.size(3)};
-  mdp_lattice cube(3, L);
+  const Box L = {lattice.size(1), lattice.size(2), lattice.size(3)};
+  mdp_lattice cube(L);
   mdp_real_scalar_field Q3(cube);
   mdp_site x4(lattice);
   mdp_site x3(cube);

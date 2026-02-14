@@ -34,24 +34,22 @@ namespace MDP
   struct Box
   {
     constexpr Box(std::initializer_list<int> init) noexcept
-        : m_ndim(init.size()), m_volume(1)
+        : m_ndim(init.size())
     {
       mdp_int i = 0;
       for (int v : init)
       {
         m_box[i++] = v;
-        m_volume *= v;
       }
     }
 
     template <mdp_int N>
     constexpr Box(const int (&arr)[N]) noexcept
-        : m_ndim(N), m_volume(1)
+        : m_ndim(N)
     {
       for (mdp_int i = 0; i < N && i < MAX_DIM; ++i)
       {
         m_box[i] = arr[i];
-        m_volume *= arr[i];
       }
     }
 
@@ -64,27 +62,37 @@ namespace MDP
       return m_box[i];
     }
 
-    constexpr mdp_int volume() const noexcept { return m_volume; }
+    constexpr mdp_int &operator[](mdp_int i) noexcept
+    {
+      return m_box[i];
+    }
+
+    constexpr mdp_int volume() const noexcept
+    {
+      mdp_int v = 1;
+      for (mdp_int i = 0; i < m_ndim; ++i)
+        v *= m_box[i];
+      return v;
+    }
 
     constexpr const mdp_int *get() const noexcept { return m_box.data(); }
 
   private:
     std::array<mdp_int, MAX_DIM> m_box{};
     mdp_int m_ndim{0};
-    mdp_int m_volume{1};
   };
 
   /// @brief distributed lattice object
   ///
   /// Example:
   /// @verbatim
-  ///    int box[]={3,3,3};
+  ///    constexpr Box box = {3,3,3};
   ///    int seed=0, border_width=1;
-  ///    mdp_lattice lattice(3,box,default_partitioning0,
+  ///    mdp_lattice lattice(box,default_partitioning0,
   ///                        torus_topology,seed,border_width);
   ///    mdp_site x(lattice);
   ///    forallsites(x)
-  ///      cout << lattice.random(x).plain() << endl;
+  ///      std::cout << lattice.random(x).plain() << std::endl;
   /// @endverbatim
   class mdp_lattice
   {
@@ -274,6 +282,30 @@ namespace MDP
     /** @brief declares a lattice object
      *
      * @param box size of the lattice
+     * @param ndir_ number of directions
+     * @param where_ pointer to a partitioning function
+     * @param neighbour_ pointer to a topology function
+     * @param random_seed_ seed to be used by the parallel prng
+     * @param next_next_ size of the buffer between neighbour processes
+     * @param local_random_ true is local random generator is required
+     */
+    mdp_lattice(const Box &box,
+                int ndir_,
+                int (*where_)(const int[], const int, const int[]) = default_partitioning0,
+                void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
+                mdp_int random_seed_ = 0,
+                int next_next_ = 1,
+                bool local_random_ = true) : mdp_lattice()
+    {
+      if (ndir_ < 0)
+        ndir_ = box.dim();
+      allocate_lattice(box, ndir_, where_, neighbour_,
+                       random_seed_, next_next_, local_random_);
+    }
+
+    /** @brief declares a lattice object
+     *
+     * @param box size of the lattice
      * @param where_ pointer to a partitioning function
      * @param neighbour_ pointer to a topology function
      * @param random_seed_ seed to be used by the parallel prng
@@ -285,72 +317,21 @@ namespace MDP
                 void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
-                bool local_random_ = true) : mdp_lattice()
-    {
-      allocate_lattice(box.dim(), box.get(), box.dim(), where_, neighbour_,
-                       random_seed_, next_next_, local_random_);
-    }
-
-    /** @brief declares a lattice object
-     *
-     * @param ndim_ dimensions of the lattice
-     * @param nx_ size of the lattice
-     * @param ndir_ number of directions
-     * @param where_ pointer to a partitioning function
-     * @param neighbour_ pointer to a topology function
-     * @param random_seed_ seed to be used by the parallel prng
-     * @param next_next_ size of the buffer between neighbour processes
-     * @param local_random_ true is local random generator is required
-     */
-    mdp_lattice(int ndim_,
-                const int nx_[],
-                int ndir_,
-                int (*where_)(const int[], const int, const int[]) = default_partitioning0,
-                void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
-                mdp_int random_seed_ = 0,
-                int next_next_ = 1,
-                bool local_random_ = true) : mdp_lattice()
-    {
-      if (ndir_ < 0)
-        ndir_ = ndim_;
-      allocate_lattice(ndim_, nx_, ndir_, where_, neighbour_,
-                       random_seed_, next_next_, local_random_);
-    }
-
-    /** @brief declares a lattice object
-     *
-     * @param ndim_ dimensions of the lattice
-     * @param nx_ size of the lattice
-     * @param where_ pointer to a partitioning function
-     * @param neighbour_ pointer to a topology function
-     * @param random_seed_ seed to be used by the parallel prng
-     * @param next_next_ size of the buffer between neighbour processes
-     * @param local_random_ true is local random generator is required
-     */
-    mdp_lattice(int ndim_,
-                const int nx_[],
-                int (*where_)(const int[], const int, const int[]) = default_partitioning0,
-                void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
-                mdp_int random_seed_ = 0,
-                int next_next_ = 1,
-                bool local_random_ = true)
-        : mdp_lattice(ndim_, nx_, ndim_, where_, neighbour_, random_seed_, next_next_, local_random_)
+                bool local_random_ = true) : mdp_lattice(box, box.dim(), where_, neighbour_, random_seed_, next_next_, local_random_)
     {
     }
 
     /** @brief reallocate a lattice dynamically
      *
-     * @param ndim_ dimensions of the lattice
+     * @param box size of the lattice
      * @param ndir_ number of directions
-     * @param nx_ size of the lattice
      * @param where pointer to a partitioning function
      * @param neighbour_ pointer to a topology function
      * @param random_seed_ seed to be used by the parallel prng
      * @param next_next_ size of the buffer between neighbor processes
      * @param local_random_ true is local random generator is required
      */
-    void allocate_lattice(int ndim_,
-                          const int nx_[],
+    void allocate_lattice(const Box &box,
                           int ndir_,
                           int (*where_)(const int[], const int, const int[]) = default_partitioning0,
                           void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
@@ -360,7 +341,7 @@ namespace MDP
     {
       mdp.begin_function("allocate_lattice");
       m_local_random_generator = local_random_;
-      if (ndim_ != ndir_)
+      if (box.dim() != ndir_)
         mdp << "Warning: The number of dimensions (ndim) does not match the number of directions (ndir). This may cause unexpected behavior in lattice operations.\n";
       deallocate_memory();
 
@@ -373,7 +354,7 @@ namespace MDP
 
       bool is_boundary;
       mdp_int global_idx, new_idx;
-      m_ndim = ndim_;
+      m_ndim = box.dim();
       m_ndir = ndir_;
       m_where = where_;
       m_neighbour = neighbour_;
@@ -381,9 +362,9 @@ namespace MDP
       m_local_volume = 0;
       m_global_volume = 1;
 
-      mdp << "Lattice dimension: " << nx_[0];
+      mdp << "Lattice dimension: " << box[0];
       for (mdp_int mu = 1; mu < m_ndim; mu++)
-        mdp << " x " << nx_[mu];
+        mdp << " x " << box[mu];
       mdp << "\n";
 
       ///////////////////////////////////////////////////////////////////
@@ -393,7 +374,7 @@ namespace MDP
 
       for (mdp_int mu = 0; mu < m_ndim; mu++)
       {
-        m_nx[mu] = nx_[mu];
+        m_nx[mu] = box[mu];
         m_global_volume *= m_nx[mu];
       }
 

@@ -27,10 +27,8 @@ int main(int argc, char **argv)
   }
 
   mdp_field_file_header header;
-  int ndim = 4;
   int nc;
   int i = 0;
-  int *L;
   int verbose = false;
   char meson[1024] = "5x5";
   char input[1024] = "";
@@ -95,7 +93,7 @@ int main(int argc, char **argv)
   if (header.ndim != 4)
     error("Sorry, mesons only in 4D");
   nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
-  L = header.box;
+  Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
 
   // //////////////////////////////
   // Output parameters
@@ -135,7 +133,7 @@ int main(int argc, char **argv)
   // declare lattice (note the next_next=3 for long links)
   i = u0 < 0 ? 1 : 3;
 
-  mdp_lattice lattice(ndim, L, default_partitioning0, torus_topology, 0, i);
+  mdp_lattice lattice(L, default_partitioning0, torus_topology, 0, i);
   mdp_site x(lattice);        // declare site variable
   gauge_field U(lattice, nc); // declare SU(3) field
   gauge_field V(lattice, nc); // declare SU(3) field (for asqtad action)

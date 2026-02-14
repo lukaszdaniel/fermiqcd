@@ -77,7 +77,8 @@ int main(int argc, char **argv)
     if (!L)
         error("Lattice is not set");
 
-    mdp_lattice lattice(4, L);
+    const Box box = {header.box[0], header.box[1], header.box[2], header.box[3]};
+    mdp_lattice lattice(box);
 
     gauge_field U(lattice, nc);
     coefficients coeff;

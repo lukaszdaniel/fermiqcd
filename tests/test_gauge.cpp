@@ -10,8 +10,8 @@ void test_gauge()
   gauge_field U(lattice, nc);
   set_hot(U);
   std::cout << average_plaquette(U, 0, 1) << std::endl;
-  int path[][2] = {{+1, 0}, {+1, 1}, {-1, 0}, {-1, 1}};
-  std::cout << real(average_path(U, 4, path)) << std::endl;
+  Path path = {{+1, 0}, {+1, 1}, {-1, 0}, {-1, 1}}; 
+  std::cout << real(average_path(U, path)) << std::endl;
 }
 
 int main(int argc, char **argv)

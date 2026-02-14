@@ -24,10 +24,10 @@ int main(int argc, char **argv)
   if (header.ndim != 4)
     error("sorry, only in 4D");
   int nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
-  int *L = header.box; // lattice size
+  const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]}; // lattice size
 
   // create lattice and read it in
-  mdp_lattice lattice(4, L);  // make a 4D lattice
+  mdp_lattice lattice(L);     // make a 4D lattice
   gauge_field U(lattice, nc); // make a gauge field U
   U.load(gauge_filename);
 

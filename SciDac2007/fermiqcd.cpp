@@ -69,13 +69,10 @@ public:
 
   void init_cold(int LT, int LX, int LY, int LZ, int nc_)
   {
-    L[0] = LT;
-    L[1] = LX;
-    L[2] = LY;
-    L[3] = LZ;
+    const Box L = {LT, LX, LY, LZ};
     nc = nc_;
     os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;
-    plattice = new mdp_lattice(4, L);
+    plattice = new mdp_lattice(L);
     os << "making a cold gauge configuration U with nc=" << nc << std::endl;
     pU = new gauge_field(*plattice, nc);
     std::cout << ME << std::endl;
@@ -87,13 +84,10 @@ public:
 
   void init_hot(int LT, int LX, int LY, int LZ, int nc_)
   {
-    L[0] = LT;
-    L[1] = LX;
-    L[2] = LY;
-    L[3] = LZ;
+    const Box L = {LT, LX, LY, LZ};
     nc = nc_;
     os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;
-    plattice = new mdp_lattice(4, L);
+    plattice = new mdp_lattice(L);
     os << "making a hot gauge configuration U with nc=" << nc << std::endl;
     pU = new gauge_field(*plattice, nc);
     set_hot(*pU);
@@ -104,10 +98,7 @@ public:
   void init_load(std::string filename)
   {
     mdp_field_file_header header = get_info(filename);
-    L[0] = header.box[0];
-    L[1] = header.box[1];
-    L[2] = header.box[2];
-    L[3] = header.box[3];
+    const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
     // (4-8)*4*(1-4-9-25-36-49-64-81-100)
     int precision = 4;
     switch (header.bytes_per_site)
@@ -194,7 +185,7 @@ public:
       break;
     }
     os << "making an lattice TxXxYxZ=" << L[0] << "x" << L[1] << "x" << L[2] << "x" << L[3] << std::endl;
-    plattice = new mdp_lattice(4, L);
+    plattice = new mdp_lattice(L);
     os << "loading gauge configuration " << filename << " into U with nc=" << nc << std::endl;
     pU = new gauge_field(*plattice, nc);
     if (precision == 4)

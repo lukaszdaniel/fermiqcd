@@ -20,8 +20,8 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///    int box[]={10,10,10};
-  ///    mdp_lattice lattice(3,box);
+  ///    constexpr Box box = {10,10,10};
+  ///    mdp_lattice lattice(box);
   ///    mdp_nvector_field h(lattice,10,2);
   ///    mdp_site x(lattice);
   ///    forallsites(x)

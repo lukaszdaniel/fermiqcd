@@ -49,7 +49,7 @@ int main(int argc, char **argv)
 
   // read the lattice size from the gauge configuration itself
   mdp_field_file_header header = get_info(argv[1]);
-  const Box L(header.box);
+  const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
 
   mdp << "Lattice size: "
       << L[0] << "x" << L[1] << "x"

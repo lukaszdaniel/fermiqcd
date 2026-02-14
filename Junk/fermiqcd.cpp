@@ -59,11 +59,11 @@ void plaquette_vtk(gauge_field &U, std::string filename)
 
 void polyakov_vtk(gauge_field &U, std::string filename)
 {
-  int L[3];
-  L[0] = U.lattice().size(1);
-  L[1] = U.lattice().size(2);
-  L[2] = U.lattice().size(3);
-  mdp_lattice space(3, L,
+  int LX = U.lattice().size(1);
+  int LY = U.lattice().size(2);
+  int LZ = U.lattice().size(3);
+  Box L = {LX, LY, LZ};
+  mdp_lattice space(L,
                     default_partitioning<0>,
                     torus_topology,
                     0, 1, false);
@@ -451,7 +451,6 @@ int main(int argc, char **argv)
   define_base_matrices(arguments.get("-quark", "matrices", "FERMILAB|MILC|UKQCD|Minkowsy-Dirac|Minkowsy-Chiral"));
   coefficients gauge;
   coefficients quark;
-  int ndim = 4;
   int size[4];
   std::string filename, newfilename, vtkfilename;
   std::vector<std::string> filenames;
@@ -508,7 +507,8 @@ int main(int argc, char **argv)
   quark["c_E"] = arguments.get("-quark", "c_E", 0.0);
   quark["c_B"] = arguments.get("-quark", "c_B", 0.0);
 
-  mdp_lattice lattice(ndim, size,
+  Box box(size);
+  mdp_lattice lattice(box,
                       default_partitioning<1>,
                       torus_topology,
                       0, 1, (gauge_start != "load" || nconfigs > 0));

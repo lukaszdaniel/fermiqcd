@@ -21,13 +21,13 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///   int box[]={10,10,10};
-  ///   mdp_lattice lattice(3,box);
+  ///   constexpr Box box = {10,10,10};
+  ///   mdp_lattice lattice(box);
   ///   mdp_site x(lattice);
-  ///   forallsites(x) cout << x << endl;
+  ///   forallsites(x) std::cout << x << std::endl;
   ///   if (on_which_process(lattice,1,1,1)==ME) {
   ///      x.set(1,1,1);
-  ///      cout << lattice.random(x).plain() << endl;
+  ///      std::cout << lattice.random(x).plain() << std::endl;
   ///   }
   /// @endverbatim
   class mdp_site

@@ -169,8 +169,8 @@ conventions supported include ``UKQCD''.
 A lattice, for examle a 4D lattice $16\times 8^3$ called {\tt mylattice} can
 be declared as follows
 \begin{verbatim}
-int box[]={16,8,8,8};
-mdp_lattice lattice(4,box);
+constexpr Box box={16,8,8,8};
+mdp_lattice lattice(box);
 \end{verbatim}
 
 The constructor of the class can take optional parameters that are discussed
@@ -187,11 +187,11 @@ every site to print a uniform random number:
 int main(int argc, char** argv) {
    mdp.open_wormholes(argc,argv);
    declare_base_matrices(''FERMIQCD'');
-   int box[]={16,8,8,8}
-   mdp_lattice mylattice(4,box);
+   constexpr Box box={16,8,8,8}
+   mdp_lattice mylattice(box);
    site x(mylattice);
    forallsites(x)
-      cout<<mylattice.random(x).plain()<<endl;
+      std::cout<<mylattice.random(x).plain()<<std::endl;
    mdp.close_wormholes();
    return 0;
 }
@@ -237,8 +237,8 @@ them at random and saves them
 int main(int argc, char** argv) {
    mdp.open_wormholes(argc,argv);
    declare_base_matrices(''FERMIQCD'');
-   int box[]={16,8,8,8}
-   mdp_lattice mylattice(4,box);
+   constexpr Box box={16,8,8,8}
+   mdp_lattice mylattice(box);
    mdp_field<float> myfield(mylattice);
    site x(mylattice);
    forallsites(x)
@@ -566,8 +566,8 @@ chapter.
 int main(int argc, char** argv) {
    mdp.open_wormholes(argc,argv);
    declare_base_matrices(''FERMIQCD'');
-   int box[]={16,8,8,8}
-   mdp_lattice mylattice(4,box);
+   constexpr Box box={16,8,8,8}
+   mdp_lattice mylattice(box);
    int nc=3;
    gauge_field U(mylattice,nc);
    set_hot(U);
@@ -595,8 +595,8 @@ void set_hot(gauge_field &U) {
 int main(int argc, char** argv) {
    mdp.open_wormholes(argc,argv);
    declare_base_matrices(''FERMIQCD'');
-   int box[]={16,8,8,8}
-   mdp_lattice mylattice(4,box);
+   constexpr Box box={16,8,8,8}
+   mdp_lattice mylattice(box);
    int nc=3;
    gauge_field U(mylattice,nc);
    set_cold(U);
@@ -643,8 +643,8 @@ Code to generate 100 gauge configurations $U_\mu ^{[k]}(x)$ and save them.
 int main(int argc, char** argv) {
    mdp.open_wormholes(argc,argv);
    declare_base_matrices(''FERMIQCD'');
-   int box[]={16,8,8,8}
-   mdp_lattice mylattice(4,box);
+   constexpr Box box={16,8,8,8}
+   mdp_lattice mylattice(box);
    int nc=3;
    gauge_field U(mylattice,nc);
    set_cold(U);
@@ -728,8 +728,8 @@ where $N_V$ is the lattice volume and $N_c$ is the number of colors.
 int main(int argc, char** argv) {
    mdp.open_wormholes(argc,argv);
    declare_base_matrices(''FERMIQCD'');
-   int box[]={16,8,8,8}
-   mdp_lattice mylattice(4,box);
+   constexpr Box box={16,8,8,8}
+   mdp_lattice mylattice(box);
    int nc=3;
    gauge_field U(mylattice,nc);
    set_cold(U);
@@ -800,8 +800,8 @@ where $C$ is a generic path. Here is the code to compute
 int main(int argc, char** argv) {
    mdp.open_wormholes(argc,argv);
    declare_base_matrices(''FERMIQCD'');
-   int box[]={16,8,8,8}
-   mdp_lattice mylattice(4,box);
+   constexpr Box box={16,8,8,8}
+   mdp_lattice mylattice(box);
    int nc=3;
    gauge_field U(mylattice,nc);
    set_cold(U);
@@ -809,11 +809,11 @@ int main(int argc, char** argv) {
    gauge[''beta'']=6.0;
    int niter=10;
    int mu=0, nu=1;
-   int path[6][2]={{+1,mu},{+1,mu},{+1,nu},{-1,mu},{-1,nu},{-1,nu}};
+   Path path={{+1,mu},{+1,mu},{+1,nu},{-1,mu},{-1,nu},{-1,nu}};
    for(int k=0; k<100; k++) {
       WilsonGaugeAction::heatbath(U,gauge,niter);
       U.save(string(''gauge.'')+tostring(k)+string(''.mdp''));
-      mdp << average_path(U,6,path) << endl;
+      mdp << average_path(U,path) << endl;
    }
    mdp.close_wormholes();
    return 0;
@@ -829,14 +829,15 @@ some communication.
 
 This function is already implemented and looks like the following:
 \begin{verbatim}
-mdp_complex average_path(gauge_field &U, int length, int d[][2]) {
+mdp_complex average_path(gauge_field &U, const Path &d) {
    mdp_matrix_field psi(U.lattice(),U.nc,U.nc);
    mdp_site x(U.lattice());
    mdp_complex sum=0;
-   for(int i=0; i<length; i++) {
-     if(i==0) forallsites(x) psi(x)=U(x,d[i][0],d[i][1]);
-     else forallsites(x) psi(x)*=U(x,d[i][0],d[i][1]);
-     if(i<length-1) psi.shift(d[i][0],d[i][1]);
+   for(int i=0; i<d.length(); i++) {
+     const auto &[orientation, direction] = d[i];
+     if(i==0) forallsites(x) psi(x)=U(x,orientation,direction);
+     else forallsites(x) psi(x)*=U(x,orientation,direction);
+     if(i<d.length()-1) psi.shift(orientation,direction);
      else forallsites(x) sum+=trace(psi(x));
    }
    return sum/(U.lattice().nvol_gl*U.nc);
@@ -873,7 +874,7 @@ forallsites(x)
    for(int mu=0; mu<U.ndim; mu++)
       for(int nu=mu+1; nu<U.ndim; nu++)
          sum+=real(trace(U.em(x,mu,nu));
-retur sum/(U.lattice().nvol_gl*U.ndim*(U.ndim-1)/2*U.nc);
+return sum/(U.lattice().nvol_gl*U.ndim*(U.ndim-1)/2*U.nc);
 \end{verbatim}
 
 \subsection{Fermions and inverters}

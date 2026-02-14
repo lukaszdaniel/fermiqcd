@@ -62,8 +62,6 @@ int main(int argc, char **argv)
   }
 
   mdp_field_file_header header;
-  int ndim = 4;
-  int *L;
   int verbose = false, clean = false;
   char input[1024] = "";
   char output[1024] = "";
@@ -151,7 +149,7 @@ int main(int argc, char **argv)
     error("Sorry, mesons only in 4D");
 
   int nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
-  L = header.box;
+  Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
 
   // //////////////////////////////
   // Output parameters
@@ -199,10 +197,10 @@ int main(int argc, char **argv)
   // //////////////////////////////
 
   if (!verbose)
-    mdp.disablePrinting();          // eventualy print off
-  mdp_lattice lattice(ndim, L); // declare lattice
-  mdp_site x(lattice);          // declare site variable
-  gauge_field U(lattice, nc);   // declare SU(3) field
+    mdp.disablePrinting();    // eventualy print off
+  mdp_lattice lattice(L);     // declare lattice
+  mdp_site x(lattice);        // declare site variable
+  gauge_field U(lattice, nc); // declare SU(3) field
 
   fermi_propagator Sl(lattice, nc);
   fermi_propagator Sh(lattice, nc);
