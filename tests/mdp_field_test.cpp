@@ -20,8 +20,8 @@ bool mdp_field_test(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
 
-  int box[] = {4, 4, 4, 4};
-  mdp_lattice lattice(4, box);
+  constexpr Box box = {4, 4, 4, 4};
+  mdp_lattice lattice(box);
   mdp_matrix_field M(lattice, 3, 3);
   mdp_site x(lattice);
   mdp_site y(lattice);

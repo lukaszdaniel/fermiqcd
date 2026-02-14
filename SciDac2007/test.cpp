@@ -18,8 +18,8 @@ int main(int argc, char **argv)
    mdp.open_wormholes(argc, argv);
    std::string filename;
    coefficients coeff;
-   int L[] = {4, 4, 4, 4};
-   mdp_lattice spacetime(4, L);
+   constexpr Box L = {4, 4, 4, 4};
+   mdp_lattice spacetime(L);
    int nc = 3;
    gauge_field U(spacetime, nc);
    set_hot(U);

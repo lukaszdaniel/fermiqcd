@@ -6,8 +6,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // mpirun
 
-  int L[] = {10, 10};
-  mdp_lattice lattice(2, L);
+  constexpr Box L = {10, 10};
+  mdp_lattice lattice(L);
   mdp_real_scalar_field psi(lattice);
   mdp_site x(lattice);
 

@@ -22,13 +22,13 @@ int main(int argc, char **argv)
     float seed = 0;
     int Nt = 24, Ns = 8;
     int Nc = 3;
-    int box[] = {Nt, Ns, Ns, Ns};
+    const Box box = {Nt, Ns, Ns, Ns};
 
     mdp_real pU, u0 = 0.8629;
     mdp_array<mdp_real, 1> c;
     char s[256];
 
-    mdp_lattice space_time(4, box,
+    mdp_lattice space_time(box,
                            default_partitioning<0>,
                            torus_topology,
                            seed, 3);

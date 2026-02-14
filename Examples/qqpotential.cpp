@@ -5,10 +5,10 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // START
-  int L[] = {8, 8, 8, 8};         // lattice volume
+  constexpr Box L = {8, 8, 8, 8}; // lattice volume
   int n = 3;                      // SU(n) gauge group
   constexpr int N = 100;          // number of gauge configurations
-  mdp_lattice lattice(4, L);      // make a 4D lattice
+  mdp_lattice lattice(L);         // make a 4D lattice
   gauge_field U(lattice, n);      // make a gauge field U
   coefficients gauge;             // set physical parameters
   gauge["beta"] = 6.0;            // beta=6/g^2 sets lattice spacing

@@ -8,8 +8,9 @@ int main(int argc, char **argv)
 {
   define_base_matrices("FERMILAB");
   mdp.open_wormholes(argc, argv);
-  int L[] = {20, 10, 10, 10};
-  mdp_lattice lattice(4, L);
+  constexpr Box L = {20, 10, 10, 10};
+  constexpr Box L_space = {10, 10, 10};
+  mdp_lattice lattice(L);
   mdp_site x(lattice);
   gauge_field U(lattice, 1);
   staggered_field psi(lattice, 1);
@@ -23,7 +24,7 @@ int main(int argc, char **argv)
 
   mul_invQ(phi, psi, U, quark, 1e-7);
 
-  mdp_lattice space(3, L + 1);
+  mdp_lattice space(L_space);
   mdp_real_vector_field s(space, 3);
   mdp_site x3(space);
   char filename[128];

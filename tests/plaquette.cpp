@@ -4,9 +4,9 @@ using namespace MDP;
 
 void compute_plaquette(mdp_int nt, mdp_int nx, const std::string &filename)
 {
-  mdp_int L[] = {nt, nx, nx, nx};
+  const Box L = {nt, nx, nx, nx};
   mdp_int nc = 3;
-  mdp_lattice lattice(4, L,
+  mdp_lattice lattice(L,
                       default_partitioning<1>,
                       torus_topology,
                       0, 1, false);

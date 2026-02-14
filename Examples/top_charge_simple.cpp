@@ -6,8 +6,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // mpirun
 
-  int L[] = {4, 10, 10, 10};
-  mdp_lattice lattice(4, L);
+  constexpr Box L = {4, 10, 10, 10};
+  mdp_lattice lattice(L);
   gauge_field U(lattice, 3);
   coefficients gauge;
   gauge["beta"] = 5.0;

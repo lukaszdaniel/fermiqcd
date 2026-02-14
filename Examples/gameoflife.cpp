@@ -61,9 +61,9 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // START
 
-  int sides[] = {10, 10};
+  constexpr Box sides = {10, 10};
   // a regular board parallelized by columns
-  mdp_lattice board(2, sides);
+  mdp_lattice board(sides);
   // or a board with a hole parallelized by diagonal stripes
   // mdp_lattice board(2, sides, myownpartitioning, board_with_hole);
   mdp_int_scalar_field S(board);    // create field of int on board (S)

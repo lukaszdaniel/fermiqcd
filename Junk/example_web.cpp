@@ -8,8 +8,8 @@ int main(int argc, char **argv)
 
   constexpr mdp_suint nc = 4;
   constexpr mdp_suint Nconfig = 5;
-  int mybox[] = {2, 2, 2, 2, 2};
-  mdp_lattice mylattice(5, mybox);
+  constexpr Box mybox = {2, 2, 2, 2, 2};
+  mdp_lattice mylattice(mybox);
   gauge_field U(mylattice, nc);
   coefficients coeff;
   coeff["beta"] = 2.0;

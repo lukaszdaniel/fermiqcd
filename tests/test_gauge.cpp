@@ -4,9 +4,9 @@ using namespace MDP;
 
 void test_gauge()
 {
-  int box[] = {4, 4, 4, 4};
+  constexpr Box box = {4, 4, 4, 4};
   int nc = 3;
-  mdp_lattice lattice(4, box);
+  mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   set_hot(U);
   std::cout << average_plaquette(U, 0, 1) << std::endl;

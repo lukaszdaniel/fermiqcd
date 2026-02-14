@@ -11,8 +11,8 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int L[] = {20, 20, 20};
-  mdp_lattice cube(3, L);
+  constexpr Box L = {20, 20, 20};
+  mdp_lattice cube(L);
   mdp_real_scalar_field spin(cube);
   mdp_site point(cube);
   int dE = 0, H = cube.size(), dH = 0;

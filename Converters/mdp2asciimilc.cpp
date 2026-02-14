@@ -2,7 +2,7 @@
 
 using namespace MDP;
 
-void write_gauge_configuration(std::ofstream &outfp, gauge_field &U, int *L)
+void write_gauge_configuration(std::ofstream &outfp, gauge_field &U, const Box &L)
 {
   mdp_site x(U.lattice());
 
@@ -49,14 +49,14 @@ int main(int argc, char **argv)
 
   // read the lattice size from the gauge configuration itself
   mdp_field_file_header header = get_info(argv[1]);
-  int *L = header.box;
+  const Box L(header.box);
 
   mdp << "Lattice size: "
       << L[0] << "x" << L[1] << "x"
       << L[2] << "x" << L[3] << "\n";
 
   constexpr int nc = 3; // number of colors
-  mdp_lattice lattice(4, L);
+  mdp_lattice lattice(L);
   mdp_site x(lattice);
 
   assert(header.ndim == 4);

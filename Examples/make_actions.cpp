@@ -7,8 +7,8 @@ using namespace MDP;
 void test_gauge(int nt, int nx, int ny, int nz, int nc)
 {
   mdp << "START TESTING GAUGE ACTION\n";
-  int box[] = {nt, nx, ny, nz};
-  mdp_lattice lattice(4, box);
+  const Box box = {nt, nx, ny, nz};
+  mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   coefficients coeff;
   coeff["beta"] = 6.0;
@@ -26,9 +26,9 @@ void test_gauge(int nt, int nx, int ny, int nz, int nc)
 void test_gauge_improved(int nt, int nx, int ny, int nz, int nc)
 {
   mdp << "START TESTING IMPROVED GAUGE ACTION\n";
-  int box[] = {nt, nx, ny, nz};
-  mdp_lattice lattice(4, box, default_partitioning<0>,
-                          torus_topology, 0, 3);
+  const Box box = {nt, nx, ny, nz};
+  mdp_lattice lattice(box, default_partitioning<0>,
+                      torus_topology, 0, 3);
   gauge_field U(lattice, nc);
   coefficients coeff;
   coeff["beta"] = 6.0;
@@ -44,8 +44,8 @@ void test_gauge_improved(int nt, int nx, int ny, int nz, int nc)
 void test_fermi(int nt, int nx, int ny, int nz, int nc)
 {
   mdp << "START TESTING CLOVER ACTIONS\n";
-  int box[] = {nt, nx, ny, nz};
-  mdp_lattice lattice(4, box);
+  const Box box = {nt, nx, ny, nz};
+  mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   fermi_field psi(lattice, nc);
   fermi_field chi1(lattice, nc);
@@ -104,9 +104,9 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc)
 void test_staggered(int nt, int nx, int ny, int nz, int nc)
 {
   mdp << "START TESTING STAGGERED ACTIONS\n";
-  int box[] = {nt, nx, ny, nz};
-  mdp_lattice lattice(4, box, default_partitioning<0>,
-                          torus_topology, 0, 3);
+  const Box box = {nt, nx, ny, nz};
+  mdp_lattice lattice(box, default_partitioning<0>,
+                      torus_topology, 0, 3);
   gauge_field U(lattice, nc);
   gauge_field V(lattice, nc);
   staggered_field psi(lattice, nc);
@@ -176,9 +176,9 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
 void test_dwfermi(int nt, int nx, int ny, int nz, int nc)
 {
   mdp << "START TESTING DOMAIN WALL ACTIONS\n";
-  int box[] = {nt, nx, ny, nz};
+  const Box box = {nt, nx, ny, nz};
   int L5 = 10;
-  mdp_lattice lattice(4, box);
+  mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   dwfermi_field psi(lattice, L5, nc);
   dwfermi_field chi1(lattice, L5, nc);

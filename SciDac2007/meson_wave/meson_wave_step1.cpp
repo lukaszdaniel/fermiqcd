@@ -15,15 +15,16 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int L[4] = {20, 10, 10, 10};
-  mdp_lattice lattice(4, L);
+  constexpr Box L = {20, 10, 10, 10};
+  constexpr Box L_space = {10, 10, 10};
+  mdp_lattice lattice(L);
   mdp_site x(lattice);
   int nc = 2;
   gauge_field U(lattice, nc);
   fermi_field chi(lattice, nc);
   fermi_field psi(lattice, nc);
   fermi_field phi(lattice, nc);
-  mdp_lattice space(3, L + 1);
+  mdp_lattice space(L_space);
   mdp_site x0(space);
   mdp_site x3(space);
   mdp_matrix A(nc, nc);

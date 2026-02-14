@@ -6,8 +6,8 @@ int main(int argc, char **argv)
 {
     mdp.open_wormholes(argc, argv);
     define_base_matrices("FERMILAB");
-    int L[] = {8, 32, 32, 32};
-    mdp_lattice lattice(4, L);
+    constexpr Box L = {8, 32, 32, 32};
+    mdp_lattice lattice(L);
     gauge_field U(lattice, 3);
     InstantonGenerator4D generator;
     for (int k = 0; k < 100; k++)

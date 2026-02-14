@@ -5,8 +5,8 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int L[] = {100};
-  mdp_lattice line(1, L);
+  constexpr Box L = {100};
+  mdp_lattice line(L);
   mdp_int_scalar_field spin(line);
   mdp_site x(line);
   int dE = 0, H = L[0], dH = 0;

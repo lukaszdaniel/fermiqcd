@@ -4,10 +4,10 @@ using namespace MDP;
 
 void compute_energy(int nt, int nx, std::string filename)
 {
-  int L[] = {nt, nx, nx, nx};
+  const Box L = {nt, nx, nx, nx};
   int nc = 3;
   char output[512];
-  mdp_lattice lattice(4, L,
+  mdp_lattice lattice(L,
                       default_partitioning<1>,
                       torus_topology,
                       0, 1, false);

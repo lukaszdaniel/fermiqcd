@@ -6,8 +6,8 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int mybox[] = {20, 20, 20};
-  mdp_lattice vacuum(3, mybox,
+  constexpr Box mybox = {20, 20, 20};
+  mdp_lattice vacuum(mybox,
                      default_partitioning<0>,
                      box_topology);
   mdp_real_scalar_field u(vacuum);

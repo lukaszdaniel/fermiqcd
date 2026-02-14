@@ -6,8 +6,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
 
-  int L[] = {10, 10, 8, 6};
-  mdp_lattice lattice(4, L);
+  constexpr Box L = {10, 10, 8, 6};
+  mdp_lattice lattice(L);
   mdp_site x(lattice);
   mdp_real_vector_field s(lattice, 2);
   forallsites(x)

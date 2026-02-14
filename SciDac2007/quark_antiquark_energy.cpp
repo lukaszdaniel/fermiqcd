@@ -9,9 +9,10 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
   int nc = 3;
-  int L[] = {12, 12, 12, 12};
-  mdp_lattice lattice(4, L);
-  mdp_lattice cube(3, L + 1);
+  constexpr Box L = {12, 12, 12, 12};
+  constexpr Box L_space = {12, 12, 12};
+  mdp_lattice lattice(L);
+  mdp_lattice cube(L_space);
   gauge_field U(lattice, nc);
   mdp_complex_field F(cube, 12);
   mdp_real_scalar_field Q3(cube);

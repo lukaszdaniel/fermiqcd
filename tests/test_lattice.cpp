@@ -17,8 +17,8 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
     mdp.open_wormholes(argc, argv);
-    int mybox[] = {8, 8, 8};
-    mdp_lattice mylattice(3, mybox);
+    constexpr Box mybox = {8, 8, 8};
+    mdp_lattice mylattice(mybox);
     mdp_site x(mylattice);
     int sum_lattice_sites = 0;
     mdp_int global_vol = mylattice.global_volume();

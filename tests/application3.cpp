@@ -84,8 +84,8 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
 
   constexpr int Nconfig = 10;
-  int mybox[] = {128, 128};
-  mdp_lattice mylattice(2, mybox);
+  constexpr Box mybox = {128, 128};
+  mdp_lattice mylattice(mybox);
   ising_field S(mylattice);  /* ths spin field +1 or -1     */
   scalar_field H(mylattice); /* the external magnetic field */
   mdp_site x(mylattice);

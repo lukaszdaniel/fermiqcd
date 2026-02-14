@@ -37,14 +37,14 @@ int main(int argc, char **argv)
 #endif
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
 
-  int nt = 12;
+  constexpr int nt = 12;
   int nc = 3;
   // double alpha=0.0;
 
-  int mybox[] = {nt, 4, 4, 4};
+  constexpr Box mybox = {nt, 4, 4, 4};
 
   // creating the fields
-  mdp_lattice mylattice(4, mybox);
+  mdp_lattice mylattice(mybox);
   gauge_field U(mylattice, nc);
   fermi_field psi(mylattice, nc);
   fermi_field phi(mylattice, nc);

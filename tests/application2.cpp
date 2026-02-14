@@ -11,8 +11,8 @@ float resistance(int x0, int x1, int mu)
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int mybox[] = {100, 20};
-  mdp_lattice cylinder(2, mybox, default_partitioning<0>,
+  constexpr Box mybox = {100, 20};
+  mdp_lattice cylinder(mybox, default_partitioning<0>,
                        open_cylinder);
   mdp_real_scalar_field u(cylinder);
   mdp_real_vector_field r(cylinder, 2);

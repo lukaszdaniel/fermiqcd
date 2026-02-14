@@ -5,9 +5,9 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int L[] = {256, 32, 32, 32};
+  constexpr Box L = {256, 32, 32, 32};
 
-  mdp_lattice lattice(4, L, default_partitioning0, torus_topology, 0, 1, false);
+  mdp_lattice lattice(L, default_partitioning0, torus_topology, 0, 1, false);
   mdp << "here\n";
 
   gauge_field U(lattice, 3);

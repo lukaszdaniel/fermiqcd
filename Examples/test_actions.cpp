@@ -7,9 +7,9 @@ using namespace MDP;
 void test_gauge()
 {
    mdp << "START TESTING GAUGE ACTION\n";
-   int box[] = {4, 4, 4, 4};
+   constexpr Box box = {4, 4, 4, 4};
    int nc = 3;
-   mdp_lattice lattice(4, box);
+   mdp_lattice lattice(box);
    gauge_field U(lattice, nc);
    coefficients coeff;
    coeff["beta"] = 6.0;
@@ -28,10 +28,10 @@ void test_gauge()
 void test_gauge_improved()
 {
    mdp << "START TESTING IMPROVED GAUGE ACTION\n";
-   int box[] = {4, 4, 4, 4};
+   constexpr Box box = {4, 4, 4, 4};
    int nc = 3;
-   mdp_lattice lattice(4, box, default_partitioning<0>,
-                           torus_topology, 0, 3);
+   mdp_lattice lattice(box, default_partitioning<0>,
+                       torus_topology, 0, 3);
    gauge_field U(lattice, nc);
    coefficients coeff;
    coeff["beta"] = 6.0;
@@ -48,9 +48,9 @@ void test_fermi()
 {
    mdp << "START TESTING CLOVER ACTIONS\n";
 
-   int box[] = {4, 4, 4, 4};
+   constexpr Box box = {4, 4, 4, 4};
    int nc = 3;
-   mdp_lattice lattice(4, box);
+   mdp_lattice lattice(box);
    gauge_field U(lattice, nc);
    fermi_field psi(lattice, nc);
    fermi_field chi1(lattice, nc);
@@ -119,10 +119,10 @@ void test_staggered()
 {
    mdp << "START TESTING STAGGERED ACTIONS\n";
 
-   int box[] = {4, 4, 4, 4};
+   constexpr Box box = {4, 4, 4, 4};
    int nc = 3;
-   mdp_lattice lattice(4, box, default_partitioning<0>,
-                           torus_topology, 0, 3);
+   mdp_lattice lattice(box, default_partitioning<0>,
+                       torus_topology, 0, 3);
    gauge_field U(lattice, nc);
    gauge_field V(lattice, nc);
    staggered_field psi(lattice, nc);
@@ -190,10 +190,10 @@ void test_dwfermi()
 {
    mdp << "START TESTING DOMAIN WALL ACTIONS\n";
 
-   int box[] = {4, 4, 4, 4};
+   constexpr Box box = {4, 4, 4, 4};
    int nc = 3;
    int L5 = 5;
-   mdp_lattice lattice(4, box);
+   mdp_lattice lattice(box);
    gauge_field U(lattice, nc);
    dwfermi_field psi(lattice, L5, nc);
    dwfermi_field chi1(lattice, L5, nc);

@@ -12,8 +12,8 @@ int main(int argc, char **argv)
   assert(header.box[3] == header.box[1]);
   int nt = header.box[0];
   int nx = header.box[1];
-  int box[] = {nt, nx, nx, nx};
-  mdp_lattice lattice(4, box, default_partitioning0, torus_topology, 0, 2, false);
+  const Box box = {nt, nx, nx, nx};
+  mdp_lattice lattice(box, default_partitioning0, torus_topology, 0, 2, false);
   gauge_field U(lattice, nc);
   U.load("gauge.cold");
   mdp_site x(lattice);

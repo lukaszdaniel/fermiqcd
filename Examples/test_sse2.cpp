@@ -6,12 +6,12 @@ using namespace MDP;
 
 void test_fermi()
 {
-  int box[] = {4, 4, 4, 4};
+  constexpr Box box = {4, 4, 4, 4};
   int nc = 3;
 
   mdp << "\n\nTEST FERMI FIELDS\n\n";
 
-  mdp_lattice lattice(4, box);
+  mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   fermi_field psi(lattice, nc);
   fermi_field chi1(lattice, nc);

@@ -71,8 +71,8 @@ int main(int argc, char **argv)
   // param.read("input");
 
   define_base_matrices("FERMILAB");
-  int box[] = {param.T, param.L, param.L, param.L};
-  mdp_lattice lattice(param.ndim, box);
+  const Box box = {param.T, param.L, param.L, param.L};
+  mdp_lattice lattice(box);
   // unsigned int r=param.seed;
 
   gauge_field U(lattice, param.nc);

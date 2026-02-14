@@ -7,8 +7,8 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
   int nc = 3;
-  int box[] = {8, 4, 4, 4};
-  mdp_lattice lattice(4, box);
+  constexpr Box box = {8, 4, 4, 4};
+  mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   fermi_field source(lattice, nc);
   fermi_field sink(lattice, nc);

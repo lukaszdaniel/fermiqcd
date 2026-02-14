@@ -14,8 +14,9 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int L[4] = {20, 10, 10, 10};
-  mdp_lattice space(3, L + 1);
+  constexpr Box L = {20, 10, 10, 10};
+  constexpr Box L_space = {10, 10, 10};
+  mdp_lattice space(L_space);
   mdp_site x(space);
   mdp_site y(space);
   mdp_complex_vector_field s(space, 16);

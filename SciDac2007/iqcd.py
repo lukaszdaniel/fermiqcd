@@ -315,7 +315,7 @@ def menu():
         sse = input("Do you have a processor that supports SSE2 (y/n)? ").lower()
         pos = input("Do you have FULL POSIX support (y/n)? ").lower()
         par = input("Do you want to compile with MPI support (y/n)? ").lower()
-        command = f"g++ -O2 -std=c++17 {filename} -I../Libraries -o {filename.replace('.cpp', '.exe')}"
+        command = f"g++ -O2 -std=gnu++20 {filename} -I../Libraries -o {filename.replace('.cpp', '.exe')}"
         if osx == "y":
             command += " -DOSX"
         elif sse == "y":

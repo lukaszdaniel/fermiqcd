@@ -113,9 +113,9 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
   int nc = 3;
-  // int L[]={10,10,10,10};
-  int L[] = {32, 16, 16, 16};
-  mdp_lattice lattice(4, L);
+  // constexpr Box L = {10, 10, 10, 10};
+  constexpr Box L = {32, 16, 16, 16};
+  mdp_lattice lattice(L);
   gauge_field U(lattice, nc);
   gauge_field V(lattice, nc);
   char filename[128];

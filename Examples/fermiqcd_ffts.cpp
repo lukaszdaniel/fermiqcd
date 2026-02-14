@@ -31,8 +31,8 @@ int test1()
 void test2()
 {
 
-    int box[] = {1, 20, 20, 20};
-    mdp_lattice lattice(4, box);
+    constexpr Box box = {1, 20, 20, 20};
+    mdp_lattice lattice(box);
     fermi_field psi(lattice, 3);
     fermi_field phi(lattice, 3);
     fermi_field chi(lattice, 3);

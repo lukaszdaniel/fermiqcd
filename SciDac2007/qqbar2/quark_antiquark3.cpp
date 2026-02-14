@@ -121,10 +121,11 @@ int main(int argc, char **argv)
   define_base_matrices("FERMILAB");
   int N;
   int nc = 2;
-  int L[] = {10, 16, 10, 10};
+  constexpr Box L = {10, 16, 10, 10};
+  constexpr Box L_space = {16, 10, 10};
   int idx[6][3] = {{0, 0, 1}, {1, 0, 2}, {2, 0, 3}, {3, 1, 2}, {4, 1, 3}, {5, 2, 3}};
-  mdp_lattice lattice(4, L);
-  mdp_lattice cube(3, L + 1);
+  mdp_lattice lattice(L);
+  mdp_lattice cube(L_space);
 
   gauge_field U(lattice, nc);
   gauge_field V(lattice, nc);

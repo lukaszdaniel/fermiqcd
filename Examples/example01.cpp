@@ -6,9 +6,8 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int ndim = 3;
-  int mybox[] = {4, 4, 4};
-  mdp_lattice mylattice(ndim, mybox);
+  constexpr Box mybox = {4, 4, 4};
+  mdp_lattice mylattice(mybox);
   mdp_matrix_field F(mylattice, 5, 5);
   mdp_site x(mylattice);
 

@@ -4,13 +4,14 @@ using namespace MDP;
 
 void polyakov(int nt, int nx, std::string filename)
 {
-  int L[] = {nt, nx, nx, nx};
+  const Box L = {nt, nx, nx, nx};
+  const Box L_space = {nx, nx, nx};
   char output[512];
-  mdp_lattice lattice(4, L,
+  mdp_lattice lattice(L,
                       default_partitioning<1>,
                       torus_topology,
                       0, 1, false);
-  mdp_lattice lattice3d(3, L + 1,
+  mdp_lattice lattice3d(L_space,
                         default_partitioning<1>,
                         torus_topology,
                         0, 1, false);

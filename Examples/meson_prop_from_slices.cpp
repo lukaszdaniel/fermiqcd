@@ -6,13 +6,14 @@ using namespace MDP;
 
 void meson_prop_from_slice(int nt, int nx, const char *filename)
 {
-  int box[] = {nt, nx, nx, nx};
+  const Box box = {nt, nx, nx, nx};
+  const Box box_space = {nx, nx, nx};
   int nc = 3;
-  mdp_lattice lattice(4, box,
+  mdp_lattice lattice(box,
                       default_partitioning0,
                       torus_topology,
                       0, 1, false);
-  mdp_lattice space(3, box + 1,
+  mdp_lattice space(box_space,
                     default_partitioning0,
                     torus_topology,
                     0, 1, false);

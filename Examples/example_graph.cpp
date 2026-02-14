@@ -61,8 +61,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv); // START
 
-  int sides[] = {10, 10};
-  mdp_lattice board(2, sides, myownpartitioning, board_with_hole);
+  constexpr Box sides = {10, 10};
+  mdp_lattice board(sides, myownpartitioning, board_with_hole);
   mdp_int_scalar_field S(board);    // create field of int on board (S)
   mdp_int_scalar_field newS(board); // create field of int in board (newS)
   mdp_site x(board);          // create variable to loop on board

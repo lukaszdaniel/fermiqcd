@@ -6,8 +6,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   int nc = 3;
-  int L[] = {8, 4, 4, 4};
-  mdp_lattice lattice(4, L);
+  constexpr Box L = {8, 4, 4, 4};
+  mdp_lattice lattice(L);
   fermi_field psi(lattice, nc);
   fermi_field phi(lattice, nc);
   fermi_field chi(lattice, nc);

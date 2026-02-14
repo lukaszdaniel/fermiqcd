@@ -6,12 +6,12 @@ using namespace MDP;
 
 void test_gauge(int nt, int nx, const char *filename)
 {
-  int box[] = {nt, nx, nx, nx};
+  const Box box = {nt, nx, nx, nx};
   int nc = 3;
-  mdp_lattice lattice(4, box,
-                          default_partitioning0,
-                          torus_topology,
-                          0, 1, false);
+  mdp_lattice lattice(box,
+                      default_partitioning0,
+                      torus_topology,
+                      0, 1, false);
   gauge_field U(lattice, nc);
   mdp << "success in allocating vector\n";
   char filename2[128];
