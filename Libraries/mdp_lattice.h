@@ -122,6 +122,20 @@ namespace MDP
     std::unique_ptr<mdp_prng[]> m_random_obj;
     mdp_int m_random_seed;
 
+    // helper function
+    inline bool is_me(const int x[]) const noexcept
+    {
+      const int owner_id = m_where(x, m_ndim, m_nx);
+      return owner_id == ME;
+    }
+
+    // helper function
+    inline bool is_valid_process(const int x[]) const noexcept
+    {
+      const int owner_id = m_where(x, m_ndim, m_nx);
+      return (owner_id < Nproc);
+    }
+
     /** @brief share information with other processors
      */
     void communicate_results_to_all_processes()
@@ -340,6 +354,7 @@ namespace MDP
                           bool local_random_ = true)
     {
       mdp.begin_function("allocate_lattice");
+
       m_local_random_generator = local_random_;
       if (box.dim() != ndir_)
         mdp << "Warning: The number of dimensions (ndim) does not match the number of directions (ndir). This may cause unexpected behavior in lattice operations.\n";
@@ -352,15 +367,13 @@ namespace MDP
       // //////////////////////////////////////////////////////////////////
       mdp << "Initializing a mdp_lattice...\n";
 
-      bool is_boundary;
-      mdp_int global_idx, new_idx;
       m_ndim = box.dim();
       m_ndir = ndir_;
       m_where = where_;
       m_neighbour = neighbour_;
       m_next_next = next_next_;
       m_local_volume = 0;
-      m_global_volume = 1;
+      m_global_volume = box.volume();
 
       mdp << "Lattice dimension: " << box[0];
       for (mdp_int mu = 1; mu < m_ndim; mu++)
@@ -375,7 +388,6 @@ namespace MDP
       for (mdp_int mu = 0; mu < m_ndim; mu++)
       {
         m_nx[mu] = box[mu];
-        m_global_volume *= m_nx[mu];
       }
 
       int x[MAX_DIM];
@@ -416,8 +428,8 @@ namespace MDP
 
       do
       {
-        global_idx = global_coordinate(x);
-        if ((*m_where)(x, m_ndim, m_nx) == ME)
+        mdp_int global_idx = global_coordinate(x);
+        if (is_me(x))
         {
 #ifndef MDP_NO_LG
           local_mdp_sites[m_local_volume] = global_idx;
@@ -433,19 +445,18 @@ namespace MDP
         }
         else if (m_next_next >= 0)
         {
-          is_boundary = false;
+          bool is_boundary = false;
           for (mdp_int mu = 0; mu < m_ndir; mu++)
           {
             // calculate up and down points in mu direction given the neighbour topology
             (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
 
-            if (((*m_where)(x_up, m_ndim, m_nx) >= Nproc) ||
-                ((*m_where)(x_dw, m_ndim, m_nx) >= Nproc))
+            if (!is_valid_process(x_up) || !is_valid_process(x_dw))
               error("Incorrect partitioning");
 
-            if (((*m_where)(x_up, m_ndim, m_nx) == ME) ||
-                ((*m_where)(x_dw, m_ndim, m_nx) == ME))
+            if (is_me(x_up) || is_me(x_dw))
               is_boundary = true;
+
             // ////////////////////////////////////////////////////
             // cases:
             // 1) mu+nu
@@ -460,16 +471,16 @@ namespace MDP
                 (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, m_ndim, m_nx);
                 (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, m_ndim, m_nx);
 
-                if (((*m_where)(x_up_dw, m_ndim, m_nx) >= Nproc) ||
-                    ((*m_where)(x_up_up, m_ndim, m_nx) >= Nproc) ||
-                    ((*m_where)(x_dw_dw, m_ndim, m_nx) >= Nproc) ||
-                    ((*m_where)(x_dw_up, m_ndim, m_nx) >= Nproc))
+                if (!is_valid_process(x_up_dw) ||
+                    !is_valid_process(x_up_up) ||
+                    !is_valid_process(x_dw_dw) ||
+                    !is_valid_process(x_dw_up))
                   error("Incorrect partitioning");
 
-                if (((*m_where)(x_up_dw, m_ndim, m_nx) == ME) ||
-                    ((*m_where)(x_up_up, m_ndim, m_nx) == ME) ||
-                    ((*m_where)(x_dw_dw, m_ndim, m_nx) == ME) ||
-                    ((*m_where)(x_dw_up, m_ndim, m_nx) == ME))
+                if (is_me(x_up_dw) ||
+                    is_me(x_up_up) ||
+                    is_me(x_dw_dw) ||
+                    is_me(x_dw_up))
                   is_boundary = true;
 
                 if (m_next_next == 3)
@@ -478,21 +489,21 @@ namespace MDP
                     (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, m_ndim, m_nx);
                     (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, m_ndim, m_nx);
 
-                    if (((*m_where)(x_up_up_up, m_ndim, m_nx) >= Nproc) ||
-                        ((*m_where)(x_up_up_dw, m_ndim, m_nx) >= Nproc) ||
-                        ((*m_where)(x_dw_dw_up, m_ndim, m_nx) >= Nproc) ||
-                        ((*m_where)(x_dw_dw_dw, m_ndim, m_nx) >= Nproc))
+                    if (!is_valid_process(x_up_up_up) ||
+                        !is_valid_process(x_up_up_dw) ||
+                        !is_valid_process(x_dw_dw_up) ||
+                        !is_valid_process(x_dw_dw_dw))
                       error("Incorrect partitioning");
 
-                    if (((*m_where)(x_up_up_up, m_ndim, m_nx) == ME) ||
-                        ((*m_where)(x_up_up_dw, m_ndim, m_nx) == ME) ||
-                        ((*m_where)(x_dw_dw_up, m_ndim, m_nx) == ME) ||
-                        ((*m_where)(x_dw_dw_dw, m_ndim, m_nx) == ME))
+                    if (is_me(x_up_up_up) ||
+                        is_me(x_up_up_dw) ||
+                        is_me(x_dw_dw_up) ||
+                        is_me(x_dw_dw_dw))
                       is_boundary = true;
                   }
               }
           }
-          if (is_boundary == true)
+          if (is_boundary)
           {
 #ifndef MDP_NO_LG
             local_mdp_sites[m_local_volume] = global_idx;
@@ -544,19 +555,19 @@ namespace MDP
               "Unable to create temporary m_local_from_global file");
 #endif
       m_wh = new mdp_int[m_local_volume];
+#ifndef MDP_NO_LG
+      std::fill_n(m_local_from_global, m_global_volume, NOWHERE);
+#else
       for (int global_idx = 0; global_idx < m_global_volume; global_idx++)
       {
-#ifndef MDP_NO_LG
-        m_local_from_global[global_idx] = NOWHERE;
-#else
         m_lg_file.seekp(global_idx * sizeof(mdp_int), std::ios::beg);
         m_lg_file.write(reinterpret_cast<const char *>(&NOWHERE), sizeof(mdp_int));
 
         if (!m_lg_file)
           error("mdp_lattice::allocate_lattice()\n"
                 "Unable to write to temporary file");
-#endif
       }
+#endif
       m_parity = new int[m_local_volume];
       // /////////////////////////////////////////////////////////////////
       m_start[0][0] = m_stop[0][0] = 0;
@@ -589,7 +600,7 @@ namespace MDP
 #endif
             if (((*m_where)(x, m_ndim, m_nx) == process) && (compute_parity(x) == np))
             {
-              new_idx = m_stop[process][np];
+              mdp_int new_idx = m_stop[process][np];
 #ifndef MDP_NO_LG
               m_local_from_global[local_mdp_sites[old_idx]] = new_idx;
               m_global_from_local[new_idx] = local_mdp_sites[old_idx];
@@ -624,7 +635,7 @@ namespace MDP
       lms_file.close();
 #endif
       // /////////////////////////
-      for (int new_idx = 0; new_idx < m_local_volume; new_idx++)
+      for (mdp_int new_idx = 0; new_idx < m_local_volume; new_idx++)
       {
         translate_to_coordinates(m_global_from_local[new_idx], x);
 
