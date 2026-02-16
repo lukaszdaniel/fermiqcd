@@ -121,6 +121,16 @@ namespace MDP
     bool m_local_random_generator;
     std::unique_ptr<mdp_prng[]> m_random_obj;
     mdp_int m_random_seed;
+    using where_fn = int (*)(const int x[], const int ndim, const int nx[]);
+    using neighbour_fn = void (*)(const int mu,
+                                  int x_dw[],
+                                  const int x[],
+                                  int x_up[],
+                                  const int ndim,
+                                  const int nx[]);
+
+    where_fn m_where;
+    neighbour_fn m_neighbour;
 
     // helper function
     inline bool is_me(const int x[]) const noexcept
@@ -216,8 +226,455 @@ namespace MDP
 #endif
     }
 
-    int (*m_where)(const int x[], const int ndim, const int nx[]);
-    void (*m_neighbour)(const int mu, int x_dw[], const int x[], int x_up[], const int ndim, const int nx[]);
+    /** @brief initialize random number generator for each local mdp_site
+     */
+    void initialize_random(mdp_int random_seed_ = 0)
+    {
+      m_random_seed = random_seed_;
+      if (m_local_random_generator)
+      {
+        mdp << "Using a local random generator\n";
+        // if (m_random_obj != nullptr)
+        //   delete[] m_random_obj;
+        m_random_obj = std::make_unique<mdp_prng[]>(m_internal_volume);
+        for (mdp_int idx = 0; idx < m_internal_volume; idx++)
+          m_random_obj[idx].initialize(m_global_from_local[idx + m_start[ME][0]] + m_random_seed);
+      }
+    }
+
+    /** @brief reallocate a lattice dynamically
+     *
+     * @param box size of the lattice
+     * @param ndir_ number of directions
+     * @param where pointer to a partitioning function
+     * @param neighbour_ pointer to a topology function
+     * @param random_seed_ seed to be used by the parallel prng
+     * @param next_next_ size of the buffer between neighbor processes
+     * @param local_random_ true is local random generator is required
+     */
+    void allocate_lattice(const Box &box,
+                          int ndir_,
+                          int (*where_)(const int[], const int, const int[]) = default_partitioning0,
+                          void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
+                          mdp_int random_seed_ = 0,
+                          int next_next_ = 1,
+                          bool local_random_ = true)
+    {
+      mdp.begin_function("allocate_lattice");
+
+      deallocate_memory();
+
+      // //////////////////////////////////////////////////////////////////
+      // (*where)(x,nc) must return the processor rank of where x is stored
+      // (*neghbour)(mu,x_dw,x,x_up,ndim, nx) must fill x_dw and x_up
+      //            according with current position x and direction mu
+      // //////////////////////////////////////////////////////////////////
+      mdp << "Initializing mdp_lattice...\n";
+
+      m_ndim = box.dim();
+      m_ndir = ndir_;
+      m_where = where_;
+      m_neighbour = neighbour_;
+      m_next_next = next_next_;
+      m_local_random_generator = local_random_;
+
+      m_local_volume = 0;
+      m_internal_volume = 0;
+      m_global_volume = box.volume();
+
+      if (m_ndim != m_ndir)
+        mdp << "Warning: The number of dimensions (ndim) does not match the number of directions (ndir). This may cause unexpected behavior in lattice operations.\n";
+
+      mdp << "Lattice dimension: " << box[0];
+      for (mdp_int mu = 1; mu < m_ndim; mu++)
+        mdp << " x " << box[mu];
+      mdp << "\n";
+
+      ///////////////////////////////////////////////////////////////////
+      // Dynamically allocate some arrays
+      ///////////////////////////////////////////////////////////////////
+      m_nx = new int[m_ndim];
+      for (mdp_int mu = 0; mu < m_ndim; ++mu)
+        m_nx[mu] = box[mu];
+
+      int x[MAX_DIM], x_up[MAX_DIM], x_dw[MAX_DIM];
+
+#ifndef MDP_NO_LG
+      mdp_int *local_mdp_sites = new mdp_int[m_global_volume];
+#else
+      std::string lms_filename(8, '\0');
+      std::generate(lms_filename.begin(), lms_filename.end(), []()
+                    { return "abcdef123456"[rand() % 12]; });
+      std::fstream lms_file;
+      lms_file.open(lms_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+
+      if (!lms_file)
+        error("mdp_lattice::mdp_lattice()\n"
+              "Unable to create temporary lms file");
+#endif
+
+      int x_up_dw[MAX_DIM], x_up_up[MAX_DIM], x_up_up_dw[MAX_DIM], x_up_up_up[MAX_DIM];
+      int x_dw_up[MAX_DIM], x_dw_dw[MAX_DIM], x_dw_dw_dw[MAX_DIM], x_dw_dw_up[MAX_DIM];
+
+      // ///////////////////////////////////////////////////////////////////
+      // Fill table local_mdp_sites with the global coordinate of mdp_sites in ME
+      // m_local_volume counts the mdp_sites stored in local_mdp_sites
+      // ///////////////////////////////////////////////////////////////////
+      //
+      // cases of interest...:
+      //
+      // m_next_next < 0 => only local mdp_sites NEW!
+      // m_next_next = 0 => only x+mu and x-mu (wilson) NEW!
+      // m_next_next = 1 => only x+-mu, x+-mu+-nu mu!=nu (clover)
+      // m_next_next = 2 => only x+-mu, x+-mu+-nu
+      // m_next_next = 3 => only x+-mu, x+-mu+-nu, x+-mu+-nu+-rho (asqtad)
+      //
+      // ///////////////////////////////////////////////////////////////////
+
+      for (mdp_int mu = 0; mu < m_ndim; mu++)
+        x[mu] = 0;
+
+      do
+      {
+        const mdp_int global_idx = global_coordinate(x);
+
+        if (is_me(x))
+        {
+#ifndef MDP_NO_LG
+          local_mdp_sites[m_local_volume] = global_idx;
+#else
+          lms_file.seekp(m_local_volume * sizeof(mdp_int), std::ios::beg);
+          lms_file.write(reinterpret_cast<const char *>(&global_idx), sizeof(mdp_int));
+
+          if (!lms_file)
+            error("mdp_lattice::allocate_lattice()\n"
+                  "Unable to write to temporary file");
+#endif
+          ++m_local_volume;
+        }
+        else if (m_next_next >= 0)
+        {
+          bool is_boundary = false;
+          for (mdp_int mu = 0; mu < m_ndir; mu++)
+          {
+            // calculate up and down points in mu direction given the neighbour topology
+            (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
+
+            if (!is_valid_process(x_up) || !is_valid_process(x_dw))
+              error("Incorrect partitioning");
+
+            if (is_me(x_up) || is_me(x_dw))
+              is_boundary = true;
+
+            // ////////////////////////////////////////////////////
+            // cases:
+            // 1) mu+nu
+            // 2) mu+nu and mu+mu
+            // 3) mu+nu+rho and mu+mu+rho and mu+mu+mu
+            // One may want to optimize case 3. It was thought for
+            // improved staggered fermions.
+            // ////////////////////////////////////////////////////
+            for (mdp_int nu = 0; nu < m_ndir; nu++)
+            {
+              if ((nu != mu) || (m_next_next > 1))
+              {
+                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, m_ndim, m_nx);
+                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, m_ndim, m_nx);
+
+                if (!is_valid_process(x_up_dw) ||
+                    !is_valid_process(x_up_up) ||
+                    !is_valid_process(x_dw_dw) ||
+                    !is_valid_process(x_dw_up))
+                  error("Incorrect partitioning");
+
+                if (is_me(x_up_dw) ||
+                    is_me(x_up_up) ||
+                    is_me(x_dw_dw) ||
+                    is_me(x_dw_up))
+                  is_boundary = true;
+
+                // mu-nu-rho terms (asqtad case)
+                if (m_next_next == 3)
+                {
+                  for (mdp_int rho = 0; rho < m_ndir; rho++)
+                  {
+                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, m_ndim, m_nx);
+                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, m_ndim, m_nx);
+
+                    if (!is_valid_process(x_up_up_up) ||
+                        !is_valid_process(x_up_up_dw) ||
+                        !is_valid_process(x_dw_dw_up) ||
+                        !is_valid_process(x_dw_dw_dw))
+                      error("Incorrect partitioning");
+
+                    if (is_me(x_up_up_up) ||
+                        is_me(x_up_up_dw) ||
+                        is_me(x_dw_dw_up) ||
+                        is_me(x_dw_dw_dw))
+                      is_boundary = true;
+                  }
+                }
+              }
+            }
+          }
+
+          if (is_boundary)
+          {
+#ifndef MDP_NO_LG
+            local_mdp_sites[m_local_volume] = global_idx;
+#else
+            lms_file.seekp(m_local_volume * sizeof(mdp_int), std::ios::beg);
+            lms_file.write(reinterpret_cast<const char *>(&global_idx), sizeof(mdp_int));
+
+            if (!lms_file)
+              error("mdp_lattice::allocate_lattice()\n"
+                    "Unable to write to temporary file");
+#endif
+            ++m_local_volume;
+          }
+        }
+        x[0]++;
+        for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
+          if (x[mu] >= m_nx[mu])
+          {
+            x[mu] = 0;
+            x[mu + 1]++;
+          }
+      } while (x[m_ndim - 1] < m_nx[m_ndim - 1]);
+
+      // /////////////////////////////////////////////////////////////////
+      // Dynamically allocate some other arrays
+      // /////////////////////////////////////////////////////////////////
+
+      m_dw = new mdp_int *[m_local_volume];
+      m_up = new mdp_int *[m_local_volume];
+      m_co = new mdp_int *[m_local_volume];
+
+      for (mdp_int new_idx = 0; new_idx < m_local_volume; new_idx++)
+      {
+        m_dw[new_idx] = new mdp_int[m_ndir];
+        m_up[new_idx] = new mdp_int[m_ndir];
+        m_co[new_idx] = new mdp_int[m_ndir];
+      }
+
+      m_global_from_local = new mdp_int[m_local_volume];
+
+#ifndef MDP_NO_LG
+      m_local_from_global = new mdp_int[m_global_volume];
+      std::fill_n(m_local_from_global, m_global_volume, NOWHERE);
+#else
+      std::string lg_filename(6, '\0');
+      std::generate(lg_filename.begin(), lg_filename.end(),
+                    []
+                    { return "abcdef123456"[rand() % 12]; });
+
+      m_lg_file.open(lg_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+
+      if (!m_lg_file)
+        error("mdp_lattice::mdp_lattice()\n"
+              "Unable to create temporary m_local_from_global file");
+
+      for (mdp_int global_idx = 0; global_idx < m_global_volume; ++global_idx)
+      {
+        m_lg_file.seekp(global_idx * sizeof(mdp_int), std::ios::beg);
+        m_lg_file.write(reinterpret_cast<const char *>(&NOWHERE), sizeof(mdp_int));
+
+        if (!m_lg_file)
+          error("mdp_lattice::allocate_lattice()\n"
+                "Unable to write to temporary file");
+      }
+#endif
+
+      m_wh = new mdp_int[m_local_volume];
+      m_parity = new int[m_local_volume];
+      // /////////////////////////////////////////////////////////////////
+      m_start[0][0] = m_stop[0][0] = 0;
+#ifdef MDP_NO_LG
+      mdp_int lms_tmp = 0;
+#endif
+      for (int process = 0; process < Nproc; process++)
+      {
+        if (process > 0)
+        {
+          m_start[process][0] = m_stop[process][0] = m_stop[process - 1][1];
+        }
+
+        for (int np = 0; np < 2; np++)
+        {
+          if (np > 0)
+          {
+            m_start[process][1] = m_stop[process][1] = m_stop[process][0];
+          }
+
+          for (mdp_int old_idx = 0; old_idx < m_local_volume; ++old_idx)
+          {
+#ifndef MDP_NO_LG
+            translate_to_coordinates(local_mdp_sites[old_idx], x);
+#else
+            lms_file.seekg(old_idx * sizeof(mdp_int), std::ios::beg);
+            lms_file.read(reinterpret_cast<char *>(&lms_tmp), sizeof(mdp_int));
+
+            if (!lms_file)
+              error("mdp_lattice::allocate_lattice()\n"
+                    "Unable to read from temporary file");
+            translate_to_coordinates(lms_tmp, x);
+#endif
+            if (((*m_where)(x, m_ndim, m_nx) == process) && (compute_parity(x) == np))
+            {
+              mdp_int new_idx = m_stop[process][np];
+#ifndef MDP_NO_LG
+              m_local_from_global[local_mdp_sites[old_idx]] = new_idx;
+              m_global_from_local[new_idx] = local_mdp_sites[old_idx];
+#else
+
+              lms_file.seekg(old_idx * sizeof(mdp_int), std::ios::beg);
+              lms_file.read(reinterpret_cast<char *>(&lms_tmp), sizeof(mdp_int));
+
+              if (!lms_file)
+                error("mdp_lattice::allocate_lattice()\n"
+                      "Unable to read from temporary file");
+
+              m_lg_file.seekp(lms_tmp * sizeof(mdp_int), std::ios::beg);
+              m_lg_file.write(reinterpret_cast<const char *>(&new_idx), sizeof(mdp_int));
+
+              if (!m_lg_file)
+                error("mdp_lattice::allocate_lattice()\n"
+                      "Unable to write to temporary file");
+              m_global_from_local[new_idx] = lms_tmp;
+#endif
+              m_wh[new_idx] = process;
+              m_parity[new_idx] = compute_parity(x);
+              m_stop[process][np]++;
+            }
+          }
+        }
+      }
+      // deallocate temporary array
+#ifndef MDP_NO_LG
+      delete[] local_mdp_sites;
+#else
+      lms_file.close();
+#endif
+      // /////////////////////////
+      for (mdp_int local_idx = 0; local_idx < m_local_volume; ++local_idx)
+      {
+        const mdp_int global = m_global_from_local[local_idx];
+
+        translate_to_coordinates(global, x);
+
+        for (mdp_int mu = 0; mu < m_ndim; ++mu)
+          m_co[local_idx][mu] = x[mu];
+
+        for (mdp_int mu = 0; mu < m_ndir; ++mu)
+        {
+          (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
+
+          const mdp_int g_up = global_coordinate(x_up);
+          const mdp_int g_dw = global_coordinate(x_dw);
+
+          if (m_wh[local_idx] == ME)
+          {
+            m_dw[local_idx][mu] = local(g_dw);
+            m_up[local_idx][mu] = local(g_up);
+          }
+          else
+          {
+            if (local(g_dw) != NOWHERE)
+              m_dw[local_idx][mu] = local(g_dw);
+            else
+              m_dw[local_idx][mu] = NOWHERE;
+
+            if (local(g_up) != NOWHERE)
+              m_up[local_idx][mu] = local(g_up);
+            else
+              m_up[local_idx][mu] = NOWHERE;
+          }
+        }
+      }
+
+      m_internal_volume = m_stop[ME][1] - m_start[ME][0];
+      mdp << "Communicating...\n";
+      communicate_results_to_all_processes();
+
+      mdp << "Initializing random per mdp_site...\n";
+      if (mdp_random_seed_filename && random_seed_ == 0)
+      {
+        if (isMainProcess())
+        {
+          {
+            std::ifstream fp(mdp_random_seed_filename, std::ios::binary);
+            if (fp)
+            {
+              fp.read(reinterpret_cast<char *>(&random_seed_), sizeof(random_seed_));
+              if (!fp)
+              {
+                random_seed_ = 0;
+              }
+            }
+          }
+
+          {
+            std::ofstream fp(mdp_random_seed_filename, std::ios::binary | std::ios::trunc);
+            if (fp)
+            {
+              mdp_int tmp = random_seed_ + 1;
+              fp.write(reinterpret_cast<char *>(&tmp), sizeof(tmp));
+            }
+          }
+          mdp << "Reading from file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ << "\n";
+          mdp << "Writing to   file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ + 1 << "\n";
+        }
+        mdp.broadcast(random_seed_, 0);
+      }
+      else
+      {
+        mdp << "Adopting random_seed=" << random_seed_ << "\n";
+      }
+
+      initialize_random(random_seed_);
+
+      mdp << "Lattice created.\n";
+      mdp.end_function("allocate_lattice");
+    }
+
+    /** @brief dynamically deallocate a lattice
+     */
+    void deallocate_memory()
+    {
+      if (m_local_volume == 0)
+        return;
+
+      delete[] m_nx;
+
+      for (int process = 0; process < Nproc; process++)
+      {
+        if (process != ME)
+        {
+          if (m_len_to_send[process][0] + m_len_to_send[process][1] != 0)
+            delete[] m_to_send[process];
+        }
+      }
+
+      for (int new_idx = 0; new_idx < m_local_volume; ++new_idx)
+      {
+        delete[] m_dw[new_idx];
+        delete[] m_up[new_idx];
+        delete[] m_co[new_idx];
+      }
+
+      delete[] m_dw;
+      delete[] m_up;
+      delete[] m_co;
+      delete[] m_wh;
+      delete[] m_global_from_local;
+#ifndef MDP_NO_LG
+      delete[] m_local_from_global;
+#else
+      m_lg_file.close();
+#endif
+      delete[] m_parity;
+      // delete[] m_random_obj;
+    }
 
   public:
     /** Which process point x[] is in?
@@ -335,379 +792,6 @@ namespace MDP
     {
     }
 
-    /** @brief reallocate a lattice dynamically
-     *
-     * @param box size of the lattice
-     * @param ndir_ number of directions
-     * @param where pointer to a partitioning function
-     * @param neighbour_ pointer to a topology function
-     * @param random_seed_ seed to be used by the parallel prng
-     * @param next_next_ size of the buffer between neighbor processes
-     * @param local_random_ true is local random generator is required
-     */
-    void allocate_lattice(const Box &box,
-                          int ndir_,
-                          int (*where_)(const int[], const int, const int[]) = default_partitioning0,
-                          void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
-                          mdp_int random_seed_ = 0,
-                          int next_next_ = 1,
-                          bool local_random_ = true)
-    {
-      mdp.begin_function("allocate_lattice");
-
-      m_local_random_generator = local_random_;
-      if (box.dim() != ndir_)
-        mdp << "Warning: The number of dimensions (ndim) does not match the number of directions (ndir). This may cause unexpected behavior in lattice operations.\n";
-      deallocate_memory();
-
-      // //////////////////////////////////////////////////////////////////
-      // (*where)(x,nc) must return the processor rank of where x is stored
-      // (*neghbour)(mu,x_dw,x,x_up,ndim, nx) must fill x_dw and x_up
-      //            according with current position x and direction mu
-      // //////////////////////////////////////////////////////////////////
-      mdp << "Initializing a mdp_lattice...\n";
-
-      m_ndim = box.dim();
-      m_ndir = ndir_;
-      m_where = where_;
-      m_neighbour = neighbour_;
-      m_next_next = next_next_;
-      m_local_volume = 0;
-      m_global_volume = box.volume();
-
-      mdp << "Lattice dimension: " << box[0];
-      for (mdp_int mu = 1; mu < m_ndim; mu++)
-        mdp << " x " << box[mu];
-      mdp << "\n";
-
-      ///////////////////////////////////////////////////////////////////
-      // Dynamically allocate some arrays
-      ///////////////////////////////////////////////////////////////////
-      m_nx = new int[m_ndim];
-
-      for (mdp_int mu = 0; mu < m_ndim; mu++)
-      {
-        m_nx[mu] = box[mu];
-      }
-
-      int x[MAX_DIM];
-      int x_up[MAX_DIM], x_up_dw[MAX_DIM], x_up_up[MAX_DIM], x_up_up_dw[MAX_DIM], x_up_up_up[MAX_DIM];
-      int x_dw[MAX_DIM], x_dw_up[MAX_DIM], x_dw_dw[MAX_DIM], x_dw_dw_dw[MAX_DIM], x_dw_dw_up[MAX_DIM];
-
-#ifndef MDP_NO_LG
-      mdp_int *local_mdp_sites = new mdp_int[m_global_volume];
-#else
-      mdp_int lms_tmp = 0;
-      std::string lms_filename(8, '\0');
-      std::generate(lms_filename.begin(), lms_filename.end(), []()
-                    { return "abcdef123456"[rand() % 12]; });
-      std::fstream lms_file;
-      lms_file.open(lms_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-
-      if (!lms_file)
-        error("mdp_lattice::mdp_lattice()\n"
-              "Unable to create temporary lms file");
-#endif
-      // ///////////////////////////////////////////////////////////////////
-      // Fill table local_mdp_sites with the global coordinate of mdp_sites in ME
-      // m_local_volume counts the mdp_sites stored in local_mdp_sites
-      // ///////////////////////////////////////////////////////////////////
-      //
-      // cases of interest...:
-      //
-      // m_next_next < 0 => only local mdp_sites NEW!
-      // m_next_next = 0 => only x+mu and x-mu (wilson) NEW!
-      // m_next_next = 1 => only x+-mu, x+-mu+-nu mu!=nu (clover)
-      // m_next_next = 2 => only x+-mu, x+-mu+-nu
-      // m_next_next = 3 => only x+-mu, x+-mu+-nu, x+-mu+-nu+-rho (asqtad)
-      //
-      // ///////////////////////////////////////////////////////////////////
-
-      for (mdp_int mu = 0; mu < m_ndim; mu++)
-        x[mu] = 0;
-
-      do
-      {
-        mdp_int global_idx = global_coordinate(x);
-        if (is_me(x))
-        {
-#ifndef MDP_NO_LG
-          local_mdp_sites[m_local_volume] = global_idx;
-#else
-          lms_file.seekp(m_local_volume * sizeof(mdp_int), std::ios::beg);
-          lms_file.write(reinterpret_cast<const char *>(&global_idx), sizeof(mdp_int));
-
-          if (!lms_file)
-            error("mdp_lattice::allocate_lattice()\n"
-                  "Unable to write to temporary file");
-#endif
-          m_local_volume++;
-        }
-        else if (m_next_next >= 0)
-        {
-          bool is_boundary = false;
-          for (mdp_int mu = 0; mu < m_ndir; mu++)
-          {
-            // calculate up and down points in mu direction given the neighbour topology
-            (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
-
-            if (!is_valid_process(x_up) || !is_valid_process(x_dw))
-              error("Incorrect partitioning");
-
-            if (is_me(x_up) || is_me(x_dw))
-              is_boundary = true;
-
-            // ////////////////////////////////////////////////////
-            // cases:
-            // 1) mu+nu
-            // 2) mu+nu and mu+mu
-            // 3) mu+nu+rho and mu+mu+rho and mu+mu+mu
-            // One may want to optimize case 3. It was thought for
-            // improved staggered fermions.
-            // ////////////////////////////////////////////////////
-            for (mdp_int nu = 0; nu < m_ndir; nu++)
-              if ((nu != mu) || (m_next_next > 1))
-              {
-                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, m_ndim, m_nx);
-                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, m_ndim, m_nx);
-
-                if (!is_valid_process(x_up_dw) ||
-                    !is_valid_process(x_up_up) ||
-                    !is_valid_process(x_dw_dw) ||
-                    !is_valid_process(x_dw_up))
-                  error("Incorrect partitioning");
-
-                if (is_me(x_up_dw) ||
-                    is_me(x_up_up) ||
-                    is_me(x_dw_dw) ||
-                    is_me(x_dw_up))
-                  is_boundary = true;
-
-                if (m_next_next == 3)
-                  for (mdp_int rho = 0; rho < m_ndir; rho++)
-                  {
-                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, m_ndim, m_nx);
-                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, m_ndim, m_nx);
-
-                    if (!is_valid_process(x_up_up_up) ||
-                        !is_valid_process(x_up_up_dw) ||
-                        !is_valid_process(x_dw_dw_up) ||
-                        !is_valid_process(x_dw_dw_dw))
-                      error("Incorrect partitioning");
-
-                    if (is_me(x_up_up_up) ||
-                        is_me(x_up_up_dw) ||
-                        is_me(x_dw_dw_up) ||
-                        is_me(x_dw_dw_dw))
-                      is_boundary = true;
-                  }
-              }
-          }
-          if (is_boundary)
-          {
-#ifndef MDP_NO_LG
-            local_mdp_sites[m_local_volume] = global_idx;
-#else
-            lms_file.seekp(m_local_volume * sizeof(mdp_int), std::ios::beg);
-            lms_file.write(reinterpret_cast<const char *>(&global_idx), sizeof(mdp_int));
-
-            if (!lms_file)
-              error("mdp_lattice::allocate_lattice()\n"
-                    "Unable to write to temporary file");
-#endif
-            m_local_volume++;
-          }
-        }
-        x[0]++;
-        for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
-          if (x[mu] >= m_nx[mu])
-          {
-            x[mu] = 0;
-            x[mu + 1]++;
-          }
-      } while (x[m_ndim - 1] < m_nx[m_ndim - 1]);
-
-      // /////////////////////////////////////////////////////////////////
-      // Dynamically allocate some other arrays
-      // /////////////////////////////////////////////////////////////////
-
-      m_dw = new mdp_int *[m_local_volume];
-      m_up = new mdp_int *[m_local_volume];
-      m_co = new mdp_int *[m_local_volume];
-
-      for (mdp_int new_idx = 0; new_idx < m_local_volume; new_idx++)
-      {
-        m_dw[new_idx] = new mdp_int[m_ndir];
-        m_up[new_idx] = new mdp_int[m_ndir];
-        m_co[new_idx] = new mdp_int[m_ndir];
-      }
-      m_global_from_local = new mdp_int[m_local_volume];
-#ifndef MDP_NO_LG
-      m_local_from_global = new mdp_int[m_global_volume];
-#else
-      std::string lg_filename(6, '\0');
-      std::generate(lg_filename.begin(), lg_filename.end(), []()
-                    { return "abcdef123456"[rand() % 12]; });
-      m_lg_file.open(lg_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-
-      if (!m_lg_file)
-        error("mdp_lattice::mdp_lattice()\n"
-              "Unable to create temporary m_local_from_global file");
-#endif
-      m_wh = new mdp_int[m_local_volume];
-#ifndef MDP_NO_LG
-      std::fill_n(m_local_from_global, m_global_volume, NOWHERE);
-#else
-      for (int global_idx = 0; global_idx < m_global_volume; global_idx++)
-      {
-        m_lg_file.seekp(global_idx * sizeof(mdp_int), std::ios::beg);
-        m_lg_file.write(reinterpret_cast<const char *>(&NOWHERE), sizeof(mdp_int));
-
-        if (!m_lg_file)
-          error("mdp_lattice::allocate_lattice()\n"
-                "Unable to write to temporary file");
-      }
-#endif
-      m_parity = new int[m_local_volume];
-      // /////////////////////////////////////////////////////////////////
-      m_start[0][0] = m_stop[0][0] = 0;
-      for (int process = 0; process < Nproc; process++)
-      {
-        if (process > 0)
-        {
-          m_start[process][0] = m_stop[process][0] = m_stop[process - 1][1];
-        }
-
-        for (int np = 0; np < 2; np++)
-        {
-          if (np > 0)
-          {
-            m_start[process][1] = m_stop[process][1] = m_stop[process][0];
-          }
-
-          for (int old_idx = 0; old_idx < m_local_volume; old_idx++)
-          {
-#ifndef MDP_NO_LG
-            translate_to_coordinates(local_mdp_sites[old_idx], x);
-#else
-            lms_file.seekg(old_idx * sizeof(mdp_int), std::ios::beg);
-            lms_file.read(reinterpret_cast<char *>(&lms_tmp), sizeof(mdp_int));
-
-            if (!lms_file)
-              error("mdp_lattice::allocate_lattice()\n"
-                    "Unable to read from temporary file");
-            translate_to_coordinates(lms_tmp, x);
-#endif
-            if (((*m_where)(x, m_ndim, m_nx) == process) && (compute_parity(x) == np))
-            {
-              mdp_int new_idx = m_stop[process][np];
-#ifndef MDP_NO_LG
-              m_local_from_global[local_mdp_sites[old_idx]] = new_idx;
-              m_global_from_local[new_idx] = local_mdp_sites[old_idx];
-#else
-
-              lms_file.seekg(old_idx * sizeof(mdp_int), std::ios::beg);
-              lms_file.read(reinterpret_cast<char *>(&lms_tmp), sizeof(mdp_int));
-
-              if (!lms_file)
-                error("mdp_lattice::allocate_lattice()\n"
-                      "Unable to read from temporary file");
-
-              m_lg_file.seekp(lms_tmp * sizeof(mdp_int), std::ios::beg);
-              m_lg_file.write(reinterpret_cast<const char *>(&new_idx), sizeof(mdp_int));
-
-              if (!m_lg_file)
-                error("mdp_lattice::allocate_lattice()\n"
-                      "Unable to write to temporary file");
-              m_global_from_local[new_idx] = lms_tmp;
-#endif
-              m_wh[new_idx] = process;
-              m_parity[new_idx] = compute_parity(x);
-              m_stop[process][np]++;
-            }
-          }
-        }
-      }
-      // deallocate temporary array
-#ifndef MDP_NO_LG
-      delete[] local_mdp_sites;
-#else
-      lms_file.close();
-#endif
-      // /////////////////////////
-      for (mdp_int new_idx = 0; new_idx < m_local_volume; new_idx++)
-      {
-        translate_to_coordinates(m_global_from_local[new_idx], x);
-
-        for (mdp_int mu = 0; mu < m_ndim; mu++)
-          m_co[new_idx][mu] = x[mu];
-
-        for (mdp_int mu = 0; mu < m_ndir; mu++)
-        {
-          (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx);
-          if (m_wh[new_idx] == ME)
-          {
-            m_dw[new_idx][mu] = local(global_coordinate(x_dw));
-            m_up[new_idx][mu] = local(global_coordinate(x_up));
-          }
-          else
-          {
-            if (local(global_coordinate(x_dw)) != NOWHERE)
-              m_dw[new_idx][mu] = local(global_coordinate(x_dw));
-            else
-              m_dw[new_idx][mu] = NOWHERE;
-            if (local(global_coordinate(x_up)) != NOWHERE)
-              m_up[new_idx][mu] = local(global_coordinate(x_up));
-            else
-              m_up[new_idx][mu] = NOWHERE;
-          }
-        }
-      }
-
-      m_internal_volume = m_stop[ME][1] - m_start[ME][0];
-      mdp << "Communicating...\n";
-      communicate_results_to_all_processes();
-      mdp << "Initializing random per mdp_site...\n";
-      if (mdp_random_seed_filename && random_seed_ == 0)
-      {
-        if (isMainProcess())
-        {
-          {
-            std::ifstream fp(mdp_random_seed_filename, std::ios::binary);
-            if (fp)
-            {
-              fp.read(reinterpret_cast<char *>(&random_seed_), sizeof(random_seed_));
-              if (!fp)
-              {
-                random_seed_ = 0;
-              }
-            }
-          }
-
-          {
-            std::ofstream fp(mdp_random_seed_filename, std::ios::binary | std::ios::trunc);
-            if (fp)
-            {
-              mdp_int tmp = random_seed_ + 1;
-              fp.write(reinterpret_cast<char *>(&tmp), sizeof(tmp));
-            }
-          }
-          mdp << "Reading from file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ << "\n";
-          mdp << "Writing to   file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ + 1 << "\n";
-        }
-        mdp.broadcast(random_seed_, 0);
-      }
-      else
-      {
-        mdp << "Adopting random_seed=" << random_seed_ << "\n";
-      }
-
-      initialize_random(random_seed_);
-
-      mdp << "Lattice created.\n";
-      mdp.end_function("allocate_lattice");
-    }
-
     /** @brief deallocate all the dynamically allocated arrays
      */
     virtual ~mdp_lattice()
@@ -715,62 +799,8 @@ namespace MDP
       deallocate_memory();
     }
 
-    /** @brief dynamically deallocate a lattice
-     */
-    void deallocate_memory()
-    {
-      if (m_local_volume == 0)
-        return;
-
-      delete[] m_nx;
-
-      for (int process = 0; process < Nproc; process++)
-      {
-        if (process != ME)
-        {
-          if (m_len_to_send[process][0] + m_len_to_send[process][1] != 0)
-            delete[] m_to_send[process];
-        }
-      }
-
-      for (int new_idx = 0; new_idx < m_local_volume; new_idx++)
-      {
-        delete[] m_dw[new_idx];
-        delete[] m_up[new_idx];
-        delete[] m_co[new_idx];
-      }
-
-      delete[] m_dw;
-      delete[] m_up;
-      delete[] m_co;
-      delete[] m_wh;
-      delete[] m_global_from_local;
-#ifndef MDP_NO_LG
-      delete[] m_local_from_global;
-#else
-      m_lg_file.close();
-#endif
-      delete[] m_parity;
-      // delete[] m_random_obj;
-    }
-
-    /** @brief initialize random number generator for each local mdp_site
-     */
-    void initialize_random(mdp_int random_seed_ = 0)
-    {
-      m_random_seed = random_seed_;
-      if (m_local_random_generator)
-      {
-        mdp << "Using a local random generator\n";
-        // if (m_random_obj != nullptr)
-        //   delete[] m_random_obj;
-        m_random_obj = std::make_unique<mdp_prng[]>(m_internal_volume);
-        for (mdp_int idx = 0; idx < m_internal_volume; idx++)
-          m_random_obj[idx].initialize(m_global_from_local[idx + m_start[ME][0]] + m_random_seed);
-      }
-    }
-
     mdp_prng &random(mdp_site);
+
     // //////////////////////////////////
     // functions for external access ...
     // to be used to access member variables
