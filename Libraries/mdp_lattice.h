@@ -146,122 +146,14 @@ namespace MDP
       return (owner_id < Nproc);
     }
 
-    /** @brief share information with other processors
-     */
-    void communicate_results_to_all_processes()
+    // helper function
+    void init_basic_parameters(const Box &box,
+                               int ndir_,
+                               int (*where_)(const int[], const int, const int[]),
+                               void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]),
+                               int next_next_,
+                               bool local_random_)
     {
-      mdp_int buffer[2];
-      mdp_int length;
-      int process;
-#ifdef LATTICE_DEBUG
-      int process2;
-#endif
-      mdp_request request;
-
-      // sending length ///////////////////////////
-#ifdef LATTICE_DEBUG // debugging code below
-      if (Nproc % 2 == 1 || m_where != default_partitioning0)
-      {
-#endif
-        for (int dp = 1; dp < Nproc; dp++)
-        {
-          process = (ME + dp) % Nproc;
-          for (int np = 0; np < 2; np++)
-          {
-            buffer[np] = m_stop[process][np] - m_start[process][np];
-          }
-          mdp.put(buffer, 2, process, request);
-          process = (ME - dp + Nproc) % Nproc;
-          mdp.get(m_len_to_send[process], 2, process);
-          mdp.wait(request);
-          process = (ME + dp) % Nproc;
-          length = m_stop[process][1] - m_start[process][0];
-          std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
-          for (int idx = 0; idx < length; idx++)
-            dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-          mdp.put(dynamic_buffer.get(), length, process, request);
-          process = (ME - dp + Nproc) % Nproc;
-          length = m_len_to_send[process][0] + m_len_to_send[process][1];
-          m_to_send[process] = new mdp_int[length];
-          mdp.get(m_to_send[process], length, process);
-          for (int idx = 0; idx < length; idx++)
-            m_to_send[process][idx] = local(m_to_send[process][idx]);
-          mdp.wait(request);
-        }
-#ifdef LATTICE_DEBUG // debugging code below
-      }
-      else
-      {
-        for (int dp = 1; dp < Nproc; dp++)
-        {
-          for (int k = 0; k < 2; k++)
-          {
-
-            process = (ME + dp) % Nproc;
-            process2 = (ME - dp + Nproc) % Nproc;
-
-            if ((k + ME) % 2 == 0)
-            {
-              for (int np = 0; np < 2; np++)
-                buffer[np] = m_stop[process][np] - m_start[process][np];
-              mdp.put(buffer, 2, process, request);
-              length = m_stop[process][1] - m_start[process][0];
-              std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
-              for (int idx = 0; idx < length; idx++)
-                dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
-              mdp.put(dynamic_buffer.get(), length, process, request);
-            }
-            else
-            {
-              mdp.get(m_len_to_send[process2], 2, process2);
-              length = m_len_to_send[process2][0] + m_len_to_send[process2][1];
-              m_to_send[process2] = new mdp_int[length];
-              mdp.get(m_to_send[process2], length, process);
-              for (int idx = 0; idx < length; idx++)
-                m_to_send[process2][idx] = local(m_to_send[process2][idx]);
-            }
-          }
-        }
-      }
-#endif
-    }
-
-    /** @brief initialize random number generator for each local mdp_site
-     */
-    void initialize_random(mdp_int random_seed_ = 0)
-    {
-      m_random_seed = random_seed_;
-      if (m_local_random_generator)
-      {
-        mdp << "Using a local random generator\n";
-        // if (m_random_obj != nullptr)
-        //   delete[] m_random_obj;
-        m_random_obj = std::make_unique<mdp_prng[]>(m_internal_volume);
-        for (mdp_int idx = 0; idx < m_internal_volume; idx++)
-          m_random_obj[idx].initialize(m_global_from_local[idx + m_start[ME][0]] + m_random_seed);
-      }
-    }
-
-    /** @brief reallocate a lattice dynamically
-     *
-     * @param box size of the lattice
-     * @param ndir_ number of directions
-     * @param where pointer to a partitioning function
-     * @param neighbour_ pointer to a topology function
-     * @param random_seed_ seed to be used by the parallel prng
-     * @param next_next_ size of the buffer between neighbor processes
-     * @param local_random_ true is local random generator is required
-     */
-    void allocate_lattice(const Box &box,
-                          int ndir_,
-                          int (*where_)(const int[], const int, const int[]) = default_partitioning0,
-                          void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
-                          mdp_int random_seed_ = 0,
-                          int next_next_ = 1,
-                          bool local_random_ = true)
-    {
-      mdp.begin_function("allocate_lattice");
-
       deallocate_memory();
 
       // //////////////////////////////////////////////////////////////////
@@ -269,7 +161,6 @@ namespace MDP
       // (*neghbour)(mu,x_dw,x,x_up,ndim, nx) must fill x_dw and x_up
       //            according with current position x and direction mu
       // //////////////////////////////////////////////////////////////////
-      mdp << "Initializing mdp_lattice...\n";
 
       m_ndim = box.dim();
       m_ndir = ndir_;
@@ -291,28 +182,20 @@ namespace MDP
       mdp << "\n";
 
       ///////////////////////////////////////////////////////////////////
-      // Dynamically allocate some arrays
+      // Dynamically allocate lattice size
       ///////////////////////////////////////////////////////////////////
       m_nx = new int[m_ndim];
       for (mdp_int mu = 0; mu < m_ndim; ++mu)
         m_nx[mu] = box[mu];
+    }
 
-      int x[MAX_DIM], x_up[MAX_DIM], x_dw[MAX_DIM];
-
+    // helper function
 #ifndef MDP_NO_LG
-      mdp_int *local_mdp_sites = new mdp_int[m_global_volume];
+    void compute_local_sites(int *x, int *x_up, int *x_dw, mdp_int *local_mdp_sites)
 #else
-      std::string lms_filename(8, '\0');
-      std::generate(lms_filename.begin(), lms_filename.end(), []()
-                    { return "abcdef123456"[rand() % 12]; });
-      std::fstream lms_file;
-      lms_file.open(lms_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
-
-      if (!lms_file)
-        error("mdp_lattice::mdp_lattice()\n"
-              "Unable to create temporary lms file");
+    void compute_local_sites(int *x, int *x_up, int *x_dw, std::fstream &lms_file)
 #endif
-
+    {
       int x_up_dw[MAX_DIM], x_up_up[MAX_DIM], x_up_up_dw[MAX_DIM], x_up_up_up[MAX_DIM];
       int x_dw_up[MAX_DIM], x_dw_dw[MAX_DIM], x_dw_dw_dw[MAX_DIM], x_dw_dw_up[MAX_DIM];
 
@@ -433,6 +316,7 @@ namespace MDP
             ++m_local_volume;
           }
         }
+
         x[0]++;
         for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
           if (x[mu] >= m_nx[mu])
@@ -441,22 +325,16 @@ namespace MDP
             x[mu + 1]++;
           }
       } while (x[m_ndim - 1] < m_nx[m_ndim - 1]);
+    }
 
+    // helper function
+    void allocate_basic_arrays()
+    {
       // /////////////////////////////////////////////////////////////////
       // Dynamically allocate some other arrays
       // /////////////////////////////////////////////////////////////////
 
-      m_dw = new mdp_int *[m_local_volume];
-      m_up = new mdp_int *[m_local_volume];
-      m_co = new mdp_int *[m_local_volume];
-
-      for (mdp_int new_idx = 0; new_idx < m_local_volume; new_idx++)
-      {
-        m_dw[new_idx] = new mdp_int[m_ndir];
-        m_up[new_idx] = new mdp_int[m_ndir];
-        m_co[new_idx] = new mdp_int[m_ndir];
-      }
-
+      // local to global mapping table
       m_global_from_local = new mdp_int[m_local_volume];
 
 #ifndef MDP_NO_LG
@@ -487,8 +365,35 @@ namespace MDP
 
       m_wh = new mdp_int[m_local_volume];
       m_parity = new int[m_local_volume];
-      // /////////////////////////////////////////////////////////////////
-      m_start[0][0] = m_stop[0][0] = 0;
+
+      for (int process = 0; process < Nproc; ++process)
+      {
+        m_start[process][0] = 0;
+        m_start[process][1] = 0;
+        m_stop[process][0] = 0;
+        m_stop[process][1] = 0;
+      }
+    }
+
+    // helper function
+    void allocate_connectivity_arrays()
+    {
+      // neighbour and coordinates tables
+      m_dw = new mdp_int *[m_local_volume];
+      m_up = new mdp_int *[m_local_volume];
+      m_co = new mdp_int *[m_local_volume];
+
+      for (mdp_int idx = 0; idx < m_local_volume; ++idx)
+      {
+        m_dw[idx] = new mdp_int[m_ndir];
+        m_up[idx] = new mdp_int[m_ndir];
+        m_co[idx] = new mdp_int[m_ndir];
+      }
+    }
+
+    // helper function
+    void build_local_global_maps(int *x, mdp_int *local_mdp_sites)
+    {
 #ifdef MDP_NO_LG
       mdp_int lms_tmp = 0;
 #endif
@@ -499,9 +404,9 @@ namespace MDP
           m_start[process][0] = m_stop[process][0] = m_stop[process - 1][1];
         }
 
-        for (int np = 0; np < 2; np++)
+        for (int parity = 0; parity < 2; ++parity)
         {
-          if (np > 0)
+          if (parity > 0)
           {
             m_start[process][1] = m_stop[process][1] = m_stop[process][0];
           }
@@ -519,9 +424,10 @@ namespace MDP
                     "Unable to read from temporary file");
             translate_to_coordinates(lms_tmp, x);
 #endif
-            if (((*m_where)(x, m_ndim, m_nx) == process) && (compute_parity(x) == np))
+            int x_parity = compute_parity(x);
+            if (((*m_where)(x, m_ndim, m_nx) == process) && (x_parity == parity))
             {
-              mdp_int new_idx = m_stop[process][np];
+              mdp_int new_idx = m_stop[process][parity];
 #ifndef MDP_NO_LG
               m_local_from_global[local_mdp_sites[old_idx]] = new_idx;
               m_global_from_local[new_idx] = local_mdp_sites[old_idx];
@@ -543,19 +449,17 @@ namespace MDP
               m_global_from_local[new_idx] = lms_tmp;
 #endif
               m_wh[new_idx] = process;
-              m_parity[new_idx] = compute_parity(x);
-              m_stop[process][np]++;
+              m_parity[new_idx] = x_parity;
+              m_stop[process][parity]++;
             }
           }
         }
       }
-      // deallocate temporary array
-#ifndef MDP_NO_LG
-      delete[] local_mdp_sites;
-#else
-      lms_file.close();
-#endif
-      // /////////////////////////
+    }
+
+    // helper function
+    void build_neighbour_tables(int *x, int *x_dw, int *x_up)
+    {
       for (mdp_int local_idx = 0; local_idx < m_local_volume; ++local_idx)
       {
         const mdp_int global = m_global_from_local[local_idx];
@@ -591,12 +495,93 @@ namespace MDP
           }
         }
       }
+    }
 
-      m_internal_volume = m_stop[ME][1] - m_start[ME][0];
-      mdp << "Communicating...\n";
-      communicate_results_to_all_processes();
+    /** @brief share information with other processors
+     */
+    void communicate_results_to_all_processes()
+    {
+      mdp_int buffer[2];
+      mdp_int length;
+      int process;
+// #define LATTICE_DEBUG
+#ifdef LATTICE_DEBUG
+      int process2;
+#endif
+      mdp_request request;
 
-      mdp << "Initializing random per mdp_site...\n";
+      // sending length ///////////////////////////
+#ifdef LATTICE_DEBUG // debugging code below
+      if (Nproc % 2 == 1 || m_where != default_partitioning0)
+      {
+#endif
+        for (int dp = 1; dp < Nproc; dp++)
+        {
+          process = (ME + dp) % Nproc;
+          for (int np = 0; np < 2; np++)
+          {
+            buffer[np] = m_stop[process][np] - m_start[process][np];
+          }
+          mdp.put(buffer, 2, process, request);
+          process = (ME - dp + Nproc) % Nproc;
+          mdp.get(m_len_to_send[process], 2, process);
+          mdp.wait(request);
+          process = (ME + dp) % Nproc;
+          length = m_stop[process][1] - m_start[process][0];
+          std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
+          for (int idx = 0; idx < length; idx++)
+            dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
+          mdp.put(dynamic_buffer.get(), length, process, request);
+          process = (ME - dp + Nproc) % Nproc;
+          length = m_len_to_send[process][0] + m_len_to_send[process][1];
+          m_to_send[process] = new mdp_int[length];
+          mdp.get(m_to_send[process], length, process);
+          for (int idx = 0; idx < length; idx++)
+            m_to_send[process][idx] = local(m_to_send[process][idx]);
+          mdp.wait(request);
+        }
+#ifdef LATTICE_DEBUG // debugging code below
+      }
+      else
+      {
+        for (int dp = 1; dp < Nproc; dp++)
+        {
+          for (int k = 0; k < 2; k++)
+          {
+
+            process = (ME + dp) % Nproc;
+            process2 = (ME - dp + Nproc) % Nproc;
+
+            if ((k + ME) % 2 == 0)
+            {
+              for (int np = 0; np < 2; np++)
+                buffer[np] = m_stop[process][np] - m_start[process][np];
+              mdp.put(buffer, 2, process, request);
+              length = m_stop[process][1] - m_start[process][0];
+              std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
+              for (int idx = 0; idx < length; idx++)
+                dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
+              mdp.put(dynamic_buffer.get(), length, process, request);
+            }
+            else
+            {
+              mdp.get(m_len_to_send[process2], 2, process2);
+              length = m_len_to_send[process2][0] + m_len_to_send[process2][1];
+              m_to_send[process2] = new mdp_int[length];
+              mdp.get(m_to_send[process2], length, process);
+              for (int idx = 0; idx < length; idx++)
+                m_to_send[process2][idx] = local(m_to_send[process2][idx]);
+            }
+          }
+        }
+      }
+#endif
+    }
+
+    /** @brief initialize random number generator for each local mdp_site
+     */
+    void initialize_random(mdp_int random_seed_)
+    {
       if (mdp_random_seed_filename && random_seed_ == 0)
       {
         if (isMainProcess())
@@ -611,6 +596,7 @@ namespace MDP
                 random_seed_ = 0;
               }
             }
+            mdp << "Reading from file '" << mdp_random_seed_filename << "' lattice().random_seed = " << random_seed_ << "\n";
           }
 
           {
@@ -619,18 +605,84 @@ namespace MDP
             {
               mdp_int tmp = random_seed_ + 1;
               fp.write(reinterpret_cast<char *>(&tmp), sizeof(tmp));
+              mdp << "Writing to   file '" << mdp_random_seed_filename << "' lattice().random_seed = " << tmp << "\n";
             }
           }
-          mdp << "Reading from file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ << "\n";
-          mdp << "Writing to   file " << mdp_random_seed_filename << " lattice().random_seed=" << random_seed_ + 1 << "\n";
         }
         mdp.broadcast(random_seed_, 0);
       }
       else
       {
-        mdp << "Adopting random_seed=" << random_seed_ << "\n";
+        mdp << "Adopting random_seed = " << random_seed_ << "\n";
       }
 
+      m_random_seed = random_seed_;
+      if (m_local_random_generator)
+      {
+        mdp << "Using a local random generator\n";
+        m_random_obj = std::make_unique<mdp_prng[]>(m_internal_volume);
+        for (mdp_int idx = 0; idx < m_internal_volume; idx++)
+          m_random_obj[idx].initialize(m_global_from_local[idx + m_start[ME][0]] + m_random_seed);
+      }
+    }
+
+    /** @brief reallocate a lattice dynamically
+     *
+     * @param box size of the lattice
+     * @param ndir_ number of directions
+     * @param where pointer to a partitioning function
+     * @param neighbour_ pointer to a topology function
+     * @param random_seed_ seed to be used by the parallel prng
+     * @param next_next_ size of the buffer between neighbor processes
+     * @param local_random_ true is local random generator is required
+     */
+    void allocate_lattice(const Box &box,
+                          int ndir_,
+                          int (*where_)(const int[], const int, const int[]) = default_partitioning0,
+                          void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
+                          mdp_int random_seed_ = 0,
+                          int next_next_ = 1,
+                          bool local_random_ = true)
+    {
+      mdp.begin_function("allocate_lattice");
+
+      mdp << "Initializing mdp_lattice...\n";
+      init_basic_parameters(box, ndir_, where_, neighbour_, next_next_, local_random_);
+
+#ifndef MDP_NO_LG
+      std::unique_ptr<mdp_int[]> local_mdp_sites = std::make_unique<mdp_int[]>(m_global_volume);
+#else
+      std::string lms_filename(8, '\0');
+      std::generate(lms_filename.begin(), lms_filename.end(), []()
+                    { return "abcdef123456"[rand() % 12]; });
+      std::fstream lms_file;
+      lms_file.open(lms_filename, std::ios::in | std::ios::out | std::ios::binary | std::ios::trunc);
+
+      if (!lms_file)
+        error("mdp_lattice::mdp_lattice()\n"
+              "Unable to create temporary lms file");
+#endif
+
+      int x[MAX_DIM];
+      int x_up[MAX_DIM];
+      int x_dw[MAX_DIM];
+#ifndef MDP_NO_LG
+      compute_local_sites(x, x_up, x_dw, local_mdp_sites.get());
+#else
+      compute_local_sites(x, x_up, x_dw, lms_file);
+#endif
+
+      allocate_basic_arrays();
+      allocate_connectivity_arrays();
+      build_local_global_maps(x, local_mdp_sites.get());
+      build_neighbour_tables(x, x_dw, x_up);
+
+      m_internal_volume = m_stop[ME][1] - m_start[ME][0];
+
+      mdp << "Communicating...\n";
+      communicate_results_to_all_processes();
+
+      mdp << "Initializing random per mdp_site...\n";
       initialize_random(random_seed_);
 
       mdp << "Lattice created.\n";
@@ -692,6 +744,11 @@ namespace MDP
       return m_wh[local_idx];
     }
 
+    /** mu-th coordinate for point x[] based on local index
+     *
+     * @param local_idx Local index for point x[] to be inspected
+     * @return Value of mu-th coordinate
+     */
     mdp_int coordinate(mdp_int local_idx, mdp_int mu) const
     {
       return m_co[local_idx][mu];
@@ -725,6 +782,11 @@ namespace MDP
       x[0] = global_idx;
     }
 
+    /** Which process point x[] is in based on its global index?
+     *
+     * @param global_idx Global index for point x[] to be inspected
+     * @return Process ID
+     */
     mdp_int where_global(mdp_int global_idx)
     {
       int x[MAX_DIM];
@@ -897,6 +959,8 @@ namespace MDP
     }
 #endif
 
+    /** @brief Local index based on global index
+     */
     mdp_int local(mdp_int global_idx) const
     {
 #ifndef MDP_NO_LG
@@ -914,6 +978,8 @@ namespace MDP
 #endif
     }
 
+    /** @brief Global index based on local index
+     */
     mdp_int global(mdp_int local_idx) const
     {
       return m_global_from_local[local_idx];
