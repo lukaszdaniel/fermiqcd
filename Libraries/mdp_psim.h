@@ -19,7 +19,7 @@
 #include <sys/socket.h>
 #include <sys/stat.h> // for mkfifo()
 #include <sys/file.h> // for flock()
-#include <fcntl.h> // for open()
+#include <fcntl.h>    // for open()
 #include <cerrno>
 #include <glob.h> // for glob_t
 using socket_fd_t = int;
@@ -75,8 +75,8 @@ namespace MDP
   {
   private:
     // Typed Constants
-    static constexpr int PROCESS_COUNT_MIN = 1;        // minimum number of processes
-    static constexpr int PROCESS_COUNT_MAX = 128;      // maximum number of processes
+    static constexpr int PROCESS_COUNT_MIN = 1;   // minimum number of processes
+    static constexpr int PROCESS_COUNT_MAX = 128; // maximum number of processes
     // static constexpr int CONN_LIST_IGNORE = -1;     // connections that cannot occur
     static constexpr int PROCESS_PARENT = 0;           // The parent process ID number
     static constexpr int COMM_RECV = 0;                // socket array indicator for reading
@@ -118,7 +118,7 @@ namespace MDP
      * First entry is the table of processes
      * Second entry is the socket array indicator for reading/writing
      */
-    socket_fd_t (*_socketFD)[2];
+    std::vector<std::array<socket_fd_t, 2>> _socketFD;
 
     /** @brief defaults to COMM_TIMEOUT_DEFAULT
      */
@@ -126,7 +126,7 @@ namespace MDP
 
     /** @brief Hash Map to hold out of sequence (send/receive) data
      */
-    std::map<std::string, std::vector<char>> *_hash;
+    std::unique_ptr<std::map<std::string, std::vector<char>>[]> _hash;
 
     inline ssize_t ipc_write(socket_fd_t fd, const void *buffer, size_t size)
     {
@@ -232,15 +232,14 @@ namespace MDP
         }
       }
 
-      if (_socketFD != NULL)
-        delete[] _socketFD;
-      _socketFD = NULL;
+      if (!_socketFD.empty())
+        _socketFD.clear();
+      _socketFD.resize(0);
 
       // only delete the _hash if it still exists
       if (_hash != NULL)
       {
-        delete[] _hash;
-        _hash = NULL;
+        _hash.reset();
       }
 
       char buffer[256];
@@ -259,15 +258,15 @@ namespace MDP
       _processID = PROCESS_PARENT;
       _commTimeout = COMM_TIMEOUT_DEFAULT;
 
-      _hash = new std::map<std::string, std::vector<char>>[_processCount];
+      _hash = std::make_unique<std::map<std::string, std::vector<char>>[]>(_processCount);
       if (!_hash)
       {
         log("PSIM ERROR: failure to allocate hash");
         throw std::string("PSIM ERROR: failure to allocate hash");
       }
 
-      _socketFD = new socket_fd_t[_processCount * _processCount][2];
-      if (!_socketFD)
+      _socketFD.resize(_processCount * _processCount);
+      if (_socketFD.empty())
       {
         log("PSIM ERROR: failed to create socket array");
         throw std::string("PSIM ERROR: failed to create socket array");

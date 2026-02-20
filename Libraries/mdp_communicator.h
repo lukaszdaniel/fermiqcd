@@ -48,7 +48,7 @@ namespace MDP
   private:
 #ifndef PARALLEL
 #ifndef NO_POSIX
-    mdp_psim *nodes;
+    std::unique_ptr<mdp_psim> nodes;
 #endif
 #else
     MPI_Comm communicator;
@@ -450,7 +450,7 @@ namespace MDP
       }
 #else // not PARALLEL
 #ifndef NO_POSIX
-      nodes = new mdp_psim(argc, argv);
+      nodes = std::make_unique<mdp_psim>(argc, argv);
       my_id = nodes->id();
       my_nproc = nodes->nprocs();
 #else
@@ -525,7 +525,7 @@ namespace MDP
 #ifndef PARALLEL
 #ifndef NO_POSIX
       if (nodes)
-        delete nodes;
+        nodes.reset();
 #endif
 #endif
     }
