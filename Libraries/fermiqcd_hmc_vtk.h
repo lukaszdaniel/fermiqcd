@@ -12,6 +12,7 @@
 #ifndef FERMIQCD_HMC_VTK_
 #define FERMIQCD_HMC_VTK_
 
+#include <memory>
 #include <vector>
 #include <iostream>
 #include "mdp_field.h"
@@ -32,17 +33,18 @@ namespace MDP
 
   private:
     // these are all pointers here for speed tricks
+    FermiClass *to_F;
     GaugeClass *to_U;
     GaugeClass *to_V; // for alternate representation!
-    FermiClass *to_F;
-    GaugeClass *to_f_U;
-    GaugeClass *to_p_U;
-    GaugeClass *to_old_U;
-    GaugeClass *to_old_f_U;
-    FermiClass *to_f_F;
-    FermiClass *to_p_F;
-    FermiClass *to_old_F;
-    FermiClass *to_old_f_F;
+    std::unique_ptr<GaugeClass> owned_V; // for alternate representation!
+    std::unique_ptr<GaugeClass> to_f_U;
+    std::unique_ptr<GaugeClass> to_p_U;
+    std::unique_ptr<GaugeClass> to_old_U;
+    std::unique_ptr<GaugeClass> to_old_f_U;
+    std::unique_ptr<FermiClass> to_f_F;
+    std::unique_ptr<FermiClass> to_p_F;
+    std::unique_ptr<FermiClass> to_old_F;
+    std::unique_ptr<FermiClass> to_old_f_F;
 
   public:
     static constexpr int FUNDAMENTAL = 0;
@@ -69,15 +71,15 @@ namespace MDP
       to_U = &U;
       to_V = &U; // initialize should change this
 
-      to_f_U = new GaugeClass(U.lattice(), U.nc());
-      to_p_U = new GaugeClass(U.lattice(), U.nc());
-      to_old_U = new GaugeClass(U.lattice(), U.nc());
-      to_old_f_U = new GaugeClass(U.lattice(), U.nc());
+      to_f_U = std::make_unique<GaugeClass>(U.lattice(), U.nc());
+      to_p_U = std::make_unique<GaugeClass>(U.lattice(), U.nc());
+      to_old_U = std::make_unique<GaugeClass>(U.lattice(), U.nc());
+      to_old_f_U = std::make_unique<GaugeClass>(U.lattice(), U.nc());
 
-      to_f_F = new FermiClass(F.lattice(), F.nc());
-      to_p_F = new FermiClass(F.lattice(), F.nc());
-      to_old_F = new FermiClass(F.lattice(), F.nc());
-      to_old_f_F = new FermiClass(F.lattice(), F.nc());
+      to_f_F = std::make_unique<FermiClass>(F.lattice(), F.nc());
+      to_p_F = std::make_unique<FermiClass>(F.lattice(), F.nc());
+      to_old_F = std::make_unique<FermiClass>(F.lattice(), F.nc());
+      to_old_f_F = std::make_unique<FermiClass>(F.lattice(), F.nc());
 
       std::cout << to_p_U->lattice().ndim() << std::endl;
 
@@ -86,16 +88,16 @@ namespace MDP
 
     ~HMCVTK()
     {
-      delete to_f_U;
-      delete to_p_U;
-      delete to_old_U;
-      delete to_old_f_U;
-      delete to_f_F;
-      delete to_p_F;
-      delete to_old_F;
-      delete to_old_f_F;
+      to_f_U.reset();
+      to_p_U.reset();
+      to_old_U.reset();
+      to_old_f_U.reset();
+      to_f_F.reset();
+      to_p_F.reset();
+      to_old_F.reset();
+      to_old_f_F.reset();
       if (to_V != to_U)
-        delete to_V;
+        to_V = nullptr;
     }
 
     void step()
@@ -202,7 +204,8 @@ namespace MDP
         lambda.resize(g.ngenerators);
         for (int a = 0; a < lambda.size(); a++)
           lambda[a] = g.lambda(a);
-        to_V = new GaugeClass(U.lattice(), dimrep);
+        owned_V = std::make_unique<GaugeClass>(U.lattice(), dimrep);
+        to_V = owned_V.get();
         mdp_matrix tmp(U.nc(), U.nc());
         S.resize(g.ngenerators);
 

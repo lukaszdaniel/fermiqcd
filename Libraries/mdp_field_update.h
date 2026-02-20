@@ -25,7 +25,7 @@ namespace MDP
   template <class T>
   void mdp_field<T>::update(int np, int d, mdp_uint ncomp)
   {
-    T *dynamic_buffer = nullptr;
+    std::unique_ptr<T[]> dynamic_buffer;
     mdp.comm_time -= mdp.time();
     mdp_request request;
     mdp_int start_to_send = 0;
@@ -76,14 +76,14 @@ namespace MDP
 
       if (length > 0)
       {
-        dynamic_buffer = new T[length * ncomp];
+        dynamic_buffer = std::make_unique<T[]>(length * ncomp);
         for (mdp_int idx = 0; idx < length; idx++)
           for (mdp_uint k = 0; k < ncomp; k++)
           {
             dynamic_buffer[idx * ncomp + k] =
                 *(m_data.get() + lattice().to_send0(process, start_to_send + idx) * m_field_components + d * ncomp + k);
           }
-        mdp.put(dynamic_buffer, length * ncomp, process, request);
+        mdp.put(dynamic_buffer.get(), length * ncomp, process, request);
         std::cout.flush();
       }
       else
@@ -118,7 +118,7 @@ namespace MDP
       if (dynamic_buffer != nullptr)
       {
         mdp.wait(request);
-        delete[] dynamic_buffer;
+        dynamic_buffer.reset();
       }
     }
     mdp.comm_time += mdp.time();
