@@ -71,7 +71,7 @@ LDLIBS += -lfermiqcd -lmdp
 
 # ================== Compiler flags =================
 CXXFLAGS_INC += -I$(LIB_DIR)
-CXXFLAGS     += -g -O3 -flto -DUSE_DOUBLE_PRECISION \
+CXXFLAGS     += -g -O3 -flto -fPIE -DUSE_DOUBLE_PRECISION \
                 -std=gnu++20 -Wall -Wextra -Werror -pedantic \
                 $(CXXFLAGS_INC)
 
