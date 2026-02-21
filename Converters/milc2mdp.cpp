@@ -15,7 +15,7 @@ using type32 = short;
 using type32 = int;
 #endif
 
-void error(const char s[])
+void _error(const char s[])
 {
   printf("ERROR: %s\n", s);
   exit(1);
@@ -107,12 +107,12 @@ _generic_field_file_header get_info(const std::string &filename)
   _generic_field_file_header myheader;
   std::ifstream in(filename, std::ios::binary);
   if (!in)
-    error("Unable to open file");
+    _error("Unable to open file");
 
   in.read(reinterpret_cast<char *>(&myheader), sizeof(_generic_field_file_header));
 
   if (!in)
-    error("Error while reading file");
+    _error("Error while reading file");
 
   return myheader;
 }
@@ -208,7 +208,7 @@ void process_gauge(std::ifstream &MILC_fp, std::ofstream &MDP_fp, int nx[4], boo
 
             if (!MILC_fp)
             {
-              error("Error while reading from MILC file");
+              _error("Error while reading from MILC file");
             }
           }
 
@@ -226,7 +226,7 @@ void process_gauge(std::ifstream &MILC_fp, std::ofstream &MDP_fp, int nx[4], boo
 
     if (!MDP_fp)
     {
-      error("Error while writing to MDP file");
+      _error("Error while writing to MDP file");
     }
   }
 }
@@ -254,13 +254,13 @@ int main(int argc, char **argv)
   std::ifstream MILC_fp(argv[3]);
   if (!MILC_fp)
   {
-    error("Cannot open input file");
+    _error("Cannot open input file");
   }
 
   std::ofstream MDP_fp(argv[4], std::ios::binary);
   if (!MDP_fp)
   {
-    error("Cannot open output file");
+    _error("Cannot open output file");
   }
 
   printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
 
     if (!MILC_fp)
     {
-      error("Error while reading from file");
+      _error("Error while reading from file");
     }
 
     printf("%x\n", MILC_header.magic_number);

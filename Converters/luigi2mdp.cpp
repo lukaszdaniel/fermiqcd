@@ -14,7 +14,7 @@ using Complex = std::complex<float>;
 using Complex = std::complex<double>;
 #endif
 
-void error(const char s[])
+void _error(const char s[])
 {
   printf("ERROR: %s\n", s);
   exit(1);
@@ -63,12 +63,12 @@ _generic_field_file_header get_info(const std::string &filename)
   _generic_field_file_header myheader;
   std::ifstream in(filename, std::ios::binary);
   if (!in)
-    error("Unable to open file");
+    _error("Unable to open file");
 
   in.read(reinterpret_cast<char *>(&myheader), sizeof(_generic_field_file_header));
 
   if (!in)
-    error("Error while reading file");
+    _error("Error while reading file");
 
   return myheader;
 }
@@ -164,7 +164,7 @@ void process_gauge(std::ifstream &LUIGI_fp, std::ofstream &MDP_fp, int nx[4], in
 
             if (!LUIGI_fp)
             {
-              error("Error while reading from file");
+              _error("Error while reading from file");
             }
           }
     MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
@@ -172,7 +172,7 @@ void process_gauge(std::ifstream &LUIGI_fp, std::ofstream &MDP_fp, int nx[4], in
 
     if (!MDP_fp)
     {
-      error("Error while writing to file");
+      _error("Error while writing to file");
     }
   }
 }
@@ -200,13 +200,13 @@ int main(int argc, char **argv)
   std::ifstream LUIGI_fp(argv[3]);
   if (!LUIGI_fp)
   {
-    error("Cannot open input file");
+    _error("Cannot open input file");
   }
 
   std::ofstream MDP_fp(argv[4], std::ios::binary);
   if (!MDP_fp)
   {
-    error("Cannot open output file");
+    _error("Cannot open output file");
   }
 
   printf("Lattice: %i x %i x %i x %i\n", nx[0], nx[1], nx[2], nx[3]);

@@ -17,7 +17,7 @@ using Complex = std::complex<float>;
 #define Nspace nx[1] * nx[2] * nx[3]
 #define Ndim 4
 
-void error(const char s[])
+void _error(const char s[])
 {
   printf("ERROR: %s\n", s);
   exit(1);
@@ -127,10 +127,10 @@ void read_t_gauge(short_field &U, char fileprefix[],
 
   // Check input makes sense -- ie that precision is correct
   if ((precision != 'F') && (precision != 'D'))
-    error("Invalid precision");
+    _error("Invalid precision");
   // Check input -- whether byte swap is correct
   if ((swap != 'Y') && (swap != 'N'))
-    error("Invalid swapping parameter");
+    _error("Invalid swapping parameter");
 
   // for each time have Nspace sites, Ndim directions and 6 complex
   // numbers stored.
@@ -149,21 +149,21 @@ void read_t_gauge(short_field &U, char fileprefix[],
   // buffer[].
   auto buffer = std::make_unique<unsigned char[]>(file_length);
   if (buffer == nullptr)
-    error("Unable to allocate memory");
+    _error("Unable to allocate memory");
   std::ifstream fp(filename, std::ios::binary);
   if (!fp)
-    error("Unable to open file");
+    _error("Unable to open file");
   fp.read(reinterpret_cast<char *>(buffer.get()), static_cast<std::streamsize>(file_length));
 
   if (!fp)
   {
-    error("Error while reading file");
+    _error("Error while reading file");
   }
 
   bytes_read = static_cast<std::size_t>(fp.gcount());
 
   if (bytes_read != file_length)
-    error("Read wrong number of bytes");
+    _error("Read wrong number of bytes");
 
   // Do block swapping if necessary
   if (swap == 'Y')
@@ -273,10 +273,10 @@ void read_t_prop(short_field &S, char fileprefix[],
 
   // Check input makes sense -- ie that precision is correct
   if ((precision != 'F') && (precision != 'D'))
-    error("Invalid precision");
+    _error("Invalid precision");
   // Check input -- whether byte swap is correct
   if ((swap != 'Y') && (swap != 'N'))
-    error("Invalid swapping parameter");
+    _error("Invalid swapping parameter");
 
   // File contains only sink spin and sink colour
   if (precision == 'F')
@@ -287,7 +287,7 @@ void read_t_prop(short_field &S, char fileprefix[],
   // Allocate space to buffer[]
   buffer = std::make_unique<unsigned char[]>(bytes_to_read);
   if (buffer == nullptr)
-    error("Out of memory");
+    _error("Out of memory");
 
   for (int source_spin = 0; source_spin < 4; source_spin++)
   {
@@ -302,16 +302,16 @@ void read_t_prop(short_field &S, char fileprefix[],
       // Open, read, check and close file
       std::ifstream fp(filename, std::ios::binary);
       if (!fp)
-        error("Unable to open file");
+        _error("Unable to open file");
       fp.read(reinterpret_cast<char *>(buffer.get()), static_cast<std::streamsize>(bytes_to_read));
       if (!fp)
       {
-        error("Error while reading file");
+        _error("Error while reading file");
       }
       bytes_read = static_cast<std::size_t>(fp.gcount());
 
       if (bytes_read != bytes_to_read)
-        error("Wrong number of bytes read");
+        _error("Wrong number of bytes read");
 
       // Do block swapping if necessary
       if (swap == 'Y')
@@ -379,12 +379,12 @@ _generic_field_file_header get_info(const std::string &filename)
   _generic_field_file_header myheader;
   std::ifstream in(filename, std::ios::binary);
   if (!in)
-    error("Unable to open file");
+    _error("Unable to open file");
 
   in.read(reinterpret_cast<char *>(&myheader), sizeof(_generic_field_file_header));
 
   if (!in)
-    error("Error while reading file");
+    _error("Error while reading file");
 
   return myheader;
 }
