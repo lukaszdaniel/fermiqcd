@@ -36,7 +36,11 @@ jobs:
       - name: Compile
         run: |
           if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.compiler }}" == "clang++" ]]; then
-            make CXX=clang++-18
+            make \
+            CXX=clang++-18 \
+            AR=llvm-ar-18 \
+            RANLIB=llvm-ranlib-18 \
+            LDFLAGS="-fuse-ld=lld"
           else
             make CXX=${{ matrix.compiler }}
           fi

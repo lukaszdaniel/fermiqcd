@@ -58,7 +58,6 @@ PRG_SUFFIX_FLAG ?= 1
 AR      ?= ar
 RANLIB  ?= ranlib
 
-
 # ================== Platform ======================
 ifeq ($(OS),Windows_NT)
     PRG_SUFFIX := .exe
