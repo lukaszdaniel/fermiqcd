@@ -15,6 +15,7 @@ jobs:
     name: FermiQCD on ${{ matrix.os }} with ${{ matrix.compiler }}
     runs-on: ${{ matrix.os }}
     timeout-minutes: 60
+
     strategy:
       fail-fast: false
       matrix:
@@ -25,8 +26,20 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Install LLVM 18 (Ubuntu + clang)
+        if: matrix.os == 'ubuntu-latest' && matrix.compiler == 'clang++'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y llvm-18 clang-18 lld-18
+          echo "/usr/lib/llvm-18/bin" >> $GITHUB_PATH
+
       - name: Compile
-        run: CXX=${{matrix.compiler}} make
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" && "${{ matrix.compiler }}" == "clang++" ]]; then
+            make CXX=clang++-18
+          else
+            make CXX=${{ matrix.compiler }}
+          fi
 
   windows:
     name: FermiQCD on Windows (MSYS2 MinGW)

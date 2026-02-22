@@ -58,10 +58,6 @@ PRG_SUFFIX_FLAG ?= 1
 AR      ?= ar
 RANLIB  ?= ranlib
 
-# If using clang, switch to LLVM binutils for LTO compatibility
-ifneq (,$(findstring clang,$(notdir $(CXX))))
-    LDFLAGS += -fuse-ld=lld
-endif
 
 # ================== Platform ======================
 ifeq ($(OS),Windows_NT)
