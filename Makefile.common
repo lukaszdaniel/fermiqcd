@@ -55,8 +55,13 @@
 COMMON_DIR := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 LIB_DIR ?= $(COMMON_DIR)/Libraries
 PRG_SUFFIX_FLAG ?= 1
-AR      ?= ar
-RANLIB  ?= ranlib
+
+# If using clang, switch to LLVM binutils for LTO compatibility
+ifneq (,$(findstring clang,$(notdir $(CXX))))
+    AR      := llvm-ar
+    RANLIB  := llvm-ranlib
+    LDFLAGS += -fuse-ld=lld
+endif
 
 # ================== Platform ======================
 ifeq ($(OS),Windows_NT)
