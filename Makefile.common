@@ -60,8 +60,6 @@ RANLIB  ?= ranlib
 
 # If using clang, switch to LLVM binutils for LTO compatibility
 ifneq (,$(findstring clang,$(notdir $(CXX))))
-    AR      := llvm-ar
-    RANLIB  := llvm-ranlib
     LDFLAGS += -fuse-ld=lld
 endif
 
