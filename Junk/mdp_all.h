@@ -58,8 +58,14 @@ namespace MDP
 {
   void exit_message(int en, const std::string &message)
   {
+#ifdef _WIN32
+    std::cerr << "FROM PROCESS PID: " << _getpid() << std::endl;
+    std::cerr << "CHILD OF PROCESS PID: (unsupported on Windows)" << std::endl;
+#else
     std::cerr << "FROM PROCESS PID: " << getpid() << std::endl;
     std::cerr << "CHILD OF PROCESS PID: " << getppid() << std::endl;
+#endif
+
     std::cerr << "FATAL ERROR: " << message << std::endl;
     std::cerr << "EXITING WITH ERROR NUMBER: " << en << std::endl;
     std::exit(en);

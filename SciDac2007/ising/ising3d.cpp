@@ -1,5 +1,5 @@
 #include "../../Libraries/mdp.h"
-#include "../mdp_all.h"
+// #include "../mdp_all.h"
 #include "../dump.h"
 
 #define X 0
@@ -45,6 +45,7 @@ int main(int argc, char **argv)
     H = H + dH;
     mdp << "magnetization=" << H << "\n";
   }
+  // spin.save_vtk("ising3d.vtk", -1, -1, 0, true);
   dump(spin);
   mdp.close_wormholes();
   return 0;

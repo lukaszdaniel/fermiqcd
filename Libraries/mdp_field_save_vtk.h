@@ -30,7 +30,7 @@ namespace MDP
                               bool ASCII)
   {
     filename = next_to_latest_file(filename);
-    std::string filename_tmp = filename + ".tmp";
+    std::string tempfile = filename + ".tmp";
 
     int max_buffer_size = 1024;
     mdp_int nvol_gl = lattice().global_volume();
@@ -54,9 +54,14 @@ namespace MDP
                 << " from process " << processIO
                 << " (buffer = " << max_buffer_size << " sites)\n";
 
-      std::ofstream ofs(filename_tmp, std::ios::binary);
+      std::ofstream ofs;
+      if (ASCII)
+        ofs.open(tempfile, std::ios::out);
+      else
+        ofs.open(tempfile, std::ios::out | std::ios::binary);
+
       if (!ofs)
-        error("Unable to open temporary VTK file for writing");
+        throw std::ios_base::failure("Unable to open temporary VTK file for writing");
 
       int space_volume = lattice().size() / lattice().size(0);
       int LZ = lattice().size(1);
@@ -120,16 +125,16 @@ namespace MDP
               if (component == -1 || fc == mdp_uint(component))
               {
                 float fval = static_cast<float>(short_buffer[fc]);
-                if (!ASCII)
+                if (ASCII)
                 {
-                  switch_endianess(fval);
-                  ofs.write(reinterpret_cast<char *>(&fval), sizeof(fval));
-                  if (!ofs)
-                    error("probably out of disk space");
+                  ofs << std::scientific << fval << "\n";
                 }
                 else
                 {
-                  ofs << std::scientific << fval << "\n";
+                  switch_endianess(fval);
+                  ofs.write(reinterpret_cast<char *>(&fval), sizeof(float));
+                  if (!ofs)
+                    error("probably out of disk space");
                 }
               }
             }
@@ -139,7 +144,7 @@ namespace MDP
 
       ofs.close();
       std::remove(filename.c_str());
-      std::rename(filename_tmp.c_str(), filename.c_str());
+      std::rename(tempfile.c_str(), filename.c_str());
     }
     else
     {

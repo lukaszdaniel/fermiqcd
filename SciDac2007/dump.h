@@ -16,37 +16,34 @@ namespace MDP
 
     const std::string tempfile = "tmp.vtk";
 
+    fs::remove(tempfile); // remove tmp.vtk file if exists
+
+    std::cout << "Saving file " << filename << std::endl;
+
+    std::ofstream ofs;
+    if (bASCII)
+      ofs.open(tempfile, std::ios::out);
+    else
+      ofs.open(tempfile, std::ios::out | std::ios::binary);
+
+    if (!ofs)
+      throw std::ios_base::failure("Unable to open temporary VTK file for writing");
+
     const int LX = s.lattice().size(0);
     const int LY = s.lattice().size(1);
     const int LZ = s.lattice().size(2);
 
-    std::ostringstream header;
-    header << "# vtk DataFile Version 2.0\n"
-              "Really cool data\n"
-           << (bASCII ? "ASCII\n" : "BINARY\n") << "DATASET STRUCTURED_POINTS\n"
-           << "DIMENSIONS "
-           << LX + 1 << " " << LY + 1 << " " << LZ + 1 << "\n"
-           << "ORIGIN 0 0 0\n"
-           << "SPACING 1 1 1\n"
-           << "POINT_DATA "
-           << (LX + 1) * (LY + 1) * (LZ + 1) << "\n"
-           << "SCALARS scalar0 float 1\n"
-           << "LOOKUP_TABLE default\n";
-
-    fs::remove(tempfile); // remove tmp.vtk file if exists
-
-    std::ofstream out;
-    if (bASCII)
-      out.open(tempfile, std::ios::out);
-    else
-      out.open(tempfile, std::ios::out | std::ios::binary);
-
-    if (!out)
-      throw std::ios_base::failure("Cannot open temporary VTK file");
-
-    std::cout << "saving... " << filename << std::endl;
-
-    out << header.str();
+    // VTK header
+    ofs << "# vtk DataFile Version 2.0\n"
+        << filename << "\n"
+        << (bASCII ? "ASCII" : "BINARY") << "\n"
+        << "DATASET STRUCTURED_POINTS\n"
+        << "DIMENSIONS " << LX + 1 << " " << LY + 1 << " " << LZ + 1 << "\n"
+        << "ORIGIN 0 0 0\n"
+        << "SPACING 1 1 1\n"
+        << "POINT_DATA " << (LX + 1) * (LY + 1) * (LZ + 1) << "\n"
+        << "SCALARS scalar0 float 1\n"
+        << "LOOKUP_TABLE default\n";
 
     mdp_site p(s.lattice());
 
@@ -56,18 +53,18 @@ namespace MDP
         {
           p.set(i % LX, j % LY, k % LZ);
 
-          float fval = (float)s(p, site_idx);
+          float fval = static_cast<float>(s(p, site_idx));
           if (bASCII)
           {
-            out << std::scientific << fval << '\n';
+            ofs << std::scientific << fval << "\n";
           }
           else
           {
-            out.write(reinterpret_cast<char *>(&fval), sizeof(float));
+            ofs.write(reinterpret_cast<char *>(&fval), sizeof(float));
           }
         }
 
-    out.close();
+    ofs.close();
 
     fs::remove(filename);
     fs::rename(tempfile, filename);

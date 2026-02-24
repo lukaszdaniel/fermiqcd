@@ -15,7 +15,7 @@ allowed_commands = {
         ["filename", r"[a-zA-Z0-9_/.\-\*]*", "gauge.*.mdp"],
         ["precision", r"(?:float)|(?:double)", "float"],
     ],
-    "save_partitioning": [["filename", r"[a-zA-Z0-9_/.\-]*", "partitining"]],
+    "save_partitioning": [["filename", r"[a-zA-Z0-9_/.\-]*", "partitioning"]],
     "heatbath": [["beta", r"\d+(.\d+)+", "5.0"], ["steps", r"\d+", "1"]],
     "save": [["filename", r"[a-zA-Z0-9_/.\-\*]*", "gauge.*.mdp"]],
     "plaquette": [],
@@ -179,14 +179,14 @@ def report(errors, warnings):
 def generate_code(instruction, warnings, commands):
     """Generate C++ code based on the parsed commands."""
     program = "/*\n"
-    program += f"    python qcd.py code {instruction}\n\n"
+    program += f"    python3 iqcd.py code {instruction}\n\n"
 
     # Add warnings to the program header
     for warning in warnings:
         program += f"    {warning}\n"
 
     program += "*/\n"
-    program += '#include "fermiqcd.h"\n'
+    program += '#include "fermiqcd.h"\n\n'
     program += "using namespace MDP;\n\n"
 
     program += "int main(int argc, char **argv) {\n"
@@ -206,25 +206,25 @@ def generate_code(instruction, warnings, commands):
         if not have_gauge:
             if s.command == "cold":
                 dims = s.args.get("TxXxYxZ", "").replace("x", ",")
-                program += f"   int L[] = {{{dims}}};\n"
-                program += "   mdp_lattice spacetime(4, L);\n"
+                program += f"   constexpr Box L = {{{dims}}};\n"
+                program += "   mdp_lattice spacetime(L);\n"
                 program += f"   int nc = {s.args.get('nc', 3)};\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 program += "   set_cold(U);\n"
                 have_gauge = True
             elif s.command == "hot":
                 dims = s.args.get("TxXxYxZ", "").replace("x", ",")
-                program += f"   int L[] = {{{dims}}};\n"
-                program += "   mdp_lattice spacetime(4, L);\n"
+                program += f"   constexpr Box L = {{{dims}}};\n"
+                program += "   mdp_lattice spacetime(L);\n"
                 program += f"   int nc = {s.args.get('nc', 3)};\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 program += "   set_hot(U);\n"
                 have_gauge = True
             elif s.command == "load":
                 program += f"   mdp_field_file_header header = get_info(\"{s.args.get('filename', 'input.mdp')}\");\n"
-                program += "   int L[] = {header.box[0], header.box[1], header.box[2], header.box[3]};\n"
+                program += "   const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};\n"
                 program += NC_SWITCH
-                program += "   mdp_lattice spacetime(4, L);\n"
+                program += "   mdp_lattice spacetime(L);\n"
                 program += f"   int nc = header.nc;\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 precision = s.args.get("precision", "double")
@@ -257,7 +257,7 @@ def generate_code(instruction, warnings, commands):
             if s.command == "save":
                 program += f"{SPACE}U.save(\"{s.args['filename']}\");\n"
             if s.command == "plaquette":
-                program += (f'{SPACE}mdp << "plaquette = " << average_plaquette(U) << "\\n";\n')
+                program += (f'{SPACE}mdp << "average plaquette = " << average_plaquette(U) << "\\n";\n')
             if s.command == "heatbath":
                 program += f"{SPACE}coeff[\"beta\"] = {s.args['beta']};\n"
                 program += f"{SPACE}WilsonGaugeAction::heatbath(U, coeff, {s.args['steps']});\n"
@@ -269,7 +269,7 @@ def generate_code(instruction, warnings, commands):
                 program += f"{SPACE}GaugeFixing::fix(U, GaugeFixing::Landau, {s.args['steps']}, {s.args['precision']}, {s.args['boost']});\n"
             if s.command == "topological_charge":
                 program += f"{SPACE}{{ float tc = topological_charge_vtk(U, \"{s.args['filename']}\", {s.args['t']});\n"
-                program += (f'{SPACE}  mdp << "topological_charge = " << tc << "\\n"; }}\n')
+                program += (f'{SPACE}  mdp << "total topological charge = " << tc << "\\n"; }}\n')
         k += 1
 
         # Close loops when needed
@@ -291,12 +291,12 @@ def menu():
     """Display the main menu and handle command-line inputs."""
     if len(sys.argv) == 1:
         print("usage:")
-        print('"python qcd.py help" to list all available algorithms')
-        print('"python qcd.py help -heatbath" for help about the heatbath algorithm')
-        print('"python qcd.py code +cold TxXxYxZ=10x4x4x4 nc=3" to create a program that makes one cold gauge configuration')
-        print('"python qcd.py compile filename.cpp" to compile filename.cpp (for those who hate make like me)')
-        # print '"python qcd.py submit filename.exe" to submit filename.exe to your cluster
-        # print '"python qcd.py monitor pid" to monitor the executable running as pid
+        print('"python3 iqcd.py help" to list all available algorithms')
+        print('"python3 iqcd.py help -heatbath" for help about the heatbath algorithm')
+        print('"python3 iqcd.py code +cold TxXxYxZ=10x4x4x4 nc=3" to create a program that makes one cold gauge configuration')
+        print('"python3 iqcd.py compile filename.cpp" to compile filename.cpp (for those who hate make like me)')
+        # print '"python3 iqcd.py submit filename.exe" to submit filename.exe to your cluster
+        # print '"python3 iqcd.py monitor pid" to monitor the executable running as pid
     elif sys.argv[1] == "code":
         instruction, commands, errors, warnings = parse()
         if errors or warnings:

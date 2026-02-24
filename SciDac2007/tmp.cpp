@@ -1,9 +1,9 @@
 /*
-    python qcd.py make +cold +save_partitioning_vtk
+    python3 iqcd.py code +cold +save_partitioning
 
     +cold warning: assuming default argument TxXxYxZ=16x4x4x4
     +cold warning: assuming default argument nc=3
-    +save_partitioning_vtk warning: assuming default argument filename=partitining
+    +save_partitioning warning: assuming default argument filename=partitioning
 */
 #include "fermiqcd.h"
 
