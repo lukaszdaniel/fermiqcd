@@ -156,11 +156,8 @@ namespace MDP
     {
       deallocate_field();
       if (n == 0)
-        n = m_field_components;
-      else
-        m_field_components = n;
-      if (m_field_components == 0)
         error("You cannot have a field of zero size!");
+      m_field_components = n;
       m_size = a.enclosing_volume() * m_field_components;
       m_data = std::make_unique<T[]>(m_size);
       m_lattice = &a;

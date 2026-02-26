@@ -275,7 +275,7 @@ namespace MDP
     }
 
     /** @brief returns a site shifted i position (backwards if i<0 or forward if i>0)
-     * in direction mu=(0...mdim-1)
+     * in direction mu=(0...ndim-1)
      */
     mdp_site hop(int i, mdp_int mu)
     {
@@ -299,7 +299,7 @@ namespace MDP
 
     /** @brief sets the site to the coordinates stored in vector v
      */
-    mdp_site operator=(mdp_vector v)
+    mdp_site operator=(const mdp_vector &v)
     {
       set(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9]);
       return *this;
@@ -308,7 +308,7 @@ namespace MDP
     /** @brief returns a site similar to the present but
      * each coordinates mu of the site shifted according to v[mu]
      */
-    mdp_site operator+(mdp_vector v)
+    mdp_site operator+(const mdp_vector &v)
     {
       mdp_site y = *this;
       for (mdp_int mu = 0; mu < lattice().n_dimensions(); mu++)
@@ -326,7 +326,7 @@ namespace MDP
     /** @brief returns a site similar to the present but
      * each coordinates mu of the site shifted according to -v[mu]
      */
-    mdp_site operator-(mdp_vector v)
+    mdp_site operator-(const mdp_vector &v)
     {
       mdp_site y = *this;
       for (mdp_int mu = 0; mu < lattice().n_dimensions(); mu++)

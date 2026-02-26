@@ -13,7 +13,7 @@
 #define MDP_GLOBAL_VARS_
 
 #include <string>
-#include <limits> // for numeric_limits()
+#include <limits>  // for numeric_limits()
 #include <cstdint> // for uint8_t
 
 namespace MDP
@@ -76,7 +76,7 @@ namespace MDP
     constexpr int ODD = 1;
     constexpr int EVENODD = 2;
     constexpr int _NprocMax_ = 256;
-    constexpr mdp_real PRECISION = 3.0e-6;
+    constexpr mdp_real PRECISION = 1.0 / (1 << 18); // ~3.0e-6 in binary
     constexpr mdp_int NOWHERE = std::numeric_limits<mdp_int>::max();
 
     /// Each program should have a name
@@ -96,7 +96,7 @@ namespace MDP
 
     /// Default precision used by iterative algorithms such as
     /// mdp_matrix::sin(), mdp_matrix::cos() and mdp_matrix::exp()
-    constexpr mdp_real mdp_precision = 1e-5;
+    constexpr mdp_real mdp_precision = 1.0 / (1 << 16); // ~1e-5 in binary
 
     void _mpi_error_message(std::string, std::string, int);
 } // namespace MDP

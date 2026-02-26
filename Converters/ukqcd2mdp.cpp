@@ -447,7 +447,7 @@ int main(int argc, char **argv)
 
   sscanf(argv[2], "%ix%ix%ix%i", nx, nx + 1, nx + 2, nx + 3);
 
-  char PRECISION = argv[2][strlen(argv[2]) - 2];
+  char precision = argv[2][strlen(argv[2]) - 2];
   char SWAP = argv[2][strlen(argv[2]) - 1];
 
   long time0 = clock() / CLOCKS_PER_SEC;
@@ -475,7 +475,7 @@ int main(int argc, char **argv)
     U.initialize(nx[1], nx[2], nx[3], 4, 3, 3);
     for (int x0 = 0; x0 < nx[0]; x0++)
     {
-      read_t_gauge(U, argv[3], PRECISION, SWAP, x0);
+      read_t_gauge(U, argv[3], precision, SWAP, x0);
       const std::streamoff byte_pos = static_cast<std::streamoff>(bytes_per_site) * Nspace * x0 + static_cast<std::streamoff>(offset);
       MDP_fp.seekp(byte_pos, std::ios::beg);
       MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
@@ -488,7 +488,7 @@ int main(int argc, char **argv)
     U.initialize(nx[1], nx[2], nx[3], 4, 4, 3, 3);
     for (int x0 = 0; x0 < nx[0]; x0++)
     {
-      read_t_prop(U, argv[3], PRECISION, SWAP, x0);
+      read_t_prop(U, argv[3], precision, SWAP, x0);
       const std::streamoff byte_pos = static_cast<std::streamoff>(bytes_per_site) * Nspace * x0 + static_cast<std::streamoff>(offset);
       MDP_fp.seekp(byte_pos, std::ios::beg);
       MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
