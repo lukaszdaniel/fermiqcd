@@ -62,9 +62,9 @@ namespace MDP
 
     for (const auto &[coefficient, value] : coeff)
     {
-      std::cout << "<coefficient name=\"" << coefficient << "\">" << value
-                << "</coefficient>"
-                << "\n";
+      mdp << "<coefficient name=\"" << coefficient << "\">" << value
+          << "</coefficient>"
+          << "\n";
     }
     end_function("print_coefficients");
     return os;

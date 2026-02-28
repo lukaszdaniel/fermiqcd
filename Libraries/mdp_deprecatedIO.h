@@ -37,9 +37,9 @@ namespace MDP
 			for (int process = 0; process < Nproc; process++)
 				buffer_size[process] = 0;
 
-			printf("Loading file %s from process %i (buffer = %li sites)\n",
-				   filename, processIO, max_buffer_size);
-			fflush(stdout);
+			std::cout << "Loading file " << filename
+					  << " from process " << processIO
+					  << " (buffer = " << max_buffer_size << " sites)\n";
 
 			std::ifstream file(filename, std::ios::binary);
 			if (!file)
@@ -153,8 +153,8 @@ namespace MDP
 
 		if (isMainProcess() && !mdp_shutup)
 		{
-			printf("... Loading time: %f (sec)\n", mdp.time() - mytime);
-			fflush(stdout);
+			std::cout << "... Loading time: " << (mdp.time() - mytime) << " (sec)\n";
+			std::cout.flush();
 		}
 
 		if (try_switch_endianess && auto_switch_endianess)
@@ -187,9 +187,9 @@ namespace MDP
 			for (int process = 0; process < Nproc; process++)
 				buffer_ptr[process] = 0;
 
-			printf("Saving file %s from process %i (buffer = %li sites)\n",
-				   filename, processIO, max_buffer_size);
-			fflush(stdout);
+			std::cout << "Saving file " << filename
+					  << " from process " << processIO
+					  << " (buffer = " << max_buffer_size << " sites)\n";
 
 			std::ios::openmode open_mode = std::ios::binary;
 			if (mode && std::strchr(mode, 'a'))
@@ -306,8 +306,7 @@ namespace MDP
 
 		if (isMainProcess() && !mdp_shutup)
 		{
-			printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
-			fflush(stdout);
+			std::cout << "... Saving time: " << (mdp.time() - mytime) << " (sec)\n";
 		}
 	}
 #endif

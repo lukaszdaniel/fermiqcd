@@ -68,7 +68,7 @@ namespace MDP
   public:
     double comm_time; // time spent in communications
 
-    mdp_communicator()
+    mdp_communicator() : mdp_log()
     {
       wormholes_open = false;
     }
@@ -424,7 +424,7 @@ namespace MDP
      *
      * parses command line argument for MPI or PSIM parameters
      */
-    void open_wormholes(int argc, char **argv
+    void open_wormholes(int argc, char **argv, const std::string &target = "std::cout"
 #ifdef PARALLEL
                         ,
                         MPI_Comm communicator_ = MPI_COMM_WORLD
@@ -434,6 +434,7 @@ namespace MDP
       if (wormholes_open)
         return;
 
+      openTarget(target);
 #ifdef PARALLEL
       communicator = communicator_;
       MPI_Init(&argc, &argv);
@@ -528,6 +529,7 @@ namespace MDP
         nodes.reset();
 #endif
 #endif
+      closeTarget();
     }
 
     /** @brief forces the process to exit

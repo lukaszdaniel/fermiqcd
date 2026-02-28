@@ -61,12 +61,12 @@ namespace MDP
   /// Best way to load a field
   template <class T>
   bool mdp_field<T>::load_old(std::string filename,
-                          int processIO,
-                          mdp_int max_buffer_size,
-                          bool load_header,
-                          mdp_int skip_bytes,
-                          bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &),
-                          bool try_switch_endianess)
+                              int processIO,
+                              mdp_int max_buffer_size,
+                              bool load_header,
+                              mdp_int skip_bytes,
+                              bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &),
+                              bool try_switch_endianess)
   {
     if (!file_exists(filename))
       throw std::string("file ") + filename + std::string(" does not exist");
@@ -278,8 +278,8 @@ namespace MDP
 
     if (isMainProcess() && !mdp_shutup)
     {
-      printf("... Loading time: %f (sec)\n", mdp.time() - mytime);
-      fflush(stdout);
+      std::cout << "... Loading time: " << (mdp.time() - mytime) << " (sec)\n";
+      std::cout.flush();
     }
     return true;
   }
@@ -500,7 +500,7 @@ namespace MDP
     }
 
     if (isMainProcess() && !mdp_shutup)
-      printf("... Loading time: %f (sec)\n", mdp.time() - mytime);
+      std::cout << "... Loading time: " << (mdp.time() - mytime) << " (sec)\n";
 
     return true;
   }

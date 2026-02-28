@@ -94,7 +94,6 @@ namespace MDP
                 << " from process " << processIO
                 << " (buffer = " << max_buffer_size << " sites)\n";
 
-      fflush(stdout);
       FILE *fp = fopen(filename.c_str(), "wb+");
       if (fp == nullptr)
         error("Unable to open file");
@@ -211,8 +210,7 @@ namespace MDP
 
     if (isMainProcess() && !mdp_shutup)
     {
-      printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
-      fflush(stdout);
+      std::cout << "... Saving time: " << (mdp.time() - mytime) << " (sec)\n";
     }
 
     return true;
@@ -368,7 +366,7 @@ namespace MDP
     }
 
     if (isMainProcess() && !mdp_shutup)
-      printf("... Saving time: %f (sec)\n", mdp.time() - mytime);
+      std::cout << "... Saving time: " << (mdp.time() - mytime) << " (sec)\n";
 
     return true;
   }

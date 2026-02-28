@@ -22,8 +22,8 @@
 
 namespace MDP
 {
-  /// @brief base class of class mdp_communicator (DO NOT INSTANTIATE)
-  /// @see class mdp_communicator
+  /// @brief Logging mechanism
+  /// @note base class of class mdp_communicator
   class mdp_log
   {
   private:
@@ -41,8 +41,8 @@ namespace MDP
 
     mdp_log(const mdp_log &) = delete;
     mdp_log &operator=(const mdp_log &) = delete;
-    mdp_log(mdp_log &&) = default;
-    mdp_log &operator=(mdp_log &&) = default;
+    mdp_log(mdp_log &&) = delete;
+    mdp_log &operator=(mdp_log &&) = delete;
 
     static std::string formatTime(const std::chrono::system_clock::time_point &tp)
     {
@@ -59,32 +59,7 @@ namespace MDP
       return oss.str();
     }
 
-    void openTarget(const std::string &target)
-    {
-      if (target.empty() || target == "std::cout")
-      {
-        m_os = &std::cout;
-      }
-      else if (target == "std::stderr")
-      {
-        m_os = &std::cerr;
-      }
-      else
-      {
-        m_file.open(target);
-        if (!m_file)
-          throw std::runtime_error("cannot open log file: " + target);
-        m_os = &m_file;
-      }
-    }
-
-    void closeTarget()
-    {
-      if (m_file.is_open())
-        m_file.close();
-    }
-
-    // --- nagłówek / stopka --------------------------------------------------
+    // --- header / footer --------------------------------------------------
 
     void writeHeader(int argc = 0, char *argv[] = nullptr, const std::string &id = "")
     {
@@ -125,11 +100,44 @@ namespace MDP
       m_os->flush();
     }
 
+  protected:
+    /** @brief Special constructor for mdp_communicator
+     */
+    mdp_log() : m_printEnabled(true), m_footerEnabled(false), m_cpuValid(false), m_os(nullptr)
+    {
+      openTarget("std::cout");
+    }
+
+    void openTarget(const std::string &target)
+    {
+      if (target.empty() || target == "std::cout")
+      {
+        m_os = &std::cout;
+      }
+      else if (target == "std::stderr")
+      {
+        m_os = &std::cerr;
+      }
+      else
+      {
+        m_file.open(target);
+        if (!m_file)
+          throw std::runtime_error("cannot open log file: " + target);
+        m_os = &m_file;
+      }
+    }
+
+    void closeTarget()
+    {
+      if (m_file.is_open())
+        m_file.close();
+    }
+
   public:
     class function_scope
     {
     public:
-      function_scope(mdp_log &log, std::string name)
+      function_scope(mdp_log &log, const std::string &name)
           : m_log(log), m_name(std::move(name))
       {
         m_log.begin_function(m_name);
@@ -148,11 +156,10 @@ namespace MDP
       std::string m_name;
     };
 
-    mdp_log() : m_printEnabled(true), m_footerEnabled(false), m_cpuValid(false), m_os(nullptr)
-    {
-      openTarget("std::cout");
-    }
-
+    /** @brief Constructor for generic logging
+     *
+     * @note Not for mdp_communicator
+     */
     mdp_log(const std::string &target, int argc, char *argv[], const std::string &id = "") : m_printEnabled(true), m_footerEnabled(false), m_cpuValid(false), m_os(nullptr)
     {
       openTarget(target);
