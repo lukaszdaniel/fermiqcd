@@ -87,7 +87,7 @@ public:
     m_counter = 0;
   }
 
-  void init_load(std::string filename)
+  void init_load(const std::string &filename)
   {
     mdp_field_file_header header = get_info(filename);
     const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};

@@ -22,16 +22,13 @@ namespace MDP
     // #define CHECK_ALL
     // #define CHECK_BOUNDARY
     // #define INCLUDE_DEPRECATED_IO
-    // #define MDP_MPI
     // #define PARALLEL
     // #define NO_POSIX
     // #define HAVE_NO_TIMEZONE
     // #define SSE2
     // #define NO_SSE2_LINALG
-    // #define DO_NOT_USE_MDP_COMPLEX //define if you want to use standard complex.h header
+    // #define DO_NOT_USE_MDP_COMPLEX //define if you want to use standard complex header
     // #define MDP_NO_LG //define if you want a temporary file to store local-to-global lattice mappings
-    // #define MATRIX_SSE2
-    // #define AIX
     // #define BLOCKSITE 100
     // #define TWISTED_BOUNDARY
     // #define LATTICE_DEBUG
@@ -98,7 +95,7 @@ namespace MDP
     /// mdp_matrix::sin(), mdp_matrix::cos() and mdp_matrix::exp()
     constexpr mdp_real mdp_precision = 1.0 / (1 << 16); // ~1e-5 in binary
 
-    void _mpi_error_message(std::string, std::string, int);
+    void _mpi_error_message(const std::string &message, const std::string &file, int line);
 } // namespace MDP
 
 #endif /* MDP_GLOBAL_VARS_ */

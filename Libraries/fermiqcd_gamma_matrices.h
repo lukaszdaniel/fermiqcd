@@ -356,7 +356,7 @@ namespace MDP
     end_function("define_base_matrices");
   }
 
-  mdp_matrix parse_gamma(std::string g)
+  mdp_matrix parse_gamma(const std::string &g)
   {
     if (g == "I")
       return Gamma4;

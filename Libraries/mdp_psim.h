@@ -596,7 +596,7 @@ namespace MDP
     // ***                                                             ***
     // *******************************************************************
 
-    void doBegEndLog(std::string method, BegEnd begEnd)
+    void doBegEndLog(const std::string &method, BegEnd begEnd)
     {
       char buffer[256];
       char *be;
@@ -646,7 +646,7 @@ namespace MDP
     // ***                                                             ***
     // *******************************************************************
 
-    void log(std::string message, int level = 2)
+    void log(const std::string &message, int level = 2)
     {
       if (_doLogging)
       {

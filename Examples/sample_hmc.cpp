@@ -37,7 +37,7 @@ public:
     read_in = 0;
   }
 
-  void read(std::string filename)
+  void read(const std::string &filename)
   {
     L = (int)val(prompt(filename, "L", "8"));
     T = (int)val(prompt(filename, "T", "16"));

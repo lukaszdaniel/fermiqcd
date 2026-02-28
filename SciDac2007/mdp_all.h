@@ -87,7 +87,7 @@ namespace MDP
     int m_port;
 
   public:
-    InternetAddress(std::string hostname = "127.0.0.1", int port = 0)
+    InternetAddress(const std::string &hostname = "127.0.0.1", int port = 0)
     {
       struct addrinfo hints;
       struct addrinfo *result = nullptr;
@@ -253,7 +253,7 @@ namespace MDP
     return socket(AF_INET, SOCK_DGRAM, flags);
   }
 
-  int newTcpClientSocket(std::string ipaddress, int port, int sleep_time = 10)
+  int newTcpClientSocket(const std::string &ipaddress, int port, int sleep_time = 10)
   {
     InternetAddress peer = InternetAddress(ipaddress, port);
     int sfd = newTcpSocket();

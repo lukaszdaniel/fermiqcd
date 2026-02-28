@@ -21,7 +21,7 @@
 
 namespace MDP
 {
-  void select_action_and_inverter(std::string quark_action, std::string inverter)
+  void select_action_and_inverter(const std::string &quark_action, const std::string &inverter)
   {
     if (quark_action == "clover_fast")
     {

@@ -14,7 +14,7 @@ void usage()
   exit(0);
 }
 
-void cool(gauge_field &U, mdp_args &arguments)
+void cool(gauge_field &U, const mdp_args &arguments)
 {
   if (arguments.get("-cool", "alg", "ape") == "ape")
     ApeSmearing::smear(U,
@@ -25,7 +25,7 @@ void cool(gauge_field &U, mdp_args &arguments)
     mdp.error_message("cooling algorithm not supported");
 }
 
-void cool_vtk(gauge_field &U, mdp_args &arguments, std::string filename)
+void cool_vtk(gauge_field &U, const mdp_args &arguments, const std::string &filename)
 {
   if (arguments.get("-cool", "alg", "ape") == "ape")
     for (int k = 0; k < arguments.get("-cool_vtk", "n", 20); k++)
@@ -40,7 +40,7 @@ void cool_vtk(gauge_field &U, mdp_args &arguments, std::string filename)
     mdp.error_message("cooling algorithm not supported");
 }
 
-void plaquette_vtk(gauge_field &U, std::string filename)
+void plaquette_vtk(gauge_field &U, const std::string &filename)
 {
   mdp_real_scalar_field q(U.lattice());
   mdp_site x(U.lattice());
@@ -57,7 +57,7 @@ void plaquette_vtk(gauge_field &U, std::string filename)
   q.save_vtk(filename, -1);
 }
 
-void polyakov_vtk(gauge_field &U, std::string filename)
+void polyakov_vtk(gauge_field &U, const std::string &filename)
 {
   int LX = U.lattice().size(1);
   int LY = U.lattice().size(2);
@@ -74,6 +74,7 @@ void polyakov_vtk(gauge_field &U, std::string filename)
 
   forallsites(y)
       V(y) = 1;
+
   for (int t = 0; t < L[0]; t++)
   {
     forallsites(y)
@@ -82,6 +83,7 @@ void polyakov_vtk(gauge_field &U, std::string filename)
       V(y) = V(y) * U(x, 0);
     }
   }
+
   forallsites(y)
   {
     mdp_complex z = trace(V(y));
@@ -91,7 +93,7 @@ void polyakov_vtk(gauge_field &U, std::string filename)
   q.save_vtk(filename, -1, 0, 0, false);
 }
 
-void pretty_print(std::string prefix, std::vector<mdp_real> data)
+void pretty_print(const std::string &prefix, const std::vector<mdp_real> &data)
 {
   if (isMainProcess())
   {
@@ -103,7 +105,7 @@ void pretty_print(std::string prefix, std::vector<mdp_real> data)
 }
 
 void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
-                mdp_args &arguments, std::string newfilename)
+                const mdp_args &arguments, const std::string &newfilename)
 {
 
   float abs_precision = arguments.get("-quark", "abs_precision", 1e-12);

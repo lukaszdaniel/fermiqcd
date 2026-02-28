@@ -32,7 +32,7 @@ namespace MDP
     mdp_real charge; // this is 1/g
     mdp_real lambda;
     mdp_matrix eta[4][4];
-    Instanton4D(int nc_, int sub_i_, int sub_j_, mdp_real charge_, mdp_real lambda_, std::vector<mdp_real> &p_)
+    Instanton4D(int nc_, int sub_i_, int sub_j_, mdp_real charge_, mdp_real lambda_, const std::vector<mdp_real> &p_)
     {
       nc = nc_;
       sub_i = sub_i_;

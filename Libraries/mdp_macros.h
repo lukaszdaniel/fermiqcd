@@ -50,7 +50,7 @@ namespace MDP
 #define Nproc mdp.nproc()
 
 /// Reports a runtime error and the line that caused it
-#define error(a) _mpi_error_message(a, __FILE__, __LINE__);
+#define error(message) _mpi_error_message(message, __FILE__, __LINE__);
 } // namespace MDP
 
 #endif /* MDP_MACROS_ */

@@ -265,7 +265,7 @@ namespace MDP
         m_data[i] -= psi.m_data[i];
     }
 
-    bool save_as_float(std::string filename,
+    bool save_as_float(const std::string &filename,
                        int processIO = 0,
                        mdp_int max_buffer_size = 1024,
                        bool load_header = true,
@@ -282,7 +282,7 @@ namespace MDP
       return true;
     }
 
-    bool load_as_float(std::string filename,
+    bool load_as_float(const std::string &filename,
                        int processIO = 0,
                        mdp_int max_buffer_size = 1024,
                        bool load_header = true,
@@ -300,7 +300,7 @@ namespace MDP
       return true;
     }
 
-    bool load_as_double(std::string filename,
+    bool load_as_double(const std::string &filename,
                         int processIO = 0,
                         mdp_int max_buffer_size = 1024,
                         bool load_header = true,
@@ -317,7 +317,7 @@ namespace MDP
       return true;
     }
 
-    bool save_as_double(std::string filename,
+    bool save_as_double(const std::string &filename,
                         int processIO = 0,
                         mdp_int max_buffer_size = 1024,
                         bool load_header = true,
@@ -325,7 +325,7 @@ namespace MDP
     {
 #ifndef USE_DOUBLE_PRECISION
       m_header.bytes_per_site *= 2;
-      save_old(filename, processIO, max_buffer_size, load_header, skip_bytes,
+      save(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_write_float_as_double);
       m_header.bytes_per_site /= 2;
 #else

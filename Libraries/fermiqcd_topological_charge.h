@@ -12,6 +12,8 @@
 #ifndef FERMIQCD_TOPOLOGICAL_CHARGE_
 #define FERMIQCD_TOPOLOGICAL_CHARGE_
 
+#include <algorithm>
+#include <ranges>
 #include <string>
 #include "mdp_field_save_vtk.h"
 #include "fermiqcd_gauge_field.h"
@@ -25,19 +27,16 @@ namespace MDP
   class HypSmearing
   {
   public:
-    static std::vector<float> alpha;
+    static std::vector<float> s_alpha;
 
-    bool in(int x, std::vector<int> set)
+    static bool contains(const std::vector<int> &set, int x)
     {
-      for (size_t i = 0; i < set.size(); i++)
-        if (x == set[i])
-          return true;
-      return false;
+      return std::ranges::find(set, x) != set.end();
     }
 
   public:
     static void smear_aux(gauge_field &U,
-                          // std::vector<int> set,
+                          // const std::vector<int> &set,
                           int cooling_steps = 10)
     {
       mdp_site x(U.lattice());
@@ -88,7 +87,7 @@ namespace MDP
 
             for (int i = 0; i < U.nc(); i++)
               for (int j = 0; j < U.nc(); j++)
-                U(x, mu, i, j) = (1.0 - alpha[m]) * U(x, mu, i, j) + alpha[m] * staples(i, j);
+                U(x, mu, i, j) = (1.0 - s_alpha[m]) * U(x, mu, i, j) + s_alpha[m] * staples(i, j);
             U(x, mu) = project_SU(U(x, mu), cooling_steps);
           }
         }
@@ -96,7 +95,7 @@ namespace MDP
     }
   };
 
-  std::vector<float> HypSmearing::alpha;
+  std::vector<float> HypSmearing::s_alpha;
 #endif
 
   // from Bonnet et al. Phys Rev D 62, 094509

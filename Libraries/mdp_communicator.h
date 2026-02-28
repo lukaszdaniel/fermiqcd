@@ -54,7 +54,7 @@ namespace MDP
     MPI_Comm communicator;
 #endif
     double mytime; // total time
-    int wormholes_open;
+    bool wormholes_open;
     int my_id;
     int my_nproc;
 
@@ -546,24 +546,21 @@ namespace MDP
   /// the only communicator object
   mdp_communicator mdp;
 
-  /// alias for mdp
-  mdp_communicator &mpi = mdp;
-
-  void _mpi_error_message(std::string a, std::string b = "unkown", int c = 0)
+  void _mpi_error_message(const std::string &message, const std::string &file = "unknown", int line = 0)
   {
-    mdp.error_message(a, b, c);
+    mdp.error_message(message, file, line);
   }
 
-  /// Logs in xml the start of a function with message s
-  void begin_function(std::string s)
+  /// Logs in xml the start of a function with message fun
+  void begin_function(const std::string &fun)
   {
-    mdp.begin_function(s);
+    mdp.begin_function(fun);
   }
 
-  /// Logs in xml the end of a function with message s
-  void end_function(std::string s)
+  /// Logs in xml the end of a function with message fun
+  void end_function(const std::string &fun)
   {
-    mdp.end_function(s);
+    mdp.end_function(fun);
   }
 } // namespace MDP
 

@@ -12,15 +12,14 @@
 #ifndef MDP_COMPLEX_
 #define MDP_COMPLEX_
 
-// #define DO_NOT_USE_MDP_COMPLEX
-
 #include <ostream>
 #include <cmath>
+
+#include "mdp_global_vars.h"
 
 #ifdef DO_NOT_USE_MDP_COMPLEX
 #include <complex>
 #endif
-#include "mdp_global_vars.h"
 
 namespace MDP
 {

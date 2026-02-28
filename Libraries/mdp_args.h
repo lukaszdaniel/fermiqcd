@@ -22,83 +22,95 @@ namespace MDP
   class mdp_args
   {
   private:
-    std::vector<std::string> args;
+    std::vector<std::string> m_args;
 
   public:
     mdp_args(int argc, char **argv)
     {
       for (int i = 1; i < argc; i++)
-        args.push_back(argv[i]);
+        m_args.push_back(argv[i]);
     }
 
-    int length()
+    size_t length() const
     {
-      return args.size();
+      return m_args.size();
     }
 
-    bool have(const std::string &name)
+    bool have(const std::string &name) const
     {
-      for (size_t i = 0; i < args.size(); i++)
-        if (args[i] == name || startswith(args[i], name + ":"))
+      for (size_t i = 0; i < m_args.size(); i++)
+      {
+        if (m_args[i] == name || startswith(m_args[i], name + ":"))
           return true;
+      }
       return false;
     }
 
-    float get(const std::string &name, const std::string &key, float value = 0.0)
+    float get(const std::string &name, const std::string &key, float value = 0.0) const
     {
-      for (size_t i = 0; i < args.size(); i++)
-        if (startswith(args[i], name + ":"))
-          return parse_float(args[i], key, value);
+      for (size_t i = 0; i < m_args.size(); i++)
+      {
+        if (startswith(m_args[i], name + ":"))
+          return parse_float(m_args[i], key, value);
+      }
       return value;
     }
 
-    float get(const std::string &name, const std::string &key, double value = 0.0)
+    float get(const std::string &name, const std::string &key, double value = 0.0) const
     {
-      for (size_t i = 0; i < args.size(); i++)
-        if (startswith(args[i], name + ":"))
+      for (size_t i = 0; i < m_args.size(); i++)
+      {
+        if (startswith(m_args[i], name + ":"))
         {
-          value = parse_float(args[i], key, value);
+          value = parse_float(m_args[i], key, value);
           break;
         }
+      }
       mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
       return value;
     }
 
-    int get(const std::string &name, const std::string &key, int value = 0)
+    int get(const std::string &name, const std::string &key, int value = 0) const
     {
-      for (size_t i = 0; i < args.size(); i++)
-        if (startswith(args[i], name + ":"))
+      for (size_t i = 0; i < m_args.size(); i++)
+      {
+        if (startswith(m_args[i], name + ":"))
         {
-          value = parse_int(args[i], key, value);
+          value = parse_int(m_args[i], key, value);
           break;
         }
+      }
       mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
       return value;
     }
 
-    mdp_uint get(const std::string &name, const std::string &key, mdp_uint value = 0)
+    mdp_uint get(const std::string &name, const std::string &key, mdp_uint value = 0) const
     {
-      for (size_t i = 0; i < args.size(); i++)
-        if (startswith(args[i], name + ":"))
+      for (size_t i = 0; i < m_args.size(); i++)
+      {
+        if (startswith(m_args[i], name + ":"))
         {
-          value = parse_uint(args[i], key, value);
+          value = parse_uint(m_args[i], key, value);
           break;
         }
+      }
       mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
       return value;
     }
 
-    std::string get(const std::string &name, const std::string &key, std::string value = "")
+    std::string get(const std::string &name, const std::string &key, std::string value = "") const
     {
       int i = value.find('|');
       if (i >= 0)
         value = value.substr(0, i);
-      for (size_t i = 0; i < args.size(); i++)
-        if (startswith(args[i], name + ":"))
+      for (size_t i = 0; i < m_args.size(); i++)
+      {
+        if (startswith(m_args[i], name + ":"))
         {
-          value = parse_string(args[i], key, value);
+          value = parse_string(m_args[i], key, value);
           break;
         }
+      }
       mdp << "INPUT " << name << ":" << key << "=" << value << "\n";
       return value;
     }

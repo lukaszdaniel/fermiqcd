@@ -138,17 +138,13 @@ namespace MDP
     /// returns a gaussian random number
     float gaussian(float sigma = 1)
     {
-#ifdef AIX
-      static int i; // assumes i is set to zero by default
-#else
       static int i = 0;
-#endif
-      static float r;
-      float x, y;
+      static float r = 0;
+
       if (i == 0)
       {
-        x = (float)std::sqrt(-2.0 * std::log(plain()));
-        y = (float)2.0 * Pi * plain();
+        float x = (float)std::sqrt(-2.0 * std::log(plain()));
+        float y = (float)2.0 * Pi * plain();
         i = 1;
         r = sigma * x * ((float)std::cos(y));
         return sigma * x * ((float)std::sin(y));
