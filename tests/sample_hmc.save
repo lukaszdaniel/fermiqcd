@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=41946
+PSIM LOG: process 0 of 1 created with pid=36134
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -25,27 +25,27 @@ Creating a hot gauge configuration
 </set_hot>
 average_plaquette = 0.00074480
 4
-h_new 18282.14401342
+h_new 18282.14401241
 DH: 0.00000002
 acceptance=1.00000000
-h_new 18293.88079773
+h_new 18293.88079650
 DH: 0.00000002
 acceptance=1.00000000
-h_new 18126.25309419
+h_new 18126.25309297
 DH: 0.00000004
 acceptance=1.00000000
-h_new 18082.25330517
+h_new 18082.25330354
 DH: 0.00000001
 acceptance=1.00000000
 <close_wormholes>
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=12.61% PROCESS=13.45% COMM=0.00%
+* Process 0 stats: CPU=10.88% PROCESS=11.92% COMM=0.00%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 0.14880300 sec.
+PROCESS 0 ENDING AFTER 0.16160900 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating

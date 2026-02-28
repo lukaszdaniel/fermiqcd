@@ -65,17 +65,17 @@ namespace MDP
 
     ///////////////////////////////////////////////////////////////////////
     //      initializei: this takes a single integer in the range
-    //		0 <= ijkl <= 900 000 000
-    //	and produces the four smaller integers needed for start. It is
-    //	based on the ideas contained in the RMARIN subroutine in
-    //		F. James, "A Review of Pseudorandom Number Generators",
-    //			Comp. Phys. Commun. Oct 1990, p.340
-    //	To reduce the modifications to the existing code, seed_uni now
-    //	takes the role of a preprocessor for rstart.
+    //    0 <= ijkl <= 900 000 000
+    //  and produces the four smaller integers needed for start. It is
+    //  based on the ideas contained in the RMARIN subroutine in
+    //    F. James, "A Review of Pseudorandom Number Generators",
+    //      Comp. Phys. Commun. Oct 1990, p.340
+    //  To reduce the modifications to the existing code, seed_uni now
+    //  takes the role of a preprocessor for rstart.
     //
-    //	This is useful for the parallel version of the code as James
-    //	states that any integer ijkl will produce a statistically
-    //	independent sequence of random numbers.
+    //  This is useful for the parallel version of the code as James
+    //  states that any integer ijkl will produce a statistically
+    //  independent sequence of random numbers.
     //
     //     Very funny.
     //     If that statement was worth anything he would have provided

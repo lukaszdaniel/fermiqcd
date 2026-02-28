@@ -33,27 +33,39 @@ namespace MDP
 
   struct Box
   {
-    constexpr Box(std::initializer_list<int> init) noexcept
-        : m_ndim(init.size())
+    constexpr Box() noexcept = default;
+
+    constexpr Box(std::initializer_list<mdp_int> init) noexcept
     {
       mdp_int i = 0;
-      for (int v : init)
+      for (mdp_int v : init)
       {
         m_box[i++] = v;
       }
     }
 
     template <mdp_int N>
-    constexpr Box(const int (&arr)[N]) noexcept
-        : m_ndim(N)
+    constexpr Box(const mdp_int (&arr)[N]) noexcept
     {
-      for (mdp_int i = 0; i < N && i < MAX_DIM; ++i)
+      constexpr mdp_int size = N < MAX_DIM ? N : MAX_DIM;
+      for (mdp_int i = 0; i < size; ++i)
       {
         m_box[i] = arr[i];
       }
     }
 
-    constexpr mdp_int dim() const noexcept { return m_ndim; }
+    constexpr mdp_int dim() const noexcept
+    {
+      for (mdp_int i = 0; i < MAX_DIM; ++i)
+      {
+        if (m_box[i] == 0)
+        {
+          return i;
+        }
+      }
+
+      return MAX_DIM;
+    }
 
     constexpr mdp_int dim(mdp_int i) const noexcept { return m_box[i]; }
 
@@ -67,10 +79,10 @@ namespace MDP
       return m_box[i];
     }
 
-    constexpr mdp_int volume() const noexcept
+    constexpr mdp_uint volume() const noexcept
     {
       mdp_int v = 1;
-      for (mdp_int i = 0; i < m_ndim; ++i)
+      for (mdp_int i = 0; i < dim(); ++i)
         v *= m_box[i];
       return v;
     }
@@ -79,7 +91,6 @@ namespace MDP
 
   private:
     std::array<mdp_int, MAX_DIM> m_box{};
-    mdp_int m_ndim{0};
   };
 
   /// @brief distributed lattice object

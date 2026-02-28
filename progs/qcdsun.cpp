@@ -64,7 +64,7 @@ int main(int argc, char **argv)
   if (par.defined_i("poly-cor-meas-freq"))
     poly_cor_meas_freq = par.i("poly-cor-meas-freq");
   // if (par.defined_i("plaq-cor-meas-freq"))
-  // 	plaq_cor_meas_freq = par.i("plaq-cor-meas-freq");
+  //   plaq_cor_meas_freq = par.i("plaq-cor-meas-freq");
   if (par.defined_i("seed"))
     seed = par.i("seed");
   if (not par.defined_d("beta"))
@@ -83,10 +83,11 @@ int main(int argc, char **argv)
   mdp_uint Lt = par.i("L_time");
   mdp_real stats;
 
-  Box mybox = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+  Box mybox;
   mybox[0] = Lt;
   for (mdp_suint i = 1; i < dim; i++)
     mybox[i] = Ls;
+
   mdp_lattice lattice(mybox, default_partitioning0, torus_topology, seed, local_random);
   gauge_field U(lattice, ncolors);
   coefficients coeff;
@@ -104,7 +105,7 @@ int main(int argc, char **argv)
 
   log << par << "\n";
 
-  //	THERMALISATION
+  //  THERMALISATION
   if (!field_loaded)
   {
     log << "Thermalisation: " << ntherm << " sweeps.\n";
@@ -131,7 +132,7 @@ int main(int argc, char **argv)
   polyfile << std::setprecision(16);
   std::ofstream polycorfile(polyCorFileName);
   polycorfile << std::setprecision(16);
-  // std::ofstream plaqcorfile(plaqCorFileName);	plaqcorfile << std::setprecision(16);
+  // std::ofstream plaqcorfile(plaqCorFileName);  plaqcorfile << std::setprecision(16);
 
   mdp_real Pt, Ps;
   mdp_real S;
@@ -140,12 +141,12 @@ int main(int argc, char **argv)
   const mdp_real at = 1.0 * U.ndim() - 1;
 
   // const mdp_real c1 = -1.0 / 12; // Symanzik
-  // const mdp_real c1 = -0.331;	   // Iwasaki
+  // const mdp_real c1 = -0.331;     // Iwasaki
   // const mdp_real c1 = -1.4088;   // DBW2
   // const mdp_real c0 = 1 - 8 * c1;
   mdp_complex polyakov;
 
-  //	SWEEPING
+  //  SWEEPING
   log << "Production: " << nsweeps << " sweeps.\n";
   log.flush();
   for (mdp_uint i = 1; i <= nsweeps; i++)
