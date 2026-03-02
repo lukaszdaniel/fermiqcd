@@ -51,7 +51,7 @@ namespace MDP
       // int nspin = psi_in.nspin();
       // int nc = psi_in.nc();
       // int L5 = psi_in.L5();
-      mdp_real /*m_5 = 0, m_f = 0, */sign = 0;
+      mdp_real /*m_5 = 0, m_f = 0, */ sign = 0;
       // if (coeff.has_key("m_5"))
       //   m_5 = coeff["m_5"];
       // else
@@ -80,8 +80,14 @@ namespace MDP
       _sse_check_alignment((void *)psi, 0xf);
       _sse_su3 *U = (_sse_su3 *)U_in.physical_address();
       _sse_check_alignment((void *)U, 0xf);
-      mdp_int **iup = U_in.lattice().up();
-      mdp_int **idw = U_in.lattice().down();
+      const std::vector<mdp_int> &iup = U_in.lattice().up();
+      const std::vector<mdp_int> &idw = U_in.lattice().down();
+      const ndir = U_in.lattice().ndir();
+      auto at = [ndir](mdp_int local_idx, mdp_int mu)
+      {
+        return local_idx * ndir + mu;
+      };
+
       mdp_int start = U_in.lattice().start_index(ME, 0); // even
       mdp_int stop = U_in.lattice().stop_index(ME, 1);   // odd
 
@@ -161,8 +167,8 @@ namespace MDP
 
           /******************************* direction +0 ***********************/
 
-          sm1 = psi + (iy1 = idw[ix1][0]) * L5 + ell;
-          sp1 = psi + iup[ix1][0] * L5 + ell;
+          sm1 = psi + (iy1 = idw[at(ix1, 0)]) * L5 + ell;
+          sp1 = psi + iup[at(ix1, 0)] * L5 + ell;
           _sse_float_prefetch_spinor(sm1);
 
           _sse_float_pair_load((*sp1).c3, (*sp1).c4);
@@ -182,7 +188,7 @@ namespace MDP
 
           /******************************* direction -0 ***********************/
 
-          sp1 = psi + iup[ix1][1] * L5 + ell;
+          sp1 = psi + iup[at(ix1, 1)] * L5 + ell;
           _sse_float_prefetch_spinor(sp1);
 
           _sse_float_pair_load((*sm1).c1, (*sm1).c2);
@@ -198,7 +204,7 @@ namespace MDP
 
           /******************************* direction +1 ***********************/
 
-          sm1 = psi + (iy1 = idw[ix1][1]) * L5 + ell;
+          sm1 = psi + (iy1 = idw[at(ix1, 1)]) * L5 + ell;
           _sse_float_prefetch_spinor(sm1);
 
           _sse_float_pair_load((*sp1).c1, (*sp1).c2);
@@ -221,7 +227,7 @@ namespace MDP
 
           /******************************* direction -1 ***********************/
 
-          sp1 = psi + iup[ix1][2] * L5;
+          sp1 = psi + iup[at(ix1, 2)] * L5 + ell;
           _sse_float_prefetch_spinor(sp1);
 
           _sse_float_pair_load((*sm1).c1, (*sm1).c2);
@@ -244,7 +250,7 @@ namespace MDP
 
           /******************************* direction +2 ***********************/
 
-          sm1 = psi + (iy1 = idw[ix1][2]) * L5 + ell;
+          sm1 = psi + (iy1 = idw[at(ix1, 2)]) * L5 + ell;
           _sse_float_prefetch_spinor(sm1);
 
           _sse_float_pair_load((*sp1).c1, (*sp1).c2);
@@ -267,7 +273,7 @@ namespace MDP
 
           /******************************* direction -2 ***********************/
 
-          sp1 = psi + iup[ix1][3] * L5 + ell;
+          sp1 = psi + iup[at(ix1, 3)] * L5 + ell;
           _sse_float_prefetch_spinor(sp1);
 
           _sse_float_pair_load((*sm1).c1, (*sm1).c2);
@@ -290,7 +296,7 @@ namespace MDP
 
           /******************************* direction +3 ***********************/
 
-          sm1 = psi + (iy1 = idw[ix1][3]) * L5 + ell;
+          sm1 = psi + (iy1 = idw[at(ix1, 3)]) * L5 + ell;
           _sse_float_prefetch_spinor(sm1);
 
           _sse_float_pair_load((*sp1).c1, (*sp1).c2);
@@ -342,8 +348,14 @@ namespace MDP
       _sse_spinor *psi = (_sse_spinor *)psi_in.physical_address();
       _sse_su3 *U = (_sse_su3 *)U_in.physical_address();
       // _sse_su3 *uem = (_sse_su3 *)U_in.em.physical_address();
-      mdp_int **iup = U_in.lattice().up();
-      mdp_int **idw = U_in.lattice().down();
+      const std::vector<mdp_int> &iup = U_in.lattice().up();
+      const std::vector<mdp_int> &idw = U_in.lattice().down();
+      const ndir = U_in.lattice().ndir();
+      auto at = [ndir](mdp_int local_idx, mdp_int mu)
+      {
+        return local_idx * ndir + mu;
+      };
+
       mdp_int start = U_in.lattice().start_index(ME, 0); // even
       mdp_int stop = U_in.lattice().stop_index(ME, 1);   // odd
 
@@ -396,7 +408,7 @@ namespace MDP
       fact4.c1 = -1.0;
       fact4.c2 = -1.0;
 
-      sp = (_sse_spinor *)&psi[iup[start][0]];
+      sp = (_sse_spinor *)&psi[iup[at(start, 0)]];
       up = (_sse_su3 *)U + 4 * start;
 
       /************************ loop over all lattice sites ***************/
@@ -408,7 +420,7 @@ namespace MDP
 
         /******************************* direction +0 ***********************/
 
-        iy = idw[ix][0];
+        iy = idw[at(ix, 0)];
         sm = psi + iy;
         _sse_double_prefetch_spinor(sm);
 
@@ -440,7 +452,7 @@ namespace MDP
 
         /******************************* direction -0 ***********************/
 
-        sp = psi + iup[ix][1];
+        sp = psi + iup[at(ix, 1)];
         _sse_double_prefetch_spinor(sp);
         up++;
         _sse_double_prefetch_su3(up);
@@ -461,7 +473,7 @@ namespace MDP
 
         /******************************* direction +1 ***********************/
 
-        iy = idw[ix][1];
+        iy = idw[at(ix, 1)];
         sm = psi + iy;
         _sse_double_prefetch_spinor(sm);
         um = U + iy * 4 + 1;
@@ -491,7 +503,7 @@ namespace MDP
 
         /******************************* direction -1 ***********************/
 
-        sp = psi + iup[ix][2];
+        sp = psi + iup[at(ix, 2)];
         _sse_double_prefetch_spinor(sp);
         up++;
         _sse_double_prefetch_su3(up);
@@ -520,7 +532,7 @@ namespace MDP
 
         /******************************* direction +2 ***********************/
 
-        iy = idw[ix][2];
+        iy = idw[at(ix, 2)];
         sm = psi + iy;
         _sse_double_prefetch_spinor(sm);
         um = U + iy * 4 + 2;
@@ -554,7 +566,7 @@ namespace MDP
 
         /******************************* direction -2 ***********************/
 
-        sp = psi + iup[ix][3];
+        sp = psi + iup[at(ix, 3)];
         _sse_double_prefetch_spinor(sp);
         up++;
         _sse_double_prefetch_su3(up);
@@ -587,7 +599,7 @@ namespace MDP
 
         /******************************* direction +3 ***********************/
 
-        iy = idw[ix][3];
+        iy = idw[at(ix, 3)];
         sm = psi + iy;
         _sse_double_prefetch_spinor(sm);
         um = U + iy * 4 + 3;
@@ -623,7 +635,7 @@ namespace MDP
         iz = ix + 1;
         if (iz < stop)
         {
-          sp = psi + iup[iz][0];
+          sp = psi + iup[at(iz, 0)];
           _sse_double_prefetch_spinor(sp);
           up = U + iz * 4;
           _sse_double_prefetch_su3(up);

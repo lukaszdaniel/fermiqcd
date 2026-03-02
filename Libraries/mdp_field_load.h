@@ -136,7 +136,7 @@ namespace MDP
           return false;
         }
 
-        for (mdp_int d = 0; d < lattice().ndim(); d++)
+        for (mdp_uint d = 0; d < lattice().ndim(); d++)
           if (tmp_header.box[d] != m_header.box[d])
           {
             fprintf(stderr, "mdp_file.load(): wrong lattice size\n");

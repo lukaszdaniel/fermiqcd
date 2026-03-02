@@ -108,10 +108,9 @@ namespace MDP
   class mdp_lattice
   {
   private:
-    int m_ndim;                                     /* number of dimensions       */
-    int m_ndir;                                     /* number of directions       */
+    mdp_uint m_ndir;                                /* number of directions       */
     int m_next_next;                                /* 1, 2 or 3 is the thickness of the boundary */
-    std::unique_ptr<mdp_int[]> m_nx;                /* box containing the lattice */
+    std::vector<mdp_int> m_nx;                      /* box containing the lattice */
     mdp_int m_local_volume;                         /* local volume               */
     mdp_int m_global_volume;                        /* global volume              */
     mdp_int m_internal_volume;                      /* internal volume            */
@@ -120,14 +119,14 @@ namespace MDP
 #ifdef MDP_NO_LG
     mutable std::fstream m_lg_file; /* temporary file to store local_from_global map if not enough memory */
 #endif
-    std::vector<std::vector<mdp_int>> m_up; /* move up in local index     */
-    std::vector<std::vector<mdp_int>> m_dw; /* move dw in local index     */
-    std::vector<std::vector<mdp_int>> m_co; /* coordinate x in local idx  */
-    std::unique_ptr<mdp_int[]> m_wh;        /* in which process? is idx   */
-    std::unique_ptr<int[]> m_parity;        /* parity of local mdp_site idx   */
-    mdp_int m_start[_NprocMax_][2];
-    mdp_int m_stop[_NprocMax_][2];
-    mdp_int m_len_to_send[_NprocMax_][2];
+    std::vector<mdp_int> m_up;       /* move up in local index     */
+    std::vector<mdp_int> m_dw;       /* move dw in local index     */
+    std::vector<mdp_int> m_co;       /* coordinate x in local idx  */
+    std::unique_ptr<mdp_int[]> m_wh; /* in which process? is idx   */
+    std::unique_ptr<int[]> m_parity; /* parity of local mdp_site idx   */
+    std::array<std::array<mdp_int, 2>, _NprocMax_> m_start;
+    std::array<std::array<mdp_int, 2>, _NprocMax_> m_stop;
+    std::array<std::array<mdp_int, 2>, _NprocMax_> m_len_to_send;
     std::array<std::vector<mdp_int>, _NprocMax_> m_to_send;
     bool m_local_random_generator;
     std::unique_ptr<mdp_prng[]> m_random_obj;
@@ -143,17 +142,30 @@ namespace MDP
     where_fn m_where;
     neighbour_fn m_neighbour;
 
+    mdp_lattice(const mdp_lattice &) = delete;
+    mdp_lattice &operator=(const mdp_lattice &) = delete;
+
+    /** @brief Helper function to calculate the index
+     * in the 1D arrays m_up, m_dw, m_co from the local
+     * index and direction mu.
+     *
+     */
+    inline mdp_int at(mdp_int local_idx, mdp_int mu) const
+    {
+      return local_idx * m_ndir + mu;
+    }
+
     // helper function
     inline bool is_me(const int x[]) const noexcept
     {
-      const int owner_id = m_where(x, m_ndim, m_nx.get());
+      const int owner_id = m_where(x, ndim(), m_nx.data());
       return owner_id == ME;
     }
 
     // helper function
     inline bool is_valid_process(const int x[]) const noexcept
     {
-      const int owner_id = m_where(x, m_ndim, m_nx.get());
+      const int owner_id = m_where(x, ndim(), m_nx.data());
       return (owner_id < Nproc);
     }
 
@@ -173,7 +185,7 @@ namespace MDP
       //            according with current position x and direction mu
       // //////////////////////////////////////////////////////////////////
 
-      m_ndim = box.dim();
+      const mdp_uint ndims = box.dim();
       m_ndir = ndir_;
       m_where = where_;
       m_neighbour = neighbour_;
@@ -184,19 +196,19 @@ namespace MDP
       m_internal_volume = 0;
       m_global_volume = box.volume();
 
-      if (m_ndim != m_ndir)
+      if (ndims != m_ndir)
         mdp << "Warning: The number of dimensions (ndim) does not match the number of directions (ndir). This may cause unexpected behavior in lattice operations.\n";
 
       mdp << "Lattice dimension: " << box[0];
-      for (mdp_int mu = 1; mu < m_ndim; mu++)
+      for (mdp_uint mu = 1; mu < ndims; mu++)
         mdp << " x " << box[mu];
       mdp << "\n";
 
       ///////////////////////////////////////////////////////////////////
       // Dynamically allocate lattice size
       ///////////////////////////////////////////////////////////////////
-      m_nx = std::make_unique<mdp_int[]>(m_ndim);
-      for (mdp_int mu = 0; mu < m_ndim; ++mu)
+      m_nx.resize(ndims);
+      for (mdp_uint mu = 0; mu < ndims; ++mu)
         m_nx[mu] = box[mu];
     }
 
@@ -225,7 +237,7 @@ namespace MDP
       //
       // ///////////////////////////////////////////////////////////////////
 
-      for (mdp_int mu = 0; mu < m_ndim; mu++)
+      for (mdp_uint mu = 0; mu < ndim(); mu++)
         x[mu] = 0;
 
       do
@@ -249,10 +261,10 @@ namespace MDP
         else if (m_next_next >= 0)
         {
           bool is_boundary = false;
-          for (mdp_int mu = 0; mu < m_ndir; mu++)
+          for (mdp_uint mu = 0; mu < m_ndir; mu++)
           {
             // calculate up and down points in mu direction given the neighbour topology
-            (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx.get());
+            (*m_neighbour)(mu, x_dw, x, x_up, ndim(), m_nx.data());
 
             if (!is_valid_process(x_up) || !is_valid_process(x_dw))
               error("Incorrect partitioning");
@@ -268,12 +280,12 @@ namespace MDP
             // One may want to optimize case 3. It was thought for
             // improved staggered fermions.
             // ////////////////////////////////////////////////////
-            for (mdp_int nu = 0; nu < m_ndir; nu++)
+            for (mdp_uint nu = 0; nu < m_ndir; nu++)
             {
               if ((nu != mu) || (m_next_next > 1))
               {
-                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, m_ndim, m_nx.get());
-                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, m_ndim, m_nx.get());
+                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, ndim(), m_nx.data());
+                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, ndim(), m_nx.data());
 
                 if (!is_valid_process(x_up_dw) ||
                     !is_valid_process(x_up_up) ||
@@ -290,10 +302,10 @@ namespace MDP
                 // mu-nu-rho terms (asqtad case)
                 if (m_next_next == 3)
                 {
-                  for (mdp_int rho = 0; rho < m_ndir; rho++)
+                  for (mdp_uint rho = 0; rho < m_ndir; rho++)
                   {
-                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, m_ndim, m_nx.get());
-                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, m_ndim, m_nx.get());
+                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, ndim(), m_nx.data());
+                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, ndim(), m_nx.data());
 
                     if (!is_valid_process(x_up_up_up) ||
                         !is_valid_process(x_up_up_dw) ||
@@ -329,13 +341,13 @@ namespace MDP
         }
 
         x[0]++;
-        for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
+        for (mdp_uint mu = 0; mu < ndim() - 1; mu++)
           if (x[mu] >= m_nx[mu])
           {
             x[mu] = 0;
             x[mu + 1]++;
           }
-      } while (x[m_ndim - 1] < m_nx[m_ndim - 1]);
+      } while (x[ndim() - 1] < m_nx[ndim() - 1]);
     }
 
     // helper function
@@ -390,16 +402,9 @@ namespace MDP
     void allocate_connectivity_arrays()
     {
       // neighbour and coordinates tables
-      m_dw.resize(m_local_volume);
-      m_up.resize(m_local_volume);
-      m_co.resize(m_local_volume);
-
-      for (mdp_int idx = 0; idx < m_local_volume; ++idx)
-      {
-        m_dw[idx].resize(m_ndir);
-        m_up[idx].resize(m_ndir);
-        m_co[idx].resize(m_ndir);
-      }
+      m_dw.resize(m_local_volume * m_ndir);
+      m_up.resize(m_local_volume * m_ndir);
+      m_co.resize(m_local_volume * m_ndir);
     }
 
     // helper function
@@ -436,7 +441,7 @@ namespace MDP
             translate_to_coordinates(lms_tmp, x);
 #endif
             int x_parity = compute_parity(x);
-            if (((*m_where)(x, m_ndim, m_nx.get()) == process) && (x_parity == parity))
+            if (((*m_where)(x, ndim(), m_nx.data()) == process) && (x_parity == parity))
             {
               mdp_int new_idx = m_stop[process][parity];
 #ifndef MDP_NO_LG
@@ -477,32 +482,32 @@ namespace MDP
 
         translate_to_coordinates(global, x);
 
-        for (mdp_int mu = 0; mu < m_ndim; ++mu)
-          m_co[local_idx][mu] = x[mu];
+        for (mdp_uint mu = 0; mu < ndim(); ++mu)
+          m_co[at(local_idx, mu)] = x[mu];
 
-        for (mdp_int mu = 0; mu < m_ndir; ++mu)
+        for (mdp_uint mu = 0; mu < m_ndir; ++mu)
         {
-          (*m_neighbour)(mu, x_dw, x, x_up, m_ndim, m_nx.get());
+          (*m_neighbour)(mu, x_dw, x, x_up, ndim(), m_nx.data());
 
           const mdp_int g_up = global_coordinate(x_up);
           const mdp_int g_dw = global_coordinate(x_dw);
 
           if (m_wh[local_idx] == ME)
           {
-            m_dw[local_idx][mu] = local(g_dw);
-            m_up[local_idx][mu] = local(g_up);
+            m_dw[at(local_idx, mu)] = local(g_dw);
+            m_up[at(local_idx, mu)] = local(g_up);
           }
           else
           {
             if (local(g_dw) != NOWHERE)
-              m_dw[local_idx][mu] = local(g_dw);
+              m_dw[at(local_idx, mu)] = local(g_dw);
             else
-              m_dw[local_idx][mu] = NOWHERE;
+              m_dw[at(local_idx, mu)] = NOWHERE;
 
             if (local(g_up) != NOWHERE)
-              m_up[local_idx][mu] = local(g_up);
+              m_up[at(local_idx, mu)] = local(g_up);
             else
-              m_up[local_idx][mu] = NOWHERE;
+              m_up[at(local_idx, mu)] = NOWHERE;
           }
         }
       }
@@ -535,7 +540,7 @@ namespace MDP
           }
           mdp.put(buffer, 2, process, request);
           process = (ME - dp + Nproc) % Nproc;
-          mdp.get(m_len_to_send[process], 2, process);
+          mdp.get(m_len_to_send[process].data(), 2, process);
           mdp.wait(request);
           process = (ME + dp) % Nproc;
           length = m_stop[process][1] - m_start[process][0];
@@ -725,7 +730,7 @@ namespace MDP
      */
     int where(const int x[]) const
     {
-      return (*m_where)(x, m_ndim, m_nx.get());
+      return (*m_where)(x, ndim(), m_nx.data());
     }
 
     mdp_int process(mdp_int local_idx) const
@@ -740,7 +745,7 @@ namespace MDP
      */
     mdp_int coordinate(mdp_int local_idx, mdp_int mu) const
     {
-      return m_co[local_idx][mu];
+      return m_co[at(local_idx, mu)];
     }
 
     /** @brief Calculate global coordinate
@@ -748,12 +753,12 @@ namespace MDP
      * Calculate ordinal (global) coordinate of
      * a n-dimensional point x[].
      */
-    mdp_int global_coordinate(const int x[])
+    mdp_int global_coordinate(const int x[]) const
     {
       mdp_int global_idx = 0;
-      for (mdp_int mu = 0; mu < m_ndim - 1; mu++)
+      for (mdp_uint mu = 0; mu < ndim() - 1; mu++)
         global_idx = (global_idx + x[mu]) * m_nx[mu + 1];
-      return global_idx + x[m_ndim - 1];
+      return global_idx + x[ndim() - 1];
     }
 
     /** @brief Translate global coordinate into x[] coordinates
@@ -761,9 +766,9 @@ namespace MDP
      * Given the ordinal coordinate, recover
      * x = (x0, x1, ... x9) coordinates.
      */
-    void translate_to_coordinates(mdp_int global_idx, int x[])
+    void translate_to_coordinates(mdp_int global_idx, int x[]) const
     {
-      for (mdp_int mu = m_ndim - 1; mu > 0; mu--)
+      for (mdp_uint mu = ndim() - 1; mu > 0; mu--)
       {
         x[mu] = global_idx % m_nx[mu];
         global_idx = (global_idx - x[mu]) / m_nx[mu];
@@ -776,22 +781,22 @@ namespace MDP
      * @param global_idx Global index for point x[] to be inspected
      * @return Process ID
      */
-    mdp_int where_global(mdp_int global_idx)
+    mdp_int where_global(mdp_int global_idx) const
     {
       int x[MAX_DIM];
       translate_to_coordinates(global_idx, x);
 
-      return (*m_where)(x, m_ndim, m_nx.get());
+      return (*m_where)(x, ndim(), m_nx.data());
     }
 
     /** @brief Calculate parity of point x[]
      *
      * Check the parity of the sum of x coordinates.
      */
-    int compute_parity(const int x[])
+    int compute_parity(const int x[]) const
     {
       int p = 0;
-      for (mdp_int mu = 0; mu < m_ndim; mu++)
+      for (mdp_uint mu = 0; mu < ndim(); mu++)
         p = p + x[mu];
       return (p % 2);
     }
@@ -859,14 +864,14 @@ namespace MDP
 
     /** @brief number of dimensions of the lattice
      */
-    mdp_int n_dimensions() const
+    mdp_uint n_dimensions() const
     {
-      return m_ndim;
+      return m_nx.size();
     }
 
-    mdp_int ndim() const
+    mdp_uint ndim() const
     {
-      return m_ndim;
+      return m_nx.size();
     }
 
     /** @brief number of directions one can move on the lattice; usually same as ndim
@@ -889,7 +894,7 @@ namespace MDP
      */
     const mdp_int *dims() const
     {
-      return m_nx.get();
+      return m_nx.data();
     }
 
     /** @brief number of lattice sites stored locally by current process
@@ -928,21 +933,21 @@ namespace MDP
 
     mdp_int move_up(const mdp_int idx, const int mu) const
     {
-      return m_up[idx][mu];
+      return m_up[at(idx, mu)];
     }
 
     mdp_int move_down(const mdp_int idx, const int mu) const
     {
-      return m_dw[idx][mu];
+      return m_dw[at(idx, mu)];
     }
 
 #ifdef SSE2
-    mdp_int **up()
+    const std::vector<mdp_int> &up()
     {
       return m_up;
     }
 
-    mdp_int **down()
+    const std::vector<mdp_int> &down()
     {
       return m_dw;
     }

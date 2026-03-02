@@ -12,6 +12,7 @@
 #ifndef MDP_SITE_
 #define MDP_SITE_
 
+#include <span>
 #include "mdp_vector.h"
 #include "mdp_lattice.h"
 
@@ -33,12 +34,59 @@ namespace MDP
   class mdp_site
   {
   private:
-    mdp_lattice *m_lattice; /// this points to the lattice for this field
-    mdp_int m_idx;          /// value of the mdp_site in local coordinate
+    const mdp_lattice *m_lattice; /// this points to the lattice for this field
+    mdp_int m_idx;                /// value of the mdp_site in local coordinate
 
 #ifdef BLOCKSITE
     int m_block[BLOCKSITE];
 #endif
+
+    /** @brief Coordinte setter for mdp_site
+     *
+     * @tparam Accessor type of the coordinate accessor, must be callable with signature: mdp_int(size_t i)
+     *
+     * This function sets the site to a the location specified by the coordinates provided by the accessor.
+     * The accessor is called with indices from 0 to (ndim-1) to retrieve the coordinates in each dimension.
+     */
+    template <typename Accessor>
+    void set_from_accessor(Accessor coord)
+    {
+      const auto &lat = lattice();
+      const mdp_int ndim = lat.n_dimensions();
+
+      m_idx = coord(0);
+
+      for (mdp_int i = 1; i < ndim; ++i)
+        m_idx = m_idx * lat.size(i) + coord(i);
+
+      m_idx = lat.local(m_idx);
+
+      if (m_idx == NOWHERE)
+      {
+        bool print = mdp.printingEnabled();
+        mdp.enablePrinting();
+        mdp << "Warning message from ME=" << ME << ":\n";
+        mdp << "You assigned a site that is not here!\n";
+        mdp.setPrinting(print);
+      }
+    }
+
+    /** @brief checks if the site is equal to a site defined by coordinates
+     *
+     * @tparam Accessor type of the coordinate accessor, must be callable with signature: mdp_int(size_t i)
+     */
+    template <typename Accessor>
+    bool is_equal_from_accessor(Accessor coord) const
+    {
+      const auto &lat = lattice();
+      const mdp_int ndim = lat.n_dimensions();
+
+      for (mdp_int i = 0; i < ndim; ++i)
+        if (coord(i) != lat.coordinate(m_idx, i))
+          return false;
+
+      return true;
+    }
 
   public:
     /** @brief declares object of class mdp_site living on the
@@ -46,7 +94,7 @@ namespace MDP
      */
     mdp_site(const mdp_lattice &a)
     {
-      m_lattice = (mdp_lattice *)&a;
+      m_lattice = &a;
       m_idx = (*m_lattice).start0(ME, 0);
 #ifdef BLOCKSITE
       for (int k = 0; k < BLOCKSITE; k++)
@@ -54,7 +102,7 @@ namespace MDP
 #endif
     }
 
-    mdp_site(mdp_int i, mdp_lattice *ptr2)
+    mdp_site(mdp_int i, const mdp_lattice *ptr2)
     {
       m_idx = i;
       m_lattice = ptr2;
@@ -65,7 +113,7 @@ namespace MDP
     }
 
 #ifdef BLOCKSITE
-    mdp_site(mdp_int i, mdp_lattice *ptr2, int b[], int sign = 0, int mu = 0)
+    mdp_site(mdp_int i, const mdp_lattice *ptr2, int b[], int sign = 0, int mu = 0)
     {
       m_idx = i;
       m_lattice = ptr2;
@@ -97,7 +145,7 @@ namespace MDP
 
     /** @brief returns by reference the lattice the site lives on
      */
-    mdp_lattice &lattice()
+    const mdp_lattice &lattice() const
     {
       return *m_lattice;
     }
@@ -116,33 +164,30 @@ namespace MDP
     }
 #endif
 
-    mdp_site operator=(mdp_int i)
+    mdp_site &operator=(mdp_int i)
     {
       m_idx = lattice().start0(ME, 0) + i;
-      return mdp_site(m_idx, m_lattice);
+      return *this;
     }
 
-    mdp_site operator=(mdp_site x)
+    mdp_site &operator=(const mdp_site &x)
     {
+      if (this == &x)
+        return *this;
+
       if (m_lattice == x.m_lattice)
-      {
         m_idx = x.m_idx;
-      }
       else
-      {
         set_global(x.global_index());
-      }
 
 #ifdef BLOCKSITE
-      for (int k = 0; k < BLOCKSITE; k++)
-        m_block[k] = x.m_block[k];
-      return mdp_site(m_idx, m_lattice, m_block);
+      std::copy(std::begin(x.m_block), std::end(x.m_block), m_block);
 #endif
 
-      return mdp_site(m_idx, m_lattice);
+      return *this;
     }
 
-    bool operator==(mdp_site x)
+    bool operator==(const mdp_site &x) const
     {
       if ((m_idx == NOWHERE) || (x.m_idx == NOWHERE))
         return false;
@@ -171,7 +216,7 @@ namespace MDP
     /** @brief checks if the site is inside the portion of the lattice stored by
      * the current process
      */
-    bool is_in()
+    bool is_in() const
     {
       return ((m_idx >= lattice().start0(ME, 0)) && (m_idx < lattice().stop0(ME, 1)));
     }
@@ -180,14 +225,14 @@ namespace MDP
      * the current process or if the site is in a local copy of a remote
      * site
      */
-    int is_here()
+    int is_here() const
     {
       return ((m_idx >= 0) && (m_idx < lattice().enclosing_volume()));
     }
 
     /** @brief returns the parity EVEN or ODD of the site
      */
-    mdp_int parity()
+    mdp_int parity() const
     {
       return lattice().site_parity(m_idx);
     }
@@ -195,7 +240,7 @@ namespace MDP
     /** @brief true if the site is stored locally as a copy of a site local
      * in another process
      */
-    bool is_in_boundary()
+    bool is_in_boundary() const
     {
       return (lattice().process(m_idx) != ME);
     }
@@ -212,7 +257,7 @@ namespace MDP
 
     /** @brief returns the global (unique) index of the site
      */
-    mdp_int global_index()
+    mdp_int global_index() const
     {
       return lattice().global(m_idx);
     }
@@ -277,31 +322,25 @@ namespace MDP
     /** @brief returns a site shifted i position (backwards if i<0 or forward if i>0)
      * in direction mu=(0...ndim-1)
      */
-    mdp_site hop(int i, mdp_int mu)
+    mdp_site hop(int n, mdp_int mu) const
     {
-      mdp_site y(lattice());
-      y = (*this);
-      while (i != 0)
-      {
-        if (i < 0)
-        {
-          y = y - mu;
-          i++;
-        }
-        if (i > 0)
-        {
+      mdp_site y = *this;
+
+      if (n > 0)
+        while (n--)
           y = y + mu;
-          i--;
-        }
-      }
+      else
+        while (n++)
+          y = y - mu;
+
       return y;
     }
 
     /** @brief sets the site to the coordinates stored in vector v
      */
-    mdp_site operator=(const mdp_vector &v)
+    mdp_site &operator=(const mdp_vector &v)
     {
-      set(v[0], v[1], v[2], v[3], v[4], v[5], v[6], v[7], v[8], v[9]);
+      set(v);
       return *this;
     }
 
@@ -311,14 +350,10 @@ namespace MDP
     mdp_site operator+(const mdp_vector &v)
     {
       mdp_site y = *this;
-      for (mdp_int mu = 0; mu < lattice().n_dimensions(); mu++)
+      for (mdp_uint mu = 0; mu < lattice().n_dimensions(); ++mu)
       {
-        if (v[mu] > 0)
-          for (mdp_int step = 0; step < v[mu]; step++)
-            y = y + mu;
-        else
-          for (mdp_int step = 0; step < -v[mu]; step++)
-            y = y - mu;
+        for (mdp_uint step = 0; step < std::abs(v[mu]); ++step)
+          y = (v[mu] > 0) ? (y + mu) : (y - mu);
       }
       return y;
     }
@@ -329,78 +364,42 @@ namespace MDP
     mdp_site operator-(const mdp_vector &v)
     {
       mdp_site y = *this;
-      for (mdp_int mu = 0; mu < lattice().n_dimensions(); mu++)
+      for (mdp_uint mu = 0; mu < lattice().n_dimensions(); ++mu)
       {
-        if (v[mu] > 0)
-          for (mdp_int step = 0; step < v[mu]; step++)
-            y = y - mu;
-        else
-          for (mdp_int step = 0; step < -v[mu]; step++)
-            y = y + mu;
+        for (mdp_uint step = 0; step < std::abs(v[mu]); ++step)
+          y = (v[mu] > 0) ? (y - mu) : (y + mu);
       }
       return y;
     }
 
     /// returns mu coordinate of the site
-    mdp_int operator()(mdp_int mu)
+    mdp_int operator()(mdp_int mu) const
     {
       return lattice().coordinate(m_idx, mu);
     }
 
-    void operator=(const int x[])
+    mdp_site &operator=(std::span<const int> x)
     {
-      mdp_int ndim = lattice().n_dimensions();
-      m_idx = x[0];
-      for (mdp_int mu = 1; mu < ndim; mu++)
-        m_idx = m_idx * lattice().size(mu) + x[mu];
-      m_idx = lattice().local(m_idx);
-      if (m_idx == NOWHERE)
-      {
-        bool print = mdp.printingEnabled();
-        mdp.enablePrinting();
-        mdp << "Warning message from ME=" << ME << ":\n";
-        mdp << "You assigned a site that is not here!\n";
-        mdp.setPrinting(print);
-      }
+      set_from_accessor([&](mdp_int i)
+                        { return x[i]; });
+      return *this;
+    }
+
+    void set(const mdp_vector &v)
+    {
+      set_from_accessor([&](mdp_int i)
+                        { return v[i]; });
     }
 
     /// sets the site to a the location specified by the coordinates
     /// and assumes the site is local (or at least a copy)
     /// @see on_which_process()
-    void set(int x0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
-             int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
+    template <typename... Args>
+    void set(Args... args)
     {
-      mdp_int ndim = lattice().n_dimensions();
-      m_idx = x0;
-      if (ndim > 1)
-        m_idx = m_idx * lattice().size(1) + x1;
-      if (ndim > 2)
-        m_idx = m_idx * lattice().size(2) + x2;
-      if (ndim > 3)
-        m_idx = m_idx * lattice().size(3) + x3;
-      if (ndim > 4)
-        m_idx = m_idx * lattice().size(4) + x4;
-      if (ndim > 5)
-        m_idx = m_idx * lattice().size(5) + x5;
-      if (ndim > 6)
-        m_idx = m_idx * lattice().size(6) + x6;
-      if (ndim > 7)
-        m_idx = m_idx * lattice().size(7) + x7;
-      if (ndim > 8)
-        m_idx = m_idx * lattice().size(8) + x8;
-      if (ndim > 9)
-        m_idx = m_idx * lattice().size(9) + x9;
-
-      m_idx = lattice().local(m_idx);
-
-      if (m_idx == NOWHERE)
-      {
-        bool print = mdp.printingEnabled();
-        mdp.enablePrinting();
-        mdp << "Warning message from ME=" << ME << ":\n";
-        mdp << "You assigned a site that is not here!\n";
-        mdp.setPrinting(print);
-      }
+      static_assert(sizeof...(Args) <= mdp_vector::dim);
+      mdp_vector v{args...};
+      set(v);
     }
 
     bool operator==(const int x[])
@@ -420,32 +419,26 @@ namespace MDP
 
     /** @brief checks the site coordinates vs the coordinates passed as args
      */
-    int is_equal(int x0, int x1 = 0, int x2 = 0, int x3 = 0, int x4 = 0,
-                 int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
+    bool is_equal(const mdp_vector &v) const
     {
-      mdp_int ndim = lattice().n_dimensions();
+      return is_equal_from_accessor([&](mdp_int i)
+                                    { return v[i]; });
+    }
 
-      if ((ndim > 0) && (x0 != lattice().coordinate(m_idx, 0)))
-        return false;
-      if ((ndim > 1) && (x1 != lattice().coordinate(m_idx, 1)))
-        return false;
-      if ((ndim > 2) && (x2 != lattice().coordinate(m_idx, 2)))
-        return false;
-      if ((ndim > 3) && (x3 != lattice().coordinate(m_idx, 3)))
-        return false;
-      if ((ndim > 4) && (x4 != lattice().coordinate(m_idx, 4)))
-        return false;
-      if ((ndim > 5) && (x5 != lattice().coordinate(m_idx, 5)))
-        return false;
-      if ((ndim > 6) && (x6 != lattice().coordinate(m_idx, 6)))
-        return false;
-      if ((ndim > 7) && (x7 != lattice().coordinate(m_idx, 7)))
-        return false;
-      if ((ndim > 8) && (x8 != lattice().coordinate(m_idx, 8)))
-        return false;
-      if ((ndim > 9) && (x9 != lattice().coordinate(m_idx, 9)))
-        return false;
-      return true;
+    bool is_equal(std::span<const int> x) const
+    {
+      return is_equal_from_accessor([&](mdp_int i)
+                                    { return x[i]; });
+    }
+
+    template <typename... Args>
+    bool is_equal(Args... args) const
+    {
+      static_assert(sizeof...(Args) > 0);
+      static_assert(sizeof...(Args) <= VECTOR_MAX_DIM);
+
+      std::array<int, sizeof...(Args)> coords{args...};
+      return is_equal(std::span<const int>(coords));
     }
   };
 
@@ -455,7 +448,7 @@ namespace MDP
   mdp_int site2binary(mdp_site x)
   {
     int a = 0;
-    for (mdp_int mu = 0; mu < x.lattice().n_dimensions(); mu++)
+    for (mdp_uint mu = 0; mu < x.lattice().n_dimensions(); mu++)
     {
 #ifdef CHECK_ALL
       if (fabs(0.5 - x(mu)) > 1)
@@ -469,30 +462,19 @@ namespace MDP
   /// checks which process of the lattice a stores locally the site of
   /// coordinates x0,x1,x2,...,x9
   /// to be used before calling mdp_site::set()
-  int on_which_process(mdp_lattice &a, int x0 = 0, int x1 = 0, int x2 = 0, int x3 = 0,
-                       int x4 = 0, int x5 = 0, int x6 = 0, int x7 = 0, int x8 = 0, int x9 = 0)
+  int on_which_process(const mdp_lattice &a, std::span<const int> x)
   {
-    int x[10];
-    x[0] = x0;
-    if (a.n_dimensions() > 1)
-      x[1] = x1;
-    if (a.n_dimensions() > 2)
-      x[2] = x2;
-    if (a.n_dimensions() > 3)
-      x[3] = x3;
-    if (a.n_dimensions() > 4)
-      x[4] = x4;
-    if (a.n_dimensions() > 5)
-      x[5] = x5;
-    if (a.n_dimensions() > 6)
-      x[6] = x6;
-    if (a.n_dimensions() > 7)
-      x[7] = x7;
-    if (a.n_dimensions() > 8)
-      x[8] = x8;
-    if (a.n_dimensions() > 9)
-      x[9] = x9;
-    return a.where(x);
+    return a.where(x.data());
+  }
+
+  template <typename... Args>
+  int on_which_process(const mdp_lattice &a, Args... args)
+  {
+    static_assert(sizeof...(Args) > 0);
+    static_assert(sizeof...(Args) <= VECTOR_MAX_DIM);
+
+    std::array<int, sizeof...(Args)> coords{args...};
+    return on_which_process(a, std::span<const int>(coords));
   }
 
 #ifdef MDP_LATTICE
@@ -517,7 +499,7 @@ namespace MDP
   int in_block([[maybe_unused]] mdp_site x)
   {
 #ifdef TWISTED_BOUNDARY
-    for (mdp_int mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)
+    for (mdp_uint mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)
       if (x.block(mu) != 0)
         return false;
 #endif
@@ -526,7 +508,7 @@ namespace MDP
 
   std::ostream &operator<<(std::ostream &os, mdp_site &x)
   {
-    for (mdp_int i = 0; i < x.lattice().n_dimensions(); i++)
+    for (mdp_uint i = 0; i < x.lattice().n_dimensions(); i++)
     {
       if (i == 0)
         os << "(" << x(i);

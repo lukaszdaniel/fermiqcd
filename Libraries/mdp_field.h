@@ -127,7 +127,7 @@ namespace MDP
   private:
     void fill_header()
     {
-      int i;
+      mdp_uint i;
       m_header.bytes_per_site = sizeof(T) * m_field_components;
       m_header.sites = lattice().size();
       m_header.ndim = lattice().n_dimensions();
