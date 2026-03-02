@@ -488,13 +488,6 @@ namespace MDP
      *   should fit in the memory of processIO.
      *   By default buffersize=1024 and it works reasonably fast.
      */
-    bool load_old(std::string filename,
-              int processIO = 0,
-              mdp_int max_buffer_size = 1024,
-              bool load_header = true,
-              mdp_int skip_bytes = 0,
-              bool (*user_read)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr,
-              bool try_switch_endianess = true);
     bool load(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
@@ -505,12 +498,6 @@ namespace MDP
 
     /** @brief Best way to save a field
      */
-    bool save_old(std::string filename,
-              int processIO = 0,
-              mdp_int max_buffer_size = 1024,
-              bool load_header = true,
-              mdp_int skip_bytes = 0,
-              bool (*user_write)(FILE *, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr);
     bool save(std::string filename,
               int processIO = 0,
               mdp_int max_buffer_size = 1024,
@@ -532,24 +519,6 @@ namespace MDP
                   int component = -1,
                   int processIO = 0,
                   bool ASCII = false);
-
-#ifdef INCLUDE_DEPRECATED_IO
-    void load(const char filename[],
-              int processIO,
-              mdp_int max_buffer_size,
-              const char *header,
-              mdp_int header_size = 0,
-              mdp_int (*sort_x)(mdp_lattice &, mdp_int) = nullptr,
-              int auto_switch_endianess = true);
-
-    void save(const char filename[],
-              int processIO,
-              mdp_int max_buffer_size,
-              const char *header,
-              mdp_int header_size = 0,
-              mdp_int (*sort_x)(mdp_lattice &, mdp_int) = nullptr,
-              const char *mode = "w");
-#endif
   };
 
   /** @brief Other usefull aliases.

@@ -21,7 +21,6 @@ namespace MDP
     // #define USE_DOUBLE_PRECISION
     // #define CHECK_ALL
     // #define CHECK_BOUNDARY
-    // #define INCLUDE_DEPRECATED_IO
     // #define PARALLEL
     // #define NO_POSIX
     // #define HAVE_NO_TIMEZONE
