@@ -352,7 +352,7 @@ namespace MDP
       mdp_site y = *this;
       for (mdp_uint mu = 0; mu < lattice().n_dimensions(); ++mu)
       {
-        for (mdp_uint step = 0; step < std::abs(v[mu]); ++step)
+        for (mdp_int step = 0; step < std::abs(v[mu]); ++step)
           y = (v[mu] > 0) ? (y + mu) : (y - mu);
       }
       return y;
@@ -366,7 +366,7 @@ namespace MDP
       mdp_site y = *this;
       for (mdp_uint mu = 0; mu < lattice().n_dimensions(); ++mu)
       {
-        for (mdp_uint step = 0; step < std::abs(v[mu]); ++step)
+        for (mdp_int step = 0; step < std::abs(v[mu]); ++step)
           y = (v[mu] > 0) ? (y - mu) : (y + mu);
       }
       return y;
