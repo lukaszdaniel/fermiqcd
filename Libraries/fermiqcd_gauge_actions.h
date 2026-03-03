@@ -221,7 +221,7 @@ namespace MDP
   class ImprovedGaugeAction : public WilsonGaugeAction
   {
   private:
-    static mdp_matrix rectangles_0i_H(gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)
     {
       mdp_matrix tmp(U.nc(), U.nc());
       mdp_matrix b1(U.nc(), U.nc());
@@ -268,7 +268,7 @@ namespace MDP
 
     // if min_nu==0 then rectangles_ij computes all 6 rectangles
 
-    static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
+    static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, int mu, int min_nu = 1)
     {
       mdp_matrix tmp(U.nc(), U.nc());
       mdp_matrix b1(U.nc(), U.nc());
@@ -317,7 +317,7 @@ namespace MDP
     // see: hep-lat/0712010
     // //////////////////////////////////////////////////////
 
-    static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix chair_H(const gauge_field &U, mdp_site x, int mu)
     {
       int ndim = U.ndim();
       mdp_matrix tmp(U.nc(), U.nc());

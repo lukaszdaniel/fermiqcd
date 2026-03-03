@@ -42,7 +42,7 @@ namespace MDP
 
     /** @brief declares a n-component vector field of ixj matrices at each site
      */
-    mdp_nmatrix_field(mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j) : mdp_field<mdp_complex>(a, n * i * j), m_matrices(n), m_rows(i), m_columns(j)
+    mdp_nmatrix_field(const mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j) : mdp_field<mdp_complex>(a, n * i * j), m_matrices(n), m_rows(i), m_columns(j)
     {
     }
 
@@ -52,7 +52,7 @@ namespace MDP
 
     /** @brief dynamically allocates a n-component vector field of ixj matrices at each site
      */
-    void allocate_mdp_nmatrix_field(mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j)
+    void allocate_mdp_nmatrix_field(const mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j)
     {
       m_matrices = n;
       m_rows = i;

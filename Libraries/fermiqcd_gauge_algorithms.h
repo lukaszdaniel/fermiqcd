@@ -57,7 +57,7 @@ namespace MDP
   }
 
   /// Check that gauge field is unitary within precision
-  void check_unitarity(gauge_field &U, double precision = PRECISION)
+  void check_unitarity(const gauge_field &U, double precision = PRECISION)
   {
     begin_function("check_unitarity");
     mdp_site x(U.lattice());
@@ -75,7 +75,7 @@ namespace MDP
   }
 
   /// Compute average plaquette on plane mu-nu
-  mdp_real average_plaquette(gauge_field &U, int mu, int nu)
+  mdp_real average_plaquette(const gauge_field &U, int mu, int nu)
   {
     double tmp = 0;
     mdp_site x(U.lattice());
@@ -89,7 +89,7 @@ namespace MDP
   }
 
   /// Compute average plaquette (all planes)
-  mdp_real average_plaquette(gauge_field &U)
+  mdp_real average_plaquette(const gauge_field &U)
   {
     double tmp = 0;
     mdp_site x(U.lattice());
@@ -107,7 +107,7 @@ namespace MDP
 
   /** @brief Compute average Time plaquette
    */
-  mdp_real TimePlaquette(gauge_field &U)
+  mdp_real TimePlaquette(const gauge_field &U)
   {
     mdp_real tmp = 0;
     mdp_site x(U.lattice());
@@ -124,7 +124,7 @@ namespace MDP
 
   /** @brief Compute average Space plaquette
    */
-  mdp_real SpacePlaquette(gauge_field &U)
+  mdp_real SpacePlaquette(const gauge_field &U)
   {
     mdp_real tmp = 0;
     mdp_site x(U.lattice());
@@ -142,7 +142,7 @@ namespace MDP
 
   /** @brief Polyakov field L(vec(x))
    */
-  mdp_matrix_field PolyakovField(gauge_field &U)
+  mdp_matrix_field PolyakovField(const gauge_field &U)
   {
     mdp_site x(U.lattice()), y(U.lattice());
     mdp_matrix_field L(U.lattice(), U.nc(), U.nc());
@@ -166,7 +166,7 @@ namespace MDP
 
   /** @brief Compute averaged Polyakov loop: L(x) - polyakov field
    */
-  mdp_complex PolyakovLoop(gauge_field &U)
+  mdp_complex PolyakovLoop(const gauge_field &U)
   {
 
     mdp_site x(U.lattice());
@@ -320,7 +320,7 @@ namespace MDP
 
   ///////////////////////////////////////////////////////////////////////////
   /// Polyakov Loop correlation L(x,y)
-  mdp_matrix PolyCor(gauge_field &U)
+  mdp_matrix PolyCor(const gauge_field &U)
   {
     mdp_site x(U.lattice());
     mdp_matrix proj(U.ndim() - 1, U.lattice().size(1));
@@ -668,7 +668,7 @@ namespace MDP
   ///   Path d = {{+1,mu},{+1,nu},{-1,mu},{-1,nu}};
   ///   mdp << "plaquette=" << average_path(U,d) << "\n";
   /// @endverbatim
-  mdp_complex average_path(gauge_field &U, const Path &d)
+  mdp_complex average_path(const gauge_field &U, const Path &d)
   {
     mdp_matrix_field psi1(U.lattice(), U.nc(), U.nc());
     mdp_matrix_field psi2(U.lattice(), U.nc(), U.nc());
@@ -716,7 +716,7 @@ namespace MDP
   ///   forallsites(x)
   ///      cout << "plaquette(x)=" << average_path(U,x,d) << endl;
   /// @endverbatim
-  mdp_matrix build_path(gauge_field &U, mdp_site x, const Path &d)
+  mdp_matrix build_path(const gauge_field &U, mdp_site x, const Path &d)
   {
     int nc = U.nc();
     mdp_matrix tmp = mdp_identity(nc);

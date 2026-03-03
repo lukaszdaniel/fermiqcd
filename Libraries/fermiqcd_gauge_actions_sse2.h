@@ -52,7 +52,7 @@ namespace MDP
   private:
 #if !defined(SSE2) || !defined(USE_DOUBLE_PRECISION)
 
-    static mdp_matrix rectangles_0i_H(gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)
     {
       mdp_matrix tmp(3, 3);
       mdp_matrix b1(3, 3);
@@ -100,7 +100,7 @@ namespace MDP
 
     // if min_nu==0 then rectangles_ij computes all 6 rectanges
 
-    static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
+    static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, int mu, int min_nu = 1)
     {
       mdp_matrix tmp(3, 3);
       mdp_matrix b1(3, 3);
@@ -148,7 +148,7 @@ namespace MDP
     // see: hep-lat/0712010
     // //////////////////////////////////////////////////////
 
-    static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix chair_H(const gauge_field &U, mdp_site x, int mu)
     {
       int ndim = U.ndim();
       int nu, rho;
@@ -199,7 +199,7 @@ namespace MDP
 
 #else
 
-    static mdp_matrix rectangles_0i_H(gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)
     {
       int nc = 3;
       mdp_matrix tmp(nc, nc);
@@ -265,7 +265,7 @@ namespace MDP
 
     // if min_nu==0 then rectangles_ij computes all 6 rectanges
 
-    static mdp_matrix rectangles_ij_H(gauge_field &U, mdp_site x, int mu, int min_nu = 1)
+    static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, int mu, int min_nu = 1)
     {
       int nc = 3;
       mdp_matrix tmp(nc, nc);
@@ -327,7 +327,7 @@ namespace MDP
     // see: hep-lat/0712010
     // //////////////////////////////////////////////////////
 
-    static mdp_matrix chair_H(gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix chair_H(const gauge_field &U, mdp_site x, int mu)
     {
       int nc = 3;
       int ndim = U.ndim();
@@ -387,7 +387,7 @@ namespace MDP
       return (tmp);
     }
 
-    static mdp_matrix twisted_rectangle_H(gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix twisted_rectangle_H(const gauge_field &U, mdp_site x, int mu)
     {
       int nu;
       int nc = 3;

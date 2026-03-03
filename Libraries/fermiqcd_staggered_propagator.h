@@ -55,7 +55,7 @@ namespace MDP
     {
     }
 
-    staggered_propagator(mdp_lattice &a, int nc_) : mdp_complex_field(a, a.ndim() * a.ndim() * nc_ * nc_), m_nc(nc_)
+    staggered_propagator(const mdp_lattice &a, int nc_) : mdp_complex_field(a, a.ndim() * a.ndim() * nc_ * nc_), m_nc(nc_)
     {
     }
 

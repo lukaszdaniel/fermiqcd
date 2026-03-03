@@ -37,7 +37,7 @@ namespace MDP
 
     /** @brief declares a n-component vector field of i-component vectors at each site
      */
-    mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i) : mdp_nmatrix_field(a, n, i, 1)
+    mdp_nvector_field(const mdp_lattice &a, mdp_uint n, mdp_uint i) : mdp_nmatrix_field(a, n, i, 1)
     {
     }
 
@@ -47,7 +47,7 @@ namespace MDP
 
     /** @brief dynamically allocates a n-component vector field of i-component vectors at each site
      */
-    void allocate_mdp_nvector_field(mdp_lattice &a, mdp_uint n, mdp_uint i)
+    void allocate_mdp_nvector_field(const mdp_lattice &a, mdp_uint n, mdp_uint i)
     {
       allocate_mdp_nmatrix_field(a, n, i, 1);
     }

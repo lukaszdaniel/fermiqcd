@@ -41,7 +41,7 @@ namespace MDP
     {
     }
 
-    fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
+    fermi_field(const mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
     {
     }
 
@@ -49,7 +49,7 @@ namespace MDP
     {
     }
 
-    void allocate_fermi_field(mdp_lattice &a, int nc_, int nspin_ = 4)
+    void allocate_fermi_field(const mdp_lattice &a, int nc_, int nspin_ = 4)
     {
       deallocate_field();
       m_nc = nc_;
@@ -84,14 +84,14 @@ namespace MDP
 
     /** @brief returns the matrix stored at site x
      */
-    mdp_matrix operator()(mdp_site x)
+    mdp_matrix operator()(mdp_site x) const
     {
       return mdp_matrix(address(x), m_nspin, m_nc);
     }
 
     /** @brief returns the vector of spin \e a stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int a)
+    mdp_matrix operator()(mdp_site x, int a) const
     {
       return mdp_matrix(address(x, a * m_nc), m_nc, 1);
     }

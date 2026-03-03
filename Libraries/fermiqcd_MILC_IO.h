@@ -105,19 +105,25 @@ namespace MDP
     {
       mdp_uint magic_number; /* Identifies file format */
       mdp_int dims[4];       /* Full lattice dimensions */
-      char time_stamp[64];   /* Date and time stamp - used to
-  check consistency between the
-  ASCII header file and the
-  lattice file */
-      mdp_int header_bytes;  /* NOT WRITTEN TO THE FILE but
-  helpful for finding the data */
+      /* Date and time stamp - used to
+         check consistency between the
+         ASCII header file and the
+         lattice file
+      */
+      char time_stamp[64];
+      /* NOT WRITTEN TO THE FILE but
+        helpful for finding the data
+      */
+      mdp_int header_bytes;
       mdp_int what_is_this;
-      mdp_int order; /* 0 means no coordinate list is
-  attached and the values are in
-  coordinate serial order.
-  Nonzero means that a
-  coordinate list is attached,
-  specifying the order of values */
+      /* 0 means no coordinate list is
+        attached and the values are in
+        coordinate serial order.
+        Nonzero means that a
+        coordinate list is attached,
+        specifying the order of values
+      */
+      mdp_int order;
       // mdp_int boo;
     } milc_header;
 

@@ -193,7 +193,7 @@ namespace MDP
      *
      * @note Used by the constructor ONLY
      */
-    void psim_begin(int processCount, std::string logFileName, int verbatim)
+    void psim_begin(int processCount, const std::string &logFileName, int verbatim)
     {
       _processCount = processCount;
       _logFileName = logFileName;
@@ -614,7 +614,7 @@ namespace MDP
     /** @brief Provide the number of processes to create and the name of
      * the logfile if desired and "" if no logfile is needed.
      */
-    mdp_psim(int processCount, std::string logFileName = ".psim.log", int verbatim = 0)
+    mdp_psim(int processCount, const std::string &logFileName = ".psim.log", int verbatim = 0)
     {
       psim_begin(processCount, logFileName, verbatim);
     }
@@ -701,7 +701,7 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void send(int destProcessID, std::string dataTag, T &dataToSend)
+    void send(int destProcessID, const std::string &dataTag, T &dataToSend)
     {
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);
       std::vector<char> data(sizeof(T));
@@ -722,7 +722,7 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void send(int destProcessID, std::string dataTag,
+    void send(int destProcessID, const std::string &dataTag,
               T *pdataToSend, mdp_int dataSize)
     {
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);
@@ -743,7 +743,7 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void recv(int sourceProcessID, std::string dataTag, T &dataToReceive)
+    void recv(int sourceProcessID, const std::string &dataTag, T &dataToReceive)
     {
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_START);
       std::vector<char> data;
@@ -769,7 +769,7 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void recv(int sourceProcessID, std::string dataTag,
+    void recv(int sourceProcessID, const std::string &dataTag,
               T *pdataToReceive, mdp_int dataSize)
     {
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_START);

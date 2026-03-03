@@ -2,7 +2,7 @@
 
 using namespace MDP;
 
-void polyakov(int nt, int nx, std::string filename)
+void polyakov(int nt, int nx, const std::string &filename)
 {
   const Box L = {nt, nx, nx, nx};
   const Box L_space = {nx, nx, nx};

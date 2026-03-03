@@ -34,7 +34,7 @@ namespace MDP
     {
     }
 
-    phase_field(mdp_lattice &a) : mdp_int_scalar_field(a, 16)
+    phase_field(const mdp_lattice &a) : mdp_int_scalar_field(a, 16)
     {
       if (a.n_dimensions() != 4)
         error("fermiqcd_staggered_mesons/phase_field: ndim!=4");

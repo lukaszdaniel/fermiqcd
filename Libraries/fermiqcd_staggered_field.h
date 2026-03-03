@@ -40,7 +40,7 @@ namespace MDP
     {
     }
 
-    staggered_field(mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_)), m_nspin(nspin_), m_nc(nc_)
+    staggered_field(const mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_)), m_nspin(nspin_), m_nc(nc_)
     {
       // attention here that nspin_ is ignored in field allocation!
     }
@@ -76,7 +76,7 @@ namespace MDP
 
     /** @brief returns the vector stored at site x
      */
-    mdp_matrix operator()(mdp_site x)
+    mdp_matrix operator()(mdp_site x) const
     {
       return mdp_matrix(address(x), m_nc, 1);
     }

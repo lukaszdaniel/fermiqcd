@@ -41,7 +41,7 @@ namespace MDP
   class InstantonGenerator4D
   {
   private:
-    mdp_lattice *lattice;
+    const mdp_lattice *lattice;
     mdp_matrix tau[4], bar[4];
 
     void init_tau_and_bar()

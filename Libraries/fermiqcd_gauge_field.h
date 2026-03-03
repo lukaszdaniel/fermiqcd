@@ -78,7 +78,7 @@ namespace MDP
      * @param a Lattice where the field needs to reside.
      * @param nc_ Number of colours.
      */
-    em_field(mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * ((a.ndim() * (a.ndim() - 1)) / 2))), m_nc(nc_)
+    em_field(const mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * ((a.ndim() * (a.ndim() - 1)) / 2))), m_nc(nc_)
     {
     }
 
@@ -90,7 +90,7 @@ namespace MDP
     {
     }
 
-    void allocate_em_field(mdp_lattice &a, int nc_)
+    void allocate_em_field(const mdp_lattice &a, int nc_)
     {
       deallocate_field();
       m_nc = nc_;
@@ -105,7 +105,7 @@ namespace MDP
 
     /** @brief returns the matrix in directions \e mu, \e nu stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int mu, int nu)
+    mdp_matrix operator()(mdp_site x, int mu, int nu) const
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
@@ -186,7 +186,7 @@ namespace MDP
      * @param a Lattice where the field needs to reside.
      * @param nc_ Number of colours.
      */
-    gauge_field(mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * a.ndim())), m_nc(nc_)
+    gauge_field(const mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * a.ndim())), m_nc(nc_)
     {
     }
 
@@ -212,7 +212,7 @@ namespace MDP
       return *this;
     }
 
-    void allocate_gauge_field(mdp_lattice &a, int nc_)
+    void allocate_gauge_field(const mdp_lattice &a, int nc_)
     {
       deallocate_field();
       m_nc = nc_;

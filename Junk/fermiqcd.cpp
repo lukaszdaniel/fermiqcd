@@ -40,7 +40,7 @@ void cool_vtk(gauge_field &U, const mdp_args &arguments, const std::string &file
     mdp.error_message("cooling algorithm not supported");
 }
 
-void plaquette_vtk(gauge_field &U, const std::string &filename)
+void plaquette_vtk(const gauge_field &U, const std::string &filename)
 {
   mdp_real_scalar_field q(U.lattice());
   mdp_site x(U.lattice());
@@ -57,7 +57,7 @@ void plaquette_vtk(gauge_field &U, const std::string &filename)
   q.save_vtk(filename, -1);
 }
 
-void polyakov_vtk(gauge_field &U, const std::string &filename)
+void polyakov_vtk(const gauge_field &U, const std::string &filename)
 {
   int LX = U.lattice().size(1);
   int LY = U.lattice().size(2);

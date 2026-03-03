@@ -33,7 +33,7 @@ namespace MDP
     {
     }
 
-    sdwf_field(mdp_lattice &a, int L5_, int nc_, int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
+    sdwf_field(const mdp_lattice &a, int L5_, int nc_, int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
     {
       // attention here that nspin_ is ignored in field allocation!
     }

@@ -9,7 +9,7 @@ class scalar_field : public mdp_real_scalar_field
 public:
   const int ndim;
 
-  scalar_field(mdp_lattice &a) : mdp_real_scalar_field(a), ndim(a.n_dimensions())
+  scalar_field(const mdp_lattice &a) : mdp_real_scalar_field(a), ndim(a.n_dimensions())
   {
   }
 };
@@ -23,7 +23,7 @@ public:
   mdp_real kappa;
   mdp_real magnetic_field;
 
-  ising_field(mdp_lattice &a) : mdp_int_scalar_field(a), ndim(a.n_dimensions())
+  ising_field(const mdp_lattice &a) : mdp_int_scalar_field(a), ndim(a.n_dimensions())
   {
   }
 };

@@ -37,7 +37,7 @@ namespace MDP
 
     /** @brief declares a field of i-component vectors at each site
      */
-    mdp_vector_field(mdp_lattice &a, int i) : mdp_nvector_field(a, 1, i)
+    mdp_vector_field(const mdp_lattice &a, int i) : mdp_nvector_field(a, 1, i)
     {
     }
 
@@ -47,14 +47,14 @@ namespace MDP
 
     /** @brief dynamically allocates a field of i-component vectors at each site
      */
-    void allocate_mdp_vector_field(mdp_lattice &a, int i)
+    void allocate_mdp_vector_field(const mdp_lattice &a, int i)
     {
       allocate_mdp_nvector_field(a, 1, i);
     }
 
     /** @brief returns the matrix stored at site x
      */
-    mdp_matrix operator()(mdp_site x)
+    mdp_matrix operator()(mdp_site x) const
     {
       return mdp_matrix(address(x), m_rows, m_columns);
     }

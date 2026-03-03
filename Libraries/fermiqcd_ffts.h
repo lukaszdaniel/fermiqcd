@@ -103,7 +103,7 @@ namespace MDP
 
   void fermi_field_fft(int t,
                        fermi_field &psi_out,
-                       fermi_field &psi_in,
+                       const fermi_field &psi_in,
                        int sign)
   {
 
@@ -180,7 +180,7 @@ namespace MDP
   }
 
   void fermi_field_fft_t(fermi_field &psi_out,
-                         fermi_field &psi_in,
+                         const fermi_field &psi_in,
                          int sign)
   {
 
@@ -230,7 +230,7 @@ namespace MDP
    * Set ttime=true to FT in time too
    */
   void fermi_field_fft(fermi_field &psi_out,
-                       fermi_field &psi_in,
+                       const fermi_field &psi_in,
                        int sign, bool ttime = false)
   {
     for (mdp_int t = 0; t < psi_in.lattice().size(0); t++)
@@ -242,7 +242,7 @@ namespace MDP
 
   void mdp_complex_field_fft(int t,
                              mdp_field<mdp_complex> &psi_out,
-                             mdp_field<mdp_complex> &psi_in,
+                             const mdp_field<mdp_complex> &psi_in,
                              int sign)
   {
 
@@ -319,7 +319,7 @@ namespace MDP
   }
 
   void mdp_complex_field_fft_t(mdp_field<mdp_complex> &psi_out,
-                               mdp_field<mdp_complex> &psi_in,
+                               const mdp_field<mdp_complex> &psi_in,
                                int sign)
   {
 
@@ -369,7 +369,7 @@ namespace MDP
    * Set ttime=true to FT in time too
    */
   void mdp_complex_field_fft(mdp_field<mdp_complex> &psi_out,
-                             mdp_field<mdp_complex> &psi_in,
+                             const mdp_field<mdp_complex> &psi_in,
                              int sign, bool ttime = false)
   {
     for (mdp_int t = 0; t < psi_in.lattice().size(0); t++)

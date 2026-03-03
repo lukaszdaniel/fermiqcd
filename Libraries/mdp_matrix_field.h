@@ -36,7 +36,7 @@ namespace MDP
 
     /** @brief declares a field of ixj matrices at each site
      */
-    mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j) : mdp_nmatrix_field(a, 1, i, j)
+    mdp_matrix_field(const mdp_lattice &a, mdp_uint i, mdp_uint j) : mdp_nmatrix_field(a, 1, i, j)
     {
     }
 
@@ -46,7 +46,7 @@ namespace MDP
 
     /** @brief dynamically allocates a field of ixj matrices at each site
      */
-    void allocate_mdp_matrix_field(mdp_lattice &a, mdp_uint i, mdp_uint j)
+    void allocate_mdp_matrix_field(const mdp_lattice &a, mdp_uint i, mdp_uint j)
     {
       allocate_mdp_nmatrix_field(a, 1, i, j);
     }
@@ -64,7 +64,7 @@ namespace MDP
 
     /** @brief returns the matrix stored at site x
      */
-    mdp_matrix operator()(mdp_site x)
+    mdp_matrix operator()(mdp_site x) const
     {
       return mdp_matrix(address(x), m_rows, m_columns);
     }

@@ -141,7 +141,7 @@ namespace MDP
     {
     }
 
-    mdp_complex_field(mdp_lattice &lattice, int n = 1) : mdp_field<mdp_complex>(lattice, n)
+    mdp_complex_field(const mdp_lattice &lattice, int n = 1) : mdp_field<mdp_complex>(lattice, n)
     {
     }
 

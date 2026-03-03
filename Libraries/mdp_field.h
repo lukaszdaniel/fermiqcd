@@ -137,8 +137,15 @@ namespace MDP
         m_header.box[i] = 0;
     }
 
+    /** @brief only used by mdp_field::load() and mdp_field::save()
+     */
+    mdp_int where_global(mdp_int global_idx) const
+    {
+      return lattice().where_global(global_idx);
+    }
+
   protected:
-    mdp_lattice *m_lattice;      /* this points to the lattice for this field  */
+    const mdp_lattice *m_lattice;      /* this points to the lattice for this field  */
     std::unique_ptr<T[]> m_data; /* this is to store the main field            */
     mdp_uint m_size;             /* this is the total number field components on the lattice */
     mdp_uint m_field_components; /* this is the number of field components per site */
@@ -152,7 +159,7 @@ namespace MDP
      * @param a lattice where the field resides on
      * @param n size of the field vector. For n = 1 field is a scalar field
      */
-    void allocate_field(mdp_lattice &a, mdp_uint n = 0)
+    void allocate_field(const mdp_lattice &a, mdp_uint n = 0)
     {
       deallocate_field();
       if (n == 0)
@@ -179,7 +186,7 @@ namespace MDP
 
     /** @brief declares a field on lattice a and allocates a vector of n T at each site
      */
-    mdp_field(mdp_lattice &a, mdp_uint n = 1)
+    mdp_field(const mdp_lattice &a, mdp_uint n = 1)
     {
       allocate_field(a, n);
     }
@@ -221,7 +228,7 @@ namespace MDP
 
     /** @brief returns component i of the vector of objects T stored at site x
      */
-    T &operator()(mdp_site x, mdp_uint i = 0)
+    T &operator()(mdp_site x, mdp_uint i = 0) const
     {
 #ifdef CHECK_ALL
       if (!(x.is_here()))
@@ -240,7 +247,7 @@ namespace MDP
 
     /** @brief returns component i of the vector of objects T stored at site x
      */
-    T &operator()(mdp_uint idx, mdp_uint i = 0)
+    T &operator()(mdp_uint idx, mdp_uint i = 0) const
     {
 #ifdef CHECK_BOUNDARY
       if (i >= m_field_components)
@@ -253,12 +260,12 @@ namespace MDP
 
     /** @brief returns the address of the vector of objects T stored at site x
      */
-    T *operator[](mdp_site x)
+    T *operator[](mdp_site x) const
     {
       return address(x, 0);
     }
 
-    T &operator[](mdp_int i)
+    T &operator[](mdp_int i) const
     {
       return m_data[i];
     }
@@ -360,7 +367,7 @@ namespace MDP
 
     /** @brief returns by reference the lattice this field is defined on
      */
-    mdp_lattice &lattice() const
+    const mdp_lattice &lattice() const
     {
       return *m_lattice;
     }
@@ -384,13 +391,6 @@ namespace MDP
     mdp_int file_size()
     {
       return sizeof(mdp_field_file_header) + field_size();
-    }
-
-    /** @brief only used by mdp_field::load() and mdp_field::save()
-     */
-    int where_global(mdp_int global_idx)
-    {
-      return lattice().where_global(global_idx);
     }
 
     void switch_endianess_4bytes()
@@ -432,29 +432,29 @@ namespace MDP
 
     /** @brief lattice size in units of sizeof(T)
      */
-    mdp_int global_size()
+    mdp_int global_size() const
     {
       return m_field_components * lattice().global_volume();
     }
 
-    mdp_int physical_size()
+    mdp_int physical_size() const
     {
       return m_size;
     }
 
-    mdp_int size_per_site()
+    mdp_int size_per_site() const
     {
       return m_field_components;
     }
 
-    mdp_int physical_local_start(int i = 2)
+    mdp_int physical_local_start(int i = 2) const
     {
       if (i == 2)
         i = 0;
       return m_field_components * lattice().start0(ME, i);
     }
 
-    mdp_int physical_local_stop(int i = 2)
+    mdp_int physical_local_stop(int i = 2) const
     {
       if (i == 2)
         i = 1;

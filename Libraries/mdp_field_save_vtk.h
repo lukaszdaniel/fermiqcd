@@ -185,7 +185,7 @@ namespace MDP
     return true;
   }
 
-  mdp_field<mdp_real> &cumulate_field(mdp_field<mdp_real> &field, std::string filename)
+  mdp_field<mdp_real> &cumulate_field(mdp_field<mdp_real> &field, const std::string &filename)
   {
     static std::map<std::string, int> counter;
     static std::map<std::string, mdp_field<mdp_real> *> fields;

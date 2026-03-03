@@ -2,7 +2,7 @@
 
 using namespace MDP;
 
-void compute_energy(int nt, int nx, std::string filename)
+void compute_energy(int nt, int nx, const std::string &filename)
 {
   const Box L = {nt, nx, nx, nx};
   int nc = 3;

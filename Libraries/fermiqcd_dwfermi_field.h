@@ -43,7 +43,7 @@ namespace MDP
     {
     }
 
-    dwfermi_field(mdp_lattice &a, int L5_, int nc_, int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
+    dwfermi_field(const mdp_lattice &a, int L5_, int nc_, int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
     {
     }
 
@@ -51,7 +51,7 @@ namespace MDP
     {
     }
 
-    void allocate_dwfermi_field(mdp_lattice &a, int L5_, int nc_, int nspin_ = 4)
+    void allocate_dwfermi_field(const mdp_lattice &a, int L5_, int nc_, int nspin_ = 4)
     {
       deallocate_field();
       m_L5 = L5_;
