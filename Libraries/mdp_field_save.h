@@ -70,8 +70,8 @@ namespace MDP
     filename = next_to_latest_file(filename);
 
     mdp_int header_size = 0;
-    mdp_int psize = m_field_components * sizeof(T);
-    mdp_int idx_gl, nvol_gl = lattice().global_volume();
+    size_t idx_gl, nvol_gl = lattice().global_volume();
+    size_t psize = m_field_components * sizeof(T);
     double mytime = mdp.time();
 
     m_header.reset();
@@ -105,13 +105,14 @@ namespace MDP
         header_size = sizeof(mdp_field_file_header);
 
         fp.seekp(skip_bytes, std::ios::beg);
-        fp.write(reinterpret_cast<const char *>(&m_header), header_size);
-
-        if (!fp)
+        if (!fp.write(reinterpret_cast<const char *>(&m_header), header_size))
+        {
           error("Unable to write file header");
+        }
       }
 
       skip_bytes += header_size;
+
       bool exception = false;
 
       fp.seekp(skip_bytes, std::ios::beg);
@@ -163,10 +164,10 @@ namespace MDP
               error("probably out of disk space");
             }
 
-            fp.write(reinterpret_cast<const char *>(short_buffer.get()), psize);
-
-            if (!fp)
+            if (!fp.write(reinterpret_cast<const char *>(short_buffer.get()), psize))
+            {
               error("probably out of disk space");
+            }
           }
         }
         else
@@ -187,7 +188,9 @@ namespace MDP
         int process = where_global(idx_gl);
 
         if (process == ME)
+        {
           local_index[buffer_size++] = lattice().local(idx_gl);
+        }
 
         if ((buffer_size == max_buffer_size) ||
             ((idx_gl == nvol_gl - 1) && (buffer_size > 0)))

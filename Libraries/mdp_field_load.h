@@ -81,8 +81,6 @@ namespace MDP
     double mytime = mdp.time();
     bool reversed_header_endianess = false;
 
-    struct stat statbuf;
-
     if (isSubProcess(processIO))
     {
       auto buffer_size = std::make_unique<mdp_int[]>(Nproc);
@@ -91,13 +89,13 @@ namespace MDP
       mdp_request request;
 
       for (int process = 0; process < Nproc; process++)
+      {
         buffer_size[process] = 0;
+      }
+
       std::cout << "Loading file " << filename
                 << " from process " << processIO
                 << " (buffer = " << max_buffer_size << " sites)\n";
-
-      stat(filename.c_str(), &statbuf);
-      int total_size = statbuf.st_size;
 
       std::ifstream fp(filename, std::ios::binary);
       if (!fp)
@@ -111,24 +109,26 @@ namespace MDP
         fp.seekg(skip_bytes, std::ios::beg);
         if (!fp.read(reinterpret_cast<char *>(&tmp_header), header_size))
         {
-          fprintf(stderr, "mdp_field.load(): Unable to load file header\n");
-          return false;
+          error("Unable to load file header");
         }
 
-        reversed_header_endianess = mdp_field_file_header::switch_header_endianess(tmp_header);
-
-        std::cout << "reverse: " << reversed_header_endianess << std::endl;
-
-        if (tmp_header.endianess != m_header.endianess)
-          fprintf(stderr, "Unrecognized endianess... trying to read anyway\n");
-
         // UGLY BUT FIXES INCOMPATIBIITY
+        struct stat statbuf;
+        stat(filename.c_str(), &statbuf);
+        int total_size = statbuf.st_size;
         int actual_size = tmp_header.box[0];
         for (mdp_int d = 1; d < tmp_header.ndim; d++)
           actual_size *= tmp_header.box[d];
 
         tmp_header.sites = actual_size;
         header_size += total_size - (tmp_header.bytes_per_site * actual_size + header_size);
+
+        reversed_header_endianess = mdp_field_file_header::switch_header_endianess(tmp_header);
+        if (reversed_header_endianess)
+          std::cout << "Reversed header endianess\n";
+
+        if (tmp_header.endianess != m_header.endianess)
+          fprintf(stderr, "Unrecognized endianess... trying to read anyway\n");
 
         if (tmp_header.ndim != m_header.ndim)
         {
@@ -137,27 +137,33 @@ namespace MDP
         }
 
         for (mdp_uint d = 0; d < lattice().ndim(); d++)
+        {
           if (tmp_header.box[d] != m_header.box[d])
           {
             fprintf(stderr, "mdp_file.load(): wrong lattice size\n");
             return false;
           }
+        }
+
         if (tmp_header.bytes_per_site != m_header.bytes_per_site)
         {
           fprintf(stderr, "mdp_file.load(): wrong type of field (%i bytes per site?)\n", tmp_header.bytes_per_site);
           return false;
         }
+
         if (tmp_header.sites != m_header.sites)
         {
           fprintf(stderr, "mdp_field.load(): wrong number of sites\n");
           return false;
         }
+
         m_header = tmp_header;
       }
 
       skip_bytes += header_size;
 
       bool exception = false;
+
       fp.seekg(skip_bytes, std::ios::beg);
 
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
@@ -178,13 +184,11 @@ namespace MDP
           {
             if (exception && fp.seekg(idx_gl * psize + skip_bytes, std::ios::beg))
             {
-              std::cout << "debug info: " << idx_gl * psize + skip_bytes << " " << psize << std::endl;
               error("unexpected end of file");
             }
 
             if (!fp.read(reinterpret_cast<char *>(short_buffer.get()), psize))
             {
-              std::cout << "failure to read" << std::endl;
               error("unexpected end of file");
             }
           }
@@ -228,7 +232,7 @@ namespace MDP
         {
           T *dst = m_data.get() + lattice().local(idx_gl) * m_field_components;
 
-          for (mdp_uint k = 0; k < m_field_components; k++)
+          for (mdp_uint k = 0; k < m_field_components; ++k)
             dst[k] = short_buffer[k];
         }
       }
@@ -242,6 +246,7 @@ namespace MDP
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
         int process = where_global(idx_gl);
+
         if (process == ME)
         {
           local_index[buffer_size++] = lattice().local(idx_gl);
