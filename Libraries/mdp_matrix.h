@@ -581,7 +581,7 @@ namespace MDP
       if (m_rows == 2)
         return m_data[0] * m_data[3] - m_data[1] * m_data[2];
 
-      if (m_rows == 3)
+      if (m_rows == 3) [[likely]]
         return (m_data[0] * m_data[4] * m_data[8] +
                 m_data[1] * m_data[5] * m_data[6] +
                 m_data[2] * m_data[3] * m_data[7] -
@@ -656,7 +656,7 @@ namespace MDP
         return ans;
       }
 
-      if (m_rows == 3)
+      if (m_rows == 3) [[likely]]
       {
         mdp_complex div = det();
         if (div == mdp_complex(0))
