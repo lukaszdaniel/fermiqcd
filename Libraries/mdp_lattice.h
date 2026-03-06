@@ -855,7 +855,7 @@ namespace MDP
       deallocate_memory();
     }
 
-    const mdp_prng &random(mdp_site x) const;
+    mdp_prng &random(mdp_site x) const;
 
     // //////////////////////////////////
     // functions for external access ...

@@ -480,7 +480,7 @@ namespace MDP
 #ifdef MDP_LATTICE
 
   /// Returns the local object mdp_prng at site x of the lattice
-  const mdp_prng &mdp_lattice::random(mdp_site x) const
+  mdp_prng &mdp_lattice::random(mdp_site x) const
   {
     if (m_local_random_generator)
     {

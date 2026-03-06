@@ -38,13 +38,16 @@ namespace MDP
   private:
     static constexpr float cd = 7654321.0f / 16777216.0f;
     static constexpr float cm = 16777213.0f / 16777216.0f;
-    mutable float m_c;
-    mutable int m_ui;
-    mutable int m_uj;
-    mutable float m_u[98];
+    static constexpr unsigned long N = 97;
+    float m_c;
+    int m_ui;
+    int m_uj;
+    std::array<float, N> m_u;
+    bool m_has_gauss = false;
+    float m_gauss_cache = 0;
 
   public:
-    mdp_prng(mdp_int k = 0) : m_c(362436.0f / 16777216.0f), m_ui(97), m_uj(33)
+    mdp_prng(mdp_int k = 0) : m_c(362436.0f / 16777216.0f), m_ui(N - 1), m_uj(32)
     {
       // c = 362436.0f / 16777216.0f;
 
@@ -56,29 +59,29 @@ namespace MDP
     }
 
     /// return a uniform random number in (0,1)
-    float plain() const
+    inline float plain() noexcept
     {
-      float luni = m_u[m_ui] - m_u[m_uj]; /* local variable for Float */
-
-      luni += (luni < 0.0f);
+      float luni = m_u[m_ui] - m_u[m_uj];
+      if (luni < 0.0f)
+        luni += 1.0f;
 
       m_u[m_ui] = luni;
 
-      if (--m_ui == 0)
-        m_ui = 97;
-      if (--m_uj == 0)
-        m_uj = 97;
+      m_ui = (m_ui == 0) ? N - 1 : m_ui - 1;
+      m_uj = (m_uj == 0) ? N - 1 : m_uj - 1;
 
       m_c -= cd;
-      m_c += (m_c < 0.0f) * cm;
+      if (m_c < 0.0f)
+        m_c += cm;
 
       luni -= m_c;
-      luni += (luni < 0.0f);
+      if (luni < 0.0f)
+        luni += 1.0f;
 
       return luni;
     }
 
-    double uniform() const
+    inline double uniform() noexcept
     {
       return static_cast<double>(plain());
     }
@@ -125,12 +128,12 @@ namespace MDP
       if (i == 1 && j == 1 && k == 1)
         error("Wrong initialization for random number generator");
 
-      for (int ii = 1; ii <= 97; ii++)
+      for (unsigned int ii = 0; ii < m_u.size(); ii++)
       {
         float s = 0.0f;
         float t = 0.5f;
 
-        for (int jj = 1; jj <= 24; jj++)
+        for (unsigned int jj = 0; jj < 24; jj++)
         {
           int m = (((i * j) % 179) * k) % 179;
 
@@ -151,24 +154,24 @@ namespace MDP
     }
 
     /// returns a gaussian random number
-    float gaussian(float sigma = 1.0f) const
+    float gaussian(float sigma = 1.0f) noexcept
     {
-      static int i = 0;
-      static float r = 0;
+      if (m_has_gauss)
+      {
+        m_has_gauss = false;
+        return m_gauss_cache * sigma;
+      }
 
-      if (i == 0)
-      {
-        float x = (float)std::sqrt(-2.0 * std::log(plain()));
-        float y = (float)2.0 * Pi * plain();
-        i = 1;
-        r = sigma * x * ((float)std::cos(y));
-        return sigma * x * ((float)std::sin(y));
-      }
-      else
-      {
-        i = 0;
-        return r;
-      }
+      float u1 = plain();
+      float u2 = plain();
+
+      float r = std::sqrt(-2.0f * std::log(u1));
+      float theta = 2.0f * Pi * u2;
+
+      m_gauss_cache = r * std::cos(theta);
+      m_has_gauss = true;
+
+      return sigma * r * std::sin(theta);
     }
 
     /// draws a random float in (0,1) from a distribution using accept-reject
@@ -184,49 +187,72 @@ namespace MDP
     }
 
     /// returns a random SU(n) matrix using Cabibbo-Marinari
-    mdp_matrix SU(int n) const
+    mdp_matrix SU(int n) noexcept
     {
-      mdp_matrix tmp, small;
-      float alpha, sin_alpha;
-      float a0, a1, a2, a3;
-      float phi, cos_theta, sin_theta;
-
       if (n == 1)
       {
-        tmp.dimension(1, 1);
-        alpha = 2.0 * Pi * plain();
+        mdp_matrix tmp(1, 1);
+        float alpha = 2.0 * Pi * plain();
         tmp(0, 0) = mdp_complex(std::cos(alpha), std::sin(alpha));
         return tmp;
       }
 
-      tmp = mdp_identity(n);
+      mdp_matrix M = mdp_identity(n);
 
-      for (int i = 0; i < (n - 1); i++)
-        for (int j = i + 1; j < n; j++)
+      for (int i = 0; i < n - 1; ++i)
+      {
+        for (int j = i + 1; j < n; ++j)
         {
-          alpha = Pi * plain();
-          phi = 2.0 * Pi * plain();
-          cos_theta = 2.0 * plain() - 1.0;
-          sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
-          sin_alpha = std::sin(alpha);
-          a0 = std::cos(alpha);
-          a1 = sin_alpha * sin_theta * std::cos(phi);
-          a2 = sin_alpha * sin_theta * std::sin(phi);
-          a3 = sin_alpha * cos_theta;
-          small = mdp_identity(n);
-          small(i, i) = mdp_complex(a0, a3);
-          small(i, j) = mdp_complex(a2, a1);
-          small(j, i) = mdp_complex(-a2, a1);
-          small(j, j) = mdp_complex(a0, -a3);
-          tmp = small * tmp;
+          float alpha = Pi * plain();
+          float phi = 2.0f * Pi * plain();
+
+          float z = 2.0f * plain() - 1.0f;
+          float s = std::sqrt(1.0f - z * z);
+
+          float sa, ca;
+          float sp, cp;
+
+#if defined(__GNUC__)
+          __builtin_sincosf(alpha, &sa, &ca);
+          __builtin_sincosf(phi, &sp, &cp);
+#else
+          sa = std::sin(alpha);
+          ca = std::cos(alpha);
+          sp = std::sin(phi);
+          cp = std::cos(phi);
+#endif
+
+          float a0 = ca;
+          float a1 = sa * s * cp;
+          float a2 = sa * s * sp;
+          float a3 = sa * z;
+
+          mdp_complex *row_i = &M(i, 0);
+          mdp_complex *row_j = &M(j, 0);
+
+          mdp_complex A(a0, a3);
+          mdp_complex B(a2, a1);
+          mdp_complex C(-a2, a1);
+          mdp_complex D(a0, -a3);
+
+          for (int k = 0; k < n; ++k)
+          {
+            mdp_complex xi = row_i[k];
+            mdp_complex xj = row_j[k];
+
+            row_i[k] = A * xi + B * xj;
+            row_j[k] = C * xi + D * xj;
+          }
         }
-      return tmp;
+      }
+
+      return M;
     }
 
     /// skip n numbers from the sequence
-    void skip(int n)
+    void skip(size_t n)
     {
-      for (int i = 0; i < n; i++)
+      while (n--) [[likely]]
         plain();
     }
   } mdp_random; /// the global random number generator
