@@ -44,6 +44,12 @@ namespace MDP
 
   class CG2
   {
+  private:
+    CG2() = delete;
+    ~CG2() = delete;
+    CG2(const CG2 &) = delete;
+    CG2 &operator=(const CG2 &) = delete;
+
   public:
     template <class fieldT, class fieldG>
     static inversion_stats inverter(fieldT &psi_out,

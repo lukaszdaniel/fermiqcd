@@ -55,6 +55,12 @@ namespace MDP
   /// \f$ \chi=(/\!\!\!D[U]+m)^{-1}\psi \f$
   class MinResVtk
   {
+  private:
+    MinResVtk() = delete;
+    ~MinResVtk() = delete;
+    MinResVtk(const MinResVtk &) = delete;
+    MinResVtk &operator=(const MinResVtk &) = delete;
+
   public:
     template <class fieldT, class fieldG>
     static inversion_stats inverter(fieldT &psi_out,

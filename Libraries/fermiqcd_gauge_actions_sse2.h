@@ -50,6 +50,11 @@ namespace MDP
   class ImprovedGaugeActionSSE2 : public WilsonGaugeAction
   {
   private:
+    ImprovedGaugeActionSSE2() = delete;
+    ~ImprovedGaugeActionSSE2() = delete;
+    ImprovedGaugeActionSSE2(const ImprovedGaugeActionSSE2 &) = delete;
+    ImprovedGaugeActionSSE2 &operator=(const ImprovedGaugeActionSSE2 &) = delete;
+
 #if !defined(SSE2) || !defined(USE_DOUBLE_PRECISION)
 
     static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)

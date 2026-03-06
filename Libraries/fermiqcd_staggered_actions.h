@@ -35,6 +35,12 @@ namespace MDP
   /// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
   class StaggeredAsqtadActionSlow
   {
+  private:
+    StaggeredAsqtadActionSlow() = delete;
+    ~StaggeredAsqtadActionSlow() = delete;
+    StaggeredAsqtadActionSlow(const StaggeredAsqtadActionSlow &) = delete;
+    StaggeredAsqtadActionSlow &operator=(const StaggeredAsqtadActionSlow &) = delete;
+
   public:
     static void mul_Q(staggered_field &chi_out,
                       staggered_field &chi_in,
@@ -121,6 +127,12 @@ namespace MDP
   /// @endverbatim
   class StaggeredAsqtadActionFast
   {
+  private:
+    StaggeredAsqtadActionFast() = delete;
+    ~StaggeredAsqtadActionFast() = delete;
+    StaggeredAsqtadActionFast(const StaggeredAsqtadActionFast &) = delete;
+    StaggeredAsqtadActionFast &operator=(const StaggeredAsqtadActionFast &) = delete;
+
   public:
     static void mul_Q(staggered_field &chi_out,
                       staggered_field &chi_in,

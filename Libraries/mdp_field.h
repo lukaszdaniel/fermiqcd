@@ -228,7 +228,26 @@ namespace MDP
 
     /** @brief returns component i of the vector of objects T stored at site x
      */
-    T &operator()(mdp_site x, mdp_uint i = 0) const
+    T &operator()(mdp_site x, mdp_uint i = 0)
+    {
+#ifdef CHECK_ALL
+      if (!(x.is_here()))
+      {
+        error("You are looking for a site that is not here");
+      }
+#endif
+#ifdef CHECK_BOUNDARY
+      if (i >= m_field_components)
+      {
+        error("field rows can be indexed up to " + std::to_string(m_field_components - 1));
+      }
+#endif
+      return m_data[x.local_index() * m_field_components + i];
+    }
+
+    /** @brief returns const component i of the vector of objects T stored at site x
+     */
+    const T &operator()(mdp_site x, mdp_uint i = 0) const
     {
 #ifdef CHECK_ALL
       if (!(x.is_here()))
@@ -247,7 +266,20 @@ namespace MDP
 
     /** @brief returns component i of the vector of objects T stored at site x
      */
-    T &operator()(mdp_uint idx, mdp_uint i = 0) const
+    T &operator()(mdp_uint idx, mdp_uint i = 0)
+    {
+#ifdef CHECK_BOUNDARY
+      if (i >= m_field_components)
+      {
+        error("field rows can be indexed up to " + (m_field_components - 1));
+      }
+#endif
+      return m_data[idx * m_field_components + i];
+    }
+
+    /** @brief returns const component i of the vector of objects T stored at site x
+     */
+    const T &operator()(mdp_uint idx, mdp_uint i = 0) const
     {
 #ifdef CHECK_BOUNDARY
       if (i >= m_field_components)

@@ -23,6 +23,12 @@ namespace MDP
   /// @brief domain wall staggered (WORK IN PROGRESS)
   class SDWFActionSlow
   {
+  private:
+    SDWFActionSlow() = delete;
+    ~SDWFActionSlow() = delete;
+    SDWFActionSlow(const SDWFActionSlow &) = delete;
+    SDWFActionSlow &operator=(const SDWFActionSlow &) = delete;
+
   public:
     static void mul_Q(sdwf_field &chi_out,
                       sdwf_field &chi_in,

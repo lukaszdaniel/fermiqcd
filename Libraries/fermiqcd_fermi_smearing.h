@@ -34,6 +34,12 @@ namespace MDP
   /// @endverbatim
   class WupperthalSmearing
   {
+  private:
+    WupperthalSmearing() = delete;
+    ~WupperthalSmearing() = delete;
+    WupperthalSmearing(const WupperthalSmearing &) = delete;
+    WupperthalSmearing &operator=(const WupperthalSmearing &) = delete;
+
   public:
     static void smear(fermi_field &psi,
                       gauge_field &U,

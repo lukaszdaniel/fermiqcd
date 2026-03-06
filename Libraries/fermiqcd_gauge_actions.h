@@ -57,6 +57,12 @@ namespace MDP
   /// @endverbatim
   class WilsonGaugeAction
   {
+  private:
+    WilsonGaugeAction() = delete;
+    ~WilsonGaugeAction() = delete;
+    WilsonGaugeAction(const WilsonGaugeAction &) = delete;
+    WilsonGaugeAction &operator=(const WilsonGaugeAction &) = delete;
+
   public:
     static void heatbath_SU2(mdp_prng &random,
                              mdp_real beta_eff, mdp_complex *a)
@@ -114,22 +120,6 @@ namespace MDP
       a[3] = v2 * u1 + v3 * u3;
     }
 
-    /*
-    static void contract_staples(mdp_matrix &M, gauge_field &U, mdp_site &U, int mu)
-    {
-      int nc = U.nc();
-      mdp_matrix B(nc, nc);
-      mdp_site y = x + mu;
-      mdp_site z;
-      for (int nu = 0; nu < U.ndim(); nu++)
-        if (nu != mu)
-        {
-          z = y + nu;
-          mul_OUH(M(0, 0), U(y, nu, 0, 0), U(x + nu, mu, 0, 0));
-          mul_OUH(M(0, 0), U(y, nu, 0, 0), U(x + nu, mu, 0, 0));
-        }
-    }
-    */
     static gauge_stats heatbath(gauge_field &U,
                                 coefficients &coeff,
                                 int n_iter = 1)
@@ -221,6 +211,11 @@ namespace MDP
   class ImprovedGaugeAction : public WilsonGaugeAction
   {
   private:
+    ImprovedGaugeAction() = delete;
+    ~ImprovedGaugeAction() = delete;
+    ImprovedGaugeAction(const ImprovedGaugeAction &) = delete;
+    ImprovedGaugeAction &operator=(const ImprovedGaugeAction &) = delete;
+
     static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)
     {
       mdp_matrix tmp(U.nc(), U.nc());

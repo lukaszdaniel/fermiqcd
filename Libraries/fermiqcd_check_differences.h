@@ -19,8 +19,8 @@ namespace MDP
 {
   // compares two fields and returns the max distance between
   // equivalent components.
-  float check_differences(mdp_field<mdp_complex> &chi,
-                          mdp_field<mdp_complex> &psi)
+  float check_differences(const mdp_field<mdp_complex> &chi,
+                          const mdp_field<mdp_complex> &psi)
   {
     begin_function("check_differences");
 
@@ -35,7 +35,7 @@ namespace MDP
       if (tmp > max)
         max = tmp;
     }
-    mdp << "Fields agree/disagree within precision=" << max << "\n";
+    mdp << "Fields agree/disagree within precision = " << max << "\n";
 
     end_function("check_differences");
     return max;

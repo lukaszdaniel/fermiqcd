@@ -106,7 +106,7 @@ public:
   }
 
   Complex &operator()(int x1, int x2, int x3,
-                      int a = 0, int b = 0, int c = 0, int d = 0)
+                      int a = 0, int b = 0, int c = 0, int d = 0) const
   {
     return m_data[(((((x1 * dim[1] + x2) * dim[2] + x3) * dim[3] + a) * dim[4] + b) * dim[5] + c) * dim[6] + d];
   }

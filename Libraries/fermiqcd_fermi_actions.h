@@ -43,6 +43,12 @@ namespace MDP
   /// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
   class FermiCloverActionSlow
   {
+  private:
+    FermiCloverActionSlow() = delete;
+    ~FermiCloverActionSlow() = delete;
+    FermiCloverActionSlow(const FermiCloverActionSlow &) = delete;
+    FermiCloverActionSlow &operator=(const FermiCloverActionSlow &) = delete;
+
   public:
     static void mul_Q(fermi_field &psi_out,
                       fermi_field &psi_in,
@@ -179,6 +185,12 @@ namespace MDP
   /// @endverbatim
   class FermiCloverActionFast
   {
+  private:
+    FermiCloverActionFast() = delete;
+    ~FermiCloverActionFast() = delete;
+    FermiCloverActionFast(const FermiCloverActionFast &) = delete;
+    FermiCloverActionFast &operator=(const FermiCloverActionFast &) = delete;
+
   public:
     static void mul_Q(fermi_field &psi_out,
                       fermi_field &psi_in,

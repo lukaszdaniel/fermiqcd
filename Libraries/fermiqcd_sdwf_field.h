@@ -75,7 +75,7 @@ namespace MDP
 
     /** @brief returns the \e x5 component of the vector stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int x5)
+    mdp_matrix operator()(mdp_site x, int x5) const
     {
       return mdp_matrix(address(x, x5 * m_nc), m_nc, 1);
     }

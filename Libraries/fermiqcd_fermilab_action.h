@@ -20,6 +20,12 @@ namespace MDP
 
   class FermiFermilabActionNew
   {
+  private:
+    FermiFermilabActionNew() = delete;
+    ~FermiFermilabActionNew() = delete;
+    FermiFermilabActionNew(const FermiFermilabActionNew &) = delete;
+    FermiFermilabActionNew &operator=(const FermiFermilabActionNew &) = delete;
+
   public:
     static void mul_Q(fermi_field &psi_out,
                       fermi_field &psi_in,
@@ -27,7 +33,7 @@ namespace MDP
                       coefficients &coeff, int parity = EVENODD)
     {
 
-      mdp_lattice &lattice = psi_in.lattice();
+      const mdp_lattice &lattice = psi_in.lattice();
 
       if (parity != EVENODD)
         error("FermiFermilabAction::mul_Q\nparity must be EVENODD");

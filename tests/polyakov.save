@@ -28,7 +28,6 @@ Adopting random_seed = 0
 Lattice created.
 </allocate_lattice>
 Loading file gauge.cold from process 0 (buffer = 1024 sites)
-reverse: 0
 ... Loading time: 0.000556 (sec)
 Saving file gauge.cold.polyakov.real.vtk from process 0 (buffer = 1024 sites)
 ... Saving time: 0.000067 (sec)

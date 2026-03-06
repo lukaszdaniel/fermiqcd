@@ -39,6 +39,12 @@ namespace MDP
   /// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
   class DWFermiActionSlow
   {
+  private:
+    DWFermiActionSlow() = delete;
+    ~DWFermiActionSlow() = delete;
+    DWFermiActionSlow(const DWFermiActionSlow &) = delete;
+    DWFermiActionSlow &operator=(const DWFermiActionSlow &) = delete;
+
   public:
     static void mul_Q(dwfermi_field &psi_out,
                       dwfermi_field &psi_in,
@@ -131,6 +137,12 @@ namespace MDP
   /// Note that mul_Q(chi,psi,U,coeff) reads \f$ \chi=(/\!\!\!D[U]+m)\psi \f$
   class DWFermiActionFast
   {
+  private:
+    DWFermiActionFast() = delete;
+    ~DWFermiActionFast() = delete;
+    DWFermiActionFast(const DWFermiActionFast &) = delete;
+    DWFermiActionFast &operator=(const DWFermiActionFast &) = delete;
+
   public:
     static void mul_Q(dwfermi_field &psi_out,
                       dwfermi_field &psi_in,

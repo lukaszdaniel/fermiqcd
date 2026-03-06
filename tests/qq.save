@@ -19,7 +19,6 @@ Using a local random generator
 Lattice created.
 </allocate_lattice>
 Loading file gauge.cold from process 0 (buffer = 1024 sites)
-reverse: 0
 ... Loading time: 0.000540 (sec)
 average loop 2x3 = 0.5
 <close_wormholes>

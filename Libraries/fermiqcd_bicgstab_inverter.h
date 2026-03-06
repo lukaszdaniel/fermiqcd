@@ -49,6 +49,12 @@ namespace MDP
   /// \f$ \chi=(/\!\!\!D[U]+m)^{-1}\psi \f$
   class BiCGStab
   {
+  private:
+    BiCGStab() = delete;
+    ~BiCGStab() = delete;
+    BiCGStab(const BiCGStab &) = delete;
+    BiCGStab &operator=(const BiCGStab &) = delete;
+
   public:
     template <class fieldT, class fieldG>
     static inversion_stats inverter(fieldT &psi_out,

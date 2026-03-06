@@ -57,6 +57,11 @@ namespace MDP
   class StaggeredBiCGUML
   {
   private:
+    StaggeredBiCGUML() = delete;
+    ~StaggeredBiCGUML() = delete;
+    StaggeredBiCGUML(const StaggeredBiCGUML &) = delete;
+    StaggeredBiCGUML &operator=(const StaggeredBiCGUML &) = delete;
+
     static inversion_stats staggered_BiCG_QQh(staggered_field &psi_out,
                                               staggered_field &psi_in,
                                               gauge_field &U,

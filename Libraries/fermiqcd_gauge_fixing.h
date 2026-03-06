@@ -41,6 +41,12 @@ namespace MDP
   /// @endverbatim
   class GaugeFixing
   {
+  private:
+    GaugeFixing() = delete;
+    ~GaugeFixing() = delete;
+    GaugeFixing(const GaugeFixing &) = delete;
+    GaugeFixing &operator=(const GaugeFixing &) = delete;
+
   public:
     static constexpr int Coulomb = 0;
     static constexpr int Landau = 10;

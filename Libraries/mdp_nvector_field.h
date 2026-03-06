@@ -54,7 +54,7 @@ namespace MDP
 
     /** @brief returns the n-th vector stored at site x
      */
-    mdp_matrix operator()(mdp_site x, mdp_uint n)
+    mdp_matrix operator()(mdp_site x, mdp_uint n) const
     {
 #ifdef CHECK_BOUNDARY
       if (n >= m_matrices)

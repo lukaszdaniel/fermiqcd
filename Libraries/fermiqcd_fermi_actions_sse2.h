@@ -38,6 +38,12 @@ namespace MDP
   /// Attention: uses always FERMILAB convention of Gamma matrices
   class FermiCloverActionSSE2
   {
+  private:
+    FermiCloverActionSSE2() = delete;
+    ~FermiCloverActionSSE2() = delete;
+    FermiCloverActionSSE2(const FermiCloverActionSSE2 &) = delete;
+    FermiCloverActionSSE2 &operator=(const FermiCloverActionSSE2 &) = delete;
+
   public:
     static void mul_Q(fermi_field &chi_out,
                       fermi_field &psi_in,

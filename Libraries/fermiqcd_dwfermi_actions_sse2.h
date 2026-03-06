@@ -35,6 +35,12 @@ namespace MDP
   /// Attention: uses always FERMILAB convention of Gamma matrices
   class DwFermiActionSSE2
   {
+  private:
+    DwFermiActionSSE2() = delete;
+    ~DwFermiActionSSE2() = delete;
+    DwFermiActionSSE2(const DwFermiActionSSE2 &) = delete;
+    DwFermiActionSSE2 &operator=(const DwFermiActionSSE2 &) = delete;
+
   public:
     static void mul_Q(dwfermi_field &chi_out,
                       dwfermi_field &psi_in,

@@ -34,6 +34,12 @@ namespace MDP
   /// @endverbatim
   class StaggeredAsqtadActionSSE2
   {
+  private:
+    StaggeredAsqtadActionSSE2() = delete;
+    ~StaggeredAsqtadActionSSE2() = delete;
+    StaggeredAsqtadActionSSE2(const StaggeredAsqtadActionSSE2 &) = delete;
+    StaggeredAsqtadActionSSE2 &operator=(const StaggeredAsqtadActionSSE2 &) = delete;
+
   public:
     static void mul_Q(staggered_field &chi_out,
                       staggered_field &psi_in,

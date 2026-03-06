@@ -159,7 +159,7 @@ namespace MDP
 
     /** @brief returns the i-th row of the matrix aligned as column vector
      */
-    mdp_matrix operator()(mdp_uint i)
+    mdp_matrix operator()(mdp_uint i) const
     {
       return mdp_matrix(m_data.get() + i * m_cols, m_cols, 1);
     }

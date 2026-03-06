@@ -35,6 +35,12 @@ namespace MDP
   template <class fieldT>
   class Lanczos
   {
+  private:
+    Lanczos() = delete;
+    ~Lanczos() = delete;
+    Lanczos(const Lanczos &) = delete;
+    Lanczos &operator=(const Lanczos &) = delete;
+
   public:
     static mdp_complex step(fieldT &psi,
                             gauge_field &U,

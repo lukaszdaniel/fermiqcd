@@ -24,7 +24,6 @@ Creating a hot gauge configuration
 Saving file gauge.hot from process 0 (buffer = 1024 sites)
 ... Saving time: 0.001222 (sec)
 Loading file gauge.hot from process 0 (buffer = 1024 sites)
-reverse: 0
 ... Loading time: 0.000583 (sec)
 Matrices are equal = true
 <close_wormholes>

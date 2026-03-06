@@ -226,30 +226,7 @@ namespace MDP
 
     /** @brief returns the matrix in direction \e mu stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int mu)
-    {
-#ifndef TWISTED_BOUNDARY
-      return mdp_matrix(address(x, mu * m_nc * m_nc), m_nc, m_nc);
-#else
-      mdp_matrix tmp(address(x, mu * m_nc * m_nc), m_nc, m_nc);
-      if (!in_block(x))
-      {
-        mdp_matrix a;
-        a = tmp;
-#ifdef ADVANCED_TWIST
-        twist_eat_links(a, x, mu);
-#else
-        twist_boundary(a, x);
-#endif
-        return (a);
-      }
-      return tmp;
-#endif
-    }
-
-    /** @brief returns the const matrix in direction \e mu stored at site x
-     */
-    const mdp_matrix operator()(mdp_site x, int mu) const
+    mdp_matrix operator()(mdp_site x, int mu) const
     {
 #ifndef TWISTED_BOUNDARY
       return mdp_matrix(address(x, mu * m_nc * m_nc), m_nc, m_nc);
@@ -297,22 +274,7 @@ namespace MDP
      * @note if \e sign is negative returned matrix is a hermitian matrix
      * if direction \e -mu
      */
-    mdp_matrix operator()(mdp_site x, int sign, int mu)
-    {
-      if (sign == +1)
-        return (*this)(x, mu);
-      if (sign == -1)
-        return hermitian((*this)(x - mu, mu));
-
-      return mdp_matrix();
-    }
-
-    /** @brief returns the const matrix in direction \e mu stored at site x
-     *
-     * @note if \e sign is negative returned matrix is a hermitian matrix
-     * if direction \e -mu
-     */
-    const mdp_matrix operator()(mdp_site x, int sign, int mu) const
+    mdp_matrix operator()(mdp_site x, int sign, int mu) const
     {
       if (sign == +1)
         return (*this)(x, mu);
@@ -327,7 +289,7 @@ namespace MDP
      *
      * @note if \e sign is negative returned element is conjugated
      */
-    const mdp_complex operator()(mdp_site x, int sign, int mu,
+    mdp_complex operator()(mdp_site x, int sign, int mu,
                                  int i, int j) const
     {
       if (sign == +1)

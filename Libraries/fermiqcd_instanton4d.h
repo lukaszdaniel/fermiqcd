@@ -129,10 +129,9 @@ namespace MDP
         }
       */
     }
-    mdp_matrix operator()(mdp_site &x, int mu)
+    mdp_matrix operator()(mdp_site &x, int mu) const
     {
       int v[4];
-      // mdp_lattice &lattice=x.lattice();
       for (int nu = 0; nu < 4; nu++)
         v[nu] = x(nu) - p[nu];
       float d2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];

@@ -26,7 +26,7 @@
 namespace MDP
 {
   /// Projects a domain wall fermion (chi) into a wilson fermion (psi)
-  void project(fermi_field &psi, dwfermi_field &chi)
+  void project(fermi_field &psi, const dwfermi_field &chi)
   {
     mdp_site x(chi.lattice());
     forallsites(x)
@@ -36,7 +36,7 @@ namespace MDP
   }
 
   /// Projects a will fermion (psi) into a domain wall fermion (chi)
-  void project(dwfermi_field &chi, fermi_field &psi)
+  void project(dwfermi_field &chi, const fermi_field &psi)
   {
     mdp_site x(chi.lattice());
     forallsites(x)
