@@ -64,7 +64,7 @@ namespace MDP
     WilsonGaugeAction &operator=(const WilsonGaugeAction &) = delete;
 
   public:
-    static void heatbath_SU2(mdp_prng &random,
+    static void heatbath_SU2(const mdp_prng &random,
                              mdp_real beta_eff, mdp_complex *a)
     {
       mdp_real e0, e1, e2, e3, dk, p0;

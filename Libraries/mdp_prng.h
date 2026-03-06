@@ -36,16 +36,16 @@ namespace MDP
   class mdp_prng
   {
   private:
-    float u[98];
-    float c;
+    mutable float u[98];
+    mutable float c;
     float cd;
     float cm;
-    int ui;
-    int uj;
+    mutable int ui;
+    mutable int uj;
 
   public:
     /// return a uniform random number in (0,1)
-    float plain()
+    float plain() const
     {
       float luni; /* local variable for Float */
       luni = u[ui] - u[uj];
@@ -64,9 +64,9 @@ namespace MDP
     }
 
     ///////////////////////////////////////////////////////////////////////
-    //      initializei: this takes a single integer in the range
+    //      initialize: this takes a single integer in the range
     //    0 <= ijkl <= 900 000 000
-    //  and produces the four smaller integers needed for start. It is
+    //  and produces four smaller integers needed for start. It is
     //  based on the ideas contained in the RMARIN subroutine in
     //    F. James, "A Review of Pseudorandom Number Generators",
     //      Comp. Phys. Commun. Oct 1990, p.340
@@ -136,7 +136,7 @@ namespace MDP
     }
 
     /// returns a gaussian random number
-    float gaussian(float sigma = 1)
+    float gaussian(float sigma = 1.0f) const
     {
       static int i = 0;
       static float r = 0;
@@ -169,10 +169,9 @@ namespace MDP
     }
 
     /// returns a random SU(n) matrix using Cabibbo-Marinari
-    mdp_matrix SU(int n)
+    mdp_matrix SU(int n) const
     {
       mdp_matrix tmp, small;
-      int i, j;
       float alpha, sin_alpha;
       float a0, a1, a2, a3;
       float phi, cos_theta, sin_theta;
@@ -187,8 +186,8 @@ namespace MDP
 
       tmp = mdp_identity(n);
 
-      for (i = 0; i < (n - 1); i++)
-        for (j = i + 1; j < n; j++)
+      for (int i = 0; i < (n - 1); i++)
+        for (int j = i + 1; j < n; j++)
         {
           alpha = Pi * plain();
           phi = 2.0 * Pi * plain();
