@@ -36,31 +36,51 @@ namespace MDP
   class mdp_prng
   {
   private:
-    mutable float u[98];
-    mutable float c;
-    float cd;
-    float cm;
-    mutable int ui;
-    mutable int uj;
+    static constexpr float cd = 7654321.0f / 16777216.0f;
+    static constexpr float cm = 16777213.0f / 16777216.0f;
+    mutable float m_c;
+    mutable int m_ui;
+    mutable int m_uj;
+    mutable float m_u[98];
 
   public:
+    mdp_prng(mdp_int k = 0) : m_c(362436.0f / 16777216.0f), m_ui(97), m_uj(33)
+    {
+      // c = 362436.0f / 16777216.0f;
+
+      // ui = 97; /*  There is a bug in the original Fortran version */
+      // uj = 33; /*  of UNI -- i and j should be SAVEd in UNI()     */
+
+      if (k == 0)
+        initialize(ME);
+    }
+
     /// return a uniform random number in (0,1)
     float plain() const
     {
-      float luni; /* local variable for Float */
-      luni = u[ui] - u[uj];
-      if (luni < 0.0)
-        luni += 1.0;
-      u[ui] = luni;
-      if (--ui == 0)
-        ui = 97;
-      if (--uj == 0)
-        uj = 97;
-      if ((c -= cd) < 0.0)
-        c += cm;
-      if ((luni -= c) < 0.0)
-        luni += 1.0;
-      return ((float)luni);
+      float luni = m_u[m_ui] - m_u[m_uj]; /* local variable for Float */
+
+      luni += (luni < 0.0f);
+
+      m_u[m_ui] = luni;
+
+      if (--m_ui == 0)
+        m_ui = 97;
+      if (--m_uj == 0)
+        m_uj = 97;
+
+      m_c -= cd;
+      m_c += (m_c < 0.0f) * cm;
+
+      luni -= m_c;
+      luni += (luni < 0.0f);
+
+      return luni;
+    }
+
+    double uniform() const
+    {
+      return static_cast<double>(plain());
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -84,15 +104,16 @@ namespace MDP
 
     void initialize(mdp_int ijkl)
     {
-      int i, j, k, l, ij, kl;
       if ((ijkl < 0) || (ijkl > 900000000))
         error("Wrong initialization for random number generator");
-      ij = ijkl / 30082;
-      kl = ijkl - (30082 * ij);
-      i = ((ij / 177) % 177) + 2;
-      j = (ij % 177) + 2;
-      k = ((kl / 169) % 178) + 1;
-      l = kl % 169;
+
+      int ij = ijkl / 30082;
+      int kl = ijkl % 30082;
+
+      int i = ((ij / 177) % 177) + 2;
+      int j = (ij % 177) + 2;
+      int k = ((kl / 169) % 178) + 1;
+      int l = kl % 169;
       if ((i <= 0) || (i > 178))
         error("Wrong initialization for random number generator");
       if ((j <= 0) || (j > 178))
@@ -103,36 +124,30 @@ namespace MDP
         error("Wrong initialization for random number generator");
       if (i == 1 && j == 1 && k == 1)
         error("Wrong initialization for random number generator");
-      int ii, jj, m;
-      float s, t;
-      for (ii = 1; ii <= 97; ii++)
+
+      for (int ii = 1; ii <= 97; ii++)
       {
-        s = 0.0;
-        t = 0.5;
-        for (jj = 1; jj <= 24; jj++)
+        float s = 0.0f;
+        float t = 0.5f;
+
+        for (int jj = 1; jj <= 24; jj++)
         {
-          m = ((i * j % 179) * k) % 179;
+          int m = (((i * j) % 179) * k) % 179;
+
           i = j;
           j = k;
           k = m;
-          l = (53 * l + 1) % 169;
-          if (l * m % 64 >= 32)
-            s += t;
-          t *= 0.5;
-        }
-        u[ii] = s;
-      }
-      c = 362436.0 / 16777216.0;
-      cd = 7654321.0 / 16777216.0;
-      cm = 16777213.0 / 16777216.0;
-      ui = 97; /*  There is a bug in the original Fortran version */
-      uj = 33; /*  of UNI -- i and j should be SAVEd in UNI()     */
-    }
 
-    mdp_prng(mdp_int k = 0)
-    {
-      if (k == 0)
-        initialize(ME);
+          l = (53 * l + 1) % 169;
+
+          if ((l * m) % 64 >= 32)
+            s += t;
+
+          t *= 0.5f;
+        }
+
+        m_u[ii] = s;
+      }
     }
 
     /// returns a gaussian random number
