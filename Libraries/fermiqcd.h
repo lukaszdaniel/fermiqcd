@@ -78,7 +78,6 @@
 
 #include "fermiqcd_dwfermi_actions_sse2.h"
 #include "fermiqcd_fermilab_action.h"
-#include "fermiqcd_gauge_actions_sse2.h"
 #include "fermiqcd_hmc_vtk.h"
 #include "fermiqcd_ildg_gauge_reader.h"
 #include "fermiqcd_MILC_IO.h"

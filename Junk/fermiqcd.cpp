@@ -565,7 +565,7 @@ int main(int argc, char **argv)
           ImprovedGaugeAction::heatbath(U, gauge, niter);
 #if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
         else if (gauge_action == "wilson_sse2")
-          ImprovedGaugeActionSSE2::heatbath(U, gauge, niter);
+          ImprovedGaugeAction::heatbath(U, gauge, niter);
 #endif
         else
           mdp.error_message("gauge action not supported");
