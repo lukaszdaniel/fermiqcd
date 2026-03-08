@@ -60,28 +60,31 @@ namespace MDP
       else
         sign = 1;
 
-      int mu;
       mdp_site x(chi_in.lattice());
       mdp_site y(chi_in.lattice());
       static mdp_matrix dslash;
 
       if (two_mass != 0)
+      {
         forallsitesofparity(x, parity)
         {
           chi_out(x) = two_mass * chi_in(x);
         }
+      }
       else
+      {
         forallsitesofparity(x, parity)
         {
           chi_out(x) = 0;
         }
+      }
 
       if (!U.long_links.allocated())
       {
         // use non-naik improved action
         forallsitesofparity(x, parity)
         {
-          for (mu = 0; mu < ndim; mu++)
+          for (int mu = 0; mu < ndim; mu++)
           {
             y = x + mu;
             dslash = U(x, mu) * chi_in(y);
@@ -96,7 +99,7 @@ namespace MDP
         // use naik improved action
         forallsitesofparity(x, parity)
         {
-          for (mu = 0; mu < ndim; mu++)
+          for (int mu = 0; mu < ndim; mu++)
           {
             y = x + mu;
             dslash = U(x, mu) * chi_in(y);
@@ -152,7 +155,6 @@ namespace MDP
       else
         sign = 1;
 
-      int i, j, mu;
       mdp_site x(chi_in.lattice());
       mdp_site x_up(chi_in.lattice());
       mdp_site x_dw(chi_in.lattice());
@@ -166,7 +168,7 @@ namespace MDP
       {
         forallsitesofparity(x, parity)
         {
-          for (i = 0; i < nc; i++)
+          for (int i = 0; i < nc; i++)
             chi_out(x, i) = two_mass * chi_in(x, i);
         }
       }
@@ -174,7 +176,7 @@ namespace MDP
       {
         forallsitesofparity(x, parity)
         {
-          for (i = 0; i < nc; i++)
+          for (int i = 0; i < nc; i++)
             chi_out(x, i) = 0;
         }
       }
@@ -184,7 +186,7 @@ namespace MDP
         // version optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mu = 0; mu < ndim; mu++)
+          for (int mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;
@@ -196,7 +198,7 @@ namespace MDP
             // the factors of 3 in the Naik term
 
             phase = (mdp_real)sign * chi_in.eta(x, mu);
-            for (i = 0; i < 3; i++)
+            for (int i = 0; i < 3; i++)
               chi_out(x, i) += phase *
                                (FU_up[3 * i + 0] * Fchi_up[0] +
                                 FU_up[3 * i + 1] * Fchi_up[1] +
@@ -220,7 +222,7 @@ namespace MDP
               Fchi_up = &(chi_in(x_up, 0));
               Fchi_dw = &(chi_in(x_dw, 0));
               // check the factor phase
-              for (i = 0; i < 3; i++)
+              for (int i = 0; i < 3; i++)
                 chi_out(x, i) += phase *
                                  (FU_up[3 * i + 0] * Fchi_up[0] +
                                   FU_up[3 * i + 1] * Fchi_up[1] +
@@ -237,7 +239,7 @@ namespace MDP
         // version non-optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mu = 0; mu < ndim; mu++)
+          for (int mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;
@@ -246,8 +248,8 @@ namespace MDP
             Fchi_up = &(chi_in(x_up, 0));
             Fchi_dw = &(chi_in(x_dw, 0));
             phase = (mdp_real)sign * chi_in.eta(x, mu);
-            for (i = 0; i < nc; i++)
-              for (j = 0; j < nc; j++)
+            for (int i = 0; i < nc; i++)
+              for (int j = 0; j < nc; j++)
                 chi_out(x, i) += phase *
                                  (FU_up[nc * i + j] * Fchi_up[j] - conj(FU_dw[nc * j + i]) * Fchi_dw[j]);
             if (U.long_links.allocated())
@@ -259,8 +261,8 @@ namespace MDP
               Fchi_up = &(chi_in(x_up, 0));
               Fchi_dw = &(chi_in(x_dw, 0));
               // check the factor phase
-              for (i = 0; i < nc; i++)
-                for (j = 0; j < nc; j++)
+              for (int i = 0; i < nc; i++)
+                for (int j = 0; j < nc; j++)
                   chi_out(x, i) += phase *
                                    (FU_up[3 * i + j] * Fchi_up[j] - conj(FU_dw[3 * j + i]) * Fchi_dw[j]);
             }

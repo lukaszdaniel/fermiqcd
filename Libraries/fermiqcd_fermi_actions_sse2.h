@@ -5,7 +5,7 @@
 ///
 /// Basic actions for Wilson Fermions optimized in assembler
 ///
-/// Distributed under GPL2 license
+/// Distributed under GPL2 License
 /// Read attached license in file mdp_license.txt
 /// This file cannot be distributed without file mdp_license.txt
 //////////////////////////////////////////////////////////////////

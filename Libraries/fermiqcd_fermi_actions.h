@@ -123,11 +123,13 @@ namespace MDP
       //    and are in agreement with
       //  Heatlie et al., Nucl.Phys. B352 (1991) 266
       //    care here:
-      //    my definition of sigma is sigma_munu=i/2[gamma_mu,gamma_nu]
+      //    my definition of sigma is
+      //      Sigma[mu][nu]=i/2*[Gamma[mu],Gamma[nu]]
       //    an extra phase when compared with Heatlie
       // =================================================================
 
       psi_out = psi_in;
+
       forallsites(x)
       {
         for (mdp_int mu = 0; mu < ndim; mu++)
@@ -138,14 +140,19 @@ namespace MDP
             psi_dw(a) = hermitian(U(x - mu, mu)) * psi_in(x - mu, a);
           }
           if (mu == 0)
+          {
             psi_out(x) -= (kappa_t) * ((r_t - Gamma[mu] * rsign) * psi_up +
                                        (r_t + Gamma[mu] * rsign) * psi_dw);
+          }
           else
+          {
             psi_out(x) -= (kappa_s) * ((r_s - Gamma[mu] * rsign) * psi_up +
                                        (r_s + Gamma[mu] * rsign) * psi_dw);
+          }
         }
 
         if (cSW != 0)
+        {
           for (mdp_int mu = 0; mu < ndim - 1; mu++)
             for (mdp_int nu = mu + 1; nu < ndim; nu++)
             {
@@ -160,6 +167,7 @@ namespace MDP
                 psi_out(x) += (kappa_s * cSW * c_B * I) * (Sigma[mu][nu] * psi_lo);
               }
             }
+        }
       }
     }
   };
@@ -273,7 +281,7 @@ namespace MDP
       //  Heatlie et al., Nucl.Phys. B352 (1991) 266
       //    care here:
       //    my definition of sigma is
-      //      Sigma[mu][nu]=iI2*[Gamma[mu],Gamma[nu]]
+      //      Sigma[mu][nu]=i/2*[Gamma[mu],Gamma[nu]]
       //    an extra phase when compared with Heatlie
       // =================================================================
 
@@ -325,19 +333,25 @@ namespace MDP
             }
           }
         }
+
         if (cSW != 0)
         {
           for (mdp_int mu = 0; mu < ndim - 1; mu++)
             for (mdp_int nu = mu + 1; nu < ndim; nu++)
+            {
               for (mdp_int a = 0; a < nspin; a++)
               {
                 Fem = &(U.em(x, mu, nu, 0, 0));
                 bnc = Sigma_idx[mu][nu][a] * nc;
                 Fpsi_in = &psi_in(x, a, 0);
                 if (mu == 0)
+                {
                   coeff_clover = (kappa_s * cSW * c_E * I) * Sigma_val[mu][nu][a];
+                }
                 else
+                {
                   coeff_clover = (kappa_s * cSW * c_B * I) * Sigma_val[mu][nu][a];
+                }
                 for (mdp_int i = 0; i < nc; i++)
                 {
                   inc = i * nc;
@@ -347,7 +361,9 @@ namespace MDP
                   psi_tmp[bnc + i] += coeff_clover * psi_loc;
                 }
               }
+            }
         }
+
         for (mdp_int a = 0; a < nspin; a++)
           for (mdp_int i = 0; i < nc; i++)
             psi_out(x, a, i) += psi_tmp[anc = a * nc + i];

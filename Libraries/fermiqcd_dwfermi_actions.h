@@ -178,7 +178,6 @@ namespace MDP
       mdp_real kappaf = -m_f * kappa5;
 
       mdp_site x(psi_in.lattice());
-      int l, a, mu;
 
       mdp_matrix psi_up(nspin, nc);
       mdp_matrix psi_dw(nspin, nc);
@@ -193,11 +192,11 @@ namespace MDP
       psi_out = psi_in;
       forallsites(x)
       {
-        for (l = 0; l < L5; l++)
+        for (mdp_int l = 0; l < L5; l++)
         {
-          for (mu = 0; mu < ndim; mu++)
+          for (mdp_int mu = 0; mu < ndim; mu++)
           {
-            for (a = 0; a < nspin; a++)
+            for (mdp_int a = 0; a < nspin; a++)
               for (int i = 0; i < nc; i++)
               {
                 psi_up(a, i) = psi_dw(a, i) = 0;
@@ -212,28 +211,28 @@ namespace MDP
           }
 
           if (l < L5 - 1)
-            for (a = 0; a < nspin; a++)
+            for (mdp_int a = 0; a < nspin; a++)
               for (int i = 0; i < nc; i++)
               {
                 psi_out(x, l, a, i) += kappa5 * psi_in(x, l + 1, a, i);
                 psi_out(x, l, Gamma5_idx[a], i) -= kappa5 * Gamma5_val[a] * psi_in(x, l + 1, a, i);
               }
           else
-            for (a = 0; a < nspin; a++)
+            for (mdp_int a = 0; a < nspin; a++)
               for (int i = 0; i < nc; i++)
               {
                 psi_out(x, L5 - 1, a, i) += kappaf * psi_in(x, 0, a, i);
                 psi_out(x, L5 - 1, Gamma5_idx[a], i) -= kappaf * Gamma5_val[a] * psi_in(x, 0, a, i);
               }
           if (l > 0)
-            for (a = 0; a < nspin; a++)
+            for (mdp_int a = 0; a < nspin; a++)
               for (int i = 0; i < nc; i++)
               {
                 psi_out(x, l, a, i) += kappa5 * psi_in(x, l - 1, a, i);
                 psi_out(x, l, Gamma5_idx[a], i) += kappa5 * Gamma5_val[a] * psi_in(x, l - 1, a, i);
               }
           else
-            for (a = 0; a < nspin; a++)
+            for (mdp_int a = 0; a < nspin; a++)
               for (int i = 0; i < nc; i++)
               {
                 psi_out(x, 0, a, i) += kappaf * psi_in(x, L5 - 1, a, i);

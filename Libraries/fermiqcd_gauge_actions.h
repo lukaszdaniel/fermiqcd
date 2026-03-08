@@ -460,10 +460,7 @@ namespace MDP
               _sse_mulABC_set_333(&b2(0, 0), &U(y4, nu, 0, 0), &b3(0, 0));
               _sse_mulABHC_add_333(&b3(0, 0), &U(x, rho, 0, 0), &tmp(0, 0));
 #else
-              _sse_mulAHBC_set_333(&U(y2, nu, 0, 0), &U(y2, rho, 0, 0), &b1(0, 0));
-              _sse_mulABHC_set_333(&b1(0, 0), &U(y4, mu, 0, 0), &b2(0, 0));
-              _sse_mulABC_set_333(&b2(0, 0), &U(y4, nu, 0, 0), &b3(0, 0));
-              _sse_mulABHC_add_333(&b3(0, 0), &U(x, rho, 0, 0), &tmp(0, 0));
+              tmp += hermitian(U(y2, nu)) * U(y2, rho) * hermitian(U(y4, mu)) * U(y4, nu) * hermitian(U(x, rho));
 #endif
 
               y1 = x + mu;
