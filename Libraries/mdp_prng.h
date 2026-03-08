@@ -212,7 +212,7 @@ namespace MDP
           float sa, ca;
           float sp, cp;
 
-#if defined(__GNUC__)
+#if 0 // defined(__GNUC__)
           __builtin_sincosf(alpha, &sa, &ca);
           __builtin_sincosf(phi, &sp, &cp);
 #else
