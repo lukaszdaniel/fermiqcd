@@ -52,10 +52,10 @@ namespace MDP
     position = (((x(0) * lattice.size(3) + x(3)) * lattice.size(2) + x(2)) * lattice.size(1) + x(1));
 
     constexpr std::size_t float_size = sizeof(float);
-#ifdef USE_DOUBLE_PRECISION
-    const std::size_t bytes_to_read = psize / 2;
-#else
+#ifdef USE_SINGLE_PRECISION
     const std::size_t bytes_to_read = psize;
+#else
+    const std::size_t bytes_to_read = psize / 2;
 #endif
     const std::size_t float_count = bytes_to_read / float_size;
 

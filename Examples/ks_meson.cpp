@@ -52,7 +52,7 @@ int main(int argc, char **argv)
       sscanf(argv[i], "-input=%s", input);
     else if (strncmp(argv[i], "-meson", 6) == 0)
       sscanf(argv[i], "-meson=%s", meson);
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
     else if (strncmp(argv[i], "-lmass", 6) == 0)
       sscanf(argv[i], "-lmass=%f", &lmass);
     else if (strncmp(argv[i], "-hmass", 6) == 0)

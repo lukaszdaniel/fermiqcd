@@ -91,7 +91,7 @@ int main(int argc, char **argv)
       verbose = true;
     else if (strncmp(argv[i], "-input", 6) == 0)
       sscanf(argv[i], "-input=%s", input);
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
     else if (strncmp(argv[i], "-lkappa", 7) == 0)
       sscanf(argv[i], "-lkappa=%f", &lkappa);
     else if (strncmp(argv[i], "-lcsw", 5) == 0)

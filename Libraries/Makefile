@@ -2,10 +2,10 @@
 # CXX     = g++
 # endif
 # Basic compilation flags (-O2 for speed)
-# Flags for double precision and sse (P4 optiomizations)
-#CXXFLAGS = -DSSE2 -O3
-# Flags for parallel (mpi) double precision and sse
-#CXXFLAGS = -DPARALLEL -DUSE_DOUBLE_PRECISION -DSSE2 -O2
+# Flags for double precision
+#CXXFLAGS = -O3
+# Flags for parallel (mpi) single precision
+#CXXFLAGS = -DPARALLEL -DUSE_SINGLE_PRECISION -O2
 
 # ================== Configuration ==================
 LIB_DIR := $(CURDIR)

@@ -24,8 +24,6 @@ supports:
 
 \item  Parallelization based on MPI is hidden to high level programmer
 
-\item  SU3 operations optimized for P4 (SSE and SSE2 instructions)
-
 \item  PSIM technology for emultaing parallel processes on a single
 processor machine and improving performance on multi-threaded processors
 
@@ -115,16 +113,15 @@ g++ prg.cpp -I../Libraries -o prg.exe --O3 -DLINUX
 
 will compile for Linux and be able to measure running time
 \begin{verbatim}
-g++ prg.cpp -I../Libraries -o prg.exe -O3 -DUSE_DOUBLE_PRECISION
+g++ prg.cpp -I../Libraries -o prg.exe -O3 -DUSE_SINGLE_PRECISION
 \end{verbatim}
 
-will compile the algorithms to use double precision
+will compile the algorithms to use single precision
 \begin{verbatim}
-g++ prg.cpp -I../Libraries -o prg.exe -O3 -DSSE2
+g++ prg.cpp -I../Libraries -o prg.exe -O3
 \end{verbatim}
 
-will compile the algorithms to use SSE/SSE2 optimizations (only on P4
-processors)
+will compile the algorithms to use O3 optimizations
 \begin{verbatim}
 g++ prg.cpp -I../Libraries -o prg.exe -O3 -DPARALLEL
 \end{verbatim}

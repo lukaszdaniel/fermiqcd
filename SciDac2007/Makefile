@@ -41,8 +41,7 @@ PRG_SUFFIX_FLAG := 1
 #
 #
 #
-# -DUSE_DOUBLE_PRECISION for double precision (the most efficient option)
-# -DSSE2 -O3 for pentium4 optimizations
+# -DUSE_SINGLE_PRECISION for single precision
 # -DPARALLEL is you have mpi then compile with mpiCC and run with mpirun 
 #
 # NOTE: I hate makefiles and I do not use them. 
@@ -50,10 +49,10 @@ PRG_SUFFIX_FLAG := 1
 #
 
 # Basic compilation flags (-O2 for speed)
-# Flags for double precision and sse (P4 optiomizations)
-#CXXFLAGS = -DSSE2 -O3
-# Flags for parallel (mpi) double precision and sse
-#CXXFLAGS = -DPARALLEL -DUSE_DOUBLE_PRECISION -DSSE2 -O2
+# Flags for double precision
+#CXXFLAGS = -O3
+# Flags for parallel (mpi) single precision
+#CXXFLAGS = -DPARALLEL -DUSE_SINGLE_PRECISION -O2
 
 # ================== Configuration ==================
 #LIB_DIR := $(CURDIR)/Libraries

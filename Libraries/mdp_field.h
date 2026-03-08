@@ -666,13 +666,13 @@ namespace MDP
                        bool load_header = true,
                        mdp_int skip_bytes = 0)
     {
-#ifdef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
+      save(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr);
+#else
       m_header.bytes_per_site /= 2;
       save(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_write_double_as_float);
       m_header.bytes_per_site *= 2;
-#else
-      save(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr);
 #endif
       return true;
     }
@@ -684,13 +684,13 @@ namespace MDP
                        mdp_int skip_bytes = 0)
     {
 
-#ifdef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
+      load(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr, true);
+#else
       m_header.bytes_per_site /= 2;
       load(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_read_double_as_float, true);
       m_header.bytes_per_site *= 2;
-#else
-      load(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr, true);
 #endif
       return true;
     }
@@ -701,7 +701,7 @@ namespace MDP
                         bool load_header = true,
                         mdp_int skip_bytes = 0)
     {
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
       m_header.bytes_per_site *= 2;
       load(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_read_float_as_double, true);
@@ -718,7 +718,7 @@ namespace MDP
                         bool load_header = true,
                         mdp_int skip_bytes = 0)
     {
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
       m_header.bytes_per_site *= 2;
       save(filename, processIO, max_buffer_size, load_header, skip_bytes,
            mdp_write_float_as_double);

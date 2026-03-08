@@ -8,7 +8,7 @@
 #include <memory>
 #include <fstream>
 
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
 using Complex = std::complex<float>;
 #else
 using Complex = std::complex<double>;

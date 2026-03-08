@@ -238,7 +238,7 @@ namespace MDP
     void add(mdp_complex &obj1)
     {
       mdp_complex obj2 = 0;
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
       MPI_Allreduce(&obj1, &obj2, 2, MPI_FLOAT, MPI_SUM, communicator);
 #else
       MPI_Allreduce(&obj1, &obj2, 2, MPI_DOUBLE, MPI_SUM, communicator);
@@ -303,7 +303,7 @@ namespace MDP
       auto obj2 = std::make_unique<mdp_complex[]>(length);
       for (mdp_int i = 0; i < length; i++)
         obj2[i] = 0;
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
       MPI_Allreduce(obj1, obj2.get(), 2 * length, MPI_FLOAT, MPI_SUM, communicator);
 #else
       MPI_Allreduce(obj1, obj2.get(), 2 * length, MPI_DOUBLE, MPI_SUM, communicator);

@@ -18,7 +18,7 @@
 
 namespace MDP
 {
-    // #define USE_DOUBLE_PRECISION
+    // #define USE_SINGLE_PRECISION
     // #define CHECK_ALL
     // #define CHECK_BOUNDARY
     // #define PARALLEL
@@ -60,10 +60,10 @@ namespace MDP
      */
     using mdp_suint = uint8_t;
 
-#ifdef USE_DOUBLE_PRECISION
-    using mdp_real = double;
-#else
+#ifdef USE_SINGLE_PRECISION
     using mdp_real = float;
+#else
+    using mdp_real = double;
 #endif
 
     constexpr int EVEN = 0;

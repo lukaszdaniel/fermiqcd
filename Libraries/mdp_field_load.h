@@ -272,10 +272,10 @@ namespace MDP
     if (try_switch_endianess && reversed_header_endianess)
     {
       mdp << "switching endianess...\n";
-#ifdef USE_DOUBLE_PRECISION
-      switch_endianess_8bytes();
-#else
+#ifdef USE_SINGLE_PRECISION
       switch_endianess_4bytes();
+#else
+      switch_endianess_8bytes();
 #endif
     }
 

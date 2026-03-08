@@ -23,7 +23,7 @@ namespace MDP
 {
   /// @brief container for action parameters
   ///
-  /// All FermiQCD actions are classe and share the same prototype.
+  /// All FermiQCD actions are classes and share the same prototype.
   /// Parameters are passed to the action via coefficients objects which
   /// are nothing more than hash tables.
   ///

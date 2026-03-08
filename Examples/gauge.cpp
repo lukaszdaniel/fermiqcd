@@ -52,7 +52,7 @@ int main(int argc, char **argv)
         }
         else if (strncmp(argv[i], "-beta", 5) == 0)
         {
-#ifndef USE_DOUBLE_PRECISION
+#ifdef USE_SINGLE_PRECISION
             sscanf(argv[i], "-beta=%f", &beta);
 #else
             sscanf(argv[i], "-beta=%lf", &beta);
