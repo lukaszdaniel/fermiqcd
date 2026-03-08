@@ -1,4 +1,3 @@
-// #define SSE2
 #include "../../Libraries/fermiqcd.h"
 #include "../dump.h"
 
@@ -36,7 +35,6 @@ int main(int argc, char **argv)
   quark["kappa"] = 0.130;
   int L8 = 8;
   char filename[128];
-  // default_fermi_action=FermiCloverActionSSE2::mul_Q;
 
   set_cold(U);
 #ifndef TEST

@@ -159,10 +159,6 @@ int main(int argc, char **argv)
 
   // choose action implementation
   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  if (nc == 3)
-    default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
-#endif
 
   mdp_matrix G1; // spin structure of the meson
   mdp_matrix G2; // flavour structure ot the meson

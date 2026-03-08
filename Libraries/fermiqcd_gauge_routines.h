@@ -3,7 +3,7 @@
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
-/// Various gauge multiplication routines (some call SSE/SSE2 macors)
+/// Various gauge multiplication routines
 ///
 /// Distributed under GPL2 License
 /// Read attached license in file mdp_license.txt

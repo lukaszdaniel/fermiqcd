@@ -1,4 +1,3 @@
-// #define SSE2
 #include "../../Libraries/fermiqcd.h"
 #include "../dump.h"
 

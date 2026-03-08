@@ -4,8 +4,6 @@
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
 /// Declaration of overloaded new and delete operators
-/// to use memalign when compiled with #define SSE2
-/// Required for SSE/SSE2 assembly macros
 ///
 /// Distributed under GPL2 License
 /// Read attached license in file mdp_license.txt
@@ -14,43 +12,41 @@
 #ifndef MDP_DYNALLOC_
 #define MDP_DYNALLOC_
 
-#if defined(SSE2) && !defined(__APPLE__)
+#if 0
 #include <cstdlib>
 #include <cstddef> // for std::size_t
-#endif
 
-#if defined(SSE2) && !defined(__APPLE__)
-  void *operator new(size_t size)
-  {
-    void *p = memalign(64, size);
-    return p;
-  }
+void *operator new(size_t size)
+{
+  void *p = memalign(64, size);
+  return p;
+}
 
-  void operator delete(void *pointer) noexcept
-  {
-    free(pointer);
-  }
+void operator delete(void *pointer) noexcept
+{
+  free(pointer);
+}
 
-  void *operator new[](size_t size)
-  {
-    void *p = memalign(64, size);
-    return p;
-  }
+void *operator new[](size_t size)
+{
+  void *p = memalign(64, size);
+  return p;
+}
 
-  void operator delete[](void *pointer) noexcept
-  {
-    free(pointer);
-  }
+void operator delete[](void *pointer) noexcept
+{
+  free(pointer);
+}
 
-  void operator delete(void *pointer, std::size_t) noexcept
-  {
-    free(pointer);
-  }
+void operator delete(void *pointer, std::size_t) noexcept
+{
+  free(pointer);
+}
 
-  void operator delete[](void *pointer, std::size_t) noexcept
-  {
-    free(pointer);
-  }
+void operator delete[](void *pointer, std::size_t) noexcept
+{
+  free(pointer);
+}
 #endif
 
 #endif /* MDP_DYNALLOC_ */

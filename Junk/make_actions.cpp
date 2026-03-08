@@ -70,16 +70,7 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc)
     mdp << "FAILURE\n";
     exit(1);
   }
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  mdp << "Using FermiCloverActionSSE2\n";
-  default_fermi_action = FermiCloverActionSSE2::mul_Q;
-  mul_Q(chi2, psi, U, coeff);
-  if (check_differences(chi1, chi2) > mdp_precision)
-  {
-    mdp << "FAILURE\n";
-    exit(1);
-  }
-#endif
+
   mdp << "Using MinRes::inverter\n";
   default_fermi_inverter = MinRes::inverter<fermi_field, gauge_field>;
   mul_invQ(chi1, chi2, U, coeff);
@@ -133,16 +124,7 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
     mdp << "FAILURE\n";
     exit(1);
   }
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  mdp << "Using FermiCloverActionSSE2\n";
-  default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
-  mul_Q(chi2, psi, V, coeff);
-  if (check_differences(chi1, chi2) > mdp_precision)
-  {
-    mdp << "FAILURE\n";
-    exit(1);
-  }
-#endif
+
   mdp << "Using MinRes::inverter\n";
   default_staggered_inverter = MinRes::inverter<staggered_field, gauge_field>;
   mul_invQ(chi1, chi2, V, coeff);

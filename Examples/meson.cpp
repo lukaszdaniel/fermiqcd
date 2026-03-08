@@ -222,10 +222,6 @@ int main(int argc, char **argv)
 
   // choose action implementation
   default_fermi_action = FermiCloverActionFast::mul_Q;
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  if (nc == 3)
-    default_fermi_action = FermiCloverActionSSE2::mul_Q;
-#endif
 
   // creating and saving light quark propagator
   // load it if it exists already

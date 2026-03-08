@@ -144,14 +144,14 @@ namespace MDP
 
     /** @brief returns the (i,j) element of the matrix
      */
-    mdp_complex &operator()(mdp_uint i, mdp_uint j)
+    inline mdp_complex &operator()(mdp_uint i, mdp_uint j)
     {
       return m_data[i * m_cols + j];
     }
 
     /** @brief returns the (i,j) const element of the matrix
      */
-    const mdp_complex &operator()(mdp_uint i, mdp_uint j) const
+    inline const mdp_complex &operator()(mdp_uint i, mdp_uint j) const
     {
       return m_data[i * m_cols + j];
     }

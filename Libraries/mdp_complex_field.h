@@ -161,17 +161,6 @@ namespace MDP
 
       mdp_uint i = 0;
 
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      _sse_double *r = (_sse_double *)m_data.get();
-      _sse_double *s = (_sse_double *)psi.m_data.get();
-
-      for (; i < m_size - 7; i += 8, r += 8, s += 8)
-      {
-        _sse_double_prefetch_16(s + 8);
-        _sse_double_copy_16(r, s);
-      }
-#endif
-
       for (; i < m_size; i++)
         m_data[i] = psi.m_data[i];
 
@@ -200,20 +189,6 @@ namespace MDP
       mdp_int i_max = physical_local_stop(EVENODD);
       mdp_int i = i_min;
 
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      static _sse_double c ALIGN16;
-      _sse_double *r = (_sse_double *)physical_address(i_min);
-
-      _sse_check_alignment(&c, 0xf);
-
-      c.c1 = c.c2 = alpha;
-      for (; i < i_max - 7; i += 8, r += 8)
-      {
-        _sse_double_prefetch_16(r + 8);
-        _sse_double_multiply_16(r, c, r);
-      }
-#endif
-
       for (; i < i_max; i++)
         m_data[i] *= alpha;
     }
@@ -229,17 +204,6 @@ namespace MDP
       mdp_int i_max = psi.physical_local_stop(EVENODD);
       mdp_int i = i_min;
 
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      _sse_double *r = (_sse_double *)physical_address(i_min);
-      _sse_double *s = (_sse_double *)psi.physical_address(i_min);
-
-      for (; i < i_max - 7; i += 8, r += 8, s += 8)
-      {
-        _sse_double_prefetch_16(s + 8);
-        _sse_double_add_16(r, s);
-      }
-#endif
-
       for (; i < i_max; i++)
         m_data[i] += psi.m_data[i];
     }
@@ -249,17 +213,6 @@ namespace MDP
       mdp_int i_min = psi.physical_local_start(EVENODD);
       mdp_int i_max = psi.physical_local_stop(EVENODD);
       mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-      _sse_double *r = (_sse_double *)physical_address(i_min);
-      _sse_double *s = (_sse_double *)psi.physical_address(i_min);
-
-      for (; i < i_max - 7; i += 8, r += 8, s += 8)
-      {
-        _sse_double_prefetch_16(s + 8);
-        _sse_double_sub_16(r, s);
-      }
-#endif
 
       for (; i < i_max; i++)
         m_data[i] -= psi.m_data[i];
@@ -343,21 +296,6 @@ namespace MDP
     mdp_int i_max = psi.physical_local_stop(parity);
     mdp_int i = i_min;
 
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-    static _sse_double c ALIGN16;
-    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-
-    _sse_check_alignment(&c, 0xf);
-
-    c.c1 = c.c2 = 0;
-    for (; i < i_max - 7; i += 8, r += 8)
-    {
-      _sse_double_prefetch_16(r + 8);
-      _sse_double_add_norm_square_16(r, c);
-    }
-    n2 += c.c1 + c.c2;
-#endif
-
     for (; i < i_max; i++)
       n2 += abs2(psi[i]);
     mdp.add(n2);
@@ -372,25 +310,6 @@ namespace MDP
     mdp_int i_min = psi.physical_local_start(parity);
     mdp_int i_max = psi.physical_local_stop(parity);
     mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-    static _sse_double c, d ALIGN16;
-    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-    _sse_check_alignment(&c, 0xf);
-
-    c.c1 = c.c2 = 0;
-    d.c1 = d.c2 = 0;
-    for (; i < i_max - 7; i += 8, r += 8, s += 8)
-    {
-      _sse_double_prefetch_16(r + 8);
-      _sse_double_prefetch_16(s + 8);
-      _sse_double_add_real_scalar_product_16(r, s, c);
-      _sse_double_add_imag_scalar_product_16(r, s, d);
-    }
-    n2 += mdp_complex(c.c1 + c.c2, d.c2 - d.c1);
-#endif
 
     for (; i < i_max; i++)
       n2 += conj(psi[i]) * chi[i];
@@ -408,23 +327,6 @@ namespace MDP
     mdp_int i_min = psi.physical_local_start(parity);
     mdp_int i_max = psi.physical_local_stop(parity);
     mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-    static _sse_double c ALIGN16;
-    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-    _sse_check_alignment(&c, 0xf);
-
-    c.c1 = c.c2 = 0;
-    for (; i < i_max - 7; i += 8, r += 8, s += 8)
-    {
-      _sse_double_prefetch_16(r + 8);
-      _sse_double_prefetch_16(s + 8);
-      _sse_double_add_real_scalar_product_16(r, s, c);
-    }
-    n2 += c.c1 + c.c2;
-#endif
 
     for (; i < i_max; i++)
       n2 +=
@@ -444,23 +346,6 @@ namespace MDP
     mdp_int i_max = psi.physical_local_stop(parity);
     mdp_int i = i_min;
 
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-    static _sse_double c ALIGN16;
-    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-    _sse_check_alignment(&c, 0xf);
-
-    c.c1 = c.c2 = 0;
-    for (; i < i_max - 7; i += 8, r += 8, s += 8)
-    {
-      _sse_double_prefetch_16(r + 8);
-      _sse_double_prefetch_16(s + 8);
-      _sse_double_add_imag_scalar_product_16(r, s, c);
-    }
-    n2 += c.c2 - c.c1;
-#endif
-
     for (; i < i_max; i++)
       n2 +=
           real(psi[i]) * imag(chi[i]) +
@@ -477,23 +362,6 @@ namespace MDP
     mdp_int i_min = psi.physical_local_start(parity);
     mdp_int i_max = psi.physical_local_stop(parity);
     mdp_int i = i_min;
-
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-    static _sse_double c ALIGN16;
-    _sse_double *r = (_sse_double *)psi.physical_address(i_min);
-    _sse_double *s = (_sse_double *)chi.physical_address(i_min);
-
-    _sse_check_alignment(&c, 0xf);
-
-    c.c1 = c.c2 = alpha;
-    for (i = 0; i < i_max - 7; i += 8, r += 8, s += 8)
-    {
-      _sse_double_prefetch_16(r + 8);
-      _sse_double_prefetch_16(s + 8);
-      _sse_double_add_multiply_16(r, c, s);
-    }
-
-#endif
 
     for (; i < i_max; i++)
       psi[i] += alpha * chi[i];

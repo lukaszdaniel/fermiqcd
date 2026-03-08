@@ -110,7 +110,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
 
   float abs_precision = arguments.get("-quark", "abs_precision", 1e-12);
   float rel_precision = arguments.get("-quark", "rel_precision", 1e-12);
-  std::string quark_action = arguments.get("-quark", "action", "clover_fast|clover_slow|clover_sse2");
+  std::string quark_action = arguments.get("-quark", "action", "clover_fast|clover_slow");
   std::string inverter = arguments.get("-quark", "alg", "bicgstab|minres|bicgstabvtk|minresvtk");
   mdp << "using action=" << quark_action << " inverter=" << inverter << "\n";
 
@@ -499,7 +499,7 @@ int main(int argc, char **argv)
   gauge["u_t"] = arguments.get("-gauge", "u_t", 1.0);
   gauge["u_s"] = arguments.get("-gauge", "u_s", 1.0);
   std::string prefix = arguments.get("-gauge", "prefix", "");
-  std::string gauge_action = arguments.get("-gauge", "action", "wilson|wilson_improved|wilson_sse2");
+  std::string gauge_action = arguments.get("-gauge", "action", "wilson|wilson_improved");
   quark["kappa"] = arguments.get("-quark", "kappa", 0.12);
   quark["kappa_t"] = arguments.get("-quark", "kappa_t", quark["kappa"]);
   quark["kappa_s"] = arguments.get("-quark", "kappa_s", quark["kappa"]);
@@ -563,10 +563,6 @@ int main(int argc, char **argv)
           WilsonGaugeAction::heatbath(U, gauge, niter);
         else if (gauge_action == "wilson_improved")
           ImprovedGaugeAction::heatbath(U, gauge, niter);
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-        else if (gauge_action == "wilson_sse2")
-          ImprovedGaugeAction::heatbath(U, gauge, niter);
-#endif
         else
           mdp.error_message("gauge action not supported");
         if (filename.substr(filename.size() - 4, 4) == ".mdp")

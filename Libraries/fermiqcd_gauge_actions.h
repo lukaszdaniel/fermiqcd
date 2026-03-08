@@ -20,9 +20,6 @@
 #include "fermiqcd_gauge_field.h"
 #include "fermiqcd_coefficients.h"
 #include "fermiqcd_gauge_routines.h"
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-#include "fermiqcd_sse_su3.h"
-#endif
 
 namespace MDP
 {
@@ -186,9 +183,6 @@ namespace MDP
 
   /// @brief the \f$ O(a^2)\f$ Improved Gauge Action
   ///
-  /// Optimizations for SU3 with SSE2 and double precision
-  /// are still UNTESTED
-  ///
   /// Example using the MILC improved action:
   /// @verbatim
   ///    int ns=2, steps=10;
@@ -225,11 +219,7 @@ namespace MDP
 
     static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)
     {
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-      constexpr int nc = 3;
-#else
       int nc = U.nc();
-#endif
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
       mdp_matrix b2(nc, nc);
@@ -244,72 +234,34 @@ namespace MDP
         {
           y0 = x + mu;
           y1 = y0 + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABC_set_333(&U(y0, nu, 0, 0), &U(y1, nu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U((x + nu) + nu, mu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(x + nu, nu, 0, 0), &b3(0, 0));
-          _sse_mulABHC_add_333(&b3(0, 0), &U(x, nu, 0, 0), &tmp(0, 0));
-#else
           tmp += U(y0, nu) * U(y1, nu) * hermitian(U(x, nu) * U(x + nu, nu) * U((x + nu) + nu, mu));
-#endif
+
           y0 = (x - nu) - nu;
           y1 = y0 + mu;
           y2 = y1 + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABC_set_333(&U(y0, nu, 0, 0), &U(x - nu, nu, 0, 0), &b1(0, 0));
-          _sse_mulAHBC_set_333(&U(y0, mu, 0, 0), &b1(0, 0), &b2(0, 0));
-          _sse_mulAHBC_set_333(&U(y1, nu, 0, 0), &b2(0, 0), &b3(0, 0));
-          _sse_mulAHBC_add_333(&U(y2, nu, 0, 0), &b3(0, 0), &tmp(0, 0));
-#else
           tmp += hermitian(U(y0, mu) * U(y1, nu) * U(y2, nu)) * U(y0, nu) * U(x - nu, nu);
-#endif
         }
       }
       else
       {
         int nu = 0;
         y0 = (x - mu) + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-        _sse_mulABHC_set_333(&U(x + mu, nu, 0, 0), &U(x + nu, mu, 0, 0), &b1(0, 0));
-        _sse_mulABHC_set_333(&b1(0, 0), &U(y0, mu, 0, 0), &b2(0, 0));
-        _sse_mulABHC_set_333(&b2(0, 0), &U(x - mu, nu, 0, 0), &b3(0, 0));
-        _sse_mulABC_add_333(&b3(0, 0), &U(x - mu, mu, 0, 0), &tmp(0, 0));
-#else
         tmp += U(x + mu, nu) * hermitian(U(x - mu, nu) * U(y0, mu) * U(x + nu, mu)) * U(x - mu, mu);
-#endif
+
         y0 = x - mu;
         y1 = y0 - nu;
         y2 = y1 + mu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-        _sse_mulABC_set_333(&U(y1, nu, 0, 0), &U(y0, mu, 0, 0), &b1(0, 0));
-        _sse_mulAHBC_set_333(&U(y1, mu, 0, 0), &b1(0, 0), &b2(0, 0));
-        _sse_mulAHBC_set_333(&U(y2, mu, 0, 0), &b2(0, 0), &b3(0, 0));
-        _sse_mulAHBC_add_333(&U(y2 + mu, nu, 0, 0), &b3(0, 0), &tmp(0, 0));
-#else
         tmp += hermitian(U(y1, mu) * U(y2, mu) * U(y2 + mu, nu)) * U(y1, nu) * U(y0, mu);
-#endif
+
         y0 = x + mu;
         y1 = y0 + nu;
         y2 = y1 - mu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-        _sse_mulABC_set_333(&U(y0, mu, 0, 0), &U(y0 + mu, nu, 0, 0), &b1(0, 0));
-        _sse_mulABHC_set_333(&b1(0, 0), &U(y1, mu, 0, 0), &b2(0, 0));
-        _sse_mulABHC_set_333(&b2(0, 0), &U(y2, mu, 0, 0), &b3(0, 0));
-        _sse_mulABHC_add_333(&b3(0, 0), &U(x, nu, 0, 0), &tmp(0, 0));
-#else
         tmp += U(y0, mu) * U(y0 + mu, nu) * hermitian(U(x, nu) * U(y2, mu) * U(y1, mu));
-#endif
+
         y0 = ((x + mu) + mu) - nu;
         y1 = y0 - mu;
         y2 = y1 - mu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-        _sse_mulABHC_set_333(&U(x + mu, mu, 0, 0), &U(y0, nu, 0, 0), &b1(0, 0));
-        _sse_mulABHC_set_333(&b1(0, 0), &U(y1, mu, 0, 0), &b2(0, 0));
-        _sse_mulABHC_set_333(&b2(0, 0), &U(y2, mu, 0, 0), &b3(0, 0));
-        _sse_mulABC_add_333(&b3(0, 0), &U(y2, nu, 0, 0), &tmp(0, 0));
-#else
         tmp += U(x + mu, mu) * hermitian(U(y2, mu) * U(y1, mu) * U(y0, nu)) * U(y2, nu);
-#endif
       }
 
       return tmp;
@@ -319,11 +271,7 @@ namespace MDP
 
     static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, int mu, int min_nu = 1)
     {
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-      constexpr int nc = 3;
-#else
       int nc = U.nc();
-#endif
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
       mdp_matrix b2(nc, nc);
@@ -337,72 +285,30 @@ namespace MDP
         {
           y0 = x + mu;
           y1 = y0 + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABC_set_333(&U(y0, nu, 0, 0), &U(y1, nu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U((x + nu) + nu, mu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(x + nu, nu, 0, 0), &b3(0, 0));
-          _sse_mulABHC_add_333(&b3(0, 0), &U(x, nu, 0, 0), &tmp(0, 0));
-#else
           tmp += U(y0, nu) * U(y1, nu) * hermitian(U(x, nu) * U(x + nu, nu) * U((x + nu) + nu, mu));
-#endif
 
           y0 = (x - nu) - nu;
           y1 = y0 + mu;
           y2 = y1 + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABC_set_333(&U(y0, nu, 0, 0), &U(x - nu, nu, 0, 0), &b1(0, 0));
-          _sse_mulAHBC_set_333(&U(y0, mu, 0, 0), &b1(0, 0), &b2(0, 0));
-          _sse_mulAHBC_set_333(&U(y1, nu, 0, 0), &b2(0, 0), &b3(0, 0));
-          _sse_mulAHBC_add_333(&U(y2, nu, 0, 0), &b3(0, 0), &tmp(0, 0));
-#else
           tmp += hermitian(U(y0, mu) * U(y1, nu) * U(y2, nu)) * U(y0, nu) * U(x - nu, nu);
-#endif
 
           y0 = (x - mu) + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABHC_set_333(&U(x + mu, nu, 0, 0), &U(x + nu, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y0, mu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(x - mu, nu, 0, 0), &b3(0, 0));
-          _sse_mulABC_add_333(&b3(0, 0), &U(x - mu, mu, 0, 0), &tmp(0, 0));
-#else
           tmp += U(x + mu, nu) * hermitian(U(x - mu, nu) * U(y0, mu) * U(x + nu, mu)) * U(x - mu, mu);
-#endif
 
           y0 = x - mu;
           y1 = y0 - nu;
           y2 = y1 + mu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABC_set_333(&U(y1, nu, 0, 0), &U(y0, mu, 0, 0), &b1(0, 0));
-          _sse_mulAHBC_set_333(&U(y1, mu, 0, 0), &b1(0, 0), &b2(0, 0));
-          _sse_mulAHBC_set_333(&U(y2, mu, 0, 0), &b2(0, 0), &b3(0, 0));
-          _sse_mulAHBC_add_333(&U(y2 + mu, nu, 0, 0), &b3(0, 0), &tmp(0, 0));
-#else
           tmp += hermitian(U(y1, mu) * U(y2, mu) * U(y2 + mu, nu)) * U(y1, nu) * U(y0, mu);
-#endif
 
           y0 = x + mu;
           y1 = y0 + nu;
           y2 = y1 - mu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABC_set_333(&U(y0, mu, 0, 0), &U(y0 + mu, nu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y1, mu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y2, mu, 0, 0), &b3(0, 0));
-          _sse_mulABHC_add_333(&b3(0, 0), &U(x, nu, 0, 0), &tmp(0, 0));
-#else
           tmp += U(y0, mu) * U(y0 + mu, nu) * hermitian(U(x, nu) * U(y2, mu) * U(y1, mu));
-#endif
 
           y0 = ((x + mu) + mu) - nu;
           y1 = y0 - mu;
           y2 = y1 - mu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-          _sse_mulABHC_set_333(&U(x + mu, mu, 0, 0), &U(y0, nu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y1, mu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y2, mu, 0, 0), &b3(0, 0));
-          _sse_mulABC_add_333(&b3(0, 0), &U(y2, nu, 0, 0), &tmp(0, 0));
-#else
           tmp += U(x + mu, mu) * hermitian(U(y2, mu) * U(y1, mu) * U(y0, nu)) * U(y2, nu);
-#endif
         }
 
       return tmp;
@@ -416,11 +322,7 @@ namespace MDP
     static mdp_matrix chair_H(const gauge_field &U, mdp_site x, int mu)
     {
       int ndim = U.ndim();
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-      constexpr int nc = 3;
-#else
       int nc = U.nc();
-#endif
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
       mdp_matrix b2(nc, nc);
@@ -441,160 +343,31 @@ namespace MDP
               y3 = y2 + rho;
               y4 = y3 - mu;
               y5 = y4 - nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-              _sse_mulABC_set_333(&U(y1, nu, 0, 0), &U(y2, rho, 0, 0), &b1(0, 0));
-              _sse_mulABHC_set_333(&b1(0, 0), &U(y4, mu, 0, 0), &b2(0, 0));
-              _sse_mulABHC_set_333(&b2(0, 0), &U(y5, nu, 0, 0), &b3(0, 0));
-              _sse_mulABHC_add_333(&b3(0, 0), &U(x, rho, 0, 0), &tmp(0, 0));
-#else
               tmp += U(y1, nu) * U(y2, rho) * hermitian(U(x, rho) * U(y5, nu) * U(y4, mu));
-#endif
+
               y1 = x + mu;
               y2 = y1 - nu;
               y3 = y2 + rho;
               y4 = y3 - mu;
               y5 = y4 + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-              _sse_mulAHBC_set_333(&U(y2, nu, 0, 0), &U(y2, rho, 0, 0), &b1(0, 0));
-              _sse_mulABHC_set_333(&b1(0, 0), &U(y4, mu, 0, 0), &b2(0, 0));
-              _sse_mulABC_set_333(&b2(0, 0), &U(y4, nu, 0, 0), &b3(0, 0));
-              _sse_mulABHC_add_333(&b3(0, 0), &U(x, rho, 0, 0), &tmp(0, 0));
-#else
               tmp += hermitian(U(y2, nu)) * U(y2, rho) * hermitian(U(y4, mu)) * U(y4, nu) * hermitian(U(x, rho));
-#endif
 
               y1 = x + mu;
               y2 = y1 + nu;
               y3 = y2 - rho;
               y4 = y3 - mu;
               y5 = y4 - nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-              _sse_mulABHC_set_333(&U(y1, nu, 0, 0), &U(y3, rho, 0, 0), &b1(0, 0));
-              _sse_mulABHC_set_333(&b1(0, 0), &U(y4, mu, 0, 0), &b2(0, 0));
-              _sse_mulABHC_set_333(&b2(0, 0), &U(y5, nu, 0, 0), &b3(0, 0));
-              _sse_mulABC_add_333(&b3(0, 0), &U(y5, rho, 0, 0), &tmp(0, 0));
-#else
               tmp += U(y1, nu) * hermitian(U(y5, nu) * U(y4, mu) * U(y3, rho)) * U(y5, rho);
-#endif
 
               y1 = x + mu;
               y2 = y1 - nu;
               y3 = y2 - rho;
               y4 = y3 - mu;
               y5 = y4 + nu;
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-              _sse_mulABC_set_333(&U(y4, mu, 0, 0), &U(y3, rho, 0, 0), &b1(0, 0));
-              _sse_mulABC_set_333(&b1(0, 0), &U(y2, nu, 0, 0), &b2(0, 0));
-              _sse_mulAHBC_set_333(&b2(0, 0), &U(y4, nu, 0, 0), &b3(0, 0));
-              _sse_mulABC_add_333(&b3(0, 0), &U(y5, rho, 0, 0), &tmp(0, 0));
-#else
               tmp += hermitian(U(y4, mu) * U(y3, rho) * U(y2, nu)) * U(y4, nu) * U(y5, rho);
-#endif
             }
-      return (tmp);
-    }
-
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-    static mdp_matrix twisted_rectangle_H(const gauge_field &U, mdp_site x, int mu)
-    {
-      int nu;
-      int nc = 3;
-      mdp_site y1(U.lattice());
-      mdp_site y2(U.lattice());
-      mdp_site y3(U.lattice());
-      mdp_site y4(U.lattice());
-      mdp_site y5(U.lattice());
-      mdp_matrix tmp(nc, nc), b1(nc, nc), b2(nc, nc);
-      tmp = 0;
-      b1 = 0;
-      b2 = 0;
-      for (nu = 0; nu < U.ndim(); nu++)
-        if (nu != mu)
-        {
-
-          // type (a) staples /////////////////////////////////////////////
-
-          y1 = x + mu;
-          y2 = y1 + mu;
-          y4 = x + nu;
-          y3 = y4 + mu;
-          _sse_mulABC_set_333(&U(y1, nu, 0, 0), &U(y3, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y2, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y1, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_set_333(&b1(0, 0), &U(y1, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y4, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_add_333(&b1(0, 0), &U(x, nu, 0, 0), &tmp(0, 0));
-          y2 = y1 - nu;
-          y3 = y2 + mu;
-          y4 = y2 - mu;
-          _sse_mulAHBC_set_333(&U(y2, nu, 0, 0), &U(y2, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_set_333(&b1(0, 0), &U(y3, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y1, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y2, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y4, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_add_333(&b1(0, 0), &U(y4, nu, 0, 0), &tmp(0, 0));
-
-          //   type (b) staples  //////////////////////////////////////////
-
-          y2 = y1 + nu;
-          y3 = x + nu;
-          y4 = y3 + nu;
-          _sse_mulABHC_set_333(&U(y1, nu, 0, 0), &U(y3, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_set_333(&b1(0, 0), &U(y3, nu, 0, 0), &b2(0, 0));
-          _sse_mulABC_set_333(&b2(0, 0), &U(y4, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y2, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y3, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_add_333(&b1(0, 0), &U(x, nu, 0, 0), &tmp(0, 0));
-          y2 = x - nu;
-          y3 = y2 - nu;
-          y4 = y3 + mu;
-          y5 = y4 + nu;
-          _sse_mulABC_set_333(&U(y2, mu, 0, 0), &U(y5, nu, 0, 0), &b1(0, 0));
-          _sse_mulABC_set_333(&U(y3, nu, 0, 0), &b1(0, 0), &b2(0, 0));
-          _sse_mulAHBC_set_333(&b2(0, 0), &U(y3, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_set_333(&b1(0, 0), &U(y4, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y2, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_add_333(&b1(0, 0), &U(y2, nu, 0, 0), &tmp(0, 0));
-
-          // type (c) staples /////////////////////////////////////////////
-
-          y2 = x + nu;
-          y3 = y2 - mu;
-          y4 = y3 - nu;
-          _sse_mulABHC_set_333(&U(y1, nu, 0, 0), &U(y2, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(x, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y4, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_set_333(&b1(0, 0), &U(y4, nu, 0, 0), &b2(0, 0));
-          _sse_mulABC_set_333(&b2(0, 0), &U(y3, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_add_333(&b1(0, 0), &U(x, nu, 0, 0), &tmp(0, 0));
-          y2 = x - nu;
-          y3 = y2 - mu;
-          y4 = y3 + nu;
-          y5 = y2 + mu;
-          _sse_mulABC_set_333(&U(y2, mu, 0, 0), &U(y5, nu, 0, 0), &b1(0, 0));
-          _sse_mulAHBC_set_333(&b1(0, 0), &U(y2, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y4, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y3, nu, 0, 0), &b2(0, 0));
-          _sse_mulABC_set_333(&b2(0, 0), &U(y3, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_add_333(&b1(0, 0), &U(y2, nu, 0, 0), &tmp(0, 0));
-
-          // type (d) staples /////////////////////////////////////////////
-
-          y2 = y1 - nu;
-          y3 = y2 - mu;
-          y4 = x + nu;
-          _sse_mulABHC_set_333(&U(y1, nu, 0, 0), &U(y4, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(x, nu, 0, 0), &b2(0, 0));
-          _sse_mulABC_set_333(&b2(0, 0), &U(x, mu, 0, 0), &b1(0, 0));
-          _sse_mulABHC_set_333(&b1(0, 0), &U(y2, nu, 0, 0), &b2(0, 0));
-          _sse_mulABHC_set_333(&b2(0, 0), &U(y3, mu, 0, 0), &b1(0, 0));
-          _sse_mulABC_add_333(&b1(0, 0), &U(y3, nu, 0, 0), &tmp(0, 0));
-
-          // To include the next set double counts !!!    //////////////
-        }
       return tmp;
     }
-#endif
 
     // ////////////////////////////////////////////////////////////////////
     // new_heatbath uses an improved gauge action!

@@ -80,19 +80,6 @@ void test_fermi()
       exit(1);
    }
 
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-   default_fermi_action = FermiCloverActionSSE2::mul_Q;
-   mul_invQ(chi2, psi, U, coeff);
-
-   mdp << "\n\nCheching that CloverActionSlow and CloverActionSSE2 agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
-#endif
-
    mdp << "\n\nCheching that inversion was correct\n\n";
    mul_Q(chi1, chi2, U, coeff);
    if (check_differences(psi, chi1) > mdp_precision)
@@ -152,18 +139,6 @@ void test_staggered()
       mdp << "FAILURE\n";
       exit(1);
    }
-
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
-   default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
-   mul_invQ(chi2, psi, V, coeff);
-   mdp << "\n\nCheching that AsqtadActionSlow and AsqtadActionSSE2 agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
-#endif
 
    mdp << "\n\nCheching that inversion(s) were correct\n\n";
    mul_Q(chi1, chi2, V, coeff);

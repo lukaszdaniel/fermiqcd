@@ -105,9 +105,6 @@ int main(int argc, char **argv)
   coeff["cg_max_steps"] = param.cg_max_steps;
 
   default_fermi_action = FermiCloverActionFast::mul_Q;
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  default_fermi_action = FermiCloverActionSSE2::mul_Q;
-#endif
 
   set_hot(U);
   std::cout << "average_plaquette = " << average_plaquette(U) << std::endl;

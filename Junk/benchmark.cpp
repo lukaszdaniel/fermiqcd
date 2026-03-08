@@ -38,10 +38,6 @@ void test_wilson()
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Wilson BiCGStab TIME=" << t1 << std::endl;
 
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  default_fermi_action = FermiCloverActionSSE2::mul_Q;
-#endif
-
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
   t0 = mdp.time();
   stats = mul_invQ(chi2, psi, U, coeff);
@@ -90,10 +86,6 @@ void test_clover()
   stats = mul_invQ(chi2, psi, U, coeff);
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Clover BiCGStab TIME=" << t1 << std::endl;
-
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  default_fermi_action = FermiCloverActionSSE2::mul_Q;
-#endif
 
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
   t0 = mdp.time();
@@ -149,10 +141,6 @@ void test_staggered()
   stats = mul_invQ(chi2, psi, U, coeff);
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Staggered SSE BiCGStabUML TIME=" << t1 << std::endl;
-
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
-#endif
 
   default_staggered_inverter = MinimumResidueInverter<staggered_field, gauge_field>;
   t0 = mdp.time();
@@ -216,10 +204,6 @@ void test_asqtad()
   stats = mul_invQ(chi2, psi, V, coeff);
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Asqtad SSE BiCGStabUML TIME=" << t1 << std::endl;
-
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
-#endif
 
   default_staggered_inverter = MinimumResidueInverter<staggered_field, gauge_field>;
   t0 = mdp.time();

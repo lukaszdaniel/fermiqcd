@@ -29,38 +29,6 @@ namespace MDP
   void multiply_by_gamma5(fermi_field &r, fermi_field &s)
   {
     mdp_site x(r.lattice());
-#if defined(SSE2) && defined(USE_DOUBLE_PRECISION) && !defined(NO_SSE2_LINALG)
-    if (r.nc() == 3)
-    {
-      _sse_spinor *a;
-      _sse_spinor *b;
-      _sse_spinor c; // takes care of case r is s
-      forallsites(x)
-      {
-        a = (_sse_spinor *)&s(x, 0, 0);
-        b = (_sse_spinor *)&r(x, 0, 0);
-
-        _sse_double_load_up((*a).c1);
-        _sse_double_vector_minus_i_mul();
-        _sse_double_store_up(c.c3);
-
-        _sse_double_load_up((*a).c3);
-        _sse_double_vector_i_mul();
-        _sse_double_store_up((*b).c1);
-        (*b).c3 = c.c3;
-
-        _sse_double_load_up((*a).c2);
-        _sse_double_vector_minus_i_mul();
-        _sse_double_store_up(c.c4);
-
-        _sse_double_load_up((*a).c4);
-        _sse_double_vector_i_mul();
-        _sse_double_store_up((*b).c2);
-        (*b).c4 = c.c4;
-      }
-      return;
-    }
-#endif
     mdp_complex tmp[4];
     mdp_complex c0 = Gamma5_val[0];
     mdp_complex c1 = Gamma5_val[1];

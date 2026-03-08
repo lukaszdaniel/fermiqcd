@@ -34,15 +34,6 @@ void test_fermi()
 
   mdp << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
   check_differences(chi1, chi2);
-
-#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
-  default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-  default_fermi_action = FermiCloverActionSSE2::mul_Q;
-  mul_Q(chi2, psi, U, coeff);
-
-  mdp << "\n\nCheching that CloverActionSlow and CloverActionSSE2 agree\n\n";
-  check_differences(chi1, chi2);
-#endif
 }
 
 int main(int argc, char **argv)

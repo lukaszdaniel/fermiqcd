@@ -30,11 +30,6 @@
 #include "fermiqcd_set_random.h"
 #include "fermiqcd_coefficients.h"
 
-// ///////////////////////////////////////////////////////////////////////////
-// this file includes stuff for sse2 optimization
-// ///////////////////////////////////////////////////////////////////////////
-#include "fermiqcd_sse.h"
-#include "fermiqcd_sse_su3.h"
 #include "fermiqcd_gauge_field.h"
 #include "fermiqcd_gauge_routines.h"
 #include "fermiqcd_gauge_actions.h"
@@ -50,7 +45,6 @@
 
 #include "fermiqcd_fermi_field.h"
 #include "fermiqcd_fermi_actions.h"
-#include "fermiqcd_fermi_actions_sse2.h"
 #include "fermiqcd_fermi_algorithms.h"
 #include "fermiqcd_fermi_propagator.h"
 #include "fermiqcd_fermi_rotation.h"
@@ -59,7 +53,6 @@
 
 #include "fermiqcd_staggered_field.h"
 #include "fermiqcd_staggered_actions.h"
-#include "fermiqcd_staggered_actions_sse2.h"
 #include "fermiqcd_staggered_algorithms.h"
 #include "fermiqcd_staggered_uml_inverter.h"
 #include "fermiqcd_staggered_propagator.h"
@@ -76,8 +69,6 @@
 #include "fermiqcd_instanton4d.h"
 #include "fermiqcd_ffts.h"
 
-#include "fermiqcd_dwfermi_actions_sse2.h"
-#include "fermiqcd_fermilab_action.h"
 #include "fermiqcd_hmc_vtk.h"
 #include "fermiqcd_ildg_gauge_reader.h"
 #include "fermiqcd_MILC_IO.h"
