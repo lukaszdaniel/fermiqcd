@@ -31,7 +31,7 @@ namespace MDP
     {
       default_fermi_action = FermiCloverActionSlow::mul_Q;
     }
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
     else if (quark_action == "clover_sse2")
     {
       default_fermi_action = FermiCloverActionSSE2::mul_Q;
@@ -45,7 +45,7 @@ namespace MDP
     {
       default_staggered_action = StaggeredAsqtadActionSlow::mul_Q;
     }
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
     else if (quark_action == "staggered_sse2")
     {
       default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;

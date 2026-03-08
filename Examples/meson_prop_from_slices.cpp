@@ -36,7 +36,7 @@ void meson_prop_from_slice(int nt, int nx, const char *filename)
           for (int d = 0; d < S.nspin(); d++)
           {
             w = A(b, c) * A(d, a);
-            if (w != 0)
+            if (w != 0.0)
               Q(y) += real(w * trace(S(x, a, b) * hermitian(S(x, d, c))));
           }
   }

@@ -14,9 +14,11 @@
 #ifndef FERMIQCD_SSE_SU3_
 #define FERMIQCD_SSE_SU3_
 
+#include "mdp_global_vars.h"
+
 namespace MDP
 {
-#if defined(USE_DOUBLE_PRECISION) && defined(SSE2)
+#if defined(USE_DOUBLE_PRECISION) && defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
 
   void _sse_mulABC_set_331(mdp_complex *a, mdp_complex *b, mdp_complex *c)
   {
@@ -64,7 +66,7 @@ namespace MDP
     _sse_double_store_123(c[0], c[1], c[2]);
   }
 
-  void _sse_mulABC_set_333(mdp_complex *a, mdp_complex *b, mdp_complex *c)
+  void _sse_mulABC_set_333(const mdp_complex *a, const mdp_complex *b, mdp_complex *c)
   {
     _sse_double_load_123(b[0], b[3], b[6]);
     _sse_double_su3_multiply(*((_sse_su3 *)a));
@@ -77,7 +79,7 @@ namespace MDP
     _sse_double_store_up_123(c[2], c[5], c[8]);
   }
 
-  void _sse_mulABC_add_333(mdp_complex *a, mdp_complex *b, mdp_complex *c)
+  void _sse_mulABC_add_333(mdp_complex *a, const mdp_complex *b, mdp_complex *c)
   {
     _sse_double_load_123(b[0], b[3], b[6]);
     _sse_double_su3_multiply(*((_sse_su3 *)a));
@@ -115,7 +117,7 @@ namespace MDP
     _sse_double_store_123(c[2], c[5], c[8]);
   }
 
-  void _sse_mulAHBC_set_333(mdp_complex *a, mdp_complex *b, mdp_complex *c)
+  void _sse_mulAHBC_set_333(const mdp_complex *a, const mdp_complex *b, mdp_complex *c)
   {
     _sse_double_load_123(b[0], b[3], b[6]);
     _sse_double_su3_inverse_multiply(*((_sse_su3 *)a));
@@ -128,7 +130,7 @@ namespace MDP
     _sse_double_store_up_123(c[2], c[5], c[8]);
   }
 
-  void _sse_mulAHBC_add_333(mdp_complex *a, mdp_complex *b, mdp_complex *c)
+  void _sse_mulAHBC_add_333(const mdp_complex *a, mdp_complex *b, mdp_complex *c)
   {
     _sse_double_load_123(b[0], b[3], b[6]);
     _sse_double_su3_inverse_multiply(*((_sse_su3 *)a));
@@ -166,7 +168,7 @@ namespace MDP
     _sse_double_store_123(c[2], c[5], c[8]);
   }
 
-  void _sse_mulABHC_set_333(mdp_complex *a, mdp_complex *b, mdp_complex *c)
+  void _sse_mulABHC_set_333(const mdp_complex *a, const mdp_complex *b, mdp_complex *c)
   {
     static _sse_su3_vector v ALIGN16;
     v.c1 = conj(b[0]);
@@ -191,7 +193,7 @@ namespace MDP
     _sse_double_store_up_123(c[2], c[5], c[8]);
   }
 
-  void _sse_mulABHC_add_333(mdp_complex *a, mdp_complex *b, mdp_complex *c)
+  void _sse_mulABHC_add_333(mdp_complex *a, const mdp_complex *b, mdp_complex *c)
   {
     static _sse_su3_vector v ALIGN16;
     v.c1 = conj(b[0]);

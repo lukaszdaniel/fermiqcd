@@ -14,6 +14,7 @@
 #ifndef FERMIQCD_FERMI_ALGORITHMS_
 #define FERMIQCD_FERMI_ALGORITHMS_
 
+#include "mdp_global_vars.h"
 #include "fermiqcd_default_parameters.h"
 #include "fermiqcd_fermi_field.h"
 #include "fermiqcd_gamma_matrices.h"

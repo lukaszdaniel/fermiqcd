@@ -78,7 +78,7 @@ int main(int argc, char **argv)
   float absolute_precision = 1e-12;
   float relative_precision = 1e-8;
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
 #else
   default_fermi_action = FermiCloverActionFast::mul_Q;

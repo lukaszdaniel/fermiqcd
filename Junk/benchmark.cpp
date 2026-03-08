@@ -38,7 +38,7 @@ void test_wilson()
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Wilson BiCGStab TIME=" << t1 << std::endl;
 
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
 #endif
 
@@ -91,7 +91,7 @@ void test_clover()
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Clover BiCGStab TIME=" << t1 << std::endl;
 
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
 #endif
 
@@ -150,7 +150,7 @@ void test_staggered()
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Staggered SSE BiCGStabUML TIME=" << t1 << std::endl;
 
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
   default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
 #endif
 
@@ -217,7 +217,7 @@ void test_asqtad()
   t1 = (mdp.time() - t0) / lattice.global_volume() / stats.steps;
   std::cerr << "Asqtad SSE BiCGStabUML TIME=" << t1 << std::endl;
 
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
   default_staggered_action = StaggeredAsqtadActionSSE2::mul_Q;
 #endif
 

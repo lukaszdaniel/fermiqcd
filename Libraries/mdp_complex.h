@@ -255,7 +255,11 @@ namespace MDP
 
   mdp_real abs2(const mdp_complex &a)
   {
+#ifdef DO_NOT_USE_MDP_COMPLEX
+    return std::norm(a);
+#else
     return a.real() * a.real() + a.imag() * a.imag();
+#endif
   }
 
   std::ostream &operator<<(std::ostream &os, const mdp_complex &a)

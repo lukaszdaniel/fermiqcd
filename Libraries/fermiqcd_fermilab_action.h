@@ -14,7 +14,10 @@
 #ifndef FERMIQCD_FERMILAB_ACTION_
 #define FERMIQCD_FERMILAB_ACTION_
 
-#ifdef SSE2
+#include "mdp_global_vars.h"
+
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
+
 namespace MDP
 {
 

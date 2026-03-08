@@ -48,7 +48,7 @@ namespace MDP
   {
     int i_max = chi.size_per_site();
     mdp_site x(chi.lattice());
-   
+
     forallsitesofparity(x, parity)
     {
       if (x(0) == t)

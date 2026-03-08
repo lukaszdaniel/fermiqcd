@@ -14,6 +14,7 @@
 #ifndef FERMIQCD_GAUGE_ACTIONS_SSE2_
 #define FERMIQCD_GAUGE_ACTIONS_SSE2_
 
+#include "mdp_global_vars.h"
 #include "fermiqcd_gauge_actions.h"
 
 namespace MDP
@@ -55,7 +56,7 @@ namespace MDP
     ImprovedGaugeActionSSE2(const ImprovedGaugeActionSSE2 &) = delete;
     ImprovedGaugeActionSSE2 &operator=(const ImprovedGaugeActionSSE2 &) = delete;
 
-#if !defined(SSE2) || !defined(USE_DOUBLE_PRECISION)
+#if !defined(SSE2) || defined(DO_NOT_USE_MDP_COMPLEX) || !defined(USE_DOUBLE_PRECISION)
 
     static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)
     {

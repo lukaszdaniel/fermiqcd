@@ -358,7 +358,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
           open_prop[a][b][i][j][t] = 0.0;
         for (int c = 0; c < 4; c++)
           for (int d = 0; d < 4; d++)
-            if (G(c, d) != 0)
+            if (G(c, d) != 0.0)
               forallsites(x)
               {
                 for (int k = 0; k < U.nc(); k++)
@@ -390,7 +390,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
               {
                 mdp_complex g1 = G1(b, a);
                 mdp_complex g2 = G2(d, c);
-                if (g1 != 0 && g2 != 0)
+                if (g1 != 0.0 && g2 != 0.0)
                 {
                   for (int i = 0; i < U.nc(); i++)
                     for (int j = 0; j < U.nc(); j++)
@@ -435,7 +435,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     {
       for (int a = 0; a < 4; a++)
         for (int b = 0; b < 4; b++)
-          if (G1(a, b) != 0)
+          if (G1(a, b) != 0.0)
             for (int i = 0; i < U.nc(); i++)
               Q(x) += std::pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
     }
@@ -563,7 +563,7 @@ int main(int argc, char **argv)
           WilsonGaugeAction::heatbath(U, gauge, niter);
         else if (gauge_action == "wilson_improved")
           ImprovedGaugeAction::heatbath(U, gauge, niter);
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
         else if (gauge_action == "wilson_sse2")
           ImprovedGaugeActionSSE2::heatbath(U, gauge, niter);
 #endif

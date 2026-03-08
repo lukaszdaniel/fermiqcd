@@ -14,10 +14,12 @@
 #ifndef FERMIQCD_STAGGERED_ACTIONS_SSE2_
 #define FERMIQCD_STAGGERED_ACTIONS_SSE2_
 
+#include "mdp_global_vars.h"
+
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
+
 namespace MDP
 {
-#ifdef SSE2
-
   /// @brief Staggered/Asqtad action optimized for Pentium 4
   ///
   /// Compile with -DSSE2
@@ -55,7 +57,7 @@ namespace MDP
       _sse_su3 *LL = (_sse_su3 *)U_in.long_links.physical_address();
       const std::vector<mdp_int> &iup = U_in.lattice().up();
       const std::vector<mdp_int> &idw = U_in.lattice().down();
-      const ndir = U_in.lattice().ndir();
+      const mdp_int ndir = U_in.lattice().n_directions();
       auto at = [ndir](mdp_int local_idx, mdp_int mu)
       {
         return local_idx * ndir + mu;
@@ -750,8 +752,7 @@ namespace MDP
 #endif
     }
   };
-
-#endif // SSE2
 } // namespace MDP
+#endif // SSE2
 
 #endif /* FERMIQCD_STAGGERED_ACTIONS_SSE2_ */

@@ -918,6 +918,9 @@ namespace MDP
        :)
 #endif
 
+#endif
+
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
   // //////////////////////////////////////////////////////////////////////////
   // Multiplies an su3 vector s with an su3 matrix u, assuming s is
   // stored in  xmm0,xmm1,xmm2
@@ -1136,7 +1139,9 @@ namespace MDP
            "m"((u).c23.imag()),             \
            "m"((u).c32.imag()));            \
   }
+#endif
 
+#if defined(SSE2)
   // //////////////////////////////////////////////////////////////////////////
   //
   // stuff used for optimized gamma matrix algebra (float)

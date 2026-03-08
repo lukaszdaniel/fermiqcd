@@ -12,11 +12,13 @@
 #ifndef FERMIQCD_DWFERMI_ACTIONS_SSE2_
 #define FERMIQCD_DWFERMI_ACTIONS_SSE2_
 
+#include "mdp_global_vars.h"
+
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
+
 namespace MDP
 {
   /// WARNING!!!! THIS WAS NOT TESTED !!!!
-
-#ifdef SSE2
 
   /// @brief Domain Wilson action SSE/SSE2
   ///
@@ -88,7 +90,7 @@ namespace MDP
       _sse_check_alignment((void *)U, 0xf);
       const std::vector<mdp_int> &iup = U_in.lattice().up();
       const std::vector<mdp_int> &idw = U_in.lattice().down();
-      const ndir = U_in.lattice().ndir();
+      const mdp_int ndir = U_in.lattice().n_directions();
       auto at = [ndir](mdp_int local_idx, mdp_int mu)
       {
         return local_idx * ndir + mu;
@@ -356,7 +358,7 @@ namespace MDP
       // _sse_su3 *uem = (_sse_su3 *)U_in.em.physical_address();
       const std::vector<mdp_int> &iup = U_in.lattice().up();
       const std::vector<mdp_int> &idw = U_in.lattice().down();
-      const ndir = U_in.lattice().ndir();
+      const mdp_int ndir = U_in.lattice().n_directions();
       auto at = [ndir](mdp_int local_idx, mdp_int mu)
       {
         return local_idx * ndir + mu;
@@ -679,8 +681,7 @@ namespace MDP
 #endif // if defined(USE_DOUBLE_PRECISION)
     }
   };
-
-#endif // if defined(SSE2)
 } // namespace MDP
+#endif // if defined(SSE2)
 
 #endif /* FERMIQCD_DWFERMI_ACTIONS_SSE2_ */

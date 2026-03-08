@@ -17,6 +17,7 @@
 #ifdef PARALLEL
 #include "mpi.h"
 #endif
+#include "mdp_global_vars.h"
 #include "mdp_log.h"
 #include "mdp_psim.h"
 #include "mdp_timer.h"

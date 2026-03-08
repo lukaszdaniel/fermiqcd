@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 
   double absolute_precision = 1e-23;
   double relative_precision = 1e-12;
-#ifdef SSE2
+#if defined(SSE2) && !defined(DO_NOT_USE_MDP_COMPLEX)
   default_fermi_action = FermiCloverActionSSE2::mul_Q;
 #else
   default_fermi_action = FermiCloverActionFast::mul_Q;
