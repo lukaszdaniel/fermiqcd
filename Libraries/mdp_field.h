@@ -23,6 +23,108 @@
 
 namespace MDP
 {
+  template <typename Src, typename Dst>
+  bool mdp_write_convert(std::ofstream &file,
+                         void *data,
+                         mdp_int psize,
+                         mdp_int header_size,
+                         mdp_int position,
+                         [[maybe_unused]] const mdp_lattice &lattice)
+  {
+    auto *src = static_cast<Src *>(data);
+
+    const size_t src_count = psize / sizeof(Src);
+    const size_t bytes_to_write = src_count * sizeof(Dst);
+
+    auto buffer = std::make_unique<Dst[]>(src_count);
+
+    for (mdp_uint i = 0; i < src_count; ++i)
+      buffer[i] = static_cast<Dst>(src[i]);
+
+    const std::streamoff offset = static_cast<std::streamoff>(position) * bytes_to_write + header_size;
+
+    file.seekp(offset, std::ios::beg);
+    if (!file)
+      return false;
+
+    file.write(reinterpret_cast<const char *>(buffer.get()), bytes_to_write);
+    if (!file)
+      return false;
+
+    return true;
+  }
+
+  inline bool mdp_write_double_as_float(std::ofstream &file,
+                                        void *data,
+                                        mdp_int psize,
+                                        mdp_int header_size,
+                                        mdp_int position,
+                                        const mdp_lattice &lattice)
+  {
+    return mdp_write_convert<double, float>(file, data, psize, header_size, position, lattice);
+  }
+
+  inline bool mdp_write_float_as_double(std::ofstream &file,
+                                        void *data,
+                                        mdp_int psize,
+                                        mdp_int header_size,
+                                        mdp_int position,
+                                        const mdp_lattice &lattice)
+  {
+    return mdp_write_convert<float, double>(file, data, psize, header_size, position, lattice);
+  }
+
+  template <typename Dst, typename Src>
+  bool mdp_read_convert(std::ifstream &file,
+                        void *data,
+                        mdp_int psize,
+                        mdp_int header_size,
+                        mdp_int position,
+                        [[maybe_unused]] const mdp_lattice &lattice)
+  {
+    auto *dst = static_cast<Dst *>(data);
+
+    const size_t dst_count = psize / sizeof(Dst);
+    const size_t bytes_to_read = dst_count * sizeof(Src);
+
+    auto buffer = std::make_unique<Src[]>(dst_count);
+
+    const std::streamoff offset = static_cast<std::streamoff>(position) * bytes_to_read + header_size;
+
+    file.seekg(offset, std::ios::beg);
+    if (!file)
+      return false;
+
+    file.read(reinterpret_cast<char *>(buffer.get()), bytes_to_read);
+    if (!file)
+      return false;
+
+    for (mdp_uint i = 0; i < dst_count; ++i)
+      dst[i] = static_cast<Dst>(buffer[i]);
+
+    return true;
+  }
+
+  inline bool mdp_read_double_as_float(std::ifstream &file,
+                                       void *data,
+                                       mdp_int psize,
+                                       mdp_int header_size,
+                                       mdp_int position,
+                                       const mdp_lattice &lattice)
+  {
+    return mdp_read_convert<double, float>(file, data, psize, header_size, position, lattice);
+  }
+
+  inline bool mdp_read_float_as_double(std::ifstream &file,
+                                       void *data,
+                                       mdp_int psize,
+                                       mdp_int header_size,
+                                       mdp_int position,
+                                       const mdp_lattice &lattice)
+  {
+    return mdp_read_convert<float, double>(file, data, psize, header_size, position, lattice);
+  }
+
   /** @brief header for field file IO
    *
    * Used to store the binary file header that precedes the data
@@ -145,10 +247,10 @@ namespace MDP
     }
 
   protected:
-    const mdp_lattice *m_lattice;      /* this points to the lattice for this field  */
-    std::unique_ptr<T[]> m_data; /* this is to store the main field            */
-    mdp_uint m_size;             /* this is the total number field components on the lattice */
-    mdp_uint m_field_components; /* this is the number of field components per site */
+    const mdp_lattice *m_lattice; /* this points to the lattice for this field  */
+    std::unique_ptr<T[]> m_data;  /* this is to store the main field            */
+    mdp_uint m_size;              /* this is the total number field components on the lattice */
+    mdp_uint m_field_components;  /* this is the number of field components per site */
 
     /** @brief the field file header, contains data only if field was read from file
      */
@@ -386,6 +488,9 @@ namespace MDP
     template <class T2>
     void operator*=(const T2 a)
     {
+      if (a == 1.0) [[unlikely]]
+        return;
+
       for (mdp_uint i = 0; i < m_size; i++)
         m_data[i] *= a;
     }
@@ -393,6 +498,9 @@ namespace MDP
     template <class T2>
     void operator/=(const T2 a)
     {
+      if (a == 1.0) [[unlikely]]
+        return;
+
       for (mdp_uint i = 0; i < m_size; i++)
         m_data[i] /= a;
     }
@@ -551,12 +659,82 @@ namespace MDP
                   int component = -1,
                   int processIO = 0,
                   bool ASCII = false);
+
+    bool save_as_float(const std::string &filename,
+                       int processIO = 0,
+                       mdp_int max_buffer_size = 1024,
+                       bool load_header = true,
+                       mdp_int skip_bytes = 0)
+    {
+#ifdef USE_DOUBLE_PRECISION
+      m_header.bytes_per_site /= 2;
+      save(filename, processIO, max_buffer_size, load_header, skip_bytes,
+           mdp_write_double_as_float);
+      m_header.bytes_per_site *= 2;
+#else
+      save(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr);
+#endif
+      return true;
+    }
+
+    bool load_as_float(const std::string &filename,
+                       int processIO = 0,
+                       mdp_int max_buffer_size = 1024,
+                       bool load_header = true,
+                       mdp_int skip_bytes = 0)
+    {
+
+#ifdef USE_DOUBLE_PRECISION
+      m_header.bytes_per_site /= 2;
+      load(filename, processIO, max_buffer_size, load_header, skip_bytes,
+           mdp_read_double_as_float, true);
+      m_header.bytes_per_site *= 2;
+#else
+      load(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr, true);
+#endif
+      return true;
+    }
+
+    bool load_as_double(const std::string &filename,
+                        int processIO = 0,
+                        mdp_int max_buffer_size = 1024,
+                        bool load_header = true,
+                        mdp_int skip_bytes = 0)
+    {
+#ifndef USE_DOUBLE_PRECISION
+      m_header.bytes_per_site *= 2;
+      load(filename, processIO, max_buffer_size, load_header, skip_bytes,
+           mdp_read_float_as_double, true);
+      m_header.bytes_per_site /= 2;
+#else
+      load(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr, true);
+#endif
+      return true;
+    }
+
+    bool save_as_double(const std::string &filename,
+                        int processIO = 0,
+                        mdp_int max_buffer_size = 1024,
+                        bool load_header = true,
+                        mdp_int skip_bytes = 0)
+    {
+#ifndef USE_DOUBLE_PRECISION
+      m_header.bytes_per_site *= 2;
+      save(filename, processIO, max_buffer_size, load_header, skip_bytes,
+           mdp_write_float_as_double);
+      m_header.bytes_per_site /= 2;
+#else
+      save(filename, processIO, max_buffer_size, load_header, skip_bytes, nullptr);
+#endif
+      return true;
+    }
   };
 
   /** @brief Other usefull aliases.
    *
    * Parked here for now.
    */
+  using mdp_complex_field = mdp_field<mdp_complex>;
   using mdp_complex_scalar_field = mdp_field<mdp_complex>;
   using mdp_complex_vector_field = mdp_field<mdp_complex>;
 
@@ -567,6 +745,128 @@ namespace MDP
   using mdp_int_field = mdp_field<mdp_int>;
   using mdp_int_scalar_field = mdp_field<mdp_int>;
   using mdp_int_vector_field = mdp_field<mdp_int>;
+
+  mdp_real norm_square(mdp_complex_field &psi,
+                       int parity = EVENODD)
+  {
+    double n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+
+    for (mdp_int i = i_min; i < i_max; i++)
+      n2 += abs2(psi[i]);
+
+    mdp.add(n2);
+    return n2;
+  }
+
+  mdp_complex scalar_product(mdp_complex_field &psi,
+                             mdp_complex_field &chi,
+                             int parity = EVENODD)
+  {
+    mdp_complex n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+
+    for (mdp_int i = i_min; i < i_max; i++)
+      n2 += conj(psi[i]) * chi[i];
+
+    mdp.add(n2);
+
+    return n2;
+  }
+
+  mdp_real real_scalar_product(mdp_complex_field &psi,
+                               mdp_complex_field &chi,
+                               int parity = EVENODD)
+  {
+
+    double n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+
+    for (mdp_int i = i_min; i < i_max; i++)
+    {
+      n2 +=
+          real(chi[i]) * real(psi[i]) +
+          imag(chi[i]) * imag(psi[i]);
+    }
+
+    mdp.add(n2);
+    return n2;
+  }
+
+  mdp_real imag_scalar_product(mdp_complex_field &psi,
+                               mdp_complex_field &chi,
+                               int parity = EVENODD)
+  {
+    double n2 = 0;
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+
+    for (mdp_int i = i_min; i < i_max; i++)
+    {
+      n2 +=
+          real(psi[i]) * imag(chi[i]) +
+          imag(psi[i]) * real(chi[i]);
+    }
+    mdp.add(n2);
+    return n2;
+  }
+
+  void mdp_add_scaled_field(mdp_complex_field &psi,
+                            mdp_real alpha,
+                            mdp_complex_field &chi,
+                            int parity = EVENODD)
+  {
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+
+    for (mdp_int i = i_min; i < i_max; i++)
+      psi[i] += alpha * chi[i];
+  }
+
+  void mdp_add_scaled_field(mdp_complex_field &psi,
+                            mdp_complex alpha,
+                            mdp_complex_field &chi,
+                            int parity = EVENODD)
+  {
+    mdp_int i_min = psi.physical_local_start(parity);
+    mdp_int i_max = psi.physical_local_stop(parity);
+
+    // this needs optimization.
+    for (mdp_int i = i_min; i < i_max; i++)
+      psi[i] += alpha * chi[i];
+  }
+
+  mdp_complex operator*(mdp_complex_field &psi,
+                        mdp_complex_field &chi)
+  {
+    return scalar_product(psi, chi);
+  }
+
+  mdp_real relative_residue(mdp_complex_field &p,
+                            mdp_complex_field &q,
+                            int parity = EVENODD)
+  {
+    double residue = 0, num = 0, den = 0;
+    mdp_int i_min = p.physical_local_start(parity);
+    mdp_int i_max = q.physical_local_stop(parity);
+
+    // this needs optimization.
+    for (mdp_int i = i_min; i < i_max;)
+    {
+      num += abs2(p[i]);
+      den += abs2(q[i]);
+      if (++i % p.size_per_site() == 0)
+      {
+        residue += (den == 0) ? 1.0 : (num / den);
+        num = den = 0;
+      }
+    }
+    mdp.add(residue);
+    return std::sqrt(residue / p.lattice().global_volume());
+  }
 } // namespace MDP
 
 #endif /* MDP_FIELD_ */

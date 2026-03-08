@@ -14,7 +14,7 @@
 #ifndef FERMIQCD_GAUGE_FIELD_
 #define FERMIQCD_GAUGE_FIELD_
 
-#include "mdp_complex_field.h"
+#include "mdp_field.h"
 #include "mdp_matrix_field.h"
 
 namespace MDP
@@ -203,10 +203,6 @@ namespace MDP
       if (this == &U)
         return *this;
 
-      // base assignment
-      mdp_complex_field::operator=(U);
-
-      // derived fields assignment
       m_nc = U.m_nc;
 
       return *this;

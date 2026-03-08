@@ -14,7 +14,7 @@
 #ifndef FERMIQCD_SDWF_FIELD_
 #define FERMIQCD_SDWF_FIELD_
 
-#include "mdp_complex_field.h"
+#include "mdp_field.h"
 #include "mdp_mod2sign.h"
 
 namespace MDP
@@ -62,10 +62,6 @@ namespace MDP
       if (this == &other)
         return *this;
 
-      // base assignment
-      mdp_complex_field::operator=(other);
-
-      // derived fields assignment
       m_nspin = other.m_nspin;
       m_nc = other.m_nc;
       m_L5 = other.m_L5;

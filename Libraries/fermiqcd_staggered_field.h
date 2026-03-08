@@ -13,7 +13,7 @@
 #define FERMIQCD_STAGGERED_FIELD_
 
 #include "mdp_mod2sign.h"
-#include "mdp_complex_field.h"
+#include "mdp_field.h"
 
 namespace MDP
 {
@@ -62,10 +62,6 @@ namespace MDP
       if (this == &chi)
         return *this;
 
-      // base assignment
-      mdp_complex_field::operator=(chi);
-
-      // derived fields assignment
       m_nspin = chi.m_nspin;
       m_nc = chi.m_nc;
 

@@ -941,18 +941,6 @@ namespace MDP
       return m_dw[at(idx, mu)];
     }
 
-#ifdef SSE2
-    const std::vector<mdp_int> &up()
-    {
-      return m_up;
-    }
-
-    const std::vector<mdp_int> &down()
-    {
-      return m_dw;
-    }
-#endif
-
     /** @brief Local index based on global index
      */
     mdp_int local(mdp_int global_idx) const
@@ -965,8 +953,7 @@ namespace MDP
       m_lg_file.read(reinterpret_cast<char *>(&lg_tmp), sizeof(mdp_int));
 
       if (!m_lg_file)
-        error("mdp_lattice::allocate_lattice()\n"
-              "Unable to read from temporary file");
+        error("mdp_lattice::allocate_lattice()\nUnable to read from temporary file");
 
       return lg_tmp;
 #endif

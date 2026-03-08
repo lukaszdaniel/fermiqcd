@@ -14,7 +14,7 @@
 #ifndef FERMIQCD_STAGGERED_PROPAGATOR_
 #define FERMIQCD_STAGGERED_PROPAGATOR_
 
-#include "mdp_complex_field.h"
+#include "mdp_field.h"
 #include "fermiqcd_global_vars.h"
 #include "fermiqcd_default_parameters.h"
 #include "fermiqcd_coefficients.h"

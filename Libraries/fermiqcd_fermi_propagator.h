@@ -14,7 +14,7 @@
 #ifndef FERMIQCD_FERMI_PROPAGATOR_
 #define FERMIQCD_FERMI_PROPAGATOR_
 
-#include "mdp_complex_field.h"
+#include "mdp_field.h"
 #include "fermiqcd_default_parameters.h"
 #include "fermiqcd_gauge_field.h"
 #include "fermiqcd_coefficients.h"
@@ -85,10 +85,6 @@ namespace MDP
       if (this == &other)
         return *this;
 
-      // base assignment
-      mdp_complex_field::operator=(other);
-
-      // derived fields assignment
       m_nspin = other.m_nspin;
       m_nc = other.m_nc;
 
