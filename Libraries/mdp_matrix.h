@@ -110,9 +110,6 @@ namespace MDP
       deallocate();
     }
 
-    mdp_matrix(mdp_matrix &&) noexcept = default;
-    mdp_matrix &operator=(mdp_matrix &&) noexcept = default;
-
     /** @brief Set matrix size
      *
      * @param r Number of rows for the matrix.
