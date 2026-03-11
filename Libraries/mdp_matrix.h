@@ -14,6 +14,8 @@
 
 #include <iostream>
 #include <memory>
+#include <span>
+#include <algorithm>
 #include <type_traits>
 #include "mdp_macros.h"
 #include "mdp_global_vars.h"
@@ -34,42 +36,24 @@ namespace MDP
   class mdp_matrix
   {
   private:
-    bool m_shared;
     mdp_uint m_rows;
     mdp_uint m_cols;
-    std::unique_ptr<mdp_complex[]> m_data; // data
-
-    /** @brief Allocate required memory
-     */
-    void allocate()
-    {
-      if (!m_shared)
-      {
-        m_data = std::make_unique<mdp_complex[]>(size());
-        if (size() && !m_data)
-        {
-          error("mdp_matrix::allocate()\nOut of memory");
-        }
-        std::fill(m_data.get(), m_data.get() + size(), mdp_complex{});
-      }
-    }
+    std::unique_ptr<mdp_complex[]> m_owner;
+    std::span<mdp_complex> m_data;
 
     void reallocate()
     {
-      deallocate();
-      allocate();
-    }
+      if (size() == 0)
+      {
+        m_owner.reset();
+        m_data = {};
+        return;
+      }
 
-    void deallocate()
-    {
-      if (m_shared)
-      {
-        m_data.release();
-      }
-      else
-      {
-        m_data.reset();
-      }
+      m_owner = std::make_unique<mdp_complex[]>(size());
+      m_data = std::span<mdp_complex>(m_owner.get(), size());
+
+      std::fill(m_data.begin(), m_data.end(), mdp_complex{});
     }
 
   public:
@@ -78,19 +62,25 @@ namespace MDP
      * @param r Number of rows. Default is 3.
      * @param c Number of columns. Default is 3.
      */
-    mdp_matrix(mdp_uint r = 3, mdp_uint c = 3) : m_shared(false), m_rows(r), m_cols(c)
+    mdp_matrix(mdp_uint r = 3, mdp_uint c = 3)
+        : m_rows(r), m_cols(c),
+          m_owner(std::make_unique<mdp_complex[]>(r * c)),
+          m_data(m_owner.get(), r * c)
     {
-      allocate();
+      std::fill(m_data.begin(), m_data.end(), mdp_complex{});
     }
 
     /** @brief Copy constructor
      *
      * @param a Matrix to be copied.
      */
-    mdp_matrix(const mdp_matrix &a) : m_shared(false), m_rows(a.m_rows), m_cols(a.m_cols)
+    mdp_matrix(const mdp_matrix &a)
+        : m_rows(a.m_rows),
+          m_cols(a.m_cols),
+          m_owner(std::make_unique<mdp_complex[]>(a.size())),
+          m_data(m_owner.get(), a.size())
     {
-      allocate();
-      std::copy(a.m_data.get(), a.m_data.get() + size(), m_data.get());
+      std::copy(a.m_data.begin(), a.m_data.end(), m_data.begin());
     }
 
     /** @brief View constructor used to format array of complex numbers
@@ -101,14 +91,17 @@ namespace MDP
      *
      * @note Length of \e z array needs to be equal to \e rc.
      */
-    mdp_matrix(mdp_complex *z, mdp_uint r, mdp_uint c) : m_shared(true), m_rows(r), m_cols(c), m_data(z)
+    mdp_matrix(mdp_complex *ptr, mdp_uint r, mdp_uint c)
+        : m_rows(r), m_cols(c),
+          m_owner(nullptr),
+          m_data(ptr, r * c)
     {
     }
 
-    ~mdp_matrix()
-    {
-      deallocate();
-    }
+    ~mdp_matrix() = default;
+
+    mdp_matrix(mdp_matrix &&) noexcept = default;
+    // mdp_matrix &operator=(mdp_matrix &&) noexcept = default;
 
     /** @brief Set matrix size
      *
@@ -117,7 +110,6 @@ namespace MDP
      */
     void dimension(mdp_uint r, mdp_uint c)
     {
-      m_shared = false;
       m_rows = r;
       m_cols = c;
       reallocate();
@@ -133,11 +125,18 @@ namespace MDP
           m_cols = x.m_cols;
           reallocate();
         }
-        std::copy(x.m_data.get(), x.m_data.get() + size(), m_data.get());
+        std::copy(x.m_data.begin(), x.m_data.end(), m_data.begin());
       }
 
       return *this;
     }
+
+    auto begin() { return m_data.begin(); }
+    auto end() { return m_data.end(); }
+    auto begin() const { return m_data.begin(); }
+    auto end() const { return m_data.end(); }
+    mdp_complex *data() { return m_data.data(); }
+    const mdp_complex *data() const { return m_data.data(); }
 
     /** @brief returns the (i,j) element of the matrix
      */
@@ -157,7 +156,11 @@ namespace MDP
      */
     mdp_matrix operator()(mdp_uint i) const
     {
-      return mdp_matrix(m_data.get() + i * m_cols, m_cols, 1);
+#ifdef CHECK_ALL
+      if (i >= m_rows)
+        error("mdp_matrix::operator()\nIndex out of bounds");
+#endif
+      return mdp_matrix(m_data.data() + i * m_cols, m_cols, 1);
     }
 
     /** @brief Begining of this matrix
@@ -166,14 +169,14 @@ namespace MDP
      */
     mdp_complex *address() const
     {
-      return m_data.get();
+      return m_data.data();
     }
 
     mdp_complex &operator[](mdp_uint i)
     {
 #ifdef CHECK_ALL
       if (i >= size())
-        error("mdp_array::operator[]\nIndex out of bounds");
+        error("mdp_matrix::operator[]\nIndex out of bounds");
 #endif
       return m_data[i];
     }
@@ -182,7 +185,7 @@ namespace MDP
     {
 #ifdef CHECK_ALL
       if (i >= size())
-        error("mdp_array::operator[]\nIndex out of bounds");
+        error("mdp_matrix::operator[]\nIndex out of bounds");
 #endif
       return m_data[i];
     }
@@ -264,14 +267,14 @@ namespace MDP
         error("mdp_matrix::operator*()\nWrong argument size");
 #endif
 
-      if (m_rows == m_cols && x.m_rows == 3) [[likely]]
+      if (m_rows == 3 && m_cols == 3 && x.m_rows == 3 && x.m_cols == 3) [[likely]]
       {
         // optimized multiplication for 3x3 matrices
         mdp_matrix C(3, 3);
 
-        const mdp_complex *A = m_data.get();
-        const mdp_complex *b = x.m_data.get();
-        mdp_complex *c = C.m_data.get();
+        const mdp_complex *A = m_data.data();
+        const mdp_complex *b = x.m_data.data();
+        mdp_complex *c = C.m_data.data();
 
         const mdp_complex &a00 = A[0];
         const mdp_complex &a01 = A[1];
@@ -313,11 +316,11 @@ namespace MDP
       {
         for (mdp_uint k = 0; k < m_cols; k++)
         {
-          auto aik = (*this)(i, k);
+          const mdp_complex aik = m_data[i * m_cols + k];
 
-          for (mdp_uint j = 0; j < x.m_cols; j++)
+          for (mdp_uint j = 0; j < m_cols; j++)
           {
-            z(i, j) += aik * x(k, j);
+            z.m_data[i * m_cols + j] += aik * x.m_data[k * m_cols + j];
           }
         }
       }
@@ -354,15 +357,15 @@ namespace MDP
       return *this;
     }
 
-    mdp_matrix operator*=(const mdp_matrix &a)
+    mdp_matrix &operator*=(const mdp_matrix &a)
     {
-      (*this) = (*this) * a;
+      *this = (*this) * a;
       return *this;
     }
 
-    mdp_matrix operator/=(const mdp_matrix &a)
+    mdp_matrix &operator/=(const mdp_matrix &a)
     {
-      (*this) = (*this) / a;
+      *this = (*this) / a;
       return *this;
     }
 
@@ -438,7 +441,7 @@ namespace MDP
       requires std::is_arithmetic_v<T> || std::same_as<T, mdp_complex>
     mdp_matrix operator/(T b) const
     {
-      return (*this) * (1.0 / b);
+      return (*this) * (mdp_complex(1) / mdp_complex(b));
     }
 
     template <class T>
@@ -447,7 +450,7 @@ namespace MDP
     {
       mdp_complex c = mdp_complex(x);
 
-      for (mdp_uint i = 0; i < size(); ++i)
+      for (mdp_uint i = 0; i < m_rows; ++i)
         (*this)(i, i) += c;
 
       return *this;
@@ -459,7 +462,7 @@ namespace MDP
     {
       mdp_complex c = mdp_complex(x);
 
-      for (mdp_uint i = 0; i < size(); ++i)
+      for (mdp_uint i = 0; i < m_rows; ++i)
         (*this)(i, i) -= c;
 
       return *this;
@@ -496,7 +499,7 @@ namespace MDP
       for (mdp_uint i = 0; i < rows(); i++)
         for (mdp_uint j = 0; j < cols(); j++)
         {
-          (*this)(i, j) = (i == j) ? c : 0;
+          (*this)(i, j) = (i == j) ? c : mdp_complex(0);
         }
       return *this;
     }
@@ -690,15 +693,15 @@ namespace MDP
         const mdp_complex invdet = mdp_complex(1) / det;
 
         ans.m_data[0] = c00 * invdet;
-        ans.m_data[1] = c01 * invdet;
-        ans.m_data[2] = c02 * invdet;
+        ans.m_data[1] = c10 * invdet;
+        ans.m_data[2] = c20 * invdet;
 
-        ans.m_data[3] = c10 * invdet;
+        ans.m_data[3] = c01 * invdet;
         ans.m_data[4] = c11 * invdet;
-        ans.m_data[5] = c12 * invdet;
+        ans.m_data[5] = c21 * invdet;
 
-        ans.m_data[6] = c20 * invdet;
-        ans.m_data[7] = c21 * invdet;
+        ans.m_data[6] = c02 * invdet;
+        ans.m_data[7] = c12 * invdet;
         ans.m_data[8] = c22 * invdet;
 
         return ans;
@@ -758,7 +761,7 @@ namespace MDP
 
       mdp_matrix tma(*this);
 
-      std::fill(ans.m_data.get(), ans.m_data.get() + m_rows * m_cols, mdp_complex(0));
+      std::fill(ans.m_data.begin(), ans.m_data.end(), mdp_complex(0));
       for (mdp_uint i = 0; i < n; i++)
         ans.m_data[i * n + i] = mdp_complex(1);
 
