@@ -693,15 +693,15 @@ namespace MDP
         const mdp_complex invdet = mdp_complex(1) / det;
 
         ans.m_data[0] = c00 * invdet;
-        ans.m_data[1] = c10 * invdet;
-        ans.m_data[2] = c20 * invdet;
+        ans.m_data[1] = c01 * invdet;
+        ans.m_data[2] = c02 * invdet;
 
-        ans.m_data[3] = c01 * invdet;
+        ans.m_data[3] = c10 * invdet;
         ans.m_data[4] = c11 * invdet;
-        ans.m_data[5] = c21 * invdet;
+        ans.m_data[5] = c12 * invdet;
 
-        ans.m_data[6] = c02 * invdet;
-        ans.m_data[7] = c12 * invdet;
+        ans.m_data[6] = c20 * invdet;
+        ans.m_data[7] = c21 * invdet;
         ans.m_data[8] = c22 * invdet;
 
         return ans;

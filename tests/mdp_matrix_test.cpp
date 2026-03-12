@@ -67,7 +67,7 @@ bool mdp_matrix_test()
   return 1;
 }
 
-void test_size()
+void test_object_size()
 {
   mdp_matrix a(3, 3);
   mdp_matrix b(2, 2);
@@ -86,6 +86,6 @@ void test_size()
 int main()
 {
   mdp_matrix_test();
-  test_size();
+  test_object_size();
   return 0;
 }
