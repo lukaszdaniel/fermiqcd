@@ -1,0 +1,14 @@
+Testing mdp_complex...
+constructors OK
+unary operators OK
+addition/subtraction OK
+multiplication OK
+division OK
+assignment OK
+compound operators OK
+scalar operators OK
+helper functions OK
+math functions OK
+i helpers OK
+
+ALL TESTS PASSED
