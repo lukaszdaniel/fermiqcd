@@ -24,7 +24,7 @@ namespace MDP
     // #define PARALLEL
     // #define NO_POSIX
     // #define HAVE_NO_TIMEZONE
-    #define DO_NOT_USE_MDP_COMPLEX //define if you want to use standard complex header
+    #define DO_NOT_USE_MDP_COMPLEX // define if you want to use standard complex header
     // #define MDP_NO_LG //define if you want a temporary file to store local-to-global lattice mappings
     // #define BLOCKSITE 100
     // #define TWISTED_BOUNDARY

@@ -989,6 +989,7 @@ namespace MDP
         ((a.rows() - 1 < i) || (a.cols() - 1 < j)))
       error("submatrix(...)\nWrong dimensions in submatrix");
 #endif
+
     mdp_matrix tmp(a.rows() - 1, a.cols() - 1);
 
     for (mdp_uint r = 0; r < i; r++)
@@ -1026,6 +1027,79 @@ namespace MDP
   mdp_matrix inv(const mdp_matrix &a)
   {
     return a.inv();
+  }
+
+  mdp_matrix transpose(const mdp_matrix &a)
+  {
+    mdp_matrix tmp(a.cols(), a.rows());
+
+    for (mdp_uint r = 0; r < a.rows(); r++)
+      for (mdp_uint c = 0; c < a.cols(); c++)
+      {
+        tmp(c, r) = a(r, c);
+      }
+
+    return tmp;
+  }
+
+  mdp_complex trace(const mdp_matrix &a)
+  {
+#ifdef CHECK_ALL
+    if (a.rows() != a.cols())
+      error("trace(...)\nmdp_matrix is not squared");
+#endif
+    mdp_complex x = mdp_complex(0);
+    for (mdp_uint c = 0; c < a.cols(); c++)
+    {
+      x += a(c, c);
+    }
+    return x;
+  }
+
+  mdp_matrix conj(const mdp_matrix &a)
+  {
+    mdp_matrix tmp(a.rows(), a.cols());
+    for (mdp_uint r = 0; r < a.rows(); r++)
+      for (mdp_uint c = 0; c < a.cols(); c++)
+      {
+        tmp(r, c) = conj(a(r, c));
+      }
+
+    return tmp;
+  }
+
+  mdp_matrix hermitian(const mdp_matrix &a)
+  {
+    mdp_matrix tmp(a.cols(), a.rows());
+
+    // // optimized for 3x3 matrix
+    if (a.rows() == 3 && a.cols() == 3)
+    {
+      const mdp_complex *src = a.address();
+      mdp_complex *dst = tmp.address();
+
+      dst[0] = conj(src[0]);
+      dst[1] = conj(src[3]);
+      dst[2] = conj(src[6]);
+
+      dst[3] = conj(src[1]);
+      dst[4] = conj(src[4]);
+      dst[5] = conj(src[7]);
+
+      dst[6] = conj(src[2]);
+      dst[7] = conj(src[5]);
+      dst[8] = conj(src[8]);
+
+      return tmp;
+    }
+
+    for (mdp_uint r = 0; r < a.rows(); r++)
+      for (mdp_uint c = 0; c < a.cols(); c++)
+      {
+        tmp(c, r) = conj(a(r, c));
+      }
+
+    return tmp;
   }
 
   mdp_matrix pow(const mdp_matrix &a, int i)
@@ -1135,79 +1209,6 @@ namespace MDP
       t1 *= 1.0 / i;
       tmp += t1;
     } while (max(t1) > mdp_precision);
-
-    return tmp;
-  }
-
-  mdp_complex trace(const mdp_matrix &a)
-  {
-#ifdef CHECK_ALL
-    if (a.rows() != a.cols())
-      error("trace(...)\nmdp_matrix is not squared");
-#endif
-    mdp_complex x = mdp_complex(0);
-    for (mdp_uint c = 0; c < a.cols(); c++)
-    {
-      x += a(c, c);
-    }
-    return x;
-  }
-
-  mdp_matrix transpose(const mdp_matrix &a)
-  {
-    mdp_matrix tmp(a.cols(), a.rows());
-
-    for (mdp_uint r = 0; r < a.rows(); r++)
-      for (mdp_uint c = 0; c < a.cols(); c++)
-      {
-        tmp(c, r) = a(r, c);
-      }
-
-    return tmp;
-  }
-
-  mdp_matrix hermitian(const mdp_matrix &a)
-  {
-    mdp_matrix tmp(a.cols(), a.rows());
-
-    // // optimized for 3x3 matrix
-    if (a.rows() == 3 && a.cols() == 3)
-    {
-      const mdp_complex *src = a.address();
-      mdp_complex *dst = tmp.address();
-
-      dst[0] = conj(src[0]);
-      dst[1] = conj(src[3]);
-      dst[2] = conj(src[6]);
-
-      dst[3] = conj(src[1]);
-      dst[4] = conj(src[4]);
-      dst[5] = conj(src[7]);
-
-      dst[6] = conj(src[2]);
-      dst[7] = conj(src[5]);
-      dst[8] = conj(src[8]);
-
-      return tmp;
-    }
-
-    for (mdp_uint r = 0; r < a.rows(); r++)
-      for (mdp_uint c = 0; c < a.cols(); c++)
-      {
-        tmp(c, r) = conj(a(r, c));
-      }
-
-    return tmp;
-  }
-
-  mdp_matrix conj(const mdp_matrix &a)
-  {
-    mdp_matrix tmp(a.rows(), a.cols());
-    for (mdp_uint r = 0; r < a.rows(); r++)
-      for (mdp_uint c = 0; c < a.cols(); c++)
-      {
-        tmp(r, c) = conj(a(r, c));
-      }
 
     return tmp;
   }
