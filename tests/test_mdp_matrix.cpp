@@ -1,5 +1,5 @@
 #include <iostream>
-// #include <random>
+#include <random>
 #include <chrono>
 #include <cassert>
 #include <iomanip>
@@ -129,13 +129,13 @@ mdp_matrix cos_slow(const mdp_matrix &a)
   return sincos_slow(a).second;
 }
 
-// std::mt19937 rng(0);
-// std::uniform_real_distribution<double> dist(-2.0, 2.0);
+std::mt19937 rng(0);
+std::uniform_real_distribution<double> dist(-2.0, 2.0);
 
-// mdp_complex rand_complex()
-// {
-//   return mdp_complex(dist(rng), dist(rng));
-// }
+mdp_complex rand_complex()
+{
+  return mdp_complex(dist(rng), dist(rng));
+}
 
 void fill_random(mdp_matrix &A, bool su_matrix = false)
 {
@@ -147,7 +147,7 @@ void fill_random(mdp_matrix &A, bool su_matrix = false)
   else
   {
     for (auto &x : A)
-      x = mdp_complex(Random.gaussian(1.274), Random.gaussian(1.472)); // rand_complex();
+      x = rand_complex();
   }
 }
 
