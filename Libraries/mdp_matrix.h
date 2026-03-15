@@ -960,16 +960,12 @@ namespace MDP
    */
   mdp_real max(const mdp_matrix &a)
   {
-    double x = 0, y = 0;
-    for (mdp_uint i = 0; i < a.size(); i++)
-    {
-      if ((y = abs(a[i])) > x)
-      {
-        x = y;
-      }
-    }
+    mdp_real current_max = 0.0;
 
-    return x;
+    for (mdp_uint i = 0; i < a.size(); ++i)
+      current_max = std::max(current_max, abs(a[i]));
+
+    return current_max;
   }
 
   /** @brief Return matrix without i-th row and j-th column
@@ -985,36 +981,22 @@ namespace MDP
   mdp_matrix submatrix(const mdp_matrix &a, mdp_uint i, mdp_uint j)
   {
 #ifdef CHECK_ALL
-    if (((a.rows() < 2) || (a.cols() < 2)) ||
-        ((a.rows() - 1 < i) || (a.cols() - 1 < j)))
+    if (a.rows() < 2 || a.cols() < 2 || i >= a.rows() || j >= a.cols())
       error("submatrix(...)\nWrong dimensions in submatrix");
 #endif
 
     mdp_matrix tmp(a.rows() - 1, a.cols() - 1);
 
-    for (mdp_uint r = 0; r < i; r++)
-      for (mdp_uint c = 0; c < j; c++)
-      {
-        tmp(r, c) = a(r, c);
-      }
+    for (mdp_uint r = 0; r < tmp.rows(); ++r)
+    {
+      const mdp_uint src_r = (r < i) ? r : r + 1;
 
-    for (mdp_uint r = i + 1; r < a.rows(); r++)
-      for (mdp_uint c = 0; c < j; c++)
+      for (mdp_uint c = 0; c < tmp.cols(); ++c)
       {
-        tmp(r - 1, c) = a(r, c);
+        const mdp_uint src_c = (c < j) ? c : c + 1;
+        tmp(r, c) = a(src_r, src_c);
       }
-
-    for (mdp_uint r = 0; r < i; r++)
-      for (mdp_uint c = j + 1; c < a.cols(); c++)
-      {
-        tmp(r, c - 1) = a(r, c);
-      }
-
-    for (mdp_uint r = i + 1; r < a.rows(); r++)
-      for (mdp_uint c = j + 1; c < a.cols(); c++)
-      {
-        tmp(r - 1, c - 1) = a(r, c);
-      }
+    }
 
     return tmp;
   }
@@ -1108,19 +1090,29 @@ namespace MDP
     if (a.rows() != a.cols())
       error("pow(...)\nmdp_matrix is not squared");
 #endif
-    mdp_matrix tmp;
-    tmp = mdp_identity(a.cols());
-    mdp_int j = (i < 0) ? -i : i;
 
-    for (; j > 0; j--)
+    const mdp_uint n = a.rows();
+
+    if (i == 0)
+      return mdp_identity(n);
+
+    mdp_matrix base = (i < 0) ? inv(a) : a;
+    mdp_uint e = (i < 0) ? -i : i;
+
+    mdp_matrix result = mdp_identity(n);
+
+    while (e)
     {
-      tmp = tmp * a;
+      if (e & 1)
+        result = result * base;
+
+      e >>= 1;
+
+      if (e)
+        base = base * base;
     }
 
-    if (i < 0)
-      tmp = inv(tmp);
-
-    return tmp;
+    return result;
   }
 
   mdp_matrix exp(const mdp_matrix &a)
@@ -1169,48 +1161,53 @@ namespace MDP
     return tmp;
   }
 
-  mdp_matrix sin(const mdp_matrix &a)
+  std::pair<mdp_matrix, mdp_matrix> sincos(const mdp_matrix &a)
   {
 #ifdef CHECK_ALL
     if (a.rows() != a.cols())
-      error("sin(...)\nmdp_matrix is not squared");
+      error("sincos(...)\nmdp_matrix is not squared");
 #endif
-    mdp_matrix tmp, t1;
-    mdp_uint i = 1;
-    t1 = a;
-    tmp = t1;
+
+    mdp_matrix a2 = a * a;
+
+    mdp_matrix sin_sum = a;
+    mdp_matrix cos_sum = mdp_identity(a.rows());
+
+    mdp_matrix sin_t = a;
+    mdp_matrix cos_t = mdp_identity(a.rows());
+
+    mdp_uint i_sin = 1;
+    mdp_uint i_cos = 0;
+
     do
     {
-      ++i;
-      t1 = (-1.0 / (i)) * t1 * a * a;
-      ++i;
-      t1 *= 1.0 / i;
-      tmp += t1;
-    } while (max(t1) > mdp_precision);
+      // next sin term
+      ++i_sin;
+      sin_t = (-1.0 / i_sin) * sin_t * a2;
+      ++i_sin;
+      sin_t *= 1.0 / i_sin;
+      sin_sum += sin_t;
 
-    return tmp;
+      // next cos term
+      ++i_cos;
+      cos_t = (-1.0 / i_cos) * cos_t * a2;
+      ++i_cos;
+      cos_t *= 1.0 / i_cos;
+      cos_sum += cos_t;
+
+    } while (max(sin_t) > mdp_precision || max(cos_t) > mdp_precision);
+
+    return {sin_sum, cos_sum};
+  }
+
+  mdp_matrix sin(const mdp_matrix &a)
+  {
+    return sincos(a).first;
   }
 
   mdp_matrix cos(const mdp_matrix &a)
   {
-#ifdef CHECK_ALL
-    if (a.rows() != a.cols())
-      error("cos(...)\nmdp_matrix is not squared");
-#endif
-    mdp_matrix tmp, t1;
-    mdp_uint i = 0;
-    t1 = mdp_identity(a.rows());
-    tmp = t1;
-    do
-    {
-      ++i;
-      t1 = (-1.0 / (i)) * t1 * a * a;
-      ++i;
-      t1 *= 1.0 / i;
-      tmp += t1;
-    } while (max(t1) > mdp_precision);
-
-    return tmp;
+    return sincos(a).second;
   }
 } // namespace MDP
 
