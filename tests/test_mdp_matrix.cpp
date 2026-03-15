@@ -7,6 +7,128 @@
 
 using namespace MDP;
 
+bool approx(double a, double b, double eps = mdp_precision)
+{
+  return std::fabs(a - b) < eps;
+}
+
+bool approx_complex(const mdp_complex &a, const mdp_complex &b)
+{
+  return approx(a.real(), b.real()) && approx(a.imag(), b.imag());
+}
+
+bool compare_equal(const mdp_matrix &a, const mdp_matrix &b)
+{
+  if (a.rows() != b.rows() || a.cols() != b.cols())
+    return false;
+
+  for (mdp_uint i = 0; i < a.rows(); ++i)
+    for (mdp_uint j = 0; j < b.cols(); ++j)
+    {
+      if (!approx_complex(a(i, j), b(i, j)))
+        return false;
+    }
+
+  return true;
+}
+
+mdp_matrix exp_slow(const mdp_matrix &a)
+{
+#ifdef CHECK_ALL
+  if (a.rows() != a.cols())
+    error("exp(...)\nmdp_matrix is not squared");
+#endif
+
+  const mdp_uint n = a.rows();
+
+  mdp_matrix result = mdp_identity(n);
+  mdp_matrix term = a;
+
+  result += term;
+
+  for (mdp_uint i = 2; max(term) > mdp_precision; ++i)
+  {
+    term *= a;
+    term *= 1.0 / i;
+    result += term;
+  }
+
+  return result;
+}
+
+mdp_matrix log_slow(const mdp_matrix &a)
+{
+#ifdef CHECK_ALL
+  if (a.rows() != a.cols())
+    error("log(...)\nmdp_matrix is not squared");
+#endif
+
+  const mdp_uint n = a.rows();
+
+  mdp_matrix b = a - mdp_identity(n);
+  mdp_matrix term = b;
+  mdp_matrix result = term;
+
+  for (mdp_uint k = 2; max(term) > mdp_precision; ++k)
+  {
+    term *= b;
+
+    mdp_real coef = ((k % 2) ? 1.0 : -1.0) / k;
+    result += coef * term;
+  }
+
+  return result;
+}
+
+std::pair<mdp_matrix, mdp_matrix> sincos_slow(const mdp_matrix &a)
+{
+#ifdef CHECK_ALL
+  if (a.rows() != a.cols())
+    error("sincos(...)\nmdp_matrix is not squared");
+#endif
+
+  mdp_matrix a2 = a * a;
+
+  mdp_matrix sin_sum = a;
+  mdp_matrix cos_sum = mdp_identity(a.rows());
+
+  mdp_matrix sin_t = a;
+  mdp_matrix cos_t = mdp_identity(a.rows());
+
+  mdp_uint i_sin = 1;
+  mdp_uint i_cos = 0;
+
+  do
+  {
+    // next sin term
+    ++i_sin;
+    sin_t = (-1.0 / i_sin) * sin_t * a2;
+    ++i_sin;
+    sin_t *= 1.0 / i_sin;
+    sin_sum += sin_t;
+
+    // next cos term
+    ++i_cos;
+    cos_t = (-1.0 / i_cos) * cos_t * a2;
+    ++i_cos;
+    cos_t *= 1.0 / i_cos;
+    cos_sum += cos_t;
+
+  } while (max(sin_t) > mdp_precision || max(cos_t) > mdp_precision);
+
+  return {sin_sum, cos_sum};
+}
+
+mdp_matrix sin_slow(const mdp_matrix &a)
+{
+  return sincos_slow(a).first;
+}
+
+mdp_matrix cos_slow(const mdp_matrix &a)
+{
+  return sincos_slow(a).second;
+}
+
 // std::mt19937 rng(0);
 // std::uniform_real_distribution<double> dist(-2.0, 2.0);
 
@@ -221,21 +343,41 @@ void test_size(int n, bool su_matrix = false)
 
   print_test("exp");
   mdp_matrix ex = exp(A);
+  mdp_matrix ex_slow = exp_slow(A);
+  if (!compare_equal(ex, ex_slow))
+  {
+    std::cout << "exp(A) differs\n\n";
+  }
   std::cout << "exp(A):\n"
             << ex << "\n";
 
   print_test("log");
   mdp_matrix lg = log(I + A * 0.01);
+  mdp_matrix lg_slow = log_slow(I + A * 0.01);
+  if (!compare_equal(lg, lg_slow))
+  {
+    std::cout << "log(I + 0.01 * A) differs\n\n";
+  }
   std::cout << "log(I + 0.01 * A):\n"
             << lg << "\n";
 
   print_test("sin");
   mdp_matrix sn = sin(A);
+  mdp_matrix sn_slow = sin_slow(A);
+  if (!compare_equal(sn, sn_slow))
+  {
+    std::cout << "sin(A) differs\n\n";
+  }
   std::cout << "sin(A):\n"
             << sn << "\n";
 
   print_test("cos");
   mdp_matrix cs = cos(A);
+  mdp_matrix cs_slow = cos_slow(A);
+  if (!compare_equal(cs, cs_slow))
+  {
+    std::cout << "cos(A) differs\n\n";
+  }
   std::cout << "cos(A):\n"
             << cs << "\n";
 

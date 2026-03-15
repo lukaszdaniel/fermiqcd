@@ -1124,19 +1124,54 @@ namespace MDP
 
     const mdp_uint n = a.rows();
 
-    mdp_matrix result = mdp_identity(n);
-    mdp_matrix term = a;
+    // Padé coefficients (order 13)
+    constexpr double c[] = {
+        64764752532480000.0,
+        32382376266240000.0,
+        7771770303897600.0,
+        1187353796428800.0,
+        129060195264000.0,
+        10559470521600.0,
+        670442572800.0,
+        33522128640.0,
+        1323241920.0,
+        40840800.0,
+        960960.0,
+        16380.0,
+        182.0,
+        1.0};
 
-    result += term;
+    // matrix norm
+    double norm = max(a);
 
-    for (mdp_uint i = 2; max(term) > mdp_precision; ++i)
-    {
-      term *= a;
-      term *= 1.0 / i;
-      result += term;
-    }
+    int s = 0;
+    if (norm > 0.5)
+      s = std::max(0, (int)std::ceil(std::log2(norm)));
 
-    return result;
+    mdp_matrix B = a * (1.0 / std::pow(2.0, s));
+
+    mdp_matrix B2 = B * B;
+    mdp_matrix B4 = B2 * B2;
+    mdp_matrix B6 = B2 * B4;
+
+    mdp_matrix I = mdp_identity(n);
+
+    mdp_matrix U =
+        B * (B6 * (c[13] * B6 + c[11] * B4 + c[9] * B2) + c[7] * B6 + c[5] * B4 + c[3] * B2 + c[1] * I);
+
+    mdp_matrix V =
+        B6 * (c[12] * B6 + c[10] * B4 + c[8] * B2) + c[6] * B6 + c[4] * B4 + c[2] * B2 + c[0] * I;
+
+    mdp_matrix P = V + U;
+    mdp_matrix Q = V - U;
+
+    mdp_matrix R = Q.inv() * P;
+
+    // squaring
+    for (int i = 0; i < s; ++i)
+      R = R * R;
+
+    return R;
   }
 
   mdp_matrix log(const mdp_matrix &a)
@@ -1170,36 +1205,33 @@ namespace MDP
       error("sincos(...)\nmdp_matrix is not squared");
 #endif
 
-    mdp_matrix a2 = a * a;
+    const mdp_uint n = a.rows();
 
-    mdp_matrix sin_sum = a;
-    mdp_matrix cos_sum = mdp_identity(a.rows());
+    mdp_matrix M(2 * n, 2 * n);
 
-    mdp_matrix sin_t = a;
-    mdp_matrix cos_t = mdp_identity(a.rows());
+    //  block filling
+    for (mdp_uint i = 0; i < n; i++)
+      for (mdp_uint j = 0; j < n; j++)
+      {
+        M(i, j) = 0.0;
+        M(i, j + n) = a(i, j);
+        M(i + n, j) = -a(i, j);
+        M(i + n, j + n) = 0.0;
+      }
 
-    mdp_uint i_sin = 1;
-    mdp_uint i_cos = 0;
+    mdp_matrix E = exp(M);
 
-    do
-    {
-      // next sin term
-      ++i_sin;
-      sin_t = (-1.0 / i_sin) * sin_t * a2;
-      ++i_sin;
-      sin_t *= 1.0 / i_sin;
-      sin_sum += sin_t;
+    mdp_matrix C(n, n);
+    mdp_matrix S(n, n);
 
-      // next cos term
-      ++i_cos;
-      cos_t = (-1.0 / i_cos) * cos_t * a2;
-      ++i_cos;
-      cos_t *= 1.0 / i_cos;
-      cos_sum += cos_t;
+    for (mdp_uint i = 0; i < n; i++)
+      for (mdp_uint j = 0; j < n; j++)
+      {
+        C(i, j) = E(i, j);
+        S(i, j) = E(i, j + n);
+      }
 
-    } while (max(sin_t) > mdp_precision || max(cos_t) > mdp_precision);
-
-    return {sin_sum, cos_sum};
+    return {S, C};
   }
 
   mdp_matrix sin(const mdp_matrix &a)
