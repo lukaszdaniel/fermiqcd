@@ -1121,19 +1121,22 @@ namespace MDP
     if (a.rows() != a.cols())
       error("exp(...)\nmdp_matrix is not squared");
 #endif
-    mdp_matrix tmp;
-    mdp_matrix term;
-    mdp_uint i = 1;
-    term = a;
-    tmp = mdp_identity(a.rows());
-    tmp += a;
-    do
-    {
-      term = (1. / ++i) * term * a;
-      tmp += term;
-    } while (max(term) > mdp_precision);
 
-    return tmp;
+    const mdp_uint n = a.rows();
+
+    mdp_matrix result = mdp_identity(n);
+    mdp_matrix term = a;
+
+    result += term;
+
+    for (mdp_uint i = 2; max(term) > mdp_precision; ++i)
+    {
+      term *= a;
+      term *= 1.0 / i;
+      result += term;
+    }
+
+    return result;
   }
 
   mdp_matrix log(const mdp_matrix &a)
@@ -1142,23 +1145,22 @@ namespace MDP
     if (a.rows() != a.cols())
       error("log(...)\nmdp_matrix is not squared");
 #endif
-    mdp_matrix tmp, b, c, t1;
-    mdp_int i = 1;
-    mdp_uint j = 1;
-    b = mdp_identity(a.cols());
-    b = a - b;
-    c = b;
-    tmp = b;
-    do
-    {
-      c = c * b;
-      i = -i;
-      ++j;
-      t1 = ((1.0 * i) / (j)) * c;
-      tmp += t1;
-    } while (max(t1) > mdp_precision);
 
-    return tmp;
+    const mdp_uint n = a.rows();
+
+    mdp_matrix b = a - mdp_identity(n);
+    mdp_matrix term = b;
+    mdp_matrix result = term;
+
+    for (mdp_uint k = 2; max(term) > mdp_precision; ++k)
+    {
+      term *= b;
+
+      mdp_real coef = ((k % 2) ? 1.0 : -1.0) / k;
+      result += coef * term;
+    }
+
+    return result;
   }
 
   std::pair<mdp_matrix, mdp_matrix> sincos(const mdp_matrix &a)
