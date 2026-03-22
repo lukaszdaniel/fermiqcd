@@ -3,7 +3,7 @@
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
-/// Contains class mdp_matrix
+/// Contains declaration of class mdp_matrix
 ///
 /// Distributed under GPL2 License
 /// Read attached license in file mdp_license.txt

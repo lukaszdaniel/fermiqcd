@@ -73,7 +73,7 @@ namespace MDP
         m_data = std::make_unique<T[]>(size());
         if (size() && !m_data)
           error("mdp_array::allocate()\nOut of memory");
-        // memset(m_data, 0, size() * sizeof(T));
+        std::fill(m_data.get(), m_data.get() + size(), T{});
       }
     }
 
@@ -122,7 +122,7 @@ namespace MDP
     void copyArray(const mdp_array &a)
     {
       // if (size() != a.size())
-      dimension(a.size());
+      dimension(a.dims());
 
       for (mdp_uint i = 0; i < ARRAY_MAX_DIM; i++)
         m_size[i] = a.m_size[i];
@@ -147,6 +147,11 @@ namespace MDP
      * @return Pointer to the begining of this array
      */
     T *address()
+    {
+      return m_data.get();
+    }
+
+    const T *address() const
     {
       return m_data.get();
     }
@@ -185,7 +190,7 @@ namespace MDP
     mdp_uint size(mdp_uint i) const
     {
 #ifdef CHECK_ALL
-      if (i >= size())
+      if (i >= m_dim)
         error("mdp_array::size(...)\nIndex out of bounds");
 #endif
       return m_size[i];
@@ -212,7 +217,7 @@ namespace MDP
                    const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
     {
       calculateDimensions(c0_, c1_, c2_, c3_, c4_);
-      allocate();
+      reallocate();
     }
 
     mdp_array(const mdp_uint c0_ = 1, const mdp_uint c1_ = 1, const mdp_uint c2_ = 1,
@@ -220,24 +225,24 @@ namespace MDP
         : m_shared(false), m_dim(ndims), m_data(nullptr)
     {
       calculateDimensions(c0_, c1_, c2_, c3_, c4_);
-      allocate();
+      reallocate();
     }
 
     mdp_array(const mdp_uint *p)
         : m_shared(false), m_dim(ndims), m_data(nullptr)
     {
       calculateDimensions(p);
-      allocate();
+      reallocate();
     }
 
-    mdp_array(const T *m0, const mdp_uint c0_ = 1, const mdp_uint c1_ = 1,
+    mdp_array(T *m0, const mdp_uint c0_ = 1, const mdp_uint c1_ = 1,
               const mdp_uint c2_ = 1, const mdp_uint c3_ = 1, const mdp_uint c4_ = 1)
         : m_shared(true), m_data(m0), m_dim(ndims)
     {
       calculateDimensions(c0_, c1_, c2_, c3_, c4_);
     }
 
-    mdp_array(const T *m0, const mdp_uint *p)
+    mdp_array(T *m0, const mdp_uint *p)
         : m_shared(true), m_data(m0), m_dim(ndims)
     {
       calculateDimensions(p);
@@ -304,7 +309,7 @@ namespace MDP
   template <class T, class T2, mdp_uint ndims>
   mdp_array<T, ndims> operator*(T2 x, const mdp_array<T, ndims> &a)
   {
-    mdp_array tmp(a.dims());
+    mdp_array<T, ndims> tmp(a.dims());
     for (mdp_uint i = 0; i < a.size(); i++)
       tmp[i] = a[i] * x;
     return tmp;
@@ -326,7 +331,7 @@ namespace MDP
   mdp_array<T, ndims> applytoall(const mdp_array<T, ndims> &a, const mdp_array<T, ndims> &b,
                                  T (*fptr)(T, T, void *), void *x = nullptr)
   {
-    mdp_array tmp(a.dims());
+    mdp_array<T, ndims> tmp(a.dims());
     for (mdp_uint i = 0; i < a.size(); i++)
       tmp[i] = (*fptr)(a[i], b[i], x);
     return tmp;
@@ -340,15 +345,17 @@ namespace MDP
     case 0:
       os << "{}";
       break;
+
     case 1:
       os << "{";
-      for (mdp_uint i = 0; i < a.length(); i++)
+      for (mdp_uint i = 0; i < a.size(); i++)
         if (i == 0)
           os << " " << a[i];
         else
           os << ", " << a[i];
       os << "}";
       break;
+
     case 2:
       for (mdp_uint i = 0; i < a.size(0); i++)
       {
@@ -356,17 +363,131 @@ namespace MDP
           os << "{{";
         else
           os << " {";
+
         for (mdp_uint j = 0; j < a.size(1); j++)
           if (j == 0)
             os << " " << a(i, j);
           else
-            os << ", " << a(i, j) << " ";
+            os << ", " << a(i, j);
+
         if (i == (a.size(0) - 1))
           os << "}}\n";
         else
-          os << "}, \n";
+          os << "},\n";
       }
       break;
+
+    case 3:
+      os << "{\n";
+      for (mdp_uint i = 0; i < a.size(0); i++)
+      {
+        os << " {\n";
+        for (mdp_uint j = 0; j < a.size(1); j++)
+        {
+          os << "  {";
+          for (mdp_uint k = 0; k < a.size(2); k++)
+          {
+            if (k == 0)
+              os << " " << a(i, j, k);
+            else
+              os << ", " << a(i, j, k);
+          }
+          os << " }";
+
+          if (j != a.size(1) - 1)
+            os << ",";
+          os << "\n";
+        }
+        os << " }";
+        if (i != a.size(0) - 1)
+          os << ",";
+        os << "\n";
+      }
+      os << "}\n";
+      break;
+
+    case 4:
+      os << "{\n";
+      for (mdp_uint i = 0; i < a.size(0); i++)
+      {
+        os << " {\n";
+        for (mdp_uint j = 0; j < a.size(1); j++)
+        {
+          os << "  {\n";
+          for (mdp_uint k = 0; k < a.size(2); k++)
+          {
+            os << "   {";
+            for (mdp_uint l = 0; l < a.size(3); l++)
+            {
+              if (l == 0)
+                os << " " << a(i, j, k, l);
+              else
+                os << ", " << a(i, j, k, l);
+            }
+            os << " }";
+
+            if (k != a.size(2) - 1)
+              os << ",";
+            os << "\n";
+          }
+          os << "  }";
+          if (j != a.size(1) - 1)
+            os << ",";
+          os << "\n";
+        }
+        os << " }";
+        if (i != a.size(0) - 1)
+          os << ",";
+        os << "\n";
+      }
+      os << "}\n";
+      break;
+
+    case 5:
+      os << "{\n";
+      for (mdp_uint i = 0; i < a.size(0); i++)
+      {
+        os << " {\n";
+        for (mdp_uint j = 0; j < a.size(1); j++)
+        {
+          os << "  {\n";
+          for (mdp_uint k = 0; k < a.size(2); k++)
+          {
+            os << "   {\n";
+            for (mdp_uint l = 0; l < a.size(3); l++)
+            {
+              os << "    {";
+              for (mdp_uint m = 0; m < a.size(4); m++)
+              {
+                if (m == 0)
+                  os << " " << a(i, j, k, l, m);
+                else
+                  os << ", " << a(i, j, k, l, m);
+              }
+              os << " }";
+
+              if (l != a.size(3) - 1)
+                os << ",";
+              os << "\n";
+            }
+            os << "   }";
+            if (k != a.size(2) - 1)
+              os << ",";
+            os << "\n";
+          }
+          os << "  }";
+          if (j != a.size(1) - 1)
+            os << ",";
+          os << "\n";
+        }
+        os << " }";
+        if (i != a.size(0) - 1)
+          os << ",";
+        os << "\n";
+      }
+      os << "}\n";
+      break;
+
     default:
       os << " Sorry. Option not implemented";
       break;
