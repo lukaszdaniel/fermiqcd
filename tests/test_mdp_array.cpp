@@ -5,16 +5,14 @@
 using namespace MDP;
 
 // --- Funkcje pomocnicze do applytoall ---
-float add_const(float x, void *arg)
+float add_const(float x)
 {
-  float c = *(float *)arg;
-  return x + c;
+  return x + 5;
 }
 
-float add_two(float a, float b, void *arg)
+float add_two(float a, float b)
 {
-  float c = *(float *)arg;
-  return a + b + c;
+  return a + b;
 }
 
 // --- TESTY ---
@@ -65,18 +63,17 @@ int main()
             << f << std::endl;
 
   // 8. applytoall (unarny)
-  float val = 5.0f;
-  mdp_array<float, 3> g = applytoall(a, add_const, &val);
+  mdp_array<float, 3> g = applytoall(a, add_const);
   std::cout << "a + 5 (applytoall):\n"
             << g << std::endl;
 
   // 9. applytoall (binarny)
-  mdp_array<float, 3> h = applytoall(a, b, add_two, &val);
+  mdp_array<float, 3> h = applytoall(a, b, add_two);
   std::cout << "a + b (applytoall binary):\n"
             << h << std::endl;
 
   // 10. Test dims() i size()
-  const mdp_uint *dims = a.dims();
+  const auto &dims = a.dims();
   std::cout << "Dims a: ";
   for (mdp_uint i = 0; i < a.ndim(); i++)
     std::cout << dims[i] << " ";
