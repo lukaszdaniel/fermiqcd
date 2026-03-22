@@ -32,7 +32,7 @@ void test_fermi()
   default_fermi_action = FermiCloverActionFast::mul_Q;
   mul_Q(chi2, psi, U, coeff);
 
-  mdp << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
+  mdp << "\n\nChecking that CloverActionFast and CloverActionSlow agree\n\n";
   check_differences(chi1, chi2);
 }
 
@@ -40,7 +40,9 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
+
   test_fermi();
+
   mdp.close_wormholes();
   return 0;
 }

@@ -6,228 +6,232 @@ using namespace MDP;
 
 void test_gauge()
 {
-   mdp << "START TESTING GAUGE ACTION\n";
-   constexpr Box box = {4, 4, 4, 4};
-   int nc = 3;
-   mdp_lattice lattice(box);
-   gauge_field U(lattice, nc);
-   coefficients coeff;
-   coeff["beta"] = 6.0;
-   set_cold(U);
-   set_hot(U);
-   for (mdp_uint i = 0; i < 10; i++)
-   {
-      WilsonGaugeAction::heatbath(U, coeff);
-      mdp << "plaquette = " << average_plaquette(U) << "\n";
-   }
-   GaugeFixing::fix(U);
-   mdp << "plaquette after gauge fixing = " << average_plaquette(U) << "\n";
-   mdp << "END TESTING GAUGE ACTION\n";
+  mdp << "\n\nSTART TESTING GAUGE ACTION\n";
+  constexpr Box box = {4, 4, 4, 4};
+  int nc = 3;
+  mdp_lattice lattice(box);
+  gauge_field U(lattice, nc);
+  coefficients coeff;
+  coeff["beta"] = 6.0;
+  set_cold(U);
+  set_hot(U);
+  for (mdp_uint i = 0; i < 10; i++)
+  {
+    WilsonGaugeAction::heatbath(U, coeff);
+    mdp << "plaquette = " << average_plaquette(U) << "\n";
+  }
+  GaugeFixing::fix(U);
+  mdp << "plaquette after gauge fixing = " << average_plaquette(U) << "\n";
+  mdp << "END TESTING GAUGE ACTION\n";
 }
 
 void test_gauge_improved()
 {
-   mdp << "START TESTING IMPROVED GAUGE ACTION\n";
-   constexpr Box box = {4, 4, 4, 4};
-   int nc = 3;
-   mdp_lattice lattice(box, default_partitioning<0>,
-                       torus_topology, 0, 3);
-   gauge_field U(lattice, nc);
-   coefficients coeff;
-   coeff["beta"] = 6.0;
-   set_hot(U);
-   for (mdp_uint i = 0; i < 10; i++)
-   {
-      ImprovedGaugeAction::heatbath(U, coeff, 1, "MILC");
-      mdp << "plaquette = " << average_plaquette(U) << "\n";
-   }
-   mdp << "END TESTING IMPROVED GAUGE ACTION\n";
+  mdp << "\n\nSTART TESTING IMPROVED GAUGE ACTION\n";
+  constexpr Box box = {4, 4, 4, 4};
+  int nc = 3;
+  mdp_lattice lattice(box, default_partitioning<0>,
+                      torus_topology, 0, 3);
+  gauge_field U(lattice, nc);
+  coefficients coeff;
+  coeff["beta"] = 6.0;
+  set_hot(U);
+  for (mdp_uint i = 0; i < 10; i++)
+  {
+    ImprovedGaugeAction::heatbath(U, coeff, 1, "MILC");
+    mdp << "plaquette = " << average_plaquette(U) << "\n";
+  }
+  mdp << "END TESTING IMPROVED GAUGE ACTION\n";
 }
 
 void test_fermi()
 {
-   mdp << "START TESTING CLOVER ACTIONS\n";
+  constexpr Box box = {4, 4, 4, 4};
+  int nc = 3;
 
-   constexpr Box box = {4, 4, 4, 4};
-   int nc = 3;
-   mdp_lattice lattice(box);
-   gauge_field U(lattice, nc);
-   fermi_field psi(lattice, nc);
-   fermi_field chi1(lattice, nc);
-   fermi_field chi2(lattice, nc);
-   coefficients coeff;
+  mdp << "\n\nSTART TESTING CLOVER ACTIONS\n";
 
-   coeff["kappa_s"] = 0.1;
-   coeff["kappa_t"] = 0.1;
-   coeff["c_{sw}"] = 1.00;
+  mdp_lattice lattice(box);
+  gauge_field U(lattice, nc);
+  fermi_field psi(lattice, nc);
+  fermi_field chi1(lattice, nc);
+  fermi_field chi2(lattice, nc);
+  coefficients coeff;
 
-   set_hot(U);
-   compute_em_field(U);
-   set_random(psi);
+  coeff["kappa_s"] = 0.1;
+  coeff["kappa_t"] = 0.1;
+  coeff["c_{sw}"] = 1.00;
 
-   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-   default_fermi_action = FermiCloverActionSlow::mul_Q;
-   mul_invQ(chi1, psi, U, coeff);
+  set_hot(U);
+  compute_em_field(U);
+  set_random(psi);
 
-   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
-   default_fermi_action = FermiCloverActionFast::mul_Q;
-   mul_invQ(chi2, psi, U, coeff);
+  default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
+  default_fermi_action = FermiCloverActionSlow::mul_Q;
+  mul_invQ(chi1, psi, U, coeff);
 
-   mdp << "\n\nCheching that CloverActionFast and CloverActionSlow agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
+  default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
+  default_fermi_action = FermiCloverActionFast::mul_Q;
+  mul_invQ(chi2, psi, U, coeff);
 
-   mdp << "\n\nCheching that inversion was correct\n\n";
-   mul_Q(chi1, chi2, U, coeff);
-   if (check_differences(psi, chi1) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
+  mdp << "\n\nChecking that CloverActionFast and CloverActionSlow agree\n\n";
+  if (check_differences(chi1, chi2) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
 
-   default_fermi_inverter = BiConjugateGradientStabilizedInverter<fermi_field, gauge_field>;
-   default_fermi_action = FermiCloverActionSlow::mul_Q;
-   mul_invQ(chi1, psi, U, coeff);
+  mdp << "\n\nChecking that inversion was correct\n\n";
+  mul_Q(chi1, chi2, U, coeff);
+  if (check_differences(psi, chi1) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
 
-   mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
+  default_fermi_inverter = BiConjugateGradientStabilizedInverter<fermi_field, gauge_field>;
+  default_fermi_action = FermiCloverActionSlow::mul_Q;
+  mul_invQ(chi1, psi, U, coeff);
 
-   mdp << "END TESTING CLOVER ACTIONS\n";
+  mdp << "\n\nChecking that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
+  if (check_differences(chi1, chi2) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
+
+  mdp << "END TESTING CLOVER ACTIONS\n";
 }
 
 void test_staggered()
 {
-   mdp << "START TESTING STAGGERED ACTIONS\n";
+  constexpr Box box = {4, 4, 4, 4};
+  int nc = 3;
 
-   constexpr Box box = {4, 4, 4, 4};
-   int nc = 3;
-   mdp_lattice lattice(box, default_partitioning<0>,
-                       torus_topology, 0, 3);
-   gauge_field U(lattice, nc);
-   gauge_field V(lattice, nc);
-   staggered_field psi(lattice, nc);
-   staggered_field chi1(lattice, nc);
-   staggered_field chi2(lattice, nc);
-   coefficients coeff;
-   coeff["mass"] = 1.0;
+  mdp << "\n\nSTART TESTING STAGGERED ACTIONS\n";
 
-   set_hot(U);
-   set_random(psi);
+  mdp_lattice lattice(box, default_partitioning<0>,
+                      torus_topology, 0, 3);
+  gauge_field U(lattice, nc);
+  gauge_field V(lattice, nc);
+  staggered_field psi(lattice, nc);
+  staggered_field chi1(lattice, nc);
+  staggered_field chi2(lattice, nc);
+  coefficients coeff;
+  coeff["mass"] = 1.0;
 
-   mdp << "ATTENTION: need to adjust asqtad coefficnets\n";
+  set_hot(U);
+  set_random(psi);
 
-   lepage_improved_links(V, U, lepage_coefficients(0.4, "Full"));
+  mdp << "ATTENTION: need to adjust asqtad coefficents\n";
 
-   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
-   default_staggered_action = StaggeredAsqtadActionSlow::mul_Q;
-   mul_invQ(chi2, psi, V, coeff);
+  lepage_improved_links(V, U, lepage_coefficients(0.4, "Full"));
 
-   default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
-   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
-   mul_invQ(chi1, psi, V, coeff);
+  default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
+  default_staggered_action = StaggeredAsqtadActionSlow::mul_Q;
+  mul_invQ(chi2, psi, V, coeff);
 
-   mdp << "\n\nCheching that AsqtadActionSlow and AsqtadActionFast agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
+  default_staggered_inverter = BiConjugateGradientStabilizedInverter<staggered_field, gauge_field>;
+  default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
+  mul_invQ(chi1, psi, V, coeff);
 
-   mdp << "\n\nCheching that inversion(s) were correct\n\n";
-   mul_Q(chi1, chi2, V, coeff);
-   if (check_differences(psi, chi1) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
+  mdp << "\n\nChecking that AsqtadActionSlow and AsqtadActionFast agree\n\n";
+  if (check_differences(chi1, chi2) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
 
-   default_staggered_inverter = StaggeredBiCGUML::inverter;
-   default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
-   mul_invQ(chi1, psi, V, coeff);
+  mdp << "\n\nChecking that inversion(s) were correct\n\n";
+  mul_Q(chi1, chi2, V, coeff);
+  if (check_differences(psi, chi1) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
 
-   mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
-   mdp << "END TESTING STAGGERED ACTIONS\n";
+  default_staggered_inverter = StaggeredBiCGUML::inverter;
+  default_staggered_action = StaggeredAsqtadActionFast::mul_Q;
+  mul_invQ(chi1, psi, V, coeff);
+
+  mdp << "\n\nChecking that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
+  if (check_differences(chi1, chi2) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
+  mdp << "END TESTING STAGGERED ACTIONS\n";
 }
 
 void test_dwfermi()
 {
-   mdp << "START TESTING DOMAIN WALL ACTIONS\n";
+  constexpr Box box = {4, 4, 4, 4};
+  int nc = 3;
+  int L5 = 5;
 
-   constexpr Box box = {4, 4, 4, 4};
-   int nc = 3;
-   int L5 = 5;
-   mdp_lattice lattice(box);
-   gauge_field U(lattice, nc);
-   dwfermi_field psi(lattice, L5, nc);
-   dwfermi_field chi1(lattice, L5, nc);
-   dwfermi_field chi2(lattice, L5, nc);
-   coefficients coeff;
-   coeff["m_f"] = 1.0;
-   coeff["m_5"] = 1.0;
+  mdp << "\n\nSTART TESTING DOMAIN WALL ACTIONS\n";
 
-   set_hot(U);
-   set_random(psi);
+  mdp_lattice lattice(box);
+  gauge_field U(lattice, nc);
+  dwfermi_field psi(lattice, L5, nc);
+  dwfermi_field chi1(lattice, L5, nc);
+  dwfermi_field chi2(lattice, L5, nc);
+  coefficients coeff;
+  coeff["m_f"] = 1.0;
+  coeff["m_5"] = 1.0;
 
-   default_dwfermi_action = DWFermiActionSlow::mul_Q;
-   mul_Q(chi1, psi, U, coeff);
+  set_hot(U);
+  set_random(psi);
 
-   default_dwfermi_action = DWFermiActionFast::mul_Q;
-   mul_Q(chi2, psi, U, coeff);
+  default_dwfermi_action = DWFermiActionSlow::mul_Q;
+  mul_Q(chi1, psi, U, coeff);
 
-   mdp << "\n\nCheching that DWFermiSlow and DWFermiFast agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
+  default_dwfermi_action = DWFermiActionFast::mul_Q;
+  mul_Q(chi2, psi, U, coeff);
 
-   default_dwfermi_inverter = MinimumResidueInverter<dwfermi_field, gauge_field>;
-   default_dwfermi_action = DWFermiActionFast::mul_Q;
-   mul_invQ(chi1, psi, U, coeff);
+  mdp << "\n\nChecking that DWFermiSlow and DWFermiFast agree\n\n";
+  if (check_differences(chi1, chi2) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
 
-   default_dwfermi_inverter = BiConjugateGradientStabilizedInverter<dwfermi_field, gauge_field>;
-   default_dwfermi_action = DWFermiActionFast::mul_Q;
-   mul_invQ(chi2, psi, U, coeff);
+  default_dwfermi_inverter = MinimumResidueInverter<dwfermi_field, gauge_field>;
+  default_dwfermi_action = DWFermiActionFast::mul_Q;
+  mul_invQ(chi1, psi, U, coeff);
 
-   mdp << "\n\nCheching that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
-   if (check_differences(chi1, chi2) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
+  default_dwfermi_inverter = BiConjugateGradientStabilizedInverter<dwfermi_field, gauge_field>;
+  default_dwfermi_action = DWFermiActionFast::mul_Q;
+  mul_invQ(chi2, psi, U, coeff);
 
-   mul_Q(chi1, chi2, U, coeff);
-   mdp << "\n\nCheching that inversion was correct\n\n";
-   if (check_differences(psi, chi1) > mdp_precision)
-   {
-      mdp << "FAILURE\n";
-      exit(1);
-   }
-   mdp << "END TESTING DOMAIN WALL ACTIONS\n";
+  mdp << "\n\nChecking that MinimumResidue and BiConjugateGradientStabilized agree\n\n";
+  if (check_differences(chi1, chi2) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
+
+  mul_Q(chi1, chi2, U, coeff);
+  mdp << "\n\nChecking that inversion was correct\n\n";
+  if (check_differences(psi, chi1) > mdp_precision)
+  {
+    mdp << "FAILURE\n";
+    exit(1);
+  }
+  mdp << "END TESTING DOMAIN WALL ACTIONS\n";
 }
 
 int main(int argc, char **argv)
 {
-   mdp.open_wormholes(argc, argv);
-   define_base_matrices("FERMILAB");
+  mdp.open_wormholes(argc, argv);
+  define_base_matrices("FERMILAB");
 
-   test_gauge();
-   test_fermi();
-   test_staggered();
-   test_dwfermi();
+  test_gauge();
+  test_gauge_improved();
+  test_fermi();
+  test_staggered();
+  test_dwfermi();
 
-   mdp.close_wormholes();
-   return 0;
+  mdp.close_wormholes();
+  return 0;
 }

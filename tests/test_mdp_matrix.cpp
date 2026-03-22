@@ -149,6 +149,7 @@ void test_size(const mdp_matrix a)
   std::cout << "B(0, 0): " << x << "\n";
   B(0, 0) = mdp_complex(0.629574, 0.162009);
   std::cout << "B(0, 0) after assignment of mdp_complex(0.629574, 0.162009): " << B(0, 0) << "\n";
+  B(0, 0) = x;
 
   print_test("operator[]");
   auto y = A[0];

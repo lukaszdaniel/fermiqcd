@@ -347,7 +347,7 @@ namespace MDP
     return proj;
   }
 
-  /// Given a field U compute the chromo-eletro-magntic field U.em
+  /// Given a field U compute the chromo-electro-magnetic field U.em
   void compute_em_field(gauge_field &U)
   {
     int nc = U.nc();
