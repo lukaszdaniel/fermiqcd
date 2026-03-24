@@ -108,28 +108,28 @@ namespace MDP
   class mdp_lattice
   {
   private:
-    mdp_uint m_ndir;                                /* number of directions       */
-    int m_next_next;                                /* 1, 2 or 3 is the thickness of the boundary */
-    std::vector<mdp_int> m_nx;                      /* box containing the lattice */
-    mdp_int m_local_volume;                         /* local volume               */
-    mdp_int m_global_volume;                        /* global volume              */
-    mdp_int m_internal_volume;                      /* internal volume            */
-    std::unique_ptr<mdp_int[]> m_global_from_local; /* map local to global        */
-    std::unique_ptr<mdp_int[]> m_local_from_global; /* map global to local        */
+    mdp_uint m_ndir;                          /* number of directions       */
+    int m_next_next;                          /* 1, 2 or 3 is the thickness of the boundary */
+    std::vector<mdp_int> m_nx;                /* box containing the lattice */
+    mdp_int m_local_volume;                   /* local volume               */
+    mdp_int m_global_volume;                  /* global volume              */
+    mdp_int m_internal_volume;                /* internal volume            */
+    std::vector<mdp_int> m_global_from_local; /* map local to global        */
+    std::vector<mdp_int> m_local_from_global; /* map global to local        */
 #ifdef MDP_NO_LG
     mutable std::fstream m_lg_file; /* temporary file to store local_from_global map if not enough memory */
 #endif
-    std::vector<mdp_int> m_up;       /* move up in local index     */
-    std::vector<mdp_int> m_dw;       /* move dw in local index     */
-    std::vector<mdp_int> m_co;       /* coordinate x in local idx  */
-    std::unique_ptr<mdp_int[]> m_wh; /* in which process? is idx   */
-    std::unique_ptr<int[]> m_parity; /* parity of local mdp_site idx   */
+    std::vector<mdp_int> m_up; /* move up in local index     */
+    std::vector<mdp_int> m_dw; /* move dw in local index     */
+    std::vector<mdp_int> m_co; /* coordinate x in local idx  */
+    std::vector<mdp_int> m_wh; /* in which process? is idx   */
+    std::vector<int> m_parity; /* parity of local mdp_site idx   */
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_start;
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_stop;
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_len_to_send;
     std::array<std::vector<mdp_int>, _NprocMax_> m_to_send;
     bool m_local_random_generator;
-    std::unique_ptr<mdp_prng[]> m_random_obj;
+    mutable std::vector<mdp_prng> m_random_obj;
     mdp_int m_random_seed;
     using where_fn = int (*)(const int x[], const int ndim, const int nx[]);
     using neighbour_fn = void (*)(const int mu,
@@ -358,11 +358,11 @@ namespace MDP
       // /////////////////////////////////////////////////////////////////
 
       // local to global mapping table
-      m_global_from_local = std::make_unique<mdp_int[]>(m_local_volume);
+      m_global_from_local.resize(m_local_volume);
 
 #ifndef MDP_NO_LG
-      m_local_from_global = std::make_unique<mdp_int[]>(m_global_volume);
-      std::fill_n(m_local_from_global.get(), m_global_volume, NOWHERE);
+      m_local_from_global.resize(m_global_volume);
+      std::fill_n(m_local_from_global.data(), m_global_volume, NOWHERE);
 #else
       std::string lg_filename(6, '\0');
       std::generate(lg_filename.begin(), lg_filename.end(),
@@ -386,8 +386,8 @@ namespace MDP
       }
 #endif
 
-      m_wh = std::make_unique<mdp_int[]>(m_local_volume);
-      m_parity = std::make_unique<int[]>(m_local_volume);
+      m_wh.resize(m_local_volume);
+      m_parity.resize(m_local_volume);
 
       for (int process = 0; process < Nproc; ++process)
       {
@@ -636,7 +636,7 @@ namespace MDP
       if (m_local_random_generator)
       {
         mdp << "Using a local random generator\n";
-        m_random_obj = std::make_unique<mdp_prng[]>(m_internal_volume);
+        m_random_obj.resize(m_internal_volume);
         for (mdp_int idx = 0; idx < m_internal_volume; idx++)
           m_random_obj[idx].initialize(m_global_from_local[idx + m_start[ME][0]] + m_random_seed);
       }
@@ -802,7 +802,7 @@ namespace MDP
     }
 
     // base constructor
-    mdp_lattice() : m_local_volume(0), m_random_obj(nullptr)
+    mdp_lattice() : m_local_volume(0), m_random_obj()
     {
     }
 
