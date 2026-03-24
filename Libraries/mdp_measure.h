@@ -39,7 +39,7 @@ namespace MDP
     int m_num;
 
   public:
-    mdp_measure(float mean_ = 0, float error_ = 0, int num_ = 1) : m_mean(mean_), m_error(error_), m_num(num_)
+    mdp_measure(float mean_ = 0, float error_ = 0, int num_ = 0) : m_mean(mean_), m_error(error_), m_num(num_)
     {
     }
 

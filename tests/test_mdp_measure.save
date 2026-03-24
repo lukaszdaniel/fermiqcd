@@ -1,0 +1,18 @@
+Running mdp_measure tests...
+Testing basic
+Testing accumulation
+Testing add/sub
+Testing mul/div
+Testing scalar
+Testing functions
+Testing log
+Testing sampling
+Testing edge cases
+
+All tests passed!
+
+Other test output:
+2.35686 +/- 2.29413
+10
+0.341223 +/- 24.9235
+1
