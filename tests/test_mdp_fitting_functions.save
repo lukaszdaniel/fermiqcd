@@ -1,0 +1,5 @@
+Running tests...
+- linear_fit passed
+- golden_rule passed
+- BLM passed
+All tests passed!

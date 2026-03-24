@@ -18,24 +18,28 @@
 namespace MDP
 {
   /** @brief Fits y[i], x[i] for i0<=i<in with y=a[0]*x+a[1]
+   *  Weighted least squares linear regression
    */
   void linear_fit(float *x, mdp_measure *y, mdp_int i0, mdp_int in, mdp_measure *a)
   {
     mdp_int i;
-    double S = 0, Sx = 0, Sy = 0, Sxx = 0, Sxy = 0, det;
-    double dy2;
+    double S = 0, Sx = 0, Sy = 0, Sxx = 0, Sxy = 0;
+
     for (i = i0; i < in; i++)
     {
-      dy2 = std::pow(y[i].getmerr(), 2.0);
-      if (dy2 <= 0)
+      double dy2 = std::pow(y[i].getmerr(), 2.0);
+      if (dy2 <= 0.0)
         dy2 = std::pow(y[i].getmean() * 1e-5, 2.0);
+
       S = S + 1.0 / dy2;
       Sx = Sx + 1.0 / dy2 * x[i];
       Sy = Sy + y[i].getmean() / dy2;
       Sxx = Sxx + x[i] * x[i] / dy2;
       Sxy = Sxy + y[i].getmean() / dy2 * x[i];
     }
-    det = (S * Sxx - Sx * Sx);
+
+    const double det = S * Sxx - Sx * Sx;
+
     // this is m
     a[0].setmean((S * Sxy - Sx * Sy) / det);
     a[0].setmerror(std::sqrt(S / det));
@@ -47,7 +51,7 @@ namespace MDP
   /** @brief Fitting function
    *  finds x=xmin that minimizes
    *  (*fp)(&x,1,dummy)
-   *   must be:
+   *   requires that:
    *  (*fp)(&ax) > (*fp)(&bx) && (*fp)(&cx) > (*fp)(&bx)
    */
   float golden_rule(float (*fp)(float *, mdp_int, void *), float &xmin,
@@ -55,14 +59,15 @@ namespace MDP
                     float tol = 0.001, mdp_int niter = 100, void *dummy = nullptr)
   {
     static constexpr float CGOLD = 0.3819660;
-    mdp_int iter;
-    float a, b, d = 0, etemp, fu, fv, fw, fx, p, q, r, tol1, tol2, u, v, w, x, xm;
+
+    float a, b, d = 0, etemp, fv, fw, fx, p, q, r, tol1, tol2, u, v, w, x, xm;
     float e = 0.0;
     a = (ax < cx ? ax : cx);
     b = (ax > cx ? ax : cx);
     x = w = v = bx;
     fw = fv = fx = (*fp)(&x, 1, dummy);
-    for (iter = 0; iter < niter; iter++)
+
+    for (mdp_int iter = 0; iter < niter; iter++)
     {
       xm = 0.5 * (a + b);
       tol1 = tol * fabs(x) + PRECISION;
@@ -101,11 +106,14 @@ namespace MDP
       {
         d = CGOLD * (e = (x >= xm ? (a - x) : (b - x)));
       }
+
       if (fabs(d) >= tol1)
         u = x + d;
       else
         u = x + (d > 0 ? fabs(tol1) : -fabs(tol1));
-      fu = (*fp)(&u, 1, dummy);
+
+      float fu = fp(&u, 1, dummy);
+
       if (fu <= fx)
       {
         if (u > x)
@@ -139,7 +147,7 @@ namespace MDP
         }
       }
     }
-    printf("Too many iterations in golden_rule\n");
+
     xmin = x;
     return fx;
   }
@@ -161,7 +169,6 @@ namespace MDP
    * y[i].num, i.e. the numbers of measures used to determine y[i].mean
    * This is used as a weight factor!
    */
-
   float BLMaux(float *x, mdp_measure *y,
                mdp_int i_min, mdp_int i_max,
                float *a, float *a0, mdp_matrix &sigma, int ma,
@@ -315,7 +322,6 @@ namespace MDP
         lambda *= scale;
         chi_square = old_chi_square;
       }
-      //    printf("%f %f %f\n", a[0], a[1], lambda);
     }
 
     return chi_square;
