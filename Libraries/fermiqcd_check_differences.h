@@ -19,19 +19,20 @@ namespace MDP
 {
   // compares two fields and returns the max distance between
   // equivalent components.
-  float check_differences(const mdp_complex_field &chi,
-                          const mdp_complex_field &psi)
+  mdp_real check_differences(const mdp_complex_field &chi,
+                             const mdp_complex_field &psi)
   {
     begin_function("check_differences");
+    if (&chi.lattice() != &psi.lattice())
+      error("check_differences()\nFields defined on different lattices");
 
     mdp_int i_min = psi.physical_local_start();
     mdp_int i_max = psi.physical_local_stop();
-    float max = 0, tmp;
-    if (&chi.lattice() != &psi.lattice())
-      error("check_differences()\nFields defined on different lattices");
+    mdp_real max = 0.0;
+
     for (mdp_int i = i_min; i < i_max; i++)
     {
-      tmp = abs(chi[i] - psi[i]);
+      mdp_real tmp = std::abs(chi[i] - psi[i]);
       if (tmp > max)
         max = tmp;
     }
