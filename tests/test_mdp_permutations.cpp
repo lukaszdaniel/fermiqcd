@@ -12,27 +12,6 @@ void test_factorial()
   assert(mdp_permutations(5) == 120);
 }
 
-void test_permutation_sort()
-{
-  {
-    int arr[] = {0, 2, 1};
-    mdp_permutation_sort(arr, 1);
-    assert(arr[0] == 0 && arr[1] == 2 && arr[2] == 1);
-  }
-
-  {
-    int arr[] = {0, 3, 1};
-    mdp_permutation_sort(arr, 2);
-    assert(arr[0] == 0 && arr[1] == 1 && arr[2] == 3);
-  }
-
-  {
-    int arr[] = {2, 1};
-    mdp_permutation_sort(arr, 1);
-    assert(arr[0] == 1 && arr[1] == 2);
-  }
-}
-
 void test_permutation_basic()
 {
   // Permutations for n = 3:
@@ -98,7 +77,6 @@ void test_permutation_first()
 int main()
 {
   test_factorial();
-  test_permutation_sort();
   test_permutation_basic();
   test_permutation_edges();
   test_permutation_first();

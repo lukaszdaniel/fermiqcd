@@ -21,26 +21,16 @@
 namespace MDP
 {
   // this is just n!
-  mdp_int mdp_permutations(int n)
+  constexpr mdp_int mdp_permutations(int n)
   {
     if (n < 0)
       return 0;
 
     mdp_int a = 1;
-    for (; n; n--)
+    for (; n > 1; --n)
       a *= n;
-    return a;
-  }
 
-  // this sorts the first k elements of map[] assuming
-  // the first k-1 are already sorted
-  void mdp_permutation_sort(int map[], int k)
-  {
-    for (int i = k - 1; i >= 0; i--)
-      if (map[i] > map[i + 1])
-      {
-        std::swap(map[i], map[i + 1]);
-      }
+    return a;
   }
 
   /// Returns i-th element of the k-th permutations of n numbers
@@ -52,21 +42,37 @@ namespace MDP
   /// Returns -1 on error when (i >= n || k >= n_permutations(n))
   int mdp_permutation(int n, int k, int i)
   {
-    std::unique_ptr<int[]> map = std::make_unique<int[]>(i + 1);
-
     if (i >= n || k >= mdp_permutations(n))
       return -1;
 
-    for (int j = 0; j <= i; j++)
+    std::vector<mdp_int> fact(n + 1, 1);
+    for (int j = 1; j <= n; ++j)
+      fact[j] = fact[j - 1] * j;
+
+    std::vector<bool> used(n, false);
+
+    for (int pos = 0; pos < n; ++pos)
     {
-      map[j] = (k % mdp_permutations(n - j)) / mdp_permutations(n - 1 - j);
-      mdp_permutation_sort(map.get(), j - 1);
-      for (int l = 0; l < j; l++)
-        if (map[l] <= map[j])
-          map[j]++;
-      if (i == j)
+      mdp_int f = fact[n - 1 - pos];
+      int idx = k / f;
+      k %= f;
+
+      // find idx-th unused element
+      int count = -1;
+      for (int val = 0; val < n; ++val)
       {
-        return map[j];
+        if (!used[val])
+          ++count;
+
+        if (count == idx)
+        {
+          used[val] = true;
+
+          if (pos == i)
+            return val;
+
+          break;
+        }
       }
     }
 
