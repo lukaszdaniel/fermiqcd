@@ -23,6 +23,9 @@ namespace MDP
   // this is just n!
   mdp_int mdp_permutations(int n)
   {
+    if (n < 0)
+      return 0;
+
     mdp_int a = 1;
     for (; n; n--)
       a *= n;
@@ -30,7 +33,7 @@ namespace MDP
   }
 
   // this sorts the first k elements of map[] assuming
-  // the fisrt k-1 are already sorted
+  // the first k-1 are already sorted
   void mdp_permutation_sort(int map[], int k)
   {
     for (int i = k - 1; i >= 0; i--)
@@ -40,18 +43,18 @@ namespace MDP
       }
   }
 
-  /// Returns j-th element of the k-th permutations of n numbers
+  /// Returns i-th element of the k-th permutations of n numbers
   /// For example if n=4
   /// [0123] k=0
   /// [0132] k=1
   /// ...
   /// [3210] k=23
-  /// Returns -1 on error when (i>n || k>n_permutations(n))
+  /// Returns -1 on error when (i >= n || k >= n_permutations(n))
   int mdp_permutation(int n, int k, int i)
   {
     std::unique_ptr<int[]> map = std::make_unique<int[]>(i + 1);
 
-    if (i > n || k > mdp_permutations(n))
+    if (i >= n || k >= mdp_permutations(n))
       return -1;
 
     for (int j = 0; j <= i; j++)
@@ -66,6 +69,7 @@ namespace MDP
         return map[j];
       }
     }
+
     return -1;
   }
 } // namespace MDP
