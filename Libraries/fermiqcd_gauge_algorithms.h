@@ -714,7 +714,7 @@ namespace MDP
   ///   gauge_field U(lattice,nc);
   ///   Path d = {{+1,mu},{+1,nu},{-1,mu},{-1,nu}};
   ///   forallsites(x)
-  ///      cout << "plaquette(x)=" << average_path(U,x,d) << endl;
+  ///      std::cout << "plaquette(x)=" << average_path(U,x,d) << std::endl;
   /// @endverbatim
   mdp_matrix build_path(const gauge_field &U, mdp_site x, const Path &d)
   {

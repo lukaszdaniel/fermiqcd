@@ -27,11 +27,11 @@ namespace MDP
   /// Example:
   /// @verbatim
   ///    // print a uniform number in (0,1)
-  ///    cout << mdp_random.plain() << endl;
+  ///    std::cout << mdp_random.plain() << std::endl;
   ///    // print a gaussian number
-  ///    cout << mdp_random.gaussian() << endl;
+  ///    std::cout << mdp_random.gaussian() << std::endl;
   ///    // print a random SU(10) matrix
-  ///    cout << mdp_random.SU(10) << endl;
+  ///    std::cout << mdp_random.SU(10) << std::endl;
   /// @endverbatim
   class mdp_prng
   {

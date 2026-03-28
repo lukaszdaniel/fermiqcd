@@ -44,16 +44,16 @@ namespace MDP
 
     int ordered_index(int mu, int nu) const
     {
-      // ////////////////////////
-      // this map mu, nu -> k  //
-      //           0   1    0  //
-      //           0   2    1  //
-      //           0   3    2  //
-      //           1   2    3  //
-      //           1   3    4  //
-      //           2   3    5  //
-      // It works for any ndim //
-      // ////////////////////////
+      // /////////////////////////
+      // this maps mu, nu -> k  //
+      //            0   1    0  //
+      //            0   2    1  //
+      //            0   3    2  //
+      //            1   2    3  //
+      //            1   3    4  //
+      //            2   3    5  //
+      // It works for any ndim  //
+      // /////////////////////////
       if (mu < nu)
         return nu + (mu * (2 * ndim() - mu - 3)) / 2 - 1;
 

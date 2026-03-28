@@ -29,13 +29,13 @@ namespace MDP
   ///       jb(k,1)=mdp_random.plain();
   ///    }
   ///    jb.plain(0);
-  ///    cout << "mean of jb(k,0) =" << mean() << endl;
-  ///    cout << "jackknife of mean jb(k,0) =" << j_err() << endl;
-  ///    cout << "boostrap of mean jb(k,0) =" << b_err() << endl;
+  ///    std::cout << "mean of jb(k,0) =" << mean() << std::endl;
+  ///    std::cout << "jackknife of mean jb(k,0) =" << j_err() << std::endl;
+  ///    std::cout << "boostrap of mean jb(k,0) =" << b_err() << std::endl;
   ///    jb.plain(1);
-  ///    cout << "mean of jb(k,1) =" << mean() << endl;
-  ///    cout << "jackknife of mean jb(k,1) =" << j_err() << endl;
-  ///    cout << "boostrap of mean jb(k,1) =" << b_err() << endl;
+  ///    std::cout << "mean of jb(k,1) =" << mean() << std::endl;
+  ///    std::cout << "jackknife of mean jb(k,1) =" << j_err() << std::endl;
+  ///    std::cout << "boostrap of mean jb(k,1) =" << b_err() << std::endl;
   /// @endverbatim
   class mdp_jackboot
   {

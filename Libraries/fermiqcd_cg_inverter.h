@@ -125,7 +125,7 @@ namespace MDP
         //     << "\t\t<relative_residue>" << rresidue << "</relative_residue>\n"
         //     << "\t\t<time>" << mdp.time()-time << "</time>\n\n";
 
-        // debug: cout << residue << endl;
+        // debug: std::cout << residue << std::endl;
 
         // if ((step>10) && (rresidue==old_rresidue))
         //     error("not converging");

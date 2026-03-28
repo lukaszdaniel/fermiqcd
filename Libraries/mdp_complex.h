@@ -32,8 +32,8 @@ namespace MDP
   /// Example:
   /// @verbatim
   ///    mdp_complex x=3+5*I;
-  ///    cout << x.real() << "," << x.imag() << endl;
-  ///    cout << sin(x) << endl;
+  ///    std::cout << x.real() << "," << x.imag() << std::endl;
+  ///    std::cout << sin(x) << std::endl;
   /// @endverbatim
   class mdp_complex
   {

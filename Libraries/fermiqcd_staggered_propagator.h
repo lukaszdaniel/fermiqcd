@@ -42,7 +42,7 @@ namespace MDP
   /// for(int i=0; i<(int) pow(2,lattice.ndim); i++) {
   ///    x=binary2versor(a);
   ///    cout << "source at:" << x << "\nprop:\n";
-  ///    forallsites(y) cout << S(x,a) << endl;
+  ///    forallsites(y) std::cout << S(x,a) << std::endl;
   /// }
   /// @endverbatim
   class staggered_propagator : public mdp_complex_field

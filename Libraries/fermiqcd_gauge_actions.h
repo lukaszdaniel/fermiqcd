@@ -23,22 +23,6 @@
 
 namespace MDP
 {
-#if 0
-  void mul_OUU(mdp_complex &A, mdp_complex &B, mdp_complex &C,
-               int nc = 3, bool init = false)
-  {
-    nc = B.rows();
-    for (int i = 0; i < nc; i++)
-      for (int j = 0; j < nc; j++)
-      {
-        if (init)
-          (&A)[i * nc + j] = 0.0;
-        for (int k = 0; k < nc; k++)
-          (&A)[i * nc + j] += (&B)[i * nc + k] * (&C)[k * nc + j];
-      }
-  }
-#endif
-
   /// @brief (unused)
   class gauge_stats
   {

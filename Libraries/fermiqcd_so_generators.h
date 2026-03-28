@@ -23,7 +23,7 @@ namespace MDP
   // int main() {
   //  SO_Generators g(4);
   //  for(int a=0; a<g.ngenerators; a++)
-  //    cout << "g=" << g.lambda(a) << endl;
+  //    std::cout << "g=" << g.lambda(a) << std::endl;
   //  return 0;
   // }
   class SO_Generators
