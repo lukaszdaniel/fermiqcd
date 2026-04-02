@@ -30,17 +30,10 @@ namespace MDP
     int m_ui;
     int m_uj;
     std::array<float, N> m_u;
-    bool m_has_gauss = false;
-    float m_gauss_cache = 0;
 
   public:
     mdp_prng(mdp_int k = 0) : m_c(362436.0f / 16777216.0f), m_ui(N - 1), m_uj(32)
     {
-      // c = 362436.0f / 16777216.0f;
-
-      // ui = 97; /*  There is a bug in the original Fortran version */
-      // uj = 33; /*  of UNI -- i and j should be SAVEd in UNI()     */
-
       if (k == 0)
         initialize(ME);
     }
