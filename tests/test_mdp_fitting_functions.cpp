@@ -65,6 +65,10 @@ void test_blm()
 
   assert_near(a[0], 2.0, 1e-1, "BLM slope");
   assert_near(a[1], 1.0, 1e-1, "BLM intercept");
+  assert_near(cov(0, 0).real(), 0.014995, 1e-4, "cov(0,0)");
+  assert_near(cov(0, 1).real(), -0.0249941, 1e-4, "cov(0,1)");
+  assert_near(cov(1, 0).real(), -0.0249941, 1e-4, "cov(1,0)");
+  assert_near(cov(1, 1).real(), 0.0449946, 1e-4, "cov(1,1)");
 }
 
 int main()

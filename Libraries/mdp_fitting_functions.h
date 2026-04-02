@@ -60,46 +60,57 @@ namespace MDP
   {
     static constexpr float CGOLD = 0.3819660;
 
-    float a, b, d = 0, etemp, fv, fw, fx, p, q, r, tol1, tol2, u, v, w, x, xm;
+    float a = (ax < cx ? ax : cx);
+    float b = (ax > cx ? ax : cx);
+    float x = bx, w = bx, v = bx;
+
+    float fx = fp(&x, 1, dummy);
+    float fw = fx, fv = fx;
     float e = 0.0;
-    a = (ax < cx ? ax : cx);
-    b = (ax > cx ? ax : cx);
-    x = w = v = bx;
-    fw = fv = fx = (*fp)(&x, 1, dummy);
 
     for (mdp_int iter = 0; iter < niter; iter++)
     {
-      xm = 0.5 * (a + b);
-      tol1 = tol * fabs(x) + PRECISION;
-      tol2 = 2.0 * tol1;
+      const float xm = 0.5 * (a + b);
+      const float tol1 = tol * fabs(x) + PRECISION;
+      const float tol2 = 2.0 * tol1;
+
       if (fabs(x - xm) <= (tol2 - 0.5 * (b - a)))
       {
         xmin = x;
         return fx;
       }
+
+      float d = 0.0;
+
       if (fabs(e) > tol1)
       {
-        r = (x - w) * (fx - fv);
-        q = (x - v) * (fx - fw);
-        p = (x - v) * q - (x - w) * r;
-        q = 2.0 * (q - r);
-        if (q > 0.0)
+        // Parabolic interpolation
+        const float r = (x - w) * (fx - fv);
+        const float q = (x - v) * (fx - fw);
+        float p = (x - v) * q - (x - w) * r;
+        float q_adj = 2.0 * (q - r);
+
+        if (q_adj > 0.0)
           p = -p;
-        q = fabs(q);
-        etemp = e;
+        q_adj = fabs(q_adj);
+
+        const float etemp = e;
         e = d;
-        if (fabs(p) >= fabs(0.5 * q * etemp) || p <= q * (a - x) || p >= q * (b - x))
-          d = CGOLD * (e = ((x >= xm) ? (a - x) : (b - x)));
-        else
+
+        if (fabs(p) < fabs(0.5 * q_adj * etemp) && p > q_adj * (a - x) && p < q_adj * (b - x))
         {
-          d = p / q;
-          u = x + d;
-          if (u - a < tol2 || (b - u) < tol2)
+          d = p / q_adj;
+          const float u = x + d;
+          if ((u - a) < tol2 || (b - u) < tol2)
           {
             d = fabs(tol1);
             if (xm - x < 0.0)
               d = -d;
           }
+        }
+        else
+        {
+          d = CGOLD * (e = ((x >= xm) ? (a - x) : (b - x)));
         }
       }
       else
@@ -107,6 +118,7 @@ namespace MDP
         d = CGOLD * (e = (x >= xm ? (a - x) : (b - x)));
       }
 
+      float u = 0.0;
       if (fabs(d) >= tol1)
         u = x + d;
       else
@@ -178,44 +190,58 @@ namespace MDP
                float h,
                void *junk)
   {
-    mdp_int i, j, k;
-    double sig2i, chi_square, dy, ymod, wt;
     std::unique_ptr<double[]> dyda = std::make_unique<double[]>(ma);
 
-    for (i = 0; i < ma; i++)
+    for (mdp_int i = 0; i < ma; i++)
     {
-      for (j = 0; j < ma; j++)
+      for (mdp_int j = 0; j < ma; j++)
+      {
         alpha(i, j) = 0.0;
+      }
       beta(i, 0) = 0.0;
     }
-    chi_square = 0.0;
-    for (i = i_min; i < i_max; i++)
+
+    double chi_square = 0.0;
+
+    for (mdp_int i = i_min; i < i_max; i++)
     {
-      ymod = (*func)(x[i], a, ma, junk);
-      for (j = 0; j < ma; j++)
+      const float ymod = func(x[i], a, ma, junk);
+
+      // Numeric derivatives
+      for (mdp_int j = 0; j < ma; j++)
       {
         a[j] += h;
-        dyda[j] = (*func)(x[i], a, ma, junk);
+        dyda[j] = func(x[i], a, ma, junk);
         a[j] -= 2 * h;
-        dyda[j] -= (*func)(x[i], a, ma, junk);
+        dyda[j] -= func(x[i], a, ma, junk);
         a[j] += h;
         dyda[j] /= (2.0 * h);
       }
-      sig2i = 1.0 / std::pow(y[i].getmerr(), 2.0);
-      dy = y[i].getmean() - ymod;
-      for (j = 0; j < ma; j++)
+
+      const double sig2i = 1.0 / std::pow(y[i].getmerr(), 2.0);
+      const double dy = y[i].getmean() - ymod;
+      const double weight = y[i].getnum();
+
+      for (mdp_int j = 0; j < ma; j++)
       {
-        wt = dyda[j] * sig2i;
-        for (k = 0; k < ma; k++)
-          alpha(j, k) += dyda[k] * wt * y[i].getnum();
-        beta(j, 0) += dy * wt * y[i].getnum();
+        const double wt = dyda[j] * sig2i;
+        for (mdp_int k = 0; k < ma; k++)
+        {
+          alpha(j, k) += dyda[k] * wt * weight;
+        }
+        beta(j, 0) += dy * wt * weight;
       }
+
       chi_square += dy * dy * sig2i;
     }
 
-    for (i = 0; i < ma; i++)
-      for (j = 0; j < ma; j++)
+    for (mdp_int i = 0; i < ma; i++)
+    {
+      for (mdp_int j = 0; j < ma; j++)
+      {
         chi_square += (a0[i] - a[i]) * sigma(i, j).real() * (a0[j] - a[j]);
+      }
+    }
 
     return chi_square;
   }
@@ -243,48 +269,55 @@ namespace MDP
    *  rerun it with same fitting values and nmax=1;
    */
   float BayesianLevenbergMarquardt(float *x, mdp_measure *y,
-                                  mdp_int i_min, mdp_int i_max,
-                                  float *a, int ma,
-                                  mdp_matrix &covar,
-                                  BLM_function func,
-                                  float h = 0.001,
-                                  mdp_int nmax = 1000,
-                                  void *junk = nullptr)
+                                   mdp_int i_min, mdp_int i_max,
+                                   float *a, int ma,
+                                   mdp_matrix &covar,
+                                   BLM_function func,
+                                   float h = 0.001,
+                                   mdp_int nmax = 1000,
+                                   void *junk = nullptr)
   {
 
     double lambda = 0.1;
-    double scale = 2;
-    double chi_square = 0;
-    double old_chi_square = 0;
+    constexpr double scale = 2.0;
+
     mdp_matrix alpha(ma, ma);
     std::unique_ptr<float[]> atry = std::make_unique<float[]>(ma);
     std::unique_ptr<float[]> a0 = std::make_unique<float[]>(ma);
     mdp_matrix sigma(ma, ma);
     mdp_matrix beta(ma, 1);
     mdp_matrix oneda(ma, 1);
-    mdp_int i, j, n;
 
     if (max(covar) <= 1e-6)
-      for (i = 0; i < ma; i++)
+    {
+      for (mdp_int i = 0; i < ma; i++)
+      {
         sigma(i, i) = 0;
+      }
+    }
     else
+    {
       sigma = inv(covar);
+    }
 
-    for (i = 0; i < ma; i++)
+    for (mdp_int i = 0; i < ma; i++)
     {
       atry[i] = a[i];
       a0[i] = a[i];
     }
-    chi_square = BLMaux(x, y, i_min, i_max, a, a0.get(), sigma,
-                        ma, alpha, beta, func, h, junk);
-    old_chi_square = chi_square;
 
-    for (n = 0; n < nmax; n++)
+    float chi_square = BLMaux(x, y, i_min, i_max, a, a0.get(), sigma,
+                              ma, alpha, beta, func, h, junk);
+    float old_chi_square = chi_square;
+
+    for (mdp_int n = 0; n < nmax; n++)
     {
-      for (i = 0; i < ma; i++)
+      for (mdp_int i = 0; i < ma; i++)
       {
-        for (j = 0; j < ma; j++)
+        for (mdp_int j = 0; j < ma; j++)
+        {
           covar(i, j) = alpha(i, j);
+        }
         covar(i, i) *= (1.0 + lambda);
         oneda(i, 0) = beta(i, 0);
       }
@@ -293,29 +326,39 @@ namespace MDP
       covar = inv(covar);
       oneda = covar * oneda;
 
-      for (i = 0; i < ma; i++)
+      for (mdp_int i = 0; i < ma; i++)
+      {
         atry[i] = a[i] + real(oneda(i, 0));
+      }
+
       chi_square = BLMaux(x, y, i_min, i_max, atry.get(), a0.get(), sigma,
                           ma, covar, oneda, func, h, junk);
 
       if (fabs(chi_square - old_chi_square) < 1e-4 || lambda == 0)
       {
         covar = inv(covar);
-
         return chi_square;
       }
-      else if (chi_square <= old_chi_square)
+
+      if (chi_square <= old_chi_square)
       {
         lambda /= scale;
         old_chi_square = chi_square;
-        for (i = 0; i < ma; i++)
+
+        for (mdp_int i = 0; i < ma; i++)
         {
-          for (j = 0; j < ma; j++)
+          for (mdp_int j = 0; j < ma; j++)
+          {
             alpha(i, j) = covar(i, j);
+          }
+
           beta(i, 0) = oneda(i, 0);
         }
-        for (j = 0; j < ma; j++)
+
+        for (mdp_int j = 0; j < ma; j++)
+        {
           a[j] = atry[j];
+        }
       }
       else
       {
