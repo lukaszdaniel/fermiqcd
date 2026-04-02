@@ -151,7 +151,7 @@ namespace MDP
       std::cout << "h_new " << h_new << std::endl;
 
       // metropolis test
-      float random_number = mdp_random.plain();
+      float random_number = mdp_global_random.plain();
       mdp.broadcast(random_number, 0);
       if (random_number < std::exp(h_old - h_new))
       {

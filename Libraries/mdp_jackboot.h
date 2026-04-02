@@ -15,7 +15,7 @@
 #include <cmath>
 #include <memory>
 #include "mdp_macros.h"
-#include "mdp_prng.h"
+#include "mdp_random.h"
 
 namespace MDP
 {
@@ -25,8 +25,8 @@ namespace MDP
   /// @verbatim
   ///    mdp_jackboot jb(10,2);
   ///    for(int k=0; k<10; k++) {
-  ///       jb(k,0)=mdp_random.plain();
-  ///       jb(k,1)=mdp_random.plain();
+  ///       jb(k,0)=mdp_global_random.plain();
+  ///       jb(k,1)=mdp_global_random.plain();
   ///    }
   ///    jb.plain(0);
   ///    std::cout << "mean of jb(k,0) =" << mean() << std::endl;
@@ -70,7 +70,7 @@ namespace MDP
     {
       for (int boot = 0; boot < nboot; boot++)
         for (int j = 0; j <= m_conf; j++)
-          p[j + (m_conf + 1) * boot] = (int)((m_conf + 1) * mdp_random.plain());
+          p[j + (m_conf + 1) * boot] = (int)((m_conf + 1) * mdp_global_random.plain());
     }
 
     static float mdp_jackboot_plain(const float x[], const void *a)

@@ -18,12 +18,13 @@
 
 namespace MDP
 {
-    // #define USE_SINGLE_PRECISION
-    // #define CHECK_ALL
-    // #define CHECK_BOUNDARY
+    // #define USE_SINGLE_PRECISION // define if you want to use single precision floating point numbers (float) instead of double precision (double)
+    // #define CHECK_ALL // define if you want to have extra sanity checks (useful for debugging, but slows down the code)
+    // #define CHECK_BOUNDARY // define if you want to have extra sanity checks for field boundaries (useful for debugging, but slows down the code)
     // #define PARALLEL
     // #define NO_POSIX
     // #define HAVE_NO_TIMEZONE
+    // #define MDP_USE_SFMT // define if you want to use the SIMD-oriented Fast Mersenne Twister (SFMT) as the random number generator
     #define DO_NOT_USE_MDP_COMPLEX // define if you want to use standard complex header
     // #define MDP_NO_LG //define if you want a temporary file to store local-to-global lattice mappings
     // #define BLOCKSITE 100

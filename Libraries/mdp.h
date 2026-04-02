@@ -122,11 +122,16 @@
 #include "mdp_communicator.h"
 
 // ///////////////////////////////////////////////////////////////////////////
-// this defined the class mdp_prng and the obj mdp_random
-// (attention that ::SU<T>(int n) only works with gcc,
-//  VC does not support templates, therefore ::SU(int n) only for float)
+// these define random number generators used in mdp_random
 // ///////////////////////////////////////////////////////////////////////////
 #include "mdp_prng.h"
+#include "mdp_prng_sfmt.h"
+
+// ///////////////////////////////////////////////////////////////////////////
+// this defines the class mdp_random and the obj mdp_global_random
+// along with SU(n), gaussian(), and others
+// ///////////////////////////////////////////////////////////////////////////
+#include "mdp_random.h"
 
 // ///////////////////////////////////////////////////////////////////////////
 // mdp_jackboot is a class for statistical analysis
@@ -243,7 +248,6 @@
 #include "mdp_fitting_functions.h"
 #include "mdp_header.h"
 #include "mdp_nvector_field.h"
-#include "mdp_prng_sfmt.h"
 #include "mdp_swap.h"
 #include "mdp_parameter.h"
 

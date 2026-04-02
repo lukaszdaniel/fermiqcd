@@ -33,7 +33,7 @@ int main(int argc, char **argv)
       forallsitesofparity(point, parity)
       {
         dE = 2 * spin(point) * (spin(point - X) + spin(point + X) + spin(point - Y) + spin(point + Y) + spin(point - Z) + spin(point + Z));
-        if (exp(-kappa * dE) > mdp_random.plain())
+        if (exp(-kappa * dE) > mdp_global_random.plain())
         {
           spin(point) *= -1;
           dH = dH + 2 * spin(point);

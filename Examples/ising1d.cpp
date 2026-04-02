@@ -24,7 +24,7 @@ int main(int argc, char **argv)
       forallsitesofparity(x, parity)
       {
         dE = 2 * spin(x) * (spin(x - 0) + spin(x + 0));
-        if (exp(-kappa * dE) > mdp_random.plain())
+        if (exp(-kappa * dE) > mdp_global_random.plain())
         {
           spin(x) *= -1;
           dH = dH + 2 * spin(x);

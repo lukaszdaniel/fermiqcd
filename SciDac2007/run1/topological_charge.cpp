@@ -37,10 +37,10 @@ public:
     for (iter = 0; iter < n_iter; iter++)
     {
 
-      x.set(int(U.lattice().size(0) * mdp_random.plain()),
-            int(U.lattice().size(1) * mdp_random.plain()),
-            int(U.lattice().size(2) * mdp_random.plain()),
-            int(U.lattice().size(3) * mdp_random.plain()));
+      x.set(int(U.lattice().size(0) * mdp_global_random.plain()),
+            int(U.lattice().size(1) * mdp_global_random.plain()),
+            int(U.lattice().size(2) * mdp_global_random.plain()),
+            int(U.lattice().size(3) * mdp_global_random.plain()));
 
       for (mu = 0; mu < U.ndim(); mu++)
       {

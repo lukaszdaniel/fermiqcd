@@ -10,7 +10,7 @@ float Q(float x, [[maybe_unused]] void *a)
 
 int main()
 {
-   mdp_prng random;
+   mdp_random random;
    constexpr mdp_suint N = 100;
    float a, b, average = 0, sigma = 0.3, a_bar = 1;
    for (mdp_suint i = 0; i < N; i++)

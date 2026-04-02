@@ -15,7 +15,7 @@
 #include <cmath>
 #include <iostream>
 #include "mdp_compatibility_macros.h"
-#include "mdp_prng.h"
+#include "mdp_random.h"
 
 namespace MDP
 {
@@ -26,7 +26,7 @@ namespace MDP
   ///    mdp_measure m;
   ///    // store 10 measurements
   ///    for(int i=0; i<10; i++)
-  ///       m << 3.0+mdp_random.gaussian(2.0);
+  ///       m << 3.0+mdp_global_random.gaussian(2.0);
   ///    m=sin(exp(m)+m);
   ///    std::cout << m.getmean() << "+/-" << m.getmerr() << std::endl;
   /// @endverbatim

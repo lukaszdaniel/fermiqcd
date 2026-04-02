@@ -3,7 +3,7 @@
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
-/// Class mdp_prng (the random number generator of MDP)
+/// Marsaglia's random number generator
 ///
 /// Distributed under GPL2 License
 /// Read attached license in file mdp_license.txt
@@ -20,19 +20,6 @@
 namespace MDP
 {
   /// @brief Marsaglia's random number generator (same as UKQCD)
-  ///
-  /// You should not instantiate this class because:
-  /// - there is a global object mdp_random
-  /// - each field "lattice" has a parallel generator "lattice.random(x)"
-  /// Example:
-  /// @verbatim
-  ///    // print a uniform number in (0,1)
-  ///    std::cout << mdp_random.plain() << std::endl;
-  ///    // print a gaussian number
-  ///    std::cout << mdp_random.gaussian() << std::endl;
-  ///    // print a random SU(10) matrix
-  ///    std::cout << mdp_random.SU(10) << std::endl;
-  /// @endverbatim
   class mdp_prng
   {
   private:
@@ -58,34 +45,6 @@ namespace MDP
         initialize(ME);
     }
 
-    /// return a uniform random number in (0,1)
-    inline float plain() noexcept
-    {
-      float luni = m_u[m_ui] - m_u[m_uj];
-      if (luni < 0.0f)
-        luni += 1.0f;
-
-      m_u[m_ui] = luni;
-
-      m_ui = (m_ui == 0) ? N - 1 : m_ui - 1;
-      m_uj = (m_uj == 0) ? N - 1 : m_uj - 1;
-
-      m_c -= cd;
-      if (m_c < 0.0f)
-        m_c += cm;
-
-      luni -= m_c;
-      if (luni < 0.0f)
-        luni += 1.0f;
-
-      return luni;
-    }
-
-    inline double uniform() noexcept
-    {
-      return static_cast<double>(plain());
-    }
-
     ///////////////////////////////////////////////////////////////////////
     //      initialize: this takes a single integer in the range
     //    0 <= ijkl <= 900 000 000
@@ -104,7 +63,6 @@ namespace MDP
     //     If that statement was worth anything he would have provided
     //     a proof to go with it. spb 12/12/90
     ///////////////////////////////////////////////////////////////////////
-
     void initialize(mdp_int ijkl)
     {
       if ((ijkl < 0) || (ijkl > 900000000))
@@ -153,109 +111,33 @@ namespace MDP
       }
     }
 
-    /// returns a gaussian random number
-    float gaussian(float sigma = 1.0f) noexcept
+    /**
+     * @brief Returns a pseudorandom floating-point value in the range [0, 1].
+     *
+     * @return Random float in the range [0, 1].
+     */
+    inline float plain() noexcept
     {
-      if (m_has_gauss)
-      {
-        m_has_gauss = false;
-        return m_gauss_cache * sigma;
-      }
+      float luni = m_u[m_ui] - m_u[m_uj];
+      if (luni < 0.0f)
+        luni += 1.0f;
 
-      float u1 = plain();
-      float u2 = plain();
+      m_u[m_ui] = luni;
 
-      float r = std::sqrt(-2.0f * std::log(u1));
-      float theta = 2.0f * Pi * u2;
+      m_ui = (m_ui == 0) ? N - 1 : m_ui - 1;
+      m_uj = (m_uj == 0) ? N - 1 : m_uj - 1;
 
-      m_gauss_cache = r * std::cos(theta);
-      m_has_gauss = true;
+      m_c -= cd;
+      if (m_c < 0.0f)
+        m_c += cm;
 
-      return sigma * r * std::sin(theta);
+      luni -= m_c;
+      if (luni < 0.0f)
+        luni += 1.0f;
+
+      return luni;
     }
-
-    /// draws a random float in (0,1) from a distribution using accept-reject
-    double distribution(float (*fp)(float, void *), void *a = nullptr)
-    {
-      float x, y;
-      do
-      {
-        x = plain();
-        y = plain();
-      } while ((*fp)(x, a) >= y);
-      return x;
-    }
-
-    /// returns a random SU(n) matrix using Cabibbo-Marinari
-    mdp_matrix SU(int n) noexcept
-    {
-      if (n == 1)
-      {
-        mdp_matrix tmp(1, 1);
-        float alpha = 2.0 * Pi * plain();
-        tmp(0, 0) = mdp_complex(std::cos(alpha), std::sin(alpha));
-        return tmp;
-      }
-
-      mdp_matrix M = mdp_identity(n);
-
-      for (int i = 0; i < n - 1; ++i)
-      {
-        for (int j = i + 1; j < n; ++j)
-        {
-          float alpha = Pi * plain();
-          float phi = 2.0f * Pi * plain();
-
-          float z = 2.0f * plain() - 1.0f;
-          float s = std::sqrt(1.0f - z * z);
-
-          float sa, ca;
-          float sp, cp;
-
-#if 0 // defined(__GNUC__)
-          __builtin_sincosf(alpha, &sa, &ca);
-          __builtin_sincosf(phi, &sp, &cp);
-#else
-          sa = std::sin(alpha);
-          ca = std::cos(alpha);
-          sp = std::sin(phi);
-          cp = std::cos(phi);
-#endif
-
-          float a0 = ca;
-          float a1 = sa * s * cp;
-          float a2 = sa * s * sp;
-          float a3 = sa * z;
-
-          mdp_complex *row_i = &M(i, 0);
-          mdp_complex *row_j = &M(j, 0);
-
-          mdp_complex A(a0, a3);
-          mdp_complex B(a2, a1);
-          mdp_complex C(-a2, a1);
-          mdp_complex D(a0, -a3);
-
-          for (int k = 0; k < n; ++k)
-          {
-            mdp_complex xi = row_i[k];
-            mdp_complex xj = row_j[k];
-
-            row_i[k] = A * xi + B * xj;
-            row_j[k] = C * xi + D * xj;
-          }
-        }
-      }
-
-      return M;
-    }
-
-    /// skip n numbers from the sequence
-    void skip(size_t n)
-    {
-      while (n--) [[likely]]
-        plain();
-    }
-  } mdp_random; /// the global random number generator
+  };
 } // namespace MDP
 
 #endif /* MDP_PRNG_ */

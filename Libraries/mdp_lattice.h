@@ -21,7 +21,7 @@
 #include <array>
 #include <cstddef>
 #include "mdp_global_vars.h"
-#include "mdp_prng.h"
+#include "mdp_random.h"
 #include "mdp_partitionings.h"
 #include "mdp_topologies.h"
 
@@ -129,7 +129,7 @@ namespace MDP
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_len_to_send;
     std::array<std::vector<mdp_int>, _NprocMax_> m_to_send;
     bool m_local_random_generator;
-    mutable std::vector<mdp_prng> m_random_obj;
+    mutable std::vector<mdp_random> m_random_obj;
     mdp_int m_random_seed;
     using where_fn = int (*)(const int x[], const int ndim, const int nx[]);
     using neighbour_fn = void (*)(const int mu,
@@ -855,7 +855,7 @@ namespace MDP
       deallocate_memory();
     }
 
-    mdp_prng &random(mdp_site x) const;
+    mdp_random &random(mdp_site x) const;
 
     // //////////////////////////////////
     // functions for external access ...

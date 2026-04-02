@@ -479,8 +479,8 @@ namespace MDP
 
 #ifdef MDP_LATTICE
 
-  /// Returns the local object mdp_prng at site x of the lattice
-  mdp_prng &mdp_lattice::random(mdp_site x) const
+  /// Returns the local object mdp_random at site x of the lattice
+  mdp_random &mdp_lattice::random(mdp_site x) const
   {
     if (m_local_random_generator)
     {
@@ -488,7 +488,7 @@ namespace MDP
         error("request the random generator of a non local site");
       return m_random_obj[x.local_index() - start0(ME, 0)];
     }
-    return mdp_random;
+    return mdp_global_random;
   }
 
 #endif

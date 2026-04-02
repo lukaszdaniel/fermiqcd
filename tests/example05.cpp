@@ -5,7 +5,7 @@ using namespace MDP;
 
 int main()
 {
-   mdp_prng random;
+   mdp_random random;
    int i, n, bin[10];
    float x;
    for (n = 0; n < 10; n++)

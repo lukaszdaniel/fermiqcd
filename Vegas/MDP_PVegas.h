@@ -312,7 +312,7 @@ namespace MDP
           wgt = m_xjac;
           for (int j = 0; j < m_NumberOfDimensions; j++)
           {
-            xn = (m_kg[j] - mdp_random.plain()) * m_dxg;
+            xn = (m_kg[j] - mdp_global_random.plain()) * m_dxg;
             m_ia[j] = std::max(std::min((int)(xn), NDMX - 1), 0); // check NDMX
             if (m_ia[j] > 0)
             {

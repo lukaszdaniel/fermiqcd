@@ -18,7 +18,7 @@ namespace MDP
 #define site mdp_site
 #define Complex mdp_complex
 #define Matrix mdp_matrix
-#define Random mdp_random
+#define Random mdp_global_random
 
 // deprecated macros
 #define Measure mdp_measure
@@ -29,7 +29,7 @@ namespace MDP
 #define Matrix_field mdp_matrix_field
 #define Vector_field mdp_vector_field
 #define NMatrix_field mdp_nmatrix_field
-#define mdp_random_generator mdp_prng
+#define mdp_random_generator mdp_random
 } // namespace MDP
 
 #endif /* MDP_COMPATIBILITY_MACROS_ */

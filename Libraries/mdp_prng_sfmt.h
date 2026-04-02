@@ -3,7 +3,7 @@
 /// @version 2009-12-21
 /// @author Massimo Di Pierro <mdipierro@cs.depaul.edu>
 ///
-/// Contains ... stuff
+/// SIMD-oriented Fast Mersenne Twister (SFMT) random number generator
 ///
 /// Distributed under GPL2 License
 /// Read attached license in file mdp_license.txt
@@ -216,6 +216,12 @@ namespace MDP
     }
 
   public:
+    mdp_prng_sfmt(mdp_int k = 0)
+    {
+      if (k == 0)
+        initialize(ME);
+    }
+
     /**
      * @brief Initializes the generator with a given seed.
      *
@@ -247,7 +253,7 @@ namespace MDP
      *
      * @return Random float in the range [0, 1].
      */
-    float plain()
+    inline float plain() noexcept
     {
       unsigned int v = gen_rand32();
       return v * (1.0 / 4294967295.0);
