@@ -71,7 +71,7 @@ namespace MDP
     for (mdp_int iter = 0; iter < niter; iter++)
     {
       const float xm = 0.5 * (a + b);
-      const float tol1 = tol * fabs(x) + PRECISION;
+      const float tol1 = tol * fabs(x) + mdp_precision;
       const float tol2 = 2.0 * tol1;
 
       if (fabs(x - xm) <= (tol2 - 0.5 * (b - a)))

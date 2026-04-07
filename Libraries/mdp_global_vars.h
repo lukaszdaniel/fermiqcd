@@ -69,7 +69,6 @@ namespace MDP
     constexpr int EVEN = 0;
     constexpr int ODD = 1;
     constexpr int EVENODD = 2;
-    constexpr mdp_real PRECISION = 1.0 / (1 << 18); // ~3.0e-6 in binary
     constexpr mdp_int NOWHERE = std::numeric_limits<mdp_int>::max();
 
     /// Each program should have a name
@@ -83,13 +82,9 @@ namespace MDP
 
     constexpr double Pi = 3.1415926535897932384626433832795028841971;
 
-    /// Set mdp_shutup=true to suppress default output from any part of
-    /// the program
-    bool mdp_shutup = false;
-
     /// Default precision used by iterative algorithms such as
     /// mdp_matrix::sin(), mdp_matrix::cos() and mdp_matrix::exp()
-    constexpr mdp_real mdp_precision = 1.0 / (1 << 16); // ~1e-5 in binary
+    constexpr mdp_real mdp_precision = 1.0 / (1 << 18); // ~3.0e-6 in binary
 
     void _mpi_error_message(const std::string &message, const std::string &file, int line);
 } // namespace MDP

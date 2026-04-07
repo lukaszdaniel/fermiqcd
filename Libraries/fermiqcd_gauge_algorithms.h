@@ -57,7 +57,7 @@ namespace MDP
   }
 
   /// Check that gauge field is unitary within precision
-  void check_unitarity(const gauge_field &U, double precision = PRECISION)
+  void check_unitarity(const gauge_field &U, mdp_real precision = mdp_precision)
   {
     begin_function("check_unitarity");
     mdp_site x(U.lattice());

@@ -179,7 +179,7 @@ namespace MDP
       }
     }
 
-    if (isMainProcess() && !mdp_shutup)
+    if (isMainProcess())
       std::cout << "... Saving time: " << (mdp.time() - mytime) << " (sec)\n";
 
     return true;

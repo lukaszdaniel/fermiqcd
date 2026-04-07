@@ -154,7 +154,7 @@ namespace MDP
           {
             sv(x) = 0.0;
             for (mdp_int k = 0; k < psi_in.nc(); k++)
-              sv(x) += std::log(real(r(x, a, k) * conj(r(x, a, k))) + PRECISION);
+              sv(x) += std::log(real(r(x, a, k) * conj(r(x, a, k))) + mdp_precision);
           }
         }
         filename2 = filename_prefix + ".residue." + std::to_string(step) + ".vtk";

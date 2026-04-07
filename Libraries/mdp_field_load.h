@@ -279,7 +279,7 @@ namespace MDP
 #endif
     }
 
-    if (isMainProcess() && !mdp_shutup)
+    if (isMainProcess())
       std::cout << "... Loading time: " << (mdp.time() - mytime) << " (sec)\n";
 
     return true;
