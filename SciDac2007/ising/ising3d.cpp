@@ -14,29 +14,29 @@ int main(int argc, char **argv)
   constexpr Box L = {20, 20, 20};
   mdp_lattice cube(L);
   mdp_real_scalar_field spin(cube);
-  mdp_site point(cube);
-  int dE = 0, H = cube.size(), dH = 0;
+  mdp_site x(cube);
+  int dE = 0, H = L.volume(), dH = 0;
   float kappa = 0.40;
   if (argc > 1)
     kappa = atof(argv[1]); // try 0.5 or 0.25
 
-  forallsites(point)
+  forallsites(x)
   {
-    spin(point) = (point(0) > L[0] / 4 && point(0) <= 3 * L[0] / 4) ? (+1) : (-1);
+    spin(x) = (x(0) > L[0] / 4 && x(0) <= 3 * L[0] / 4) ? (+1) : (-1);
   }
 
   for (int i = 0; i < 100; i++)
   {
     dH = 0;
-    for (int parity = 0; parity < 2; parity++)
+    for (mdp_parity parity : {EVEN, ODD})
     {
-      forallsitesofparity(point, parity)
+      forallsitesofparity(x, parity)
       {
-        dE = 2 * spin(point) * (spin(point - X) + spin(point + X) + spin(point - Y) + spin(point + Y) + spin(point - Z) + spin(point + Z));
+        dE = 2 * spin(x) * (spin(x - X) + spin(x + X) + spin(x - Y) + spin(x + Y) + spin(x - Z) + spin(x + Z));
         if (exp(-kappa * dE) > mdp_global_random.plain())
         {
-          spin(point) *= -1;
-          dH = dH + 2 * spin(point);
+          spin(x) *= -1;
+          dH = dH + 2 * spin(x);
         }
       }
       spin.update();

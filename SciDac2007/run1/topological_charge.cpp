@@ -25,7 +25,7 @@ public:
     else
       zeta = 1;
 
-    int iter, parity = 0;
+    mdp_parity parity = EVEN;
     int mu = 0;
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
@@ -34,7 +34,7 @@ public:
 
     mdp << coeff;
 
-    for (iter = 0; iter < n_iter; iter++)
+    for (int iter = 0; iter < n_iter; iter++)
     {
 
       x.set(int(U.lattice().size(0) * mdp_global_random.plain()),

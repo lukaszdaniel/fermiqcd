@@ -9,17 +9,17 @@ int main(int argc, char **argv)
   mdp_lattice line(L);
   mdp_int_scalar_field spin(line);
   mdp_site x(line);
-  int dE = 0, H = L[0], dH = 0;
+  int dE = 0, H = L.volume(), dH = 0;
   float kappa = 2.0;
   forallsites(x)
   {
     spin(x) = +1;
   }
 
-  while (1)
+  for (int i = 0; i < 100; i++)
   {
     dH = 0;
-    for (int parity = 0; parity < 2; parity++)
+    for (mdp_parity parity : {EVEN, ODD})
     {
       forallsitesofparity(x, parity)
       {
@@ -37,5 +37,5 @@ int main(int argc, char **argv)
     mdp << "magnetization=" << H << "\n";
   }
   mdp.close_wormholes();
-  return 1;
+  return 0;
 }

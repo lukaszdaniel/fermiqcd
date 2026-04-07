@@ -67,13 +67,14 @@ namespace MDP
                                               gauge_field &U,
                                               coefficients &coeff,
                                               mdp_real mass,
-                                              int parity = EVEN,
+                                              mdp_parity parity = EVEN,
                                               mdp_real absolute_precision = staggered_inversion_precision,
                                               mdp_real relative_precision = 0,
                                               int max_steps = 2000)
     {
 
-      int i, opposite_parity = EVENODD, step = 0;
+      int step = 0;
+      mdp_parity opposite_parity = EVENODD;
       int nc = psi_in.nc();
       double beta, norm, four_mass_sq;
       double pMMp, alpha, residue, rresidue = -1, target_residue, old_residue;
@@ -91,12 +92,17 @@ namespace MDP
         error("coefficient mass undeclared or different from zero");
       four_mass_sq = std::pow(2.0 * mass, 2);
 
-      if (parity == EVEN)
+      switch (parity)
+      {
+      case EVEN:
         opposite_parity = ODD;
-      if (parity == ODD)
+        break;
+      case ODD:
         opposite_parity = EVEN;
-      if (parity == EVENODD)
-        opposite_parity = EVENODD;
+        break;
+      default:
+        break;
+      }
 
       // psi_out = psi_in;
       // t = M^Dagger M psi_out
@@ -107,7 +113,7 @@ namespace MDP
 
       forallsitesofparity(x, parity)
       {
-        for (i = 0; i < nc; i++)
+        for (mdp_int i = 0; i < nc; i++)
           p(x, i) = psi_out(x, i);
       }
 
@@ -121,7 +127,7 @@ namespace MDP
 
       forallsitesofparity(x, parity)
       {
-        for (i = 0; i < nc; i++)
+        for (mdp_int i = 0; i < nc; i++)
         {
           t(x, i) += four_mass_sq * p(x, i);
           r(x, i) = p(x, i) = psi_in(x, i) - t(x, i);
@@ -146,7 +152,7 @@ namespace MDP
         if (four_mass_sq != 0)
           forallsitesofparity(x, parity)
           {
-            for (i = 0; i < nc; i++)
+            for (mdp_int i = 0; i < nc; i++)
               t(x, i) += four_mass_sq * p(x, i);
           }
 
@@ -156,7 +162,7 @@ namespace MDP
 
         forallsitesofparity(x, parity)
         {
-          for (i = 0; i < nc; i++)
+          for (mdp_int i = 0; i < nc; i++)
           {
             r(x, i) -= alpha * t(x, i);
             psi_out(x, i) += alpha * p(x, i);
@@ -174,7 +180,7 @@ namespace MDP
 
         forallsitesofparity(x, parity)
         {
-          for (i = 0; i < nc; i++)
+          for (mdp_int i = 0; i < nc; i++)
             p(x, i) = r(x, i) + beta * p(x, i);
         }
 

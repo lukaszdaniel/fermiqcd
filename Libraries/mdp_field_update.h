@@ -23,7 +23,7 @@ namespace MDP
    * need to be synchronized between the parallel processes
    */
   template <class T>
-  void mdp_field<T>::update(int np, int d, mdp_uint ncomp)
+  void mdp_field<T>::update(mdp_parity np, int d, mdp_uint ncomp)
   {
     std::unique_ptr<T[]> dynamic_buffer;
     mdp.comm_time -= mdp.time();
@@ -31,7 +31,7 @@ namespace MDP
     mdp_int start_to_send = 0;
     mdp_int process = 0;
     mdp_int length = 0;
-    int ni, nf;
+    mdp_parity ni, nf;
 
     if (d == -1)
     {
@@ -42,32 +42,32 @@ namespace MDP
     if ((ncomp == m_field_components) && (d != 0))
       error("update(): packet is too big");
 
-    if (np < 2)
+    if (np == EVENODD)
     {
-      ni = nf = np;
+      ni = EVEN;
+      nf = ODD;
     }
     else
     {
-      ni = 0;
-      nf = 1;
+      ni = nf = np;
     }
 
     for (mdp_int dp = 1; dp < Nproc; dp++)
     {
       process = (ME + dp) % Nproc;
 
-      if (np < 2)
+      if (np == EVENODD)
       {
-        length = lattice().len_to_send0(process, np);
+        length = lattice().len_to_send0(process, EVEN) + lattice().len_to_send0(process, ODD);
       }
       else
       {
-        length = lattice().len_to_send0(process, 0) + lattice().len_to_send0(process, 1);
+        length = lattice().len_to_send0(process, np);
       }
 
-      if (np == 1)
+      if (np == ODD)
       {
-        start_to_send = lattice().len_to_send0(process, 0);
+        start_to_send = lattice().len_to_send0(process, EVEN);
       }
       else
       {

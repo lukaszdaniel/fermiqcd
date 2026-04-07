@@ -83,13 +83,13 @@ namespace MDP
                               sdwf_field &,
                               gauge_field &,
                               coefficients &,
-                              int) = SDWFActionSlow::mul_Q;
+                              mdp_parity) = SDWFActionSlow::mul_Q;
 
   void mul_Q(sdwf_field &psi_out,
              sdwf_field &psi_in,
              gauge_field &U,
              coefficients &coeff,
-             int parity = EVENODD)
+             mdp_parity parity = EVENODD)
   {
     (*default_sdwf_action)(psi_out, psi_in, U, coeff, parity);
   }

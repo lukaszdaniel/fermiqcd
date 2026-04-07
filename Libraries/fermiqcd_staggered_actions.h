@@ -44,7 +44,7 @@ namespace MDP
                       staggered_field &chi_in,
                       gauge_field &U,
                       coefficients &coeff,
-                      int parity = EVENODD)
+                      mdp_parity parity = EVENODD)
     {
 
       int ndim = U.ndim();
@@ -139,7 +139,7 @@ namespace MDP
                       staggered_field &chi_in,
                       gauge_field &U,
                       coefficients &coeff,
-                      int parity = EVENODD)
+                      mdp_parity parity = EVENODD)
     {
       int nc = U.nc();
       int ndim = U.ndim();

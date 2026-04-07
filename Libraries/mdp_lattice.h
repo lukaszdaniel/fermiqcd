@@ -124,7 +124,7 @@ namespace MDP
     std::vector<mdp_int> m_dw; /* move dw in local index     */
     std::vector<mdp_int> m_co; /* coordinate x in local idx  */
     std::vector<mdp_int> m_wh; /* in which process? is idx   */
-    std::vector<int> m_parity; /* parity of local mdp_site idx   */
+    std::vector<mdp_parity> m_parity; /* parity of local mdp_site idx   */
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_start;
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_stop;
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_len_to_send;
@@ -392,10 +392,10 @@ namespace MDP
 
       for (int process = 0; process < Nproc; ++process)
       {
-        m_start[process][0] = 0;
-        m_start[process][1] = 0;
-        m_stop[process][0] = 0;
-        m_stop[process][1] = 0;
+        m_start[process][EVEN] = 0;
+        m_start[process][ODD] = 0;
+        m_stop[process][EVEN] = 0;
+        m_stop[process][ODD] = 0;
       }
     }
 
@@ -418,14 +418,14 @@ namespace MDP
       {
         if (process > 0)
         {
-          m_start[process][0] = m_stop[process][0] = m_stop[process - 1][1];
+          m_start[process][EVEN] = m_stop[process][EVEN] = m_stop[process - 1][ODD];
         }
 
-        for (int parity = 0; parity < 2; ++parity)
+        for (mdp_parity parity : {EVEN, ODD})
         {
-          if (parity > 0)
+          if (parity == ODD)
           {
-            m_start[process][1] = m_stop[process][1] = m_stop[process][0];
+            m_start[process][ODD] = m_stop[process][ODD] = m_stop[process][EVEN];
           }
 
           for (mdp_int old_idx = 0; old_idx < m_local_volume; ++old_idx)
@@ -441,7 +441,7 @@ namespace MDP
                     "Unable to read from temporary file");
             translate_to_coordinates(lms_tmp, x);
 #endif
-            int x_parity = compute_parity(x);
+            mdp_parity x_parity = compute_parity(x);
             if (((*m_where)(x, ndim(), m_nx.data()) == process) && (x_parity == parity))
             {
               mdp_int new_idx = m_stop[process][parity];
@@ -535,7 +535,7 @@ namespace MDP
         for (int dp = 1; dp < Nproc; dp++)
         {
           process = (ME + dp) % Nproc;
-          for (int np = 0; np < 2; np++)
+          for (mdp_parity np : {EVEN, ODD})
           {
             buffer[np] = m_stop[process][np] - m_start[process][np];
           }
@@ -544,13 +544,13 @@ namespace MDP
           mdp.get(m_len_to_send[process].data(), 2, process);
           mdp.wait(request);
           process = (ME + dp) % Nproc;
-          length = m_stop[process][1] - m_start[process][0];
+          length = m_stop[process][ODD] - m_start[process][EVEN];
           std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
           for (int idx = 0; idx < length; idx++)
-            dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
+            dynamic_buffer[idx] = m_global_from_local[m_start[process][EVEN] + idx];
           mdp.put(dynamic_buffer.get(), length, process, request);
           process = (ME - dp + Nproc) % Nproc;
-          length = m_len_to_send[process][0] + m_len_to_send[process][1];
+          length = m_len_to_send[process][EVEN] + m_len_to_send[process][ODD];
           m_to_send[process].resize(length);
           mdp.get(m_to_send[process].data(), length, process);
           for (int idx = 0; idx < length; idx++)
@@ -571,19 +571,19 @@ namespace MDP
 
             if ((k + ME) % 2 == 0)
             {
-              for (int np = 0; np < 2; np++)
+              for (mdp_parity np : {EVEN, ODD})
                 buffer[np] = m_stop[process][np] - m_start[process][np];
               mdp.put(buffer, 2, process, request);
-              length = m_stop[process][1] - m_start[process][0];
+              length = m_stop[process][ODD] - m_start[process][EVEN];
               std::unique_ptr<mdp_int[]> dynamic_buffer = std::make_unique<mdp_int[]>(length);
               for (int idx = 0; idx < length; idx++)
-                dynamic_buffer[idx] = m_global_from_local[m_start[process][0] + idx];
+                dynamic_buffer[idx] = m_global_from_local[m_start[process][EVEN] + idx];
               mdp.put(dynamic_buffer.get(), length, process, request);
             }
             else
             {
               mdp.get(m_len_to_send[process2], 2, process2);
-              length = m_len_to_send[process2][0] + m_len_to_send[process2][1];
+              length = m_len_to_send[process2][EVEN] + m_len_to_send[process2][ODD];
               m_to_send[process2].resize(length);
               mdp.get(m_to_send[process2].data(), length, process);
               for (int idx = 0; idx < length; idx++)
@@ -694,7 +694,7 @@ namespace MDP
       build_local_global_maps(x, local_mdp_sites.get());
       build_neighbour_tables(x, x_dw, x_up);
 
-      m_internal_volume = m_stop[ME][1] - m_start[ME][0];
+      m_internal_volume = m_stop[ME][ODD] - m_start[ME][EVEN];
 
       mdp << "Communicating...\n";
       communicate_results_to_all_processes();
@@ -794,12 +794,12 @@ namespace MDP
      *
      * Check the parity of the sum of x coordinates.
      */
-    int compute_parity(const int x[]) const
+    mdp_parity compute_parity(const int x[]) const
     {
       int p = 0;
       for (mdp_uint mu = 0; mu < ndim(); mu++)
         p = p + x[mu];
-      return (p % 2);
+      return (p % 2 == 0) ? EVEN : ODD;
     }
 
     // base constructor
@@ -967,36 +967,36 @@ namespace MDP
       return m_global_from_local[local_idx];
     }
 
-    int site_parity(const mdp_int idx) const
+    mdp_parity site_parity(const mdp_int idx) const
     {
       return m_parity[idx];
     }
 
-    mdp_int start_index(const int process_id, int parity = EVENODD) const
+    mdp_int start_index(const int process_id, mdp_parity parity = EVENODD) const
     {
       if (parity == EVENODD)
-        parity = 0;
+        parity = EVEN;
       return m_start[process_id][parity];
     }
 
-    mdp_int stop_index(const int process_id, int parity = EVENODD) const
+    mdp_int stop_index(const int process_id, mdp_parity parity = EVENODD) const
     {
       if (parity == EVENODD)
-        parity = 1;
+        parity = ODD;
       return m_stop[process_id][parity];
     }
 
-    mdp_int start0(mdp_int process_id, mdp_int parity) const
+    mdp_int start0(mdp_int process_id, mdp_parity parity) const
     {
       return m_start[process_id][parity];
     }
 
-    mdp_int stop0(mdp_int process_id, mdp_int parity) const
+    mdp_int stop0(mdp_int process_id, mdp_parity parity) const
     {
       return m_stop[process_id][parity];
     }
 
-    mdp_int len_to_send0(mdp_int process_id, mdp_int parity) const
+    mdp_int len_to_send0(mdp_int process_id, mdp_parity parity) const
     {
       return m_len_to_send[process_id][parity];
     }

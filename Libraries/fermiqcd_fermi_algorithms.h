@@ -64,14 +64,14 @@ namespace MDP
                                fermi_field &,
                                gauge_field &,
                                coefficients &,
-                               int) = FermiCloverActionFast::mul_Q;
+                               mdp_parity) = FermiCloverActionFast::mul_Q;
 
   /// Calls the current Wilson/Clover action
   void mul_Q(fermi_field &psi_out,
              fermi_field &psi_in,
              gauge_field &U,
              coefficients &coeff,
-             int parity = EVENODD)
+             mdp_parity parity = EVENODD)
   {
     (*default_fermi_action)(psi_out, psi_in, U, coeff, parity);
   }

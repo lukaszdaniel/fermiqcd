@@ -131,7 +131,7 @@ namespace MDP
       mdp << coeff;
 
       for (int iter = 0; iter < n_iter; iter++)
-        for (int parity = 0; parity < 2; parity++)
+        for (mdp_parity parity : {EVEN, ODD})
           for (int mu = 0; mu < U.ndim(); mu++)
           {
             forallsitesofparity(x, parity)

@@ -587,17 +587,17 @@ namespace MDP
       return m_field_components;
     }
 
-    mdp_int physical_local_start(int i = 2) const
+    mdp_int physical_local_start(mdp_parity i = EVENODD) const
     {
-      if (i == 2)
-        i = 0;
+      if (i == EVENODD)
+        i = EVEN;
       return m_field_components * lattice().start0(ME, i);
     }
 
-    mdp_int physical_local_stop(int i = 2) const
+    mdp_int physical_local_stop(mdp_parity i = EVENODD) const
     {
-      if (i == 2)
-        i = 1;
+      if (i == EVENODD)
+        i = ODD;
       return m_field_components * lattice().stop0(ME, i);
     }
 
@@ -615,7 +615,7 @@ namespace MDP
      * it must be called after each field variables are modified.
      * it restores the synchronization between parallel processes.
      */
-    void update(int np = 2, int d = -1, mdp_uint ncomp = 1);
+    void update(mdp_parity np = EVENODD, int d = -1, mdp_uint ncomp = 1);
 
     /** @brief Best way to load a field
      *
@@ -747,7 +747,7 @@ namespace MDP
   using mdp_int_vector_field = mdp_field<mdp_int>;
 
   mdp_real norm_square(mdp_complex_field &psi,
-                       int parity = EVENODD)
+                       mdp_parity parity = EVENODD)
   {
     double n2 = 0;
     mdp_int i_min = psi.physical_local_start(parity);
@@ -762,7 +762,7 @@ namespace MDP
 
   mdp_complex scalar_product(mdp_complex_field &psi,
                              mdp_complex_field &chi,
-                             int parity = EVENODD)
+                             mdp_parity parity = EVENODD)
   {
     mdp_complex n2 = 0;
     mdp_int i_min = psi.physical_local_start(parity);
@@ -778,7 +778,7 @@ namespace MDP
 
   mdp_real real_scalar_product(mdp_complex_field &psi,
                                mdp_complex_field &chi,
-                               int parity = EVENODD)
+                               mdp_parity parity = EVENODD)
   {
 
     double n2 = 0;
@@ -798,7 +798,7 @@ namespace MDP
 
   mdp_real imag_scalar_product(mdp_complex_field &psi,
                                mdp_complex_field &chi,
-                               int parity = EVENODD)
+                               mdp_parity parity = EVENODD)
   {
     double n2 = 0;
     mdp_int i_min = psi.physical_local_start(parity);
@@ -817,7 +817,7 @@ namespace MDP
   void mdp_add_scaled_field(mdp_complex_field &psi,
                             mdp_real alpha,
                             mdp_complex_field &chi,
-                            int parity = EVENODD)
+                            mdp_parity parity = EVENODD)
   {
     mdp_int i_min = psi.physical_local_start(parity);
     mdp_int i_max = psi.physical_local_stop(parity);
@@ -829,7 +829,7 @@ namespace MDP
   void mdp_add_scaled_field(mdp_complex_field &psi,
                             mdp_complex alpha,
                             mdp_complex_field &chi,
-                            int parity = EVENODD)
+                            mdp_parity parity = EVENODD)
   {
     mdp_int i_min = psi.physical_local_start(parity);
     mdp_int i_max = psi.physical_local_stop(parity);
@@ -847,7 +847,7 @@ namespace MDP
 
   mdp_real relative_residue(mdp_complex_field &p,
                             mdp_complex_field &q,
-                            int parity = EVENODD)
+                            mdp_parity parity = EVENODD)
   {
     double residue = 0, num = 0, den = 0;
     mdp_int i_min = p.physical_local_start(parity);

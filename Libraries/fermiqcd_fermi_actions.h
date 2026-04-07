@@ -54,7 +54,7 @@ namespace MDP
                       fermi_field &psi_in,
                       gauge_field &U,
                       coefficients &coeff,
-                      int parity = EVENODD)
+                      mdp_parity parity = EVENODD)
     {
 
       if (psi_in.nspin() != 4)
@@ -204,7 +204,7 @@ namespace MDP
                       fermi_field &psi_in,
                       gauge_field &U,
                       coefficients &coeff,
-                      int parity = EVENODD)
+                      mdp_parity parity = EVENODD)
     {
 
       if (psi_in.nspin() != 4)

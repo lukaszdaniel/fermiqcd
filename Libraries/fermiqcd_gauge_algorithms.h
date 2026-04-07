@@ -198,7 +198,7 @@ namespace MDP
     mdp_real e[4];
 
     for (mdp_uint iter = 0; iter < n_iter; iter++)
-      for (mdp_suint parity = 0; parity < 2; parity++)
+      for (mdp_parity parity : {EVEN, ODD})
         for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           forallsitesofparity(x, parity)

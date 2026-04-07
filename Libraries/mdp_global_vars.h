@@ -66,9 +66,13 @@ namespace MDP
     using mdp_real = double;
 #endif
 
-    constexpr int EVEN = 0;
-    constexpr int ODD = 1;
-    constexpr int EVENODD = 2;
+    enum mdp_parity
+    {
+        EVEN = 0,
+        ODD = 1,
+        EVENODD = 2
+    };
+
     constexpr mdp_int NOWHERE = std::numeric_limits<mdp_int>::max();
 
     /// Each program should have a name

@@ -53,7 +53,7 @@ namespace MDP
 
     static void hit(gauge_field &U,
                     int mu,
-                    int parity,
+                    mdp_parity parity,
                     int i, int j,
                     mdp_real overrelaxation_boost = 1)
     {
@@ -64,12 +64,13 @@ namespace MDP
       static mdp_real a0_sq, ai_sq;
       static mdp_complex x0, x1;
       int k, nu, nc = U.nc();
-      int opposite_parity = EVENODD;
+      mdp_parity opposite_parity = EVENODD;
       mdp_complex_vector_field W(U.lattice(), 4);
       mdp_matrix U_up(nc, nc), U_dw(nc, nc);
       mdp_matrix A;
       mdp_site x(U.lattice());
       mdp_site y(U.lattice());
+
       switch (parity)
       {
       case EVEN:
@@ -78,7 +79,10 @@ namespace MDP
       case ODD:
         opposite_parity = EVEN;
         break;
+      default:
+        break;
       }
+
       forallsitesofparity(x, parity)
       {
         a0 = a1 = a2 = a3 = 0;
@@ -228,7 +232,7 @@ namespace MDP
       for (step = 0; step < max_steps; step++)
       {
 
-        for (int parity = EVEN; parity <= ODD; parity++)
+        for (mdp_parity parity : {EVEN, ODD})
         {
           for (int i = 0; i < U.nc() - 1; i++)
             for (int j = i + 1; j < U.nc(); j++)

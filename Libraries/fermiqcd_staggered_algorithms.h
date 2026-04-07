@@ -42,7 +42,7 @@ namespace MDP
   void (*default_staggered_action)(staggered_field &,
                                    staggered_field &,
                                    gauge_field &,
-                                   coefficients &, int) = StaggeredAsqtadActionFast::mul_Q;
+                                   coefficients &, mdp_parity) = StaggeredAsqtadActionFast::mul_Q;
 
   /** @brief Executes current Staggered/Asqtad action
    */
@@ -50,7 +50,7 @@ namespace MDP
              staggered_field &psi_in,
              gauge_field &U,
              coefficients &coeff,
-             int parity = EVENODD)
+             mdp_parity parity = EVENODD)
   {
     (*default_staggered_action)(psi_out, psi_in, U, coeff, parity);
   }

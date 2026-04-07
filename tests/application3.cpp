@@ -40,14 +40,14 @@ void set_cold(ising_field &S)
 
 void montecarlo_multihit(ising_field &S, scalar_field &H, int n_iter = 1, int n_hits = 1)
 {
-  mdp_int parity;
   mdp_int new_spin;
   mdp_real delta_action;
   mdp_site x(S.lattice());
 
   for (int iter = 0; iter < n_iter; iter++)
   {
-    for (parity = 0; parity <= 1; parity++)
+    mdp_parity processed_parity;
+    for (mdp_parity parity : {EVEN, ODD})
     {
       forallsitesofparity(x, parity)
       {
@@ -62,8 +62,9 @@ void montecarlo_multihit(ising_field &S, scalar_field &H, int n_iter = 1, int n_
             S(x) = new_spin;
         }
       }
+      processed_parity = parity;
     }
-    S.update(parity);
+    S.update(processed_parity);
   }
 }
 
