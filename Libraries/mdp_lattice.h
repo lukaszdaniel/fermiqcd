@@ -108,6 +108,7 @@ namespace MDP
   class mdp_lattice
   {
   private:
+    static constexpr int _NprocMax_ = 256;
     mdp_uint m_ndir;                          /* number of directions       */
     int m_next_next;                          /* 1, 2 or 3 is the thickness of the boundary */
     std::vector<mdp_int> m_nx;                /* box containing the lattice */

@@ -153,14 +153,10 @@ namespace MDP
 #ifdef BLOCKSITE
     int block(mdp_int mu) const
     {
-      if (mu < BLOCKSITE)
-      {
-        return m_block[mu];
-      }
-      else
-      {
+      if (mu >= BLOCKSITE)
         error("BLOCKSITE < lattice dimension");
-      }
+
+      return m_block[mu];
     }
 #endif
 
@@ -496,15 +492,15 @@ namespace MDP
   /// When compiled with TWISTED_BOUNDARY the mdp_site class keeps track of
   /// sites that moved around the boundary of the torus topology. this function
   /// returns false if this is one such site, true otherwise.
-  int in_block([[maybe_unused]] mdp_site x)
-  {
 #ifdef TWISTED_BOUNDARY
+  int in_block(mdp_site x)
+  {
     for (mdp_uint mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)
       if (x.block(mu) != 0)
         return false;
-#endif
     return true;
   }
+#endif
 
   std::ostream &operator<<(std::ostream &os, mdp_site &x)
   {

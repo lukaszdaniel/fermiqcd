@@ -204,8 +204,10 @@ int main(int argc, char **argv)
 
   light_quark["mass"] = lmass;
   heavy_quark["mass"] = hmass;
-  // look inside tthe function below in file fermiqcd_staggered_mesons.h
+  // look inside the function below in file fermiqcd_staggered_mesons.h
+#ifndef TWISTED_BOUNDARY
   prop = make_meson(U, V, G1, G2, light_quark, heavy_quark, wall_source, local_source, ap);
+#endif
 
   // print result
   if (mdp.me() == 0)

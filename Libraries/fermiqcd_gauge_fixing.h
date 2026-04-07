@@ -213,9 +213,8 @@ namespace MDP
                                  mdp_real overrelaxation_boost = 1,
                                  bool z3 = false)
     {
-
       gaugefixing_stats stats;
-      int step, nu, parity, i, j;
+      int step = 0;
       mdp_site x(U.lattice());
       double action = 0;
       double precision = 0;
@@ -229,10 +228,10 @@ namespace MDP
       for (step = 0; step < max_steps; step++)
       {
 
-        for (parity = EVEN; parity <= ODD; parity++)
+        for (int parity = EVEN; parity <= ODD; parity++)
         {
-          for (i = 0; i < U.nc() - 1; i++)
-            for (j = i + 1; j < U.nc(); j++)
+          for (int i = 0; i < U.nc() - 1; i++)
+            for (int j = i + 1; j < U.nc(); j++)
             {
               hit(U, mu, parity, i, j, overrelaxation_boost);
             }
@@ -243,16 +242,16 @@ namespace MDP
         forallsites(x)
         {
           M = 0;
-          for (nu = 0; nu < U.ndim(); nu++)
+          for (int nu = 0; nu < U.ndim(); nu++)
             if (nu != mu)
             {
               M += U(x, nu) - U(x - nu, nu);
               action += real(trace(U(x, nu) + U(x - nu, nu)));
             }
-          M = (M - trace(M) * (1.0/ U.nc()));
+          M = (M - trace(M) * (1.0 / U.nc()));
           M = M - hermitian(M);
-          for (i = 0; i < U.nc(); i++)
-            for (j = 0; j < U.nc(); j++)
+          for (int i = 0; i < U.nc(); i++)
+            for (int j = 0; j < U.nc(); j++)
               precision += (double)std::pow(abs(M(i, j)), 2);
         }
         mdp.add(precision);

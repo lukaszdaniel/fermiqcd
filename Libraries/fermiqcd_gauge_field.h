@@ -314,7 +314,7 @@ namespace MDP
     static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
     static mdp_complex a, b, c, d, e, f, g, h, i;
 
-    for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
+    for (mdp_uint mu = 1; mu < x.lattice().ndim(); mu++)
     {
       block = x.block(mu);
       if (block != 0)
@@ -434,7 +434,7 @@ namespace MDP
     // static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
     static mdp_complex a, b, c, d, e, f, g, h, i;
 
-    for (mdp_int mu = 1; mu < x.lattice().ndim(); mu++)
+    for (mdp_uint mu = 1; mu < x.lattice().ndim(); mu++)
     {
       block = x.block(mu);
       if (block != 0)

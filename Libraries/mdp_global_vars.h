@@ -18,22 +18,21 @@
 
 namespace MDP
 {
-    // #define USE_SINGLE_PRECISION // define if you want to use single precision floating point numbers (float) instead of double precision (double)
-    // #define CHECK_ALL // define if you want to have extra sanity checks (useful for debugging, but slows down the code)
-    // #define CHECK_BOUNDARY // define if you want to have extra sanity checks for field boundaries (useful for debugging, but slows down the code)
-    // #define PARALLEL
-    // #define NO_POSIX
-    // #define HAVE_NO_TIMEZONE
-    // #define MDP_USE_SFMT // define if you want to use the SIMD-oriented Fast Mersenne Twister (SFMT) as the random number generator
-    #define DO_NOT_USE_MDP_COMPLEX // define if you want to use standard complex header
-    // #define MDP_NO_LG //define if you want a temporary file to store local-to-global lattice mappings
-    // #define BLOCKSITE 100
-    // #define TWISTED_BOUNDARY
-    // #define LATTICE_DEBUG
+// #define USE_SINGLE_PRECISION // define if you want to use single precision floating point numbers (float) instead of double precision (double)
+// #define CHECK_ALL // define if you want to have extra sanity checks (useful for debugging, but slows down the code)
+// #define CHECK_BOUNDARY // define if you want to have extra sanity checks for field boundaries (useful for debugging, but slows down the code)
+// #define PARALLEL
+// #define NO_POSIX
+// #define HAVE_NO_TIMEZONE
+// #define MDP_USE_SFMT // define if you want to use the SIMD-oriented Fast Mersenne Twister (SFMT) as the random number generator
+#define DO_NOT_USE_MDP_COMPLEX // define if you want to use standard complex header
+// #define MDP_NO_LG //define if you want a temporary file to store local-to-global lattice mappings
+// #define TWISTED_BOUNDARY
+// #define LATTICE_DEBUG
 
 #ifdef TWISTED_BOUNDARY
 #ifndef BLOCKSITE
-#error BLOCKSITE is required if TWISTED_BOUNDARY is defined
+#define BLOCKSITE 100
 #endif
 #endif
 
@@ -70,7 +69,6 @@ namespace MDP
     constexpr int EVEN = 0;
     constexpr int ODD = 1;
     constexpr int EVENODD = 2;
-    constexpr int _NprocMax_ = 256;
     constexpr mdp_real PRECISION = 1.0 / (1 << 18); // ~3.0e-6 in binary
     constexpr mdp_int NOWHERE = std::numeric_limits<mdp_int>::max();
 

@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 #ifdef TWISTED_BOUNDARY
     define_twist_matrices();
 #endif
-
+#ifndef TWISTED_BOUNDARY
     printf("COMPUTING C2(t) FOR STAGGERED MESON: %s\n", argv[1]);
 
     float seed = 0;
@@ -109,6 +109,7 @@ int main(int argc, char **argv)
             printf("\n");
         }
     }
+#endif
     mdp.close_wormholes();
     return 0;
 }
