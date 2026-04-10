@@ -107,7 +107,7 @@ namespace MDP
 
       if (isMainProcess())
       {
-        printf("BEGIN Generating ordinary propagator\n");
+        std::cout << "BEGIN Generating ordinary propagator\n";
         fflush(stdout);
       }
 
@@ -123,16 +123,12 @@ namespace MDP
           x = binary2versor(a);
           if (isMainProcess())
           {
-            printf("(source at (");
+            std::cout << "(source at (";
 
             for (mdp_uint mu = 0; mu < ndim; mu++)
-#ifdef _WIN32
-              printf("%i ", x(mu));
-#else
-              printf("%li ", x(mu));
-#endif
+              std::cout << x(mu) << (mu < ndim - 1 ? ", " : "");
 
-            printf("), Color: %i\n", j);
+            std::cout << "), Color: " << j << "\n";
             fflush(stdout);
           }
           if (x.is_here())
@@ -157,7 +153,7 @@ namespace MDP
 
       if (isMainProcess())
       {
-        printf("END Generating ordinary propagator. Time: %f (sec)\n", mdp.time() - time);
+        std::cout << "END Generating ordinary propagator. Time: " << mdp.time() - time << " sec\n";
         fflush(stdout);
       }
     }

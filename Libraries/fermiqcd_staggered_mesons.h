@@ -294,7 +294,7 @@ namespace MDP
     prop = 0; //
     // ////////////////////////////////////////////////
 
-    printf("Starting to make 5x5 pion...\n");
+    std::cout << "Starting to make 5x5 pion...\n";
     for (mdp_suint i = 0; i < U.nc(); i++)
     {
       // // Make wall source /////////////////////////////
