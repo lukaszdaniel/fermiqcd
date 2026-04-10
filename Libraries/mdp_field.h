@@ -421,7 +421,7 @@ namespace MDP
      * note that if i=1, field(x-mu) is assigned to field(x)
      * function requires communication
      */
-    void shift(int i, mdp_int mu)
+    void shift(int i, mdp_uint mu)
     {
       mdp_field tmp(lattice(), m_field_components);
       mdp_site x(lattice());
@@ -514,7 +514,7 @@ namespace MDP
 
     /** Dimension of the field
      */
-    mdp_int ndim() const
+    mdp_uint ndim() const
     {
       return m_lattice->n_dimensions();
     }

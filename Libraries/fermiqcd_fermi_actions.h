@@ -64,9 +64,9 @@ namespace MDP
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
-      mdp_int ndim = psi_in.lattice().n_dimensions();
-      mdp_int nspin = psi_in.nspin();
-      mdp_int nc = psi_in.nc();
+      mdp_uint ndim = psi_in.lattice().n_dimensions();
+      mdp_suint nspin = psi_in.nspin();
+      mdp_suint nc = psi_in.nc();
       mdp_real kappa_t = 0;
       mdp_real kappa_s = 0;
       mdp_real r_t;
@@ -132,9 +132,9 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_int mu = 0; mu < ndim; mu++)
+        for (mdp_uint mu = 0; mu < ndim; mu++)
         {
-          for (mdp_int a = 0; a < nspin; a++)
+          for (mdp_suint a = 0; a < nspin; a++)
           {
             psi_up(a) = U(x, mu) * psi_in(x + mu, a);
             psi_dw(a) = hermitian(U(x - mu, mu)) * psi_in(x - mu, a);
@@ -153,10 +153,10 @@ namespace MDP
 
         if (cSW != 0)
         {
-          for (mdp_int mu = 0; mu < ndim - 1; mu++)
-            for (mdp_int nu = mu + 1; nu < ndim; nu++)
+          for (mdp_uint mu = 0; mu < ndim - 1; mu++)
+            for (mdp_uint nu = mu + 1; nu < ndim; nu++)
             {
-              for (mdp_int a = 0; a < nspin; a++)
+              for (mdp_suint a = 0; a < nspin; a++)
                 psi_lo(a) = U.em(x, mu, nu) * psi_in(x, a);
               if (mu == 0)
               {
@@ -214,9 +214,9 @@ namespace MDP
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
-      mdp_int ndim = psi_in.lattice().n_dimensions();
-      mdp_int nspin = psi_in.nspin();
-      mdp_int nc = psi_in.nc();
+      mdp_uint ndim = psi_in.lattice().n_dimensions();
+      mdp_suint nspin = psi_in.nspin();
+      mdp_suint nc = psi_in.nc();
       mdp_real kappa_t = 0;
       mdp_real kappa_s = 0;
       mdp_real r_t;
@@ -289,12 +289,12 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_int a = 0; a < nspin; a++)
-          for (mdp_int i = 0; i < nc; i++)
+        for (mdp_suint a = 0; a < nspin; a++)
+          for (mdp_suint i = 0; i < nc; i++)
           {
             psi_tmp[anc = a * nc + i] = 0;
           }
-        for (mdp_int mu = 0; mu < ndim; mu++)
+        for (mdp_uint mu = 0; mu < ndim; mu++)
         {
           if (mu == 0)
           {
@@ -308,22 +308,22 @@ namespace MDP
           }
           FU_up = &U(x, mu, 0, 0);
           FU_dw = &U(x - mu, mu, 0, 0);
-          for (mdp_int i = 0; i < nc; i++)
-            for (mdp_int j = 0; j < nc; j++)
+          for (mdp_suint i = 0; i < nc; i++)
+            for (mdp_suint j = 0; j < nc; j++)
               FHU_dw[i * nc + j] = conj(FU_dw[j * nc + i]);
-          for (mdp_int a = 0; a < nspin; a++)
+          for (mdp_suint a = 0; a < nspin; a++)
           {
             anc = a * nc;
             Fpsi_in_up = &psi_in(x + mu, a, 0);
             Fpsi_in_dw = &psi_in(x - mu, a, 0);
             bnc = Gamma_idx[mu][a] * nc;
             coeff_dif = coeff_kappa * Gamma_val[mu][a] * rsign;
-            for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint i = 0; i < nc; i++)
             {
               inc = i * nc;
               psi_up = FU_up[inc] * Fpsi_in_up[0];
               psi_dw = FHU_dw[inc] * Fpsi_in_dw[0];
-              for (mdp_int j = 1; j < nc; j++)
+              for (mdp_suint j = 1; j < nc; j++)
               {
                 psi_up += FU_up[inc + j] * Fpsi_in_up[j];
                 psi_dw += FHU_dw[inc + j] * Fpsi_in_dw[j];
@@ -336,10 +336,10 @@ namespace MDP
 
         if (cSW != 0)
         {
-          for (mdp_int mu = 0; mu < ndim - 1; mu++)
-            for (mdp_int nu = mu + 1; nu < ndim; nu++)
+          for (mdp_uint mu = 0; mu < ndim - 1; mu++)
+            for (mdp_uint nu = mu + 1; nu < ndim; nu++)
             {
-              for (mdp_int a = 0; a < nspin; a++)
+              for (mdp_suint a = 0; a < nspin; a++)
               {
                 Fem = &(U.em(x, mu, nu, 0, 0));
                 bnc = Sigma_idx[mu][nu][a] * nc;
@@ -352,11 +352,11 @@ namespace MDP
                 {
                   coeff_clover = (kappa_s * cSW * c_B * I) * Sigma_val[mu][nu][a];
                 }
-                for (mdp_int i = 0; i < nc; i++)
+                for (mdp_suint i = 0; i < nc; i++)
                 {
                   inc = i * nc;
                   psi_loc = Fem[inc] * Fpsi_in[0];
-                  for (mdp_int j = 1; j < nc; j++)
+                  for (mdp_suint j = 1; j < nc; j++)
                     psi_loc += Fem[inc + j] * Fpsi_in[j];
                   psi_tmp[bnc + i] += coeff_clover * psi_loc;
                 }
@@ -364,8 +364,8 @@ namespace MDP
             }
         }
 
-        for (mdp_int a = 0; a < nspin; a++)
-          for (mdp_int i = 0; i < nc; i++)
+        for (mdp_suint a = 0; a < nspin; a++)
+          for (mdp_suint i = 0; i < nc; i++)
             psi_out(x, a, i) += psi_tmp[anc = a * nc + i];
       }
     }

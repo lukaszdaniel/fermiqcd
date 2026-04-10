@@ -26,22 +26,22 @@ namespace MDP
   /// fermi_field psi(lattice,nc);
   /// mdp_site x(lattice);
   /// forallsites(x)
-  ///    for(int spin=0; spin<4; spin++)
-  ///      for(int i=0; i<nc; i++)
+  ///    for(mdp_suint spin=0; spin<4; spin++)
+  ///      for(mdp_suint i=0; i<nc; i++)
   ///        psi(x,spin,i)=0.0+0.0*I;
   /// @endverbatim
   class fermi_field : public mdp_complex_field
   {
   private:
-    mdp_int m_nspin;
-    mdp_int m_nc;
+    mdp_suint m_nspin;
+    mdp_suint m_nc;
 
   public:
     fermi_field() : mdp_complex_field(), m_nspin(0), m_nc(0)
     {
     }
 
-    fermi_field(const mdp_lattice &a, mdp_int nc_, mdp_int nspin_ = 4) : mdp_complex_field(a, (nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
+    fermi_field(const mdp_lattice &a, mdp_suint nc_, mdp_suint nspin_ = 4) : mdp_complex_field(a, (nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
     {
     }
 
@@ -49,7 +49,7 @@ namespace MDP
     {
     }
 
-    void allocate_fermi_field(const mdp_lattice &a, mdp_int nc_, mdp_int nspin_ = 4)
+    void allocate_fermi_field(const mdp_lattice &a, mdp_suint nc_, mdp_suint nspin_ = 4)
     {
       deallocate_field();
       m_nc = nc_;
@@ -57,12 +57,12 @@ namespace MDP
       allocate_field(a, m_nspin * m_nc);
     }
 
-    mdp_int nspin() const
+    mdp_suint nspin() const
     {
       return m_nspin;
     }
 
-    mdp_int nc() const
+    mdp_suint nc() const
     {
       return m_nc;
     }
@@ -136,7 +136,11 @@ namespace MDP
         if (stringa == "quit")
           do_exit = true;
         else
+#ifdef _WIN32
           sscanf(stringa.c_str(), "%i,%i,%i,%i", &x0, &x1, &x2, &x3);
+#else
+          sscanf(stringa.c_str(), "%li,%li,%li,%li", &x0, &x1, &x2, &x3);
+#endif
       }
       mdp.broadcast(do_exit, 0);
       if (do_exit)

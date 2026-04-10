@@ -262,7 +262,7 @@ namespace MDP
       // mdp_real im;
       forallsites(x)
       {
-        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
         {
           U(x, mu) = 0;
           for (mdp_int a = 0; a < numgen; a++)
@@ -285,7 +285,7 @@ namespace MDP
       {
         for (mdp_int alpha = 0; alpha < F.nspin(); alpha++)
         {
-          for (mdp_int i = 0; i < F.nc(); i++)
+          for (mdp_suint i = 0; i < F.nc(); i++)
           {
             re = F.lattice().random(x).gaussian();
             im = F.lattice().random(x).gaussian();
@@ -302,7 +302,7 @@ namespace MDP
       mdp_site x(p_U.lattice());
       forallsites(x)
       {
-        for (mdp_int mu = 0; mu < p_U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < p_U.ndim(); mu++)
           tmp -= 0.5 * trace(p_U(x, mu) * p_U(x, mu));
       }
       mdp.add(tmp);
@@ -319,11 +319,11 @@ namespace MDP
         mdp_site x(U.lattice());
         forallsitesandcopies(x)
         {
-          for (mdp_int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
           {
-            for (mdp_int a = 0; a < V.nc(); a++)
+            for (mdp_suint a = 0; a < V.nc(); a++)
             {
-              for (mdp_int b = 0; b < V.nc(); b++)
+              for (mdp_suint b = 0; b < V.nc(); b++)
               {
                 V(x, mu, a, b) = trace(S[a] * U(x, mu) * S[b] * transpose(U(x, mu)));
               }
@@ -385,7 +385,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
           U(x, mu) = exp(dt * p_U(x, mu) + 0.5 * dt * dt * f_U(x, mu)) * U(x, mu);
       }
       U.update();
@@ -404,7 +404,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_int mu = 0; mu < U_temp.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U_temp.ndim(); mu++)
           U_temp(x, mu) = 0;
       }
       // U_temp.update();
@@ -438,16 +438,16 @@ namespace MDP
 
       forallsitesandcopies(x)
       {
-        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
           Udag(x, mu) = hermitian(U(x, mu));
       }
 
       forallsites(x)
       {
-        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
         {
           staple = 0;
-          for (mdp_int nu = 0; nu < U.ndim(); nu++)
+          for (mdp_uint nu = 0; nu < U.ndim(); nu++)
             if (nu != mu)
               staple = staple + U(x + mu, nu) * Udag(x + nu, mu) * Udag(x, nu) +
                        Udag(x + mu - nu, nu) * Udag(x - nu, mu) * U(x - nu, nu);
@@ -476,7 +476,7 @@ namespace MDP
         f_F.update();
         forallsites(x)
         {
-          for (mdp_int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
             f_U(x, mu) -= utmp(x, mu);
         }
         f_U.update();
@@ -489,7 +489,7 @@ namespace MDP
     {
 
       mdp_site x(U.lattice());
-      mdp_int fnc = U.nc() * (U.nc() + 1) / 2;
+      mdp_suint fnc = U.nc() * (U.nc() + 1) / 2;
       mdp_matrix dum(U.nc(), U.nc());
       mdp_matrix tmp1(U.nc(), U.nc());
       mdp_matrix tmp2(U.nc(), U.nc());
@@ -500,7 +500,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
         {
           Udag(x, mu) = hermitian(U(x, mu));
           Utr(x, mu) = transpose(U(x, mu));
@@ -515,12 +515,12 @@ namespace MDP
       {
         forallsites(x)
         {
-          for (mdp_int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
-            for (mdp_int a = 0; a < U.nc(); a++)
+            for (mdp_suint a = 0; a < U.nc(); a++)
             {
-              for (mdp_int b = 0; b < U.nc(); b++)
+              for (mdp_suint b = 0; b < U.nc(); b++)
               {
                 stemp = 0.5 * hermitian(spinor(psol, x, a)) * ((1 - Gamma[mu]) * spinor(sol, x + mu, b));
                 tmp1(b, a) = stemp(0, 0);
@@ -539,12 +539,12 @@ namespace MDP
       {
         forallsites(x)
         {
-          for (mdp_int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
-            for (mdp_int a = 0; a < fnc; a++)
+            for (mdp_suint a = 0; a < fnc; a++)
             {
-              for (mdp_int b = 0; b < fnc; b++)
+              for (mdp_suint b = 0; b < fnc; b++)
               {
                 stemp = hermitian(spinor(psol, x, a)) * ((1 - Gamma[mu]) * spinor(sol, x + mu, b));
                 dum -= stemp(0, 0) * U(x, mu) * S[b] * Utr(x, mu) * S[a];
@@ -563,7 +563,7 @@ namespace MDP
         mdp_real f;
         forallsites(x)
         {
-          for (mdp_int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
             for (mdp_int g = 0; g < numgen; g++)
@@ -583,7 +583,7 @@ namespace MDP
     static mdp_matrix spinor(FermiClass &psi, mdp_site x, int b)
     {
       mdp_matrix temp(psi.nspin(), 1);
-      for (mdp_int i = 0; i < psi.nspin(); i++)
+      for (mdp_suint i = 0; i < psi.nspin(); i++)
         temp(i, 0) = psi(x, i, b);
       return temp;
     }

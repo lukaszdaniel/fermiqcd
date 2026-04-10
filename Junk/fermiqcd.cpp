@@ -119,7 +119,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   if (gauge["c_{SW}"] != 0)
     compute_em_field(U);
 
-  mdp_int nc = U.nc();
+  mdp_suint nc = U.nc();
   fermi_field psi(U.lattice(), nc);
   fermi_field phi(U.lattice(), nc);
   mdp_site x(U.lattice());
@@ -331,7 +331,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
             for (int c = 0; c < 4; c++)
             {
               s1 += conj(S(z, c, a, j, i)) * G3(c, b);
-              for (mdp_int k = 0; k < U.nc(); k++)
+              for (mdp_suint k = 0; k < U.nc(); k++)
                 s2 += S(x, b, c, j, k) * G4(c, a) * conj(Sh(x, i, k));
             }
             tmp = real(s1 * s2);
@@ -361,7 +361,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
             if (G(c, d) != 0.0)
               forallsites(x)
               {
-                for (mdp_int k = 0; k < U.nc(); k++)
+                for (mdp_suint k = 0; k < U.nc(); k++)
                   open_prop[a][b][i][j][(x(TIME) - t0 + NT) % NT] +=
                       S(x, a, c, i, k) * conj(S(x, b, d, j, k)) * G(c, d);
               }
@@ -392,8 +392,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                 mdp_complex g2 = G2(d, c);
                 if (g1 != 0.0 && g2 != 0.0)
                 {
-                  for (mdp_int i = 0; i < U.nc(); i++)
-                    for (mdp_int j = 0; j < U.nc(); j++)
+                  for (mdp_suint i = 0; i < U.nc(); i++)
+                    for (mdp_suint j = 0; j < U.nc(); j++)
                       if (!rotate)
                       {
                         c3a += real(open_prop[a][b][i][i][t1s] * g1 *
@@ -403,8 +403,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                       }
                       else
                         for (int z = 1; z < 9; z++)
-                          for (mdp_int k1 = 0; k1 < U.nc(); k1++)
-                            for (mdp_int k2 = 0; k2 < U.nc(); k2++)
+                          for (mdp_suint k1 = 0; k1 < U.nc(); k1++)
+                            for (mdp_suint k2 = 0; k2 < U.nc(); k2++)
                             {
                               c3a += real(open_prop[a][b][i][k1][t1s] * g1 *
                                           Lambda[z](k1, i) *
@@ -436,7 +436,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       for (int a = 0; a < 4; a++)
         for (int b = 0; b < 4; b++)
           if (G1(a, b) != 0.0)
-            for (mdp_int i = 0; i < U.nc(); i++)
+            for (mdp_suint i = 0; i < U.nc(); i++)
               Q(x) += std::pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
     }
     // smear_propagator(S,U,smear_steps);

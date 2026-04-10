@@ -124,7 +124,7 @@ namespace MDP
           forallsites(x)
           {
             s(x) = 0.0;
-            for (mdp_int k = 0; k < psi_in.nc(); k++)
+            for (mdp_suint k = 0; k < psi_in.nc(); k++)
               s(x) += std::sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
           }
           filename1 = filename_prefix + ".field" + std::to_string(a) + "." + std::to_string(step) + ".vtk";
@@ -134,7 +134,7 @@ namespace MDP
         {
           s(x) = 0.0;
           for (mdp_int a = 3; a < 4; a++)
-            for (mdp_int k = 0; k < psi_in.nc(); k++)
+            for (mdp_suint k = 0; k < psi_in.nc(); k++)
               s(x) += std::log(real(r(x, a, k) * conj(r(x, a, k))) + mdp_precision);
         }
         filename2 = filename_prefix + ".residue." + std::to_string(step) + ".vtk";

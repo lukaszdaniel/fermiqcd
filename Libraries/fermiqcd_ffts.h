@@ -128,7 +128,7 @@ namespace MDP
     }
 
     for (mdp_int spin = 0; spin < psi_out.nspin(); spin++)
-      for (mdp_int color = 0; color < psi_out.nc(); color++)
+      for (mdp_suint color = 0; color < psi_out.nc(); color++)
       {
         for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)
           for (mdp_int x3 = 0; x3 < psi_out.lattice().size(3); x3++)
@@ -204,7 +204,7 @@ namespace MDP
     }
 
     for (mdp_int spin = 0; spin < psi_out.nspin(); spin++)
-      for (mdp_int color = 0; color < psi_out.nc(); color++)
+      for (mdp_suint color = 0; color < psi_out.nc(); color++)
       {
         for (mdp_int x1 = 0; x1 < psi_out.lattice().size(1); x1++)
           for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)

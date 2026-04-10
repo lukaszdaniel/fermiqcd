@@ -23,7 +23,7 @@ namespace MDP
   // If use class mdp_matrix
   // ///////////////////////////
   mdp_matrix staple(const gauge_field &U, mdp_site x,
-                           mdp_int mu, int s1, mdp_int nu)
+                           mdp_uint mu, int s1, mdp_uint nu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     if (s1 == +1)
@@ -39,13 +39,13 @@ namespace MDP
     return tmp;
   }
 
-  mdp_matrix staple(const gauge_field &U, mdp_site x, mdp_int mu)
+  mdp_matrix staple(const gauge_field &U, mdp_site x, mdp_uint mu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
 
     tmp = 0;
-    for (mdp_int nu = 0; nu < U.ndim(); nu++)
+    for (mdp_uint nu = 0; nu < U.ndim(); nu++)
       if (nu != mu)
       {
         tmp += U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
@@ -56,7 +56,7 @@ namespace MDP
   }
 
   mdp_matrix staple_H(const gauge_field &U, mdp_site x,
-                             mdp_int mu, int s1, mdp_int nu)
+                             mdp_uint mu, int s1, mdp_uint nu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     if (s1 == +1)
@@ -72,11 +72,11 @@ namespace MDP
     return tmp;
   }
 
-  mdp_matrix staple_H(const gauge_field &U, mdp_site x, mdp_int mu)
+  mdp_matrix staple_H(const gauge_field &U, mdp_site x, mdp_uint mu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
-    mdp_int nu;
+    mdp_uint nu;
     tmp = 0;
     for (nu = 0; nu < U.ndim(); nu++)
       if (nu != mu)
@@ -88,11 +88,11 @@ namespace MDP
     return tmp;
   }
 
-  mdp_matrix staple_H_unisotropic(const gauge_field &U, mdp_site x, mdp_int mu, mdp_real zeta)
+  mdp_matrix staple_H_unisotropic(const gauge_field &U, mdp_site x, mdp_uint mu, mdp_real zeta)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
-    mdp_int nu;
+    mdp_uint nu;
     mdp_real param;
     tmp = 0;
     for (nu = 0; nu < U.ndim(); nu++)
@@ -113,11 +113,11 @@ namespace MDP
     return tmp;
   }
 
-  mdp_matrix staple_0i_H(const gauge_field &U, mdp_site x, mdp_int mu)
+  mdp_matrix staple_0i_H(const gauge_field &U, mdp_site x, mdp_uint mu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
-    mdp_int nu;
+    mdp_uint nu;
     if (mu == 0)
     {
       tmp = 0;
@@ -139,11 +139,11 @@ namespace MDP
     return tmp;
   }
 
-  mdp_matrix staple_ij_H(const gauge_field &U, mdp_site x, mdp_int mu)
+  mdp_matrix staple_ij_H(const gauge_field &U, mdp_site x, mdp_uint mu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     mdp_site y(U.lattice());
-    mdp_int nu;
+    mdp_uint nu;
     tmp = 0;
     if (mu != 0)
       for (nu = 1; nu < U.ndim(); nu++)
@@ -159,7 +159,7 @@ namespace MDP
   // ///////////////////////////
   // plaquette
   // //////////////////////////
-  mdp_matrix plaquette(const gauge_field &U, mdp_site x, mdp_int mu, mdp_int nu)
+  mdp_matrix plaquette(const gauge_field &U, mdp_site x, mdp_uint mu, mdp_uint nu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     tmp = U(x, mu) * U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
@@ -178,9 +178,9 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_int mu = 0; mu < U.ndim() - 1; mu++)
+      for (mdp_uint mu = 0; mu < U.ndim() - 1; mu++)
       {
-        for (mdp_int nu = mu + 1; nu < U.ndim(); nu++)
+        for (mdp_uint nu = mu + 1; nu < U.ndim(); nu++)
         {
           tmp += (1 - 8 * c1) * (1 - real(trace(plaquette(U, x, mu, nu))) / U.nc()) +
                  c1 * (2 - 1.0 / U.nc() * real(trace(U(x, mu) * (U(x + mu, mu) * U((x + mu) + mu, nu) * hermitian(U((x + mu) + nu, mu)) * hermitian(U(x + nu, mu)) * +U(x + mu, nu) * U((x + mu) + nu, nu) * hermitian(U((x + nu) + nu, mu)) * hermitian(U(x + nu, nu))) * hermitian(U(x, nu)))));

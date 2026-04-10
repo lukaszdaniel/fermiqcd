@@ -35,7 +35,7 @@ public:
 
     for (int iter = 0; iter < n_iter; iter++)
       for (mdp_parity parity : {EVEN, ODD})
-        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
         {
           forallsitesofparity(x, parity)
           {
@@ -47,8 +47,8 @@ public:
                     x(3) == sites[q](3))
                   continue;
               }
-            for (mdp_int i = 0; i < U.nc() - 1; i++)
-              for (mdp_int j = i + 1; j < U.nc(); j++)
+            for (mdp_suint i = 0; i < U.nc() - 1; i++)
+              for (mdp_suint j = i + 1; j < U.nc(); j++)
               {
                 if (zeta == 1)
                   M = U(x, mu) * staple_H(U, x, mu);
@@ -61,7 +61,7 @@ public:
                 a[2] = M(j, i);
                 a[3] = M(j, j);
                 heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-                for (mdp_int k = 0; k < U.nc(); k++)
+                for (mdp_suint k = 0; k < U.nc(); k++)
                 {
                   tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                   U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
@@ -90,7 +90,7 @@ void punched_ape_smearing(gauge_field &U,
   {
     std::cout << "smearing step " << iter << "/" << iterations << std::endl;
     V = U;
-    for (mdp_int mu = 0; mu < U.ndim(); mu++)
+    for (mdp_uint mu = 0; mu < U.ndim(); mu++)
     {
       forallsites(x)
       {
@@ -103,7 +103,7 @@ void punched_ape_smearing(gauge_field &U,
               continue;
           }
         U(x, mu) = (1.0 - alpha) * V(x, mu);
-        for (mdp_int nu = 0; nu < U.ndim(); nu++)
+        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
           if (nu != mu)
             U(x, mu) += (1.0 - alpha) / 6 *
                         (V(x, nu) * V(x + nu, mu) * hermitian(V(x + mu, nu)) +

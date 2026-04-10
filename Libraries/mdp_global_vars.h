@@ -42,7 +42,7 @@ namespace MDP
      *
      * Used for ranges (roughly) +/- 2 bln
      */
-    using mdp_int = int32_t;
+    using mdp_int = int_fast32_t;
 
     /** @brief unsigned int
      *
@@ -50,7 +50,7 @@ namespace MDP
      *
      * Used for ranges from 0 to (roughly) 4 bln
      */
-    using mdp_uint = uint32_t;
+    using mdp_uint = uint_fast32_t;
 
     /** @brief Short unsigned int
      *
@@ -58,7 +58,7 @@ namespace MDP
      *
      * Used for ranges 0 to 255
      */
-    using mdp_suint = uint8_t;
+    using mdp_suint = uint_fast8_t;
 
 #ifdef USE_SINGLE_PRECISION
     using mdp_real = float;

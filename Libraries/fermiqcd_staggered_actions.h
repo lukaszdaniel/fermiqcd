@@ -47,7 +47,7 @@ namespace MDP
                       mdp_parity parity = EVENODD)
     {
 
-      mdp_int ndim = U.ndim();
+      mdp_uint ndim = U.ndim();
       mdp_real sign = 1, two_mass = 1;
       if (coeff.has_key("mass"))
         two_mass = 2.0 * coeff["mass"];
@@ -82,7 +82,7 @@ namespace MDP
         // use non-naik improved action
         forallsitesofparity(x, parity)
         {
-          for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_uint mu = 0; mu < ndim; mu++)
           {
             y = x + mu;
             dslash = U(x, mu) * chi_in(y);
@@ -97,7 +97,7 @@ namespace MDP
         // use naik improved action
         forallsitesofparity(x, parity)
         {
-          for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_uint mu = 0; mu < ndim; mu++)
           {
             y = x + mu;
             dslash = U(x, mu) * chi_in(y);
@@ -141,8 +141,8 @@ namespace MDP
                       coefficients &coeff,
                       mdp_parity parity = EVENODD)
     {
-      mdp_int nc = U.nc();
-      mdp_int ndim = U.ndim();
+      mdp_suint nc = U.nc();
+      mdp_uint ndim = U.ndim();
       mdp_real sign = 1, two_mass = 1;
       if (coeff.has_key("mass"))
         two_mass = 2.0 * coeff["mass"];
@@ -166,7 +166,7 @@ namespace MDP
       {
         forallsitesofparity(x, parity)
         {
-          for (mdp_int i = 0; i < nc; i++)
+          for (mdp_suint i = 0; i < nc; i++)
             chi_out(x, i) = two_mass * chi_in(x, i);
         }
       }
@@ -174,7 +174,7 @@ namespace MDP
       {
         forallsitesofparity(x, parity)
         {
-          for (mdp_int i = 0; i < nc; i++)
+          for (mdp_suint i = 0; i < nc; i++)
             chi_out(x, i) = 0;
         }
       }
@@ -184,7 +184,7 @@ namespace MDP
         // version optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_uint mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;
@@ -237,7 +237,7 @@ namespace MDP
         // version non-optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_uint mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;
@@ -246,8 +246,8 @@ namespace MDP
             Fchi_up = &(chi_in(x_up, 0));
             Fchi_dw = &(chi_in(x_dw, 0));
             phase = (mdp_real)sign * chi_in.eta(x, mu);
-            for (mdp_int i = 0; i < nc; i++)
-              for (mdp_int j = 0; j < nc; j++)
+            for (mdp_suint i = 0; i < nc; i++)
+              for (mdp_suint j = 0; j < nc; j++)
                 chi_out(x, i) += phase *
                                  (FU_up[nc * i + j] * Fchi_up[j] - conj(FU_dw[nc * j + i]) * Fchi_dw[j]);
             if (U.long_links.allocated())
@@ -259,8 +259,8 @@ namespace MDP
               Fchi_up = &(chi_in(x_up, 0));
               Fchi_dw = &(chi_in(x_dw, 0));
               // check the factor phase
-              for (mdp_int i = 0; i < nc; i++)
-                for (mdp_int j = 0; j < nc; j++)
+              for (mdp_suint i = 0; i < nc; i++)
+                for (mdp_suint j = 0; j < nc; j++)
                   chi_out(x, i) += phase *
                                    (FU_up[3 * i + j] * Fchi_up[j] - conj(FU_dw[3 * j + i]) * Fchi_dw[j]);
             }

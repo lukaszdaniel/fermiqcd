@@ -189,7 +189,7 @@ int main(int argc, char **argv)
       for (mdp_int k = 0; k < U.lattice().size(1); k++)
       {
         cor[k] = 0;
-        for (mdp_int mu = 1; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 1; mu < U.ndim(); mu++)
         {
           for (mdp_int j = 0; j < U.lattice().size(1); j++)
           {

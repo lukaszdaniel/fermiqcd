@@ -223,7 +223,11 @@ namespace MDP
       int j = a.find(":", i);
       if (j < 0)
         j = a.length();
+#ifdef _WIN32
       sscanf(a.substr(i, j - i).c_str(), "%u", &value);
+#else
+      sscanf(a.substr(i, j - i).c_str(), "%lu", &value);
+#endif
       return value;
     }
   }

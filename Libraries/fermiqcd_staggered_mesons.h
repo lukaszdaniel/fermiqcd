@@ -47,7 +47,7 @@ namespace MDP
     int component(mdp_site x, mdp_site y)
     {
       int i = 0;
-      for (mdp_int mu = 0; mu < KS_NDIM; mu++)
+      for (mdp_uint mu = 0; mu < KS_NDIM; mu++)
       {
         if (x(mu) / 2 != y(mu) / 2)
           return 0;
@@ -111,9 +111,9 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_int c = 0; c < U.nc(); c++)
+      for (mdp_suint c = 0; c < U.nc(); c++)
         out(x, c) = 0;
-      for (mdp_int mu = 0; mu < KS_NDIM; mu++)
+      for (mdp_uint mu = 0; mu < KS_NDIM; mu++)
         A[mu] = x(mu) % 2;
       for (int i = 0; i < 16; i++)
         if (phases(x, i) != 0)
@@ -127,7 +127,7 @@ namespace MDP
           if (phases(x, i) != 0)
           {
             d = 0;
-            for (mdp_int mu = 0; mu < KS_NDIM; mu++)
+            for (mdp_uint mu = 0; mu < KS_NDIM; mu++)
               if (B[mu] - A[mu] != 0)
               {
                 P[d][0] = B[mu] - A[mu];
@@ -209,7 +209,7 @@ namespace MDP
 
     int t, t_source, nsources = 1, sourcestep = 1;
     int nt = U.lattice().size(0);
-    mdp_int nc = U.nc();
+    mdp_suint nc = U.nc();
     mdp_complex c;
     mdp_site x(U.lattice());
     staggered_field tmp(U.lattice(), nc);
@@ -228,11 +228,11 @@ namespace MDP
 
     for (t_source = 0; t_source < nsources * sourcestep; t_source += sourcestep)
     {
-      for (mdp_int i = 0; i < U.nc(); i++)
+      for (mdp_suint i = 0; i < U.nc(); i++)
       {
         forallsites(x)
         {
-          for (mdp_int j = 0; j < U.nc(); j++)
+          for (mdp_suint j = 0; j < U.nc(); j++)
           {
             if (i == j &&
                 (x(0) == t_source || x(0) == (t_source + 1)) &&
@@ -259,7 +259,7 @@ namespace MDP
         forallsites(x)
         {
           c = mdp_complex(0, 0);
-          for (mdp_int j = 0; j < U.nc(); j++)
+          for (mdp_suint j = 0; j < U.nc(); j++)
             c += conj(anti_prop(x, j)) * tmp(x, j);
           t = (x(0) - t_source + nt) % nt;
           if (t % 2 == 1)
@@ -295,12 +295,12 @@ namespace MDP
     // ////////////////////////////////////////////////
 
     printf("Starting to make 5x5 pion...\n");
-    for (mdp_int i = 0; i < U.nc(); i++)
+    for (mdp_suint i = 0; i < U.nc(); i++)
     {
       // // Make wall source /////////////////////////////
       forallsites(x) //
       {
-        for (mdp_int j = 0; j < U.nc(); j++) //
+        for (mdp_suint j = 0; j < U.nc(); j++) //
         {
           if (i == j && x(0) - t_source == 0)       //
             quark_source(x, j) = mdp_complex(1, 0); //
@@ -320,12 +320,12 @@ namespace MDP
       forallsites(x)
       {                                  //
         t = (x(0) - t_source + nt) % nt; //
-        for (mdp_int j = 0; j < U.nc(); j++)     //
+        for (mdp_suint j = 0; j < U.nc(); j++)     //
           tmp(t, j) += conj(quark_prop(x, j)) * quark_prop(x, j);
       }                              //
       mdp.add(tmp);                  //
       for (t = 0; t < nt; t++)       //
-        for (mdp_int j = 0; j < U.nc(); j++) //
+        for (mdp_suint j = 0; j < U.nc(); j++) //
           prop(0, t) += tmp(t, j);   //
       // /////////////////////////////////////////////////
 
@@ -334,12 +334,12 @@ namespace MDP
       forallsites(x)
       {                                              //
         t = (x(0) - t_source + nt) % nt;             //
-        for (mdp_int j = 0; j < U.nc(); j++)         //
+        for (mdp_suint j = 0; j < U.nc(); j++)       //
           tmp(t, j) += quark_prop(x, j);             //
       }                                              //
       mdp.add(tmp);                                  //
       for (t = 0; t < nt; t++)                       //
-        for (mdp_int j = 0; j < U.nc(); j++)         //
+        for (mdp_suint j = 0; j < U.nc(); j++)       //
           prop(1, t) += conj(tmp(t, j)) * tmp(t, j); //
                                                      //
     }

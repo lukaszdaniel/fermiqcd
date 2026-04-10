@@ -75,7 +75,7 @@ namespace MDP
 
       int step = 0;
       mdp_parity opposite_parity = EVENODD;
-      mdp_int nc = psi_in.nc();
+      mdp_suint nc = psi_in.nc();
       double beta, norm, four_mass_sq;
       double pMMp, alpha, residue, rresidue = -1, target_residue, old_residue;
       inversion_stats stats;
@@ -113,7 +113,7 @@ namespace MDP
 
       forallsitesofparity(x, parity)
       {
-        for (mdp_int i = 0; i < nc; i++)
+        for (mdp_suint i = 0; i < nc; i++)
           p(x, i) = psi_out(x, i);
       }
 
@@ -127,7 +127,7 @@ namespace MDP
 
       forallsitesofparity(x, parity)
       {
-        for (mdp_int i = 0; i < nc; i++)
+        for (mdp_suint i = 0; i < nc; i++)
         {
           t(x, i) += four_mass_sq * p(x, i);
           r(x, i) = p(x, i) = psi_in(x, i) - t(x, i);
@@ -162,7 +162,7 @@ namespace MDP
 
         forallsitesofparity(x, parity)
         {
-          for (mdp_int i = 0; i < nc; i++)
+          for (mdp_suint i = 0; i < nc; i++)
           {
             r(x, i) -= alpha * t(x, i);
             psi_out(x, i) += alpha * p(x, i);
@@ -180,7 +180,7 @@ namespace MDP
 
         forallsitesofparity(x, parity)
         {
-          for (mdp_int i = 0; i < nc; i++)
+          for (mdp_suint i = 0; i < nc; i++)
             p(x, i) = r(x, i) + beta * p(x, i);
         }
 
@@ -230,7 +230,7 @@ namespace MDP
       // because staggered_BiCG_QQh uses it.
       forallsites(x)
       {
-        for (mdp_int i = 0; i < U.nc(); i++)
+        for (mdp_suint i = 0; i < U.nc(); i++)
           psi_out(x, i) = 0;
       }
       psi_out.update();
@@ -239,7 +239,7 @@ namespace MDP
 
       forallsitesofparity(x, EVEN)
       {
-        for (mdp_int i = 0; i < U.nc(); i++)
+        for (mdp_suint i = 0; i < U.nc(); i++)
           r(x, i) = -r(x, i) + 2.0 * mass * psi_in(x, i);
       }
 
@@ -248,7 +248,7 @@ namespace MDP
       mul_Q(r, psi_out, U, coeff, ODD);
       forallsitesofparity(x, ODD)
       {
-        for (mdp_int i = 0; i < U.nc(); i++)
+        for (mdp_suint i = 0; i < U.nc(); i++)
           psi_out(x, i) = 1.0 / (2.0 * mass) * (psi_in(x, i) - r(x, i));
       }
 

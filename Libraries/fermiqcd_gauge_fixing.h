@@ -52,7 +52,7 @@ namespace MDP
     static constexpr int Landau = 10;
 
     static void hit(gauge_field &U,
-                    mdp_int mu,
+                    mdp_uint mu,
                     mdp_parity parity,
                     int i, int j,
                     mdp_real overrelaxation_boost = 1)
@@ -63,7 +63,7 @@ namespace MDP
       static mdp_real a0, a1, a2, a3, b, c, d;
       static mdp_real a0_sq, ai_sq;
       static mdp_complex x0, x1;
-      mdp_int nc = U.nc();
+      mdp_suint nc = U.nc();
       mdp_parity opposite_parity = EVENODD;
       mdp_complex_vector_field W(U.lattice(), 4);
       mdp_matrix U_up(nc, nc), U_dw(nc, nc);
@@ -86,7 +86,7 @@ namespace MDP
       forallsitesofparity(x, parity)
       {
         a0 = a1 = a2 = a3 = 0;
-        for (mdp_int nu = 0; nu < U.ndim(); nu++)
+        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
           if (nu != mu)
           {
             U_up = U(x, nu);
@@ -117,8 +117,8 @@ namespace MDP
       W.update();
       forallsitesofparity(x, parity)
       {
-        for (mdp_int nu = 0; nu < U.ndim(); nu++)
-          for (mdp_int k = 0; k < U.nc(); k++)
+        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+          for (mdp_suint k = 0; k < U.nc(); k++)
           {
             x0 = U(x, nu, i, k);
             x1 = U(x, nu, j, k);
@@ -128,11 +128,11 @@ namespace MDP
       }
       forallsitesofparity(x, opposite_parity)
       {
-        for (mdp_int nu = 0; nu < U.ndim(); nu++)
+        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
         {
           y = x + nu;
 #ifndef TWISTED_BOUNDARY
-          for (mdp_int k = 0; k < U.nc(); k++)
+          for (mdp_suint k = 0; k < U.nc(); k++)
           {
             x0 = U(x, nu, k, i);
             x1 = U(x, nu, k, j);
@@ -141,7 +141,7 @@ namespace MDP
           }
 #else
           if (in_block(y))
-            for (mdp_int k = 0; k < U.nc(); k++)
+            for (mdp_suint k = 0; k < U.nc(); k++)
             {
               x0 = U(x, nu, k, i);
               x1 = U(x, nu, k, j);
@@ -164,7 +164,7 @@ namespace MDP
       U.update();
     }
 
-    static void z3_fix(gauge_field &U, mdp_int mu)
+    static void z3_fix(gauge_field &U, mdp_uint mu)
     {
       int i = 0;
       mdp_site x(U.lattice());
@@ -211,7 +211,7 @@ namespace MDP
     /// @param z3 if set to true fixes residual Z(n) symmetry due to lattice
     ///           torus topology
     static gaugefixing_stats fix(gauge_field &U,
-                                 mdp_int mu = 0,
+                                 mdp_uint mu = 0,
                                  int max_steps = 1,
                                  mdp_real target_precision = 1e-5,
                                  mdp_real overrelaxation_boost = 1,
@@ -234,8 +234,8 @@ namespace MDP
 
         for (mdp_parity parity : {EVEN, ODD})
         {
-          for (mdp_int i = 0; i < U.nc() - 1; i++)
-            for (mdp_int j = i + 1; j < U.nc(); j++)
+          for (mdp_suint i = 0; i < U.nc() - 1; i++)
+            for (mdp_suint j = i + 1; j < U.nc(); j++)
             {
               hit(U, mu, parity, i, j, overrelaxation_boost);
             }
@@ -246,7 +246,7 @@ namespace MDP
         forallsites(x)
         {
           M = 0;
-          for (mdp_int nu = 0; nu < U.ndim(); nu++)
+          for (mdp_uint nu = 0; nu < U.ndim(); nu++)
             if (nu != mu)
             {
               M += U(x, nu) - U(x - nu, nu);
@@ -254,8 +254,8 @@ namespace MDP
             }
           M = (M - trace(M) * (1.0 / U.nc()));
           M = M - hermitian(M);
-          for (mdp_int i = 0; i < U.nc(); i++)
-            for (mdp_int j = 0; j < U.nc(); j++)
+          for (mdp_suint i = 0; i < U.nc(); i++)
+            for (mdp_suint j = 0; j < U.nc(); j++)
               precision += (double)std::pow(abs(M(i, j)), 2);
         }
         mdp.add(precision);

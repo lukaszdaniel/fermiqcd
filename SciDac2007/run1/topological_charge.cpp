@@ -26,7 +26,7 @@ public:
       zeta = 1;
 
     mdp_parity parity = EVEN;
-    mdp_int mu = 0;
+    mdp_uint mu = 0;
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
     mdp_site x(U.lattice());
@@ -45,8 +45,8 @@ public:
       for (mu = 0; mu < U.ndim(); mu++)
       {
 
-        for (mdp_int i = 0; i < U.nc() - 1; i++)
-          for (mdp_int j = i + 1; j < U.nc(); j++)
+        for (mdp_suint i = 0; i < U.nc() - 1; i++)
+          for (mdp_suint j = i + 1; j < U.nc(); j++)
           {
             if (zeta == 1)
               M = U(x, mu) * staple_H(U, x, mu);
@@ -59,7 +59,7 @@ public:
             a[2] = M(j, i);
             a[3] = M(j, j);
             heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-            for (mdp_int k = 0; k < U.nc(); k++)
+            for (mdp_suint k = 0; k < U.nc(); k++)
             {
               tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
               U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);

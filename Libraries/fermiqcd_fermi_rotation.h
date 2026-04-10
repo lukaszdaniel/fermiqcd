@@ -27,9 +27,9 @@ namespace MDP
     mdp_site x(psi.lattice());
     forallsites(x)
     {
-      for (mdp_int mu = 1; mu < U.ndim(); mu++)
-        for (mdp_int a = 0; a < psi.nspin(); a++)
-          for (mdp_int b = 0; b < psi.nspin(); b++)
+      for (mdp_uint mu = 1; mu < U.ndim(); mu++)
+        for (mdp_suint a = 0; a < psi.nspin(); a++)
+          for (mdp_suint b = 0; b < psi.nspin(); b++)
           {
             psi(x, a) += d1 * 0.5 * Gamma[mu](a, b) * (U(x, mu) * psi_rot(x + mu, b) - (U(x, -1, mu)) * psi_rot(x - mu, b));
           }

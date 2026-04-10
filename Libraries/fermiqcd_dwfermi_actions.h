@@ -57,10 +57,10 @@ namespace MDP
       if (psi_in.nc() != U.nc())
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
-      mdp_int ndim = psi_in.lattice().ndim();
-      mdp_int nspin = psi_in.nspin();
-      mdp_int nc = psi_in.nc();
-      mdp_int L5 = psi_in.L5();
+      mdp_uint ndim = psi_in.lattice().ndim();
+      mdp_suint nspin = psi_in.nspin();
+      mdp_suint nc = psi_in.nc();
+      mdp_suint L5 = psi_in.L5();
       mdp_real m_5 = 0, m_f = 0, sign = 0;
       if (coeff.has_key("m_5"))
         m_5 = coeff["m_5"];
@@ -94,11 +94,11 @@ namespace MDP
       psi_out = psi_in;
       forallsites(x)
       {
-        for (mdp_int l = 0; l < L5; l++)
+        for (mdp_suint l = 0; l < L5; l++)
         {
-          for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_uint mu = 0; mu < ndim; mu++)
           {
-            for (mdp_int a = 0; a < nspin; a++)
+            for (mdp_suint a = 0; a < nspin; a++)
             {
               psi_up(a) = U(x, mu) * psi_in(x + mu, l, a);
               psi_dw(a) = hermitian(U(x - mu, mu)) * psi_in(x - mu, l, a);
@@ -155,10 +155,10 @@ namespace MDP
       if (psi_in.nc() != U.nc())
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
-      mdp_int ndim = psi_in.lattice().ndim();
-      mdp_int nspin = psi_in.nspin();
-      mdp_int nc = psi_in.nc();
-      mdp_int L5 = psi_in.L5();
+      mdp_uint ndim = psi_in.lattice().ndim();
+      mdp_suint nspin = psi_in.nspin();
+      mdp_suint nc = psi_in.nc();
+      mdp_suint L5 = psi_in.L5();
       mdp_real m_5 = 0, m_f = 0, sign = 0;
       if (coeff.has_key("m_5"))
         m_5 = coeff["m_5"];
@@ -192,15 +192,15 @@ namespace MDP
       psi_out = psi_in;
       forallsites(x)
       {
-        for (mdp_int l = 0; l < L5; l++)
+        for (mdp_suint l = 0; l < L5; l++)
         {
-          for (mdp_int mu = 0; mu < ndim; mu++)
+          for (mdp_uint mu = 0; mu < ndim; mu++)
           {
-            for (mdp_int a = 0; a < nspin; a++)
-              for (int i = 0; i < nc; i++)
+            for (mdp_suint a = 0; a < nspin; a++)
+              for (mdp_suint i = 0; i < nc; i++)
               {
                 psi_up(a, i) = psi_dw(a, i) = 0;
-                for (int j = 0; j < nc; j++)
+                for (mdp_suint j = 0; j < nc; j++)
                 {
                   psi_up(a, i) += U(x, mu, i, j) * psi_in(x + mu, l, a, j);
                   psi_dw(a, i) += conj(U(x - mu, mu, j, i)) * psi_in(x - mu, l, a, j);
@@ -211,29 +211,29 @@ namespace MDP
           }
 
           if (l < L5 - 1)
-            for (mdp_int a = 0; a < nspin; a++)
-              for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint a = 0; a < nspin; a++)
+              for (mdp_suint i = 0; i < nc; i++)
               {
                 psi_out(x, l, a, i) += kappa5 * psi_in(x, l + 1, a, i);
                 psi_out(x, l, Gamma5_idx[a], i) -= kappa5 * Gamma5_val[a] * psi_in(x, l + 1, a, i);
               }
           else
-            for (mdp_int a = 0; a < nspin; a++)
-              for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint a = 0; a < nspin; a++)
+              for (mdp_suint i = 0; i < nc; i++)
               {
                 psi_out(x, L5 - 1, a, i) += kappaf * psi_in(x, 0, a, i);
                 psi_out(x, L5 - 1, Gamma5_idx[a], i) -= kappaf * Gamma5_val[a] * psi_in(x, 0, a, i);
               }
           if (l > 0)
-            for (mdp_int a = 0; a < nspin; a++)
-              for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint a = 0; a < nspin; a++)
+              for (mdp_suint i = 0; i < nc; i++)
               {
                 psi_out(x, l, a, i) += kappa5 * psi_in(x, l - 1, a, i);
                 psi_out(x, l, Gamma5_idx[a], i) += kappa5 * Gamma5_val[a] * psi_in(x, l - 1, a, i);
               }
           else
-            for (mdp_int a = 0; a < nspin; a++)
-              for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint a = 0; a < nspin; a++)
+              for (mdp_suint i = 0; i < nc; i++)
               {
                 psi_out(x, 0, a, i) += kappaf * psi_in(x, L5 - 1, a, i);
                 psi_out(x, 0, Gamma5_idx[a], i) += kappaf * Gamma5_val[a] * psi_in(x, L5 - 1, a, i);

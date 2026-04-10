@@ -21,12 +21,9 @@
 namespace MDP
 {
   // this is just n!
-  constexpr mdp_int mdp_permutations(int n)
+  constexpr mdp_uint mdp_permutations(mdp_uint n)
   {
-    if (n < 0)
-      return 0;
-
-    mdp_int a = 1;
+    mdp_uint a = 1;
     for (; n > 1; --n)
       a *= n;
 
@@ -40,26 +37,26 @@ namespace MDP
   /// ...
   /// [3210] k=23
   /// Returns -1 on error when (i >= n || k >= n_permutations(n))
-  int mdp_permutation(int n, int k, int i)
+  mdp_int mdp_permutation(mdp_uint n, mdp_uint k, mdp_uint i)
   {
     if (i >= n || k >= mdp_permutations(n))
       return -1;
 
-    std::vector<mdp_int> fact(n + 1, 1);
-    for (int j = 1; j <= n; ++j)
+    std::vector<mdp_uint> fact(n + 1, 1);
+    for (mdp_uint j = 1; j <= n; ++j)
       fact[j] = fact[j - 1] * j;
 
     std::vector<bool> used(n, false);
 
-    for (int pos = 0; pos < n; ++pos)
+    for (mdp_uint pos = 0; pos < n; ++pos)
     {
-      mdp_int f = fact[n - 1 - pos];
-      int idx = k / f;
+      mdp_uint f = fact[n - 1 - pos];
+      mdp_uint idx = k / f;
       k %= f;
 
       // find idx-th unused element
-      int count = -1;
-      for (int val = 0; val < n; ++val)
+      mdp_uint count = -1;
+      for (mdp_uint val = 0; val < n; ++val)
       {
         if (!used[val])
           ++count;

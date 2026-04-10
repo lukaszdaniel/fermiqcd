@@ -43,50 +43,50 @@ namespace MDP
       mdp_site y(U.lattice());
       mdp_matrix A(U.nc(), U.nc());
       mdp_matrix staples(U.nc(), U.nc());
-      for (mdp_int m = 0; m < U.ndim() - 1; m++)
+      for (mdp_uint m = 0; m < U.ndim() - 1; m++)
       {
         forallsites(x)
         {
-          for (mdp_int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
           {
-            for (mdp_int i = 0; i < U.nc(); i++)
-              for (mdp_int j = 0; j < U.nc(); j++)
+            for (mdp_suint i = 0; i < U.nc(); i++)
+              for (mdp_suint j = 0; j < U.nc(); j++)
                 staples(i, j) = 0;
 
-            for (mdp_int nu = 0; nu < U.nc(); nu++)
+            for (mdp_suint nu = 0; nu < U.nc(); nu++)
             {
               y = x + nu;
-              for (mdp_int i = 0; i < U.nc(); i++)
-                for (mdp_int j = 0; j < U.nc(); j++)
+              for (mdp_suint i = 0; i < U.nc(); i++)
+                for (mdp_suint j = 0; j < U.nc(); j++)
                 {
                   A(i, j) = 0;
-                  for (mdp_int k = 0; k < U.nc(); k++)
+                  for (mdp_suint k = 0; k < U.nc(); k++)
                     A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
                 }
-              for (mdp_int i = 0; i < U.nc(); i++)
-                for (mdp_int j = 0; j < U.nc(); j++)
+              for (mdp_suint i = 0; i < U.nc(); i++)
+                for (mdp_suint j = 0; j < U.nc(); j++)
                 {
-                  for (mdp_int k = 0; k < U.nc(); k++)
+                  for (mdp_suint k = 0; k < U.nc(); k++)
                     staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
                 }
               y = x - nu;
-              for (mdp_int i = 0; i < U.nc(); i++)
-                for (mdp_int j = 0; j < U.nc(); j++)
+              for (mdp_suint i = 0; i < U.nc(); i++)
+                for (mdp_suint j = 0; j < U.nc(); j++)
                 {
                   A(i, j) = 0;
-                  for (mdp_int k = 0; k < U.nc(); k++)
+                  for (mdp_suint k = 0; k < U.nc(); k++)
                     A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
                 }
-              for (mdp_int i = 0; i < U.nc(); i++)
-                for (mdp_int j = 0; j < U.nc(); j++)
+              for (mdp_suint i = 0; i < U.nc(); i++)
+                for (mdp_suint j = 0; j < U.nc(); j++)
                 {
-                  for (mdp_int k = 0; k < U.nc(); k++)
+                  for (mdp_suint k = 0; k < U.nc(); k++)
                     staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
                 }
             }
 
-            for (mdp_int i = 0; i < U.nc(); i++)
-              for (mdp_int j = 0; j < U.nc(); j++)
+            for (mdp_suint i = 0; i < U.nc(); i++)
+              for (mdp_suint j = 0; j < U.nc(); j++)
                 U(x, mu, i, j) = (1.0 - s_alpha[m]) * U(x, mu, i, j) + s_alpha[m] * staples(i, j);
             U(x, mu) = project_SU(U(x, mu), cooling_steps);
           }
@@ -114,12 +114,12 @@ namespace MDP
       {
         std::cout << "smearing step " << iter << "/" << iterations << std::endl;
         V = U;
-        for (mdp_int mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
         {
           forallsites(x)
           {
             U(x, mu) = (1.0 - alpha) * V(x, mu);
-            for (mdp_int nu = 0; nu < U.ndim(); nu++)
+            for (mdp_uint nu = 0; nu < U.ndim(); nu++)
             {
               if (nu != mu)
                 U(x, mu) += (1.0 - alpha) / 6 *
@@ -140,8 +140,8 @@ namespace MDP
     mdp_site x(U.lattice());
     forallsitesandcopies(x)
     {
-      for (mdp_int mu = 0; mu < U.ndim() - 1; mu++)
-        for (mdp_int nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_uint mu = 0; mu < U.ndim() - 1; mu++)
+        for (mdp_uint nu = mu + 1; nu < U.ndim(); nu++)
           U.em(x, mu, nu) -= 8.0 / 3.0 * I * trace(U.em(x, mu, nu));
     }
   }
@@ -153,8 +153,8 @@ namespace MDP
     forallsitesandcopies(x)
     {
       Q(x) = 0;
-      for (mdp_int i = 0; i < U.nc(); i++)
-        for (mdp_int j = 0; j < U.nc(); j++)
+      for (mdp_suint i = 0; i < U.nc(); i++)
+        for (mdp_suint j = 0; j < U.nc(); j++)
           Q(x) += real(U.em(x, 0, 1, i, j) * U.em(x, 2, 3, j, i) -
                        U.em(x, 0, 2, i, j) * U.em(x, 1, 3, j, i) +
                        U.em(x, 0, 3, i, j) * U.em(x, 1, 2, j, i));

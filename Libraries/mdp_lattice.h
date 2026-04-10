@@ -132,12 +132,12 @@ namespace MDP
     bool m_local_random_generator;
     mutable std::vector<mdp_random> m_random_obj;
     mdp_int m_random_seed;
-    using where_fn = mdp_int (*)(const mdp_int x[], const mdp_int ndim, const mdp_int nx[]);
-    using neighbour_fn = void (*)(const mdp_int mu,
+    using where_fn = mdp_int (*)(const mdp_int x[], const mdp_uint ndim, const mdp_int nx[]);
+    using neighbour_fn = void (*)(const mdp_uint mu,
                                   mdp_int x_dw[],
                                   const mdp_int x[],
                                   mdp_int x_up[],
-                                  const mdp_int ndim,
+                                  const mdp_uint ndim,
                                   const mdp_int nx[]);
 
     where_fn m_where;
@@ -151,7 +151,7 @@ namespace MDP
      * index and direction mu.
      *
      */
-    inline mdp_int at(mdp_int local_idx, mdp_int mu) const
+    inline mdp_int at(mdp_int local_idx, mdp_uint mu) const
     {
       return local_idx * m_ndir + mu;
     }
@@ -172,7 +172,7 @@ namespace MDP
 
     // helper function
     void init_basic_parameters(const Box &box,
-                               mdp_int ndir_,
+                               mdp_uint ndir_,
                                where_fn where_,
                                neighbour_fn neighbour_,
                                int next_next_,
@@ -744,7 +744,7 @@ namespace MDP
      * @param local_idx Local index for point x[] to be inspected
      * @return Value of mu-th coordinate
      */
-    mdp_int coordinate(mdp_int local_idx, mdp_int mu) const
+    mdp_int coordinate(mdp_int local_idx, mdp_uint mu) const
     {
       return m_co[at(local_idx, mu)];
     }
@@ -884,7 +884,7 @@ namespace MDP
 
     /** @brief size of the lattice in direction mu
      */
-    mdp_int size(const mdp_int mu) const
+    mdp_int size(const mdp_uint mu) const
     {
       return m_nx[mu];
     }
@@ -932,12 +932,12 @@ namespace MDP
       return m_next_next;
     }
 
-    mdp_int move_up(const mdp_int idx, const mdp_int mu) const
+    mdp_int move_up(const mdp_int idx, const mdp_uint mu) const
     {
       return m_up[at(idx, mu)];
     }
 
-    mdp_int move_down(const mdp_int idx, const mdp_int mu) const
+    mdp_int move_down(const mdp_int idx, const mdp_uint mu) const
     {
       return m_dw[at(idx, mu)];
     }

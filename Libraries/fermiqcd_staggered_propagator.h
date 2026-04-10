@@ -47,14 +47,14 @@ namespace MDP
   class staggered_propagator : public mdp_complex_field
   {
   private:
-    mdp_int m_nc;
+    mdp_suint m_nc;
 
   public:
     staggered_propagator() : mdp_complex_field()
     {
     }
 
-    staggered_propagator(const mdp_lattice &a, mdp_int nc_) : mdp_complex_field(a, a.ndim() * a.ndim() * nc_ * nc_), m_nc(nc_)
+    staggered_propagator(const mdp_lattice &a, mdp_suint nc_) : mdp_complex_field(a, a.ndim() * a.ndim() * nc_ * nc_), m_nc(nc_)
     {
     }
 
@@ -62,7 +62,7 @@ namespace MDP
     {
     }
 
-    mdp_int nc() const
+    mdp_suint nc() const
     {
       return m_nc;
     }
@@ -100,8 +100,8 @@ namespace MDP
       staggered_field psi(S.lattice(), S.nc());
       staggered_field chi(S.lattice(), S.nc());
       mdp_site x(S.lattice());
-      mdp_int ndim = S.lattice().n_dimensions();
-      mdp_int nc = S.nc();
+      mdp_uint ndim = S.lattice().n_dimensions();
+      mdp_suint nc = S.nc();
 
       double time = mdp.time();
 
@@ -111,12 +111,12 @@ namespace MDP
         fflush(stdout);
       }
 
-      for (mdp_int a = 0; a < (1 << ndim); a++)
-        for (mdp_int j = 0; j < nc; j++)
+      for (mdp_uint a = 0; a < mdp_uint(1 << ndim); a++)
+        for (mdp_suint j = 0; j < nc; j++)
         {
           forallsitesandcopies(x)
           {
-            for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint i = 0; i < nc; i++)
               psi(x, i) = 0;
           }
 
@@ -125,8 +125,12 @@ namespace MDP
           {
             printf("(source at (");
 
-            for (mdp_int mu = 0; mu < ndim; mu++)
+            for (mdp_uint mu = 0; mu < ndim; mu++)
+#ifdef _WIN32
               printf("%i ", x(mu));
+#else
+              printf("%li ", x(mu));
+#endif
 
             printf("), Color: %i\n", j);
             fflush(stdout);
@@ -146,7 +150,7 @@ namespace MDP
 
           forallsites(x)
           {
-            for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint i = 0; i < nc; i++)
               S(x, a, i, j) = chi(x, i);
           }
         }

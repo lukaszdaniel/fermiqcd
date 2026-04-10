@@ -56,13 +56,13 @@ namespace MDP
       fermi_field chi(psi.lattice(), psi.nc(), psi.nspin());
       mdp_site x(psi.lattice());
 
-      for (mdp_int i = 0; i < steps; i++)
+      for (mdp_suint i = 0; i < steps; i++)
       {
         chi = psi;
         forallsites(x)
         {
-          for (mdp_int a = 0; a < psi.nspin(); a++)
-            for (mdp_int mu = 1; mu < U.ndim(); mu++)
+          for (mdp_suint a = 0; a < psi.nspin(); a++)
+            for (mdp_uint mu = 1; mu < U.ndim(); mu++)
               psi(x, a) += factor * (U(x, mu) * chi(x + mu, a) + U(x, -1, mu) * chi(x - mu, a));
         }
       }
@@ -82,20 +82,20 @@ namespace MDP
     fermi_field psi(S.lattice(), S.nc(), S.nspin());
     mdp_site x(psi.lattice());
 
-    for (mdp_int b = 0; b < S.nspin(); b++)
-      for (mdp_int j = 0; j < U.nc(); j++)
+    for (mdp_suint b = 0; b < S.nspin(); b++)
+      for (mdp_suint j = 0; j < U.nc(); j++)
       {
         forallsitesandcopies(x)
         {
-          for (mdp_int a = 0; a < S.nspin(); a++)
-            for (mdp_int i = 0; i < U.nc(); i++)
+          for (mdp_suint a = 0; a < S.nspin(); a++)
+            for (mdp_suint i = 0; i < U.nc(); i++)
               psi(x, a, i) = S(x, a, b, i, j);
         }
         (*smf)(psi, U, coeff);
         forallsitesandcopies(x)
         {
-          for (mdp_int a = 0; a < S.nspin(); a++)
-            for (mdp_int i = 0; i < U.nc(); i++)
+          for (mdp_suint a = 0; a < S.nspin(); a++)
+            for (mdp_suint i = 0; i < U.nc(); i++)
               S(x, a, b, i, j) = psi(x, a, i);
         }
       }

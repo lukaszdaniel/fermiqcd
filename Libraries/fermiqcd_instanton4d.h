@@ -27,12 +27,12 @@ namespace MDP
   {
   public:
     std::vector<mdp_real> p; // location of the instanton
-    mdp_int nc;
+    mdp_suint nc;
     int sub_i, sub_j;
     mdp_real charge; // this is 1/g
     mdp_real lambda;
     mdp_matrix eta[4][4];
-    Instanton4D(mdp_int nc_, int sub_i_, int sub_j_, mdp_real charge_, mdp_real lambda_, const std::vector<mdp_real> &p_)
+    Instanton4D(mdp_suint nc_, int sub_i_, int sub_j_, mdp_real charge_, mdp_real lambda_, const std::vector<mdp_real> &p_)
     {
       nc = nc_;
       sub_i = sub_i_;
@@ -58,12 +58,12 @@ namespace MDP
       sigma_rot3[1] = std::cos(gamma) * sigma_rot2[1] + std::sin(gamma) * sigma_rot2[2];
       sigma_rot3[2] = -std::sin(gamma) * sigma_rot2[1] + std::cos(gamma) * sigma_rot2[2];
 
-      for (mdp_int mu = 0; mu < 4; mu++)
-        for (mdp_int nu = 0; nu < 4; nu++)
+      for (mdp_uint mu = 0; mu < 4; mu++)
+        for (mdp_uint nu = 0; nu < 4; nu++)
         {
           eta[mu][nu].dimension(nc, nc);
           eta[mu][nu] = 0;
-          for (int a = 1; a < 4; a++)
+          for (mdp_uint a = 1; a < 4; a++)
           {
             T = 0;
             T(sub_i, sub_i) = sigma_rot3[a](0, 0);
@@ -85,12 +85,12 @@ namespace MDP
           }
         }
       /*
-      for (mdp_int mu = 0; mu < 4; mu++)
-        for (mdp_int nu = 0; nu < 4; nu++)
+      for (mdp_uint mu = 0; mu < 4; mu++)
+        for (mdp_uint nu = 0; nu < 4; nu++)
         {
           eta[mu][nu].dimension(nc, nc);
-          for (mdp_int i = 0; i < nc; i++)
-            for (mdp_int j = 0; j < nc; j++)
+          for (mdp_suint i = 0; i < nc; i++)
+            for (mdp_suint j = 0; j < nc; j++)
               if (i == j && (i != sub_i && i != sub_j))
               {
                 eta[mu][nu](i, j) = 1;
@@ -129,15 +129,15 @@ namespace MDP
         }
       */
     }
-    mdp_matrix operator()(mdp_site &x, mdp_int mu) const
+    mdp_matrix operator()(mdp_site &x, mdp_uint mu) const
     {
       int v[4];
-      for (mdp_int nu = 0; nu < 4; nu++)
+      for (mdp_uint nu = 0; nu < 4; nu++)
         v[nu] = x(nu) - p[nu];
       float d2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];
       mdp_matrix A(nc, nc);
       A = 0;
-      for (mdp_int nu = 0; nu < 4; nu++)
+      for (mdp_uint nu = 0; nu < 4; nu++)
         A += eta[mu][nu] * v[nu];
       return (2.0 * charge / (d2 + lambda * lambda)) * A;
     }

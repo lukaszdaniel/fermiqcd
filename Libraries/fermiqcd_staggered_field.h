@@ -30,15 +30,15 @@ namespace MDP
   class staggered_field : public mdp_complex_field
   {
   private:
-    mdp_int m_nspin;
-    mdp_int m_nc;
+    mdp_suint m_nspin;
+    mdp_suint m_nc;
 
   public:
     staggered_field() : mdp_complex_field(), m_nspin(0), m_nc(0)
     {
     }
 
-    staggered_field(const mdp_lattice &a, mdp_int nc_, mdp_int nspin_ = 4) : mdp_complex_field(a, (nc_)), m_nspin(nspin_), m_nc(nc_)
+    staggered_field(const mdp_lattice &a, mdp_suint nc_, mdp_suint nspin_ = 4) : mdp_complex_field(a, (nc_)), m_nspin(nspin_), m_nc(nc_)
     {
       // attention here that nspin_ is ignored in field allocation!
     }
@@ -47,12 +47,12 @@ namespace MDP
     {
     }
 
-    mdp_int nspin() const
+    mdp_suint nspin() const
     {
       return m_nspin;
     }
 
-    mdp_int nc() const
+    mdp_suint nc() const
     {
       return m_nc;
     }
@@ -95,21 +95,21 @@ namespace MDP
         m_data[i] = a;
     }
 
-    mdp_real component(mdp_site x, mdp_int mu)
+    mdp_real component(mdp_site x, mdp_uint mu)
     {
       return x(mu) % 2;
     }
 
-    mdp_real eta(mdp_site x, mdp_int mu)
+    mdp_real eta(mdp_site x, mdp_uint mu)
     {
 #ifdef USE_GOLTERMAN
-      mdp_int i_max = (mu + ndim() - 1) % ndim();
+      mdp_uint i_max = (mu + ndim() - 1) % ndim();
       int tmp = 0;
-      for (mdp_int i = 1; i <= i_max; i++)
+      for (mdp_uint i = 1; i <= i_max; i++)
         tmp += x(i);
 #else
       int tmp = 0;
-      for (mdp_int i = 0; i < mu; i++)
+      for (mdp_uint i = 0; i < mu; i++)
         tmp += x(i);
 #endif
       return mdp_mod2sign(tmp);
@@ -118,7 +118,7 @@ namespace MDP
     mdp_real eps(mdp_site x)
     {
       int tmp = x(0);
-      for (mdp_int i = 1; i < ndim(); i++)
+      for (mdp_uint i = 1; i < ndim(); i++)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }
@@ -126,7 +126,7 @@ namespace MDP
     mdp_real type(mdp_site x)
     {
       mdp_real tmp = x(0) % 2;
-      for (mdp_int i = 1; i < ndim(); i++)
+      for (mdp_uint i = 1; i < ndim(); i++)
         tmp += (x(i) % 2) * std::pow(2.0, i);
       return tmp;
     }

@@ -117,8 +117,8 @@ namespace MDP
     mul_invQ(chi, psi, U, coeff);
     forallsites(x)
     {
-      for (mdp_int a = 0; a < phi.nspin(); a++)
-        for (mdp_int i = 0; i < phi.nc(); i++)
+      for (mdp_suint a = 0; a < phi.nspin(); a++)
+        for (mdp_suint i = 0; i < phi.nc(); i++)
           precision += real(pow(phi(x, a, i) - chi(x, a, i), 2));
     }
     mdp.add(precision);

@@ -31,7 +31,7 @@ namespace MDP
   {
     mdp_site x(chi.lattice());
     mdp_site y(chi.lattice());
-    int L5 = chi.L5();
+    mdp_suint L5 = chi.L5();
     mdp_real phase;
     forallsites(x)
     {
@@ -44,7 +44,7 @@ namespace MDP
   }
 
   void project(staggered_field &psi, sdwf_field &chi, gauge_field &U,
-               int sign, int L)
+               int sign, mdp_suint L)
   {
     mdp_site x(chi.lattice());
     mdp_site y(chi.lattice());
@@ -117,8 +117,7 @@ namespace MDP
 
   void compute_swirls_field(gauge_field &U)
   {
-    int j;
-    mdp_int nc = U.nc();
+    mdp_suint nc = U.nc();
     mdp_matrix A;
     U.swirls.allocate_mdp_matrix_field(U.lattice(), nc, nc);
     mdp_site x(U.lattice()), y(U.lattice());
@@ -133,9 +132,9 @@ namespace MDP
         for (mdp_int k = 0; k < 1; k++)
         {
           //  k=(int) ((float) mdp_permutations(4)*Random.plain());
-          for (mdp_int i = 0; i < U.ndim(); i++)
+          for (mdp_uint i = 0; i < U.ndim(); i++)
           {
-            j = mdp_permutation(4, k, i);
+            mdp_uint j = mdp_permutation(4, k, i);
             if (y(j) % 2 == 0)
             {
               A = A * U(y, +1, j);
@@ -152,12 +151,13 @@ namespace MDP
         U.swirls(x) = U.swirls(x) / mdp_complex(1, 0); // care here with 1
       }
     }
+
     forallsites(x)
     {
       if (x(0) % 2 == 1)
       {
         y = x;
-        for (mdp_int i = 0; i < U.ndim(); i++)
+        for (mdp_uint i = 0; i < U.ndim(); i++)
           if (y(i) % 2 == 0)
             y = y + i;
           else

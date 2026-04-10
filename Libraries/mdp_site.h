@@ -52,11 +52,11 @@ namespace MDP
     void set_from_accessor(Accessor coord)
     {
       const auto &lat = lattice();
-      const mdp_int ndim = lat.n_dimensions();
+      const mdp_uint ndim = lat.n_dimensions();
 
       m_idx = coord(0);
 
-      for (mdp_int i = 1; i < ndim; ++i)
+      for (mdp_uint i = 1; i < ndim; ++i)
         m_idx = m_idx * lat.size(i) + coord(i);
 
       m_idx = lat.local(m_idx);
@@ -79,9 +79,9 @@ namespace MDP
     bool is_equal_from_accessor(Accessor coord) const
     {
       const auto &lat = lattice();
-      const mdp_int ndim = lat.n_dimensions();
+      const mdp_uint ndim = lat.n_dimensions();
 
-      for (mdp_int i = 0; i < ndim; ++i)
+      for (mdp_uint i = 0; i < ndim; ++i)
         if (coord(i) != lat.coordinate(m_idx, i))
           return false;
 
@@ -113,7 +113,7 @@ namespace MDP
     }
 
 #ifdef BLOCKSITE
-    mdp_site(mdp_int i, const mdp_lattice *ptr2, int b[], int sign = 0, int mu = 0)
+    mdp_site(mdp_int i, const mdp_lattice *ptr2, int b[], int sign = 0, mdp_uint mu = 0)
     {
       m_idx = i;
       m_lattice = ptr2;
@@ -151,7 +151,7 @@ namespace MDP
     }
 
 #ifdef BLOCKSITE
-    int block(mdp_int mu) const
+    int block(mdp_uint mu) const
     {
       if (mu >= BLOCKSITE)
         error("BLOCKSITE < lattice dimension");
@@ -277,7 +277,7 @@ namespace MDP
 
     /** @brief returns the site shifted forward in direction mu=(0...ndim-1)
      */
-    mdp_site operator+(mdp_int mu)
+    mdp_site operator+(mdp_uint mu)
     {
       mdp_int idx2 = lattice().move_up(m_idx, mu);
       if (idx2 == NOWHERE)
@@ -299,7 +299,7 @@ namespace MDP
 
     /** @brief returns the site shifted backwards in direction mu=(0...ndim-1)
      */
-    mdp_site operator-(int mu)
+    mdp_site operator-(mdp_uint mu)
     {
       mdp_int idx2 = lattice().move_down(m_idx, mu);
       if (idx2 == NOWHERE)
@@ -318,7 +318,7 @@ namespace MDP
     /** @brief returns a site shifted i position (backwards if i<0 or forward if i>0)
      * in direction mu=(0...ndim-1)
      */
-    mdp_site hop(int n, mdp_int mu) const
+    mdp_site hop(int n, mdp_uint mu) const
     {
       mdp_site y = *this;
 
@@ -369,21 +369,21 @@ namespace MDP
     }
 
     /// returns mu coordinate of the site
-    mdp_int operator()(mdp_int mu) const
+    mdp_int operator()(mdp_uint mu) const
     {
       return lattice().coordinate(m_idx, mu);
     }
 
     mdp_site &operator=(std::span<const int> x)
     {
-      set_from_accessor([&](mdp_int i)
+      set_from_accessor([&](mdp_uint i)
                         { return x[i]; });
       return *this;
     }
 
     void set(const mdp_vector &v)
     {
-      set_from_accessor([&](mdp_int i)
+      set_from_accessor([&](mdp_uint i)
                         { return v[i]; });
     }
 
@@ -400,9 +400,9 @@ namespace MDP
 
     bool operator==(const int x[])
     {
-      mdp_int ndim = lattice().n_dimensions();
+      mdp_uint ndim = lattice().n_dimensions();
       bool is_it = true;
-      for (mdp_int mu = 0; mu < ndim; mu++)
+      for (mdp_uint mu = 0; mu < ndim; mu++)
         if (x[mu] != lattice().coordinate(m_idx, mu))
           is_it = false;
       return is_it;
@@ -417,13 +417,13 @@ namespace MDP
      */
     bool is_equal(const mdp_vector &v) const
     {
-      return is_equal_from_accessor([&](mdp_int i)
+      return is_equal_from_accessor([&](mdp_uint i)
                                     { return v[i]; });
     }
 
     bool is_equal(std::span<const int> x) const
     {
-      return is_equal_from_accessor([&](mdp_int i)
+      return is_equal_from_accessor([&](mdp_uint i)
                                     { return x[i]; });
     }
 
