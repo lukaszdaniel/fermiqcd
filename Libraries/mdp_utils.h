@@ -247,7 +247,7 @@ namespace MDP
     return value;
   }
 
-  float parse_float(const std::string &a, const std::string &b, float value = 0.0)
+  float parse_float(const std::string &a, const std::string &b, float value = 0.0f)
   {
     auto key = ":" + b;
     auto i = a.find(key);
@@ -262,12 +262,13 @@ namespace MDP
     float result = value;
     auto str = std::string_view(a).substr(i, j - i);
 
-    auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+    std::string tmp(str);
 
-    if (ec == std::errc())
-    {
+    char *end = nullptr;
+    result = std::strtof(tmp.c_str(), &end);
+
+    if (end != tmp.c_str())
       return result;
-    }
 
     return value;
   }
