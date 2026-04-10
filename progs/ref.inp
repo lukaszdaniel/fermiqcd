@@ -9,7 +9,7 @@ int poly-meas-freq 10
 int unit-freq      10
 int relax-freq    3
 int colors 4
-int ndim 3
+int ndim 4
 double norm 0.5
 double epsilon 0.25
 int nsiter     4

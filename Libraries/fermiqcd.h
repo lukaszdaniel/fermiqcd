@@ -23,7 +23,6 @@
 
 #include "fermiqcd_su_generators.h"
 #include "fermiqcd_so_generators.h"
-#include "fermiqcd_global_vars.h"
 #include "fermiqcd_gamma_matrices.h"
 #include "fermiqcd_default_parameters.h"
 #include "fermiqcd_check_differences.h"

@@ -75,7 +75,7 @@ namespace MDP
 
       int step = 0;
       mdp_parity opposite_parity = EVENODD;
-      int nc = psi_in.nc();
+      mdp_int nc = psi_in.nc();
       double beta, norm, four_mass_sq;
       double pMMp, alpha, residue, rresidue = -1, target_residue, old_residue;
       inversion_stats stats;
@@ -215,7 +215,6 @@ namespace MDP
     {
 
       mdp_site x(U.lattice());
-      int i;
       staggered_field r(psi_in.lattice(), U.nc());
       mdp_real mass = 1.0;
       inversion_stats stats;
@@ -231,7 +230,7 @@ namespace MDP
       // because staggered_BiCG_QQh uses it.
       forallsites(x)
       {
-        for (i = 0; i < U.nc(); i++)
+        for (mdp_int i = 0; i < U.nc(); i++)
           psi_out(x, i) = 0;
       }
       psi_out.update();
@@ -240,7 +239,7 @@ namespace MDP
 
       forallsitesofparity(x, EVEN)
       {
-        for (i = 0; i < U.nc(); i++)
+        for (mdp_int i = 0; i < U.nc(); i++)
           r(x, i) = -r(x, i) + 2.0 * mass * psi_in(x, i);
       }
 
@@ -249,7 +248,7 @@ namespace MDP
       mul_Q(r, psi_out, U, coeff, ODD);
       forallsitesofparity(x, ODD)
       {
-        for (i = 0; i < U.nc(); i++)
+        for (mdp_int i = 0; i < U.nc(); i++)
           psi_out(x, i) = 1.0 / (2.0 * mass) * (psi_in(x, i) - r(x, i));
       }
 

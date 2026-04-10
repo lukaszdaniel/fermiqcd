@@ -75,7 +75,7 @@ namespace MDP
   }
 
   /// Compute average plaquette on plane mu-nu
-  mdp_real average_plaquette(const gauge_field &U, int mu, int nu)
+  mdp_real average_plaquette(const gauge_field &U, mdp_int mu, mdp_int nu)
   {
     double tmp = 0;
     mdp_site x(U.lattice());
@@ -350,7 +350,7 @@ namespace MDP
   /// Given a field U compute the chromo-electro-magnetic field U.em
   void compute_em_field(gauge_field &U)
   {
-    int nc = U.nc();
+    mdp_int nc = U.nc();
     mdp_site x(U.lattice());
     // It is fine to use Nmdp_matrix even if there is twist .. how lucky!
     U.em.deallocate_field();
@@ -434,7 +434,7 @@ namespace MDP
   ///    // use quarks (will have antiperiodic boundary conditions)
   ///    set_antiperiodic_phases(U,mu,false);
   /// @endverbatim
-  void set_antiperiodic_phases(gauge_field &U, int mu = 0, int check = true)
+  void set_antiperiodic_phases(gauge_field &U, mdp_int mu = 0, bool check = true)
   {
     begin_function("set_antiperiodic_phases");
     mdp_site x(U.lattice());
@@ -663,7 +663,7 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///   int mu=0, nu=1;
+  ///   mdp_int mu=0, nu=1;
   ///   gauge_field U(lattice,nc);
   ///   Path d = {{+1,mu},{+1,nu},{-1,mu},{-1,nu}};
   ///   mdp << "plaquette=" << average_path(U,d) << "\n";
@@ -710,7 +710,7 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///   int mu=0, nu=1;
+  ///   mdp_int mu=0, nu=1;
   ///   gauge_field U(lattice,nc);
   ///   Path d = {{+1,mu},{+1,nu},{-1,mu},{-1,nu}};
   ///   forallsites(x)
@@ -718,7 +718,7 @@ namespace MDP
   /// @endverbatim
   mdp_matrix build_path(const gauge_field &U, mdp_site x, const Path &d)
   {
-    int nc = U.nc();
+    mdp_int nc = U.nc();
     mdp_matrix tmp = mdp_identity(nc);
     mdp_site y = x;
 

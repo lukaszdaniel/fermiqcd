@@ -503,7 +503,7 @@ namespace MDP
     {
 
       mdp_site x(U.lattice());
-      int fnc = U.nc() * (U.nc() + 1) / 2;
+      mdp_int fnc = U.nc() * (U.nc() + 1) / 2;
       mdp_matrix dum(U.nc(), U.nc());
       mdp_matrix tmp1(U.nc(), U.nc());
       mdp_matrix tmp2(U.nc(), U.nc());

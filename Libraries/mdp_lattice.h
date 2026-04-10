@@ -120,10 +120,10 @@ namespace MDP
 #ifdef MDP_NO_LG
     mutable std::fstream m_lg_file; /* temporary file to store local_from_global map if not enough memory */
 #endif
-    std::vector<mdp_int> m_up; /* move up in local index     */
-    std::vector<mdp_int> m_dw; /* move dw in local index     */
-    std::vector<mdp_int> m_co; /* coordinate x in local idx  */
-    std::vector<mdp_int> m_wh; /* in which process? is idx   */
+    std::vector<mdp_int> m_up;        /* move up in local index     */
+    std::vector<mdp_int> m_dw;        /* move dw in local index     */
+    std::vector<mdp_int> m_co;        /* coordinate x in local idx  */
+    std::vector<mdp_int> m_wh;        /* in which process? is idx   */
     std::vector<mdp_parity> m_parity; /* parity of local mdp_site idx   */
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_start;
     std::array<std::array<mdp_int, 2>, _NprocMax_> m_stop;
@@ -132,13 +132,13 @@ namespace MDP
     bool m_local_random_generator;
     mutable std::vector<mdp_random> m_random_obj;
     mdp_int m_random_seed;
-    using where_fn = int (*)(const int x[], const int ndim, const int nx[]);
-    using neighbour_fn = void (*)(const int mu,
-                                  int x_dw[],
-                                  const int x[],
-                                  int x_up[],
-                                  const int ndim,
-                                  const int nx[]);
+    using where_fn = mdp_int (*)(const mdp_int x[], const mdp_int ndim, const mdp_int nx[]);
+    using neighbour_fn = void (*)(const mdp_int mu,
+                                  mdp_int x_dw[],
+                                  const mdp_int x[],
+                                  mdp_int x_up[],
+                                  const mdp_int ndim,
+                                  const mdp_int nx[]);
 
     where_fn m_where;
     neighbour_fn m_neighbour;
@@ -157,24 +157,24 @@ namespace MDP
     }
 
     // helper function
-    inline bool is_me(const int x[]) const noexcept
+    inline bool is_me(const mdp_int x[]) const noexcept
     {
-      const int owner_id = m_where(x, ndim(), m_nx.data());
+      const mdp_int owner_id = m_where(x, ndim(), m_nx.data());
       return owner_id == ME;
     }
 
     // helper function
-    inline bool is_valid_process(const int x[]) const noexcept
+    inline bool is_valid_process(const mdp_int x[]) const noexcept
     {
-      const int owner_id = m_where(x, ndim(), m_nx.data());
+      const mdp_int owner_id = m_where(x, ndim(), m_nx.data());
       return (owner_id < Nproc);
     }
 
     // helper function
     void init_basic_parameters(const Box &box,
-                               int ndir_,
-                               int (*where_)(const int[], const int, const int[]),
-                               void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]),
+                               mdp_int ndir_,
+                               where_fn where_,
+                               neighbour_fn neighbour_,
                                int next_next_,
                                bool local_random_)
     {
@@ -215,13 +215,13 @@ namespace MDP
 
     // helper function
 #ifndef MDP_NO_LG
-    void compute_local_sites(int *x, int *x_up, int *x_dw, mdp_int *local_mdp_sites)
+    void compute_local_sites(mdp_int *x, mdp_int *x_up, mdp_int *x_dw, mdp_int *local_mdp_sites)
 #else
-    void compute_local_sites(int *x, int *x_up, int *x_dw, std::fstream &lms_file)
+    void compute_local_sites(mdp_int *x, mdp_int *x_up, mdp_int *x_dw, std::fstream &lms_file)
 #endif
     {
-      int x_up_dw[MAX_DIM], x_up_up[MAX_DIM], x_up_up_dw[MAX_DIM], x_up_up_up[MAX_DIM];
-      int x_dw_up[MAX_DIM], x_dw_dw[MAX_DIM], x_dw_dw_dw[MAX_DIM], x_dw_dw_up[MAX_DIM];
+      mdp_int x_up_dw[MAX_DIM], x_up_up[MAX_DIM], x_up_up_dw[MAX_DIM], x_up_up_up[MAX_DIM];
+      mdp_int x_dw_up[MAX_DIM], x_dw_dw[MAX_DIM], x_dw_dw_dw[MAX_DIM], x_dw_dw_up[MAX_DIM];
 
       // ///////////////////////////////////////////////////////////////////
       // Fill table local_mdp_sites with the global coordinate of mdp_sites in ME
@@ -409,7 +409,7 @@ namespace MDP
     }
 
     // helper function
-    void build_local_global_maps(int *x, mdp_int *local_mdp_sites)
+    void build_local_global_maps(mdp_int *x, mdp_int *local_mdp_sites)
     {
 #ifdef MDP_NO_LG
       mdp_int lms_tmp = 0;
@@ -475,7 +475,7 @@ namespace MDP
     }
 
     // helper function
-    void build_neighbour_tables(int *x, int *x_dw, int *x_up)
+    void build_neighbour_tables(mdp_int *x, mdp_int *x_dw, mdp_int *x_up)
     {
       for (mdp_int local_idx = 0; local_idx < m_local_volume; ++local_idx)
       {
@@ -655,8 +655,8 @@ namespace MDP
      */
     void allocate_lattice(const Box &box,
                           int ndir_,
-                          int (*where_)(const int[], const int, const int[]) = default_partitioning0,
-                          void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
+                          where_fn where_ = default_partitioning0,
+                          neighbour_fn neighbour_ = torus_topology,
                           mdp_int random_seed_ = 0,
                           int next_next_ = 1,
                           bool local_random_ = true)
@@ -680,9 +680,9 @@ namespace MDP
               "Unable to create temporary lms file");
 #endif
 
-      int x[MAX_DIM];
-      int x_up[MAX_DIM];
-      int x_dw[MAX_DIM];
+      mdp_int x[MAX_DIM];
+      mdp_int x_up[MAX_DIM];
+      mdp_int x_dw[MAX_DIM];
 #ifndef MDP_NO_LG
       compute_local_sites(x, x_up, x_dw, local_mdp_sites.get());
 #else
@@ -729,7 +729,7 @@ namespace MDP
      * @param x Point x[] to be inspected
      * @return Process ID
      */
-    int where(const int x[]) const
+    int where(const mdp_int x[]) const
     {
       return (*m_where)(x, ndim(), m_nx.data());
     }
@@ -754,7 +754,7 @@ namespace MDP
      * Calculate ordinal (global) coordinate of
      * a n-dimensional point x[].
      */
-    mdp_int global_coordinate(const int x[]) const
+    mdp_int global_coordinate(const mdp_int x[]) const
     {
       mdp_int global_idx = 0;
       for (mdp_uint mu = 0; mu < ndim() - 1; mu++)
@@ -767,7 +767,7 @@ namespace MDP
      * Given the ordinal coordinate, recover
      * x = (x0, x1, ... x9) coordinates.
      */
-    void translate_to_coordinates(mdp_int global_idx, int x[]) const
+    void translate_to_coordinates(mdp_int global_idx, mdp_int x[]) const
     {
       for (mdp_uint mu = ndim() - 1; mu > 0; mu--)
       {
@@ -784,7 +784,7 @@ namespace MDP
      */
     mdp_int where_global(mdp_int global_idx) const
     {
-      int x[MAX_DIM];
+      mdp_int x[MAX_DIM];
       translate_to_coordinates(global_idx, x);
 
       return (*m_where)(x, ndim(), m_nx.data());
@@ -794,9 +794,9 @@ namespace MDP
      *
      * Check the parity of the sum of x coordinates.
      */
-    mdp_parity compute_parity(const int x[]) const
+    mdp_parity compute_parity(const mdp_int x[]) const
     {
-      int p = 0;
+      mdp_int p = 0;
       for (mdp_uint mu = 0; mu < ndim(); mu++)
         p = p + x[mu];
       return (p % 2 == 0) ? EVEN : ODD;
@@ -819,8 +819,8 @@ namespace MDP
      */
     mdp_lattice(const Box &box,
                 int ndir_,
-                int (*where_)(const int[], const int, const int[]) = default_partitioning0,
-                void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
+                where_fn where_ = default_partitioning0,
+                neighbour_fn neighbour_ = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice()
@@ -841,8 +841,8 @@ namespace MDP
      * @param local_random_ true is local random generator is required
      */
     mdp_lattice(const Box &box,
-                int (*where_)(const int[], const int, const int[]) = default_partitioning0,
-                void (*neighbour_)(const int, int[], const int[], int[], const int, const int[]) = torus_topology,
+                where_fn where_ = default_partitioning0,
+                neighbour_fn neighbour_ = torus_topology,
                 mdp_int random_seed_ = 0,
                 int next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice(box, box.dim(), where_, neighbour_, random_seed_, next_next_, local_random_)
@@ -884,7 +884,7 @@ namespace MDP
 
     /** @brief size of the lattice in direction mu
      */
-    mdp_int size(const int mu) const
+    mdp_int size(const mdp_int mu) const
     {
       return m_nx[mu];
     }
@@ -932,12 +932,12 @@ namespace MDP
       return m_next_next;
     }
 
-    mdp_int move_up(const mdp_int idx, const int mu) const
+    mdp_int move_up(const mdp_int idx, const mdp_int mu) const
     {
       return m_up[at(idx, mu)];
     }
 
-    mdp_int move_down(const mdp_int idx, const int mu) const
+    mdp_int move_down(const mdp_int idx, const mdp_int mu) const
     {
       return m_dw[at(idx, mu)];
     }

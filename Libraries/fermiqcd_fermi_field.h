@@ -41,7 +41,7 @@ namespace MDP
     {
     }
 
-    fermi_field(const mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
+    fermi_field(const mdp_lattice &a, mdp_int nc_, mdp_int nspin_ = 4) : mdp_complex_field(a, (nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_)
     {
     }
 
@@ -49,7 +49,7 @@ namespace MDP
     {
     }
 
-    void allocate_fermi_field(const mdp_lattice &a, int nc_, int nspin_ = 4)
+    void allocate_fermi_field(const mdp_lattice &a, mdp_int nc_, mdp_int nspin_ = 4)
     {
       deallocate_field();
       m_nc = nc_;
@@ -121,9 +121,9 @@ namespace MDP
   void print_fermi_field(fermi_field &psi)
   {
     begin_function("print_fermi_field");
-    int x0, x1, x2, x3;
+    mdp_int x0, x1, x2, x3;
     mdp_site x(psi.lattice());
-    int do_exit = false;
+    bool do_exit = false;
     do
     {
       mdp << "\nCheck point!\n";
@@ -139,7 +139,7 @@ namespace MDP
           sscanf(stringa.c_str(), "%i,%i,%i,%i", &x0, &x1, &x2, &x3);
       }
       mdp.broadcast(do_exit, 0);
-      if (do_exit == true)
+      if (do_exit)
       {
         mdp << "\n";
         break;
@@ -153,7 +153,7 @@ namespace MDP
         x.set(x0, x1, x2, x3);
         mdp << psi(x);
       }
-    } while (1);
+    } while (true);
     end_function("print_fermi_field");
   }
 } // namespace MDP

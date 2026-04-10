@@ -76,7 +76,7 @@ int main(int argc, char **argv)
   // unsigned int r=param.seed;
 
   gauge_field U(lattice, param.nc);
-  int dimrep = 1;
+  mdp_int dimrep = 1;
   if (param.representation == "SYMMETRIC")
     dimrep = U.nc() * (U.nc() + 1) / 2;
   else if (param.representation == "FUNDAMENTAL")

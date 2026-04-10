@@ -23,7 +23,7 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///    int nc=3;
+  ///    mdp_int nc=3;
   ///    constexpr Box box = {10,8,8,8};
   ///    mdp_lattice lattice(box);
   ///    gauge_field U(lattice,nc);
@@ -31,8 +31,8 @@ namespace MDP
   ///    U.load("myfield");
   ///    compute_em_field(U);
   ///    forallsites(x)
-  ///      for(int mu=0; mu<U.ndim(); mu++)
-  ///        for(int nu=mu+1; nu<U.ndim(); nu++)
+  ///      for(mdp_int mu=0; mu<U.ndim(); mu++)
+  ///        for(mdp_int nu=mu+1; nu<U.ndim(); nu++)
   ///          std::cout << U.em(x,mu,nu) << std::endl;
   /// @endverbatim
   /// Note that U.em(x,mu,nu) is \f$ a^2 G_{\mu\nu} \f$ and
@@ -42,7 +42,7 @@ namespace MDP
   private:
     mdp_int m_nc;
 
-    int ordered_index(int mu, int nu) const
+    int ordered_index(mdp_int mu, mdp_int nu) const
     {
       // /////////////////////////
       // this maps mu, nu -> k  //
@@ -62,8 +62,9 @@ namespace MDP
         mdp_int num_of_elements = ((ndim() * (ndim() - 1)) / 2);
         return mu + (nu * (2 * ndim() - nu - 3)) / 2 - 1 + num_of_elements;
       }
-      // error("wrong call to ordered_index() with mu>=nu");
-      return -1; // error in this case!
+
+      error("wrong call to ordered_index() with mu>=nu");
+      return 0; // not reached
     }
 
   public:
@@ -78,7 +79,7 @@ namespace MDP
      * @param a Lattice where the field needs to reside.
      * @param nc_ Number of colours.
      */
-    em_field(const mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * ((a.ndim() * (a.ndim() - 1)) / 2))), m_nc(nc_)
+    em_field(const mdp_lattice &a, mdp_int nc_) : mdp_complex_field(a, (nc_ * nc_ * ((a.ndim() * (a.ndim() - 1)) / 2))), m_nc(nc_)
     {
     }
 
@@ -90,7 +91,7 @@ namespace MDP
     {
     }
 
-    void allocate_em_field(const mdp_lattice &a, int nc_)
+    void allocate_em_field(const mdp_lattice &a, mdp_int nc_)
     {
       deallocate_field();
       m_nc = nc_;
@@ -105,7 +106,7 @@ namespace MDP
 
     /** @brief returns the matrix in directions \e mu, \e nu stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int mu, int nu) const
+    mdp_matrix operator()(mdp_site x, mdp_int mu, mdp_int nu) const
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
@@ -117,7 +118,7 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix in directions \e mu, \e nu stored at site x
      */
-    mdp_complex &operator()(mdp_site x, int mu, int nu, int i, int j)
+    mdp_complex &operator()(mdp_site x, mdp_int mu, mdp_int nu, int i, int j)
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
@@ -129,7 +130,7 @@ namespace MDP
 
     /** @brief returns the (i,j) const component of the matrix in directions \e mu, \e nu stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, int mu, int nu,
+    const mdp_complex &operator()(mdp_site x, mdp_int mu, mdp_int nu,
                                   int i, int j) const
     {
 #ifdef CHECK_ALL
@@ -149,14 +150,14 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///    int nc=3;
+  ///    mdp_int nc=3;
   ///    constexpr Box box = {10,8,8,8};
   ///    mdp_lattice lattice(box);
   ///    gauge_field U(lattice,nc);
   ///    mdp_site x(lattice);
   ///    // set_cold(U);
   ///    forallsites(x)
-  ///       for(int mu=0; mu<U.ndim(); mu++)
+  ///       for(mdp_int mu=0; mu<U.ndim(); mu++)
   ///          U(x,mu)=1;
   ///    U.update(); // synchronization
   ///    U.save("myfield");
@@ -186,7 +187,7 @@ namespace MDP
      * @param a Lattice where the field needs to reside.
      * @param nc_ Number of colours.
      */
-    gauge_field(const mdp_lattice &a, int nc_) : mdp_complex_field(a, (nc_ * nc_ * a.ndim())), m_nc(nc_)
+    gauge_field(const mdp_lattice &a, mdp_int nc_) : mdp_complex_field(a, (nc_ * nc_ * a.ndim())), m_nc(nc_)
     {
     }
 
@@ -208,7 +209,7 @@ namespace MDP
       return *this;
     }
 
-    void allocate_gauge_field(const mdp_lattice &a, int nc_)
+    void allocate_gauge_field(const mdp_lattice &a, mdp_int nc_)
     {
       deallocate_field();
       m_nc = nc_;
@@ -222,7 +223,7 @@ namespace MDP
 
     /** @brief returns the matrix in direction \e mu stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int mu) const
+    mdp_matrix operator()(mdp_site x, mdp_int mu) const
     {
 #ifndef TWISTED_BOUNDARY
       return mdp_matrix(address(x, mu * m_nc * m_nc), m_nc, m_nc);
@@ -245,7 +246,7 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix in direction \e mu stored at site x
      */
-    mdp_complex &operator()(mdp_site x, int mu, int i, int j)
+    mdp_complex &operator()(mdp_site x, mdp_int mu, int i, int j)
     {
 #ifdef TWISTED_BOUNDARY
       if (!in_block(x))
@@ -256,7 +257,7 @@ namespace MDP
 
     /** @brief returns the (i,j) const component of the matrix in direction \e mu stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, int mu, int i, int j) const
+    const mdp_complex &operator()(mdp_site x, mdp_int mu, int i, int j) const
     {
 #ifdef TWISTED_BOUNDARY
       if (!in_block(x))
@@ -270,7 +271,7 @@ namespace MDP
      * @note if \e sign is negative returned matrix is a hermitian matrix
      * if direction \e -mu
      */
-    mdp_matrix operator()(mdp_site x, int sign, int mu) const
+    mdp_matrix operator()(mdp_site x, int sign, mdp_int mu) const
     {
       if (sign == +1)
         return (*this)(x, mu);

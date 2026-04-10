@@ -43,50 +43,50 @@ namespace MDP
       mdp_site y(U.lattice());
       mdp_matrix A(U.nc(), U.nc());
       mdp_matrix staples(U.nc(), U.nc());
-      for (int m = 0; m < U.ndim() - 1; m++)
+      for (mdp_int m = 0; m < U.ndim() - 1; m++)
       {
         forallsites(x)
         {
           for (mdp_int mu = 0; mu < U.ndim(); mu++)
           {
-            for (int i = 0; i < U.nc(); i++)
-              for (int j = 0; j < U.nc(); j++)
+            for (mdp_int i = 0; i < U.nc(); i++)
+              for (mdp_int j = 0; j < U.nc(); j++)
                 staples(i, j) = 0;
 
-            for (int nu = 0; nu < U.nc(); nu++)
+            for (mdp_int nu = 0; nu < U.nc(); nu++)
             {
               y = x + nu;
-              for (int i = 0; i < U.nc(); i++)
-                for (int j = 0; j < U.nc(); j++)
+              for (mdp_int i = 0; i < U.nc(); i++)
+                for (mdp_int j = 0; j < U.nc(); j++)
                 {
                   A(i, j) = 0;
-                  for (int k = 0; k < U.nc(); k++)
+                  for (mdp_int k = 0; k < U.nc(); k++)
                     A(i, j) = U(x, nu, i, k) * U(y, mu, k, j);
                 }
-              for (int i = 0; i < U.nc(); i++)
-                for (int j = 0; j < U.nc(); j++)
+              for (mdp_int i = 0; i < U.nc(); i++)
+                for (mdp_int j = 0; j < U.nc(); j++)
                 {
-                  for (int k = 0; k < U.nc(); k++)
+                  for (mdp_int k = 0; k < U.nc(); k++)
                     staples(i, j) += A(i, k) * conj(U(x + mu, nu, j, k));
                 }
               y = x - nu;
-              for (int i = 0; i < U.nc(); i++)
-                for (int j = 0; j < U.nc(); j++)
+              for (mdp_int i = 0; i < U.nc(); i++)
+                for (mdp_int j = 0; j < U.nc(); j++)
                 {
                   A(i, j) = 0;
-                  for (int k = 0; k < U.nc(); k++)
+                  for (mdp_int k = 0; k < U.nc(); k++)
                     A(i, j) = U(x - nu, nu, k, i) * U(y, mu, k, j);
                 }
-              for (int i = 0; i < U.nc(); i++)
-                for (int j = 0; j < U.nc(); j++)
+              for (mdp_int i = 0; i < U.nc(); i++)
+                for (mdp_int j = 0; j < U.nc(); j++)
                 {
-                  for (int k = 0; k < U.nc(); k++)
+                  for (mdp_int k = 0; k < U.nc(); k++)
                     staples(i, j) += A(i, k) * U(y + mu, nu, k, j);
                 }
             }
 
-            for (int i = 0; i < U.nc(); i++)
-              for (int j = 0; j < U.nc(); j++)
+            for (mdp_int i = 0; i < U.nc(); i++)
+              for (mdp_int j = 0; j < U.nc(); j++)
                 U(x, mu, i, j) = (1.0 - s_alpha[m]) * U(x, mu, i, j) + s_alpha[m] * staples(i, j);
             U(x, mu) = project_SU(U(x, mu), cooling_steps);
           }
@@ -114,7 +114,7 @@ namespace MDP
       {
         std::cout << "smearing step " << iter << "/" << iterations << std::endl;
         V = U;
-        for (mdp_int mu = 0; mu < 4; mu++)
+        for (mdp_int mu = 0; mu < U.ndim(); mu++)
         {
           forallsites(x)
           {

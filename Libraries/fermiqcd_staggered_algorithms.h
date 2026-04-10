@@ -193,12 +193,12 @@ namespace MDP
 
     // this is a list of permitations of 0,1,2,3
 
-    constexpr int epsilon[24][5] = {{0, 1, 2, 3, 0}, {0, 1, 3, 2, 3}, {0, 2, 1, 3, 1}, {0, 2, 3, 1, 4}, {0, 3, 1, 2, 2}, {0, 3, 2, 1, 5}, {1, 0, 2, 3, 0}, {1, 0, 3, 2, 3}, {1, 2, 0, 3, 1}, {1, 2, 3, 0, 4}, {1, 3, 0, 2, 2}, {1, 3, 2, 0, 5}, {2, 0, 1, 3, 0}, {2, 0, 3, 1, 3}, {2, 1, 0, 3, 1}, {2, 1, 3, 0, 4}, {2, 3, 0, 1, 2}, {2, 3, 1, 0, 5}, {3, 0, 1, 2, 0}, {3, 0, 2, 1, 3}, {3, 1, 0, 2, 1}, {3, 1, 2, 0, 4}, {3, 2, 0, 1, 2}, {3, 2, 1, 0, 5}};
+    constexpr mdp_int epsilon[24][5] = {{0, 1, 2, 3, 0}, {0, 1, 3, 2, 3}, {0, 2, 1, 3, 1}, {0, 2, 3, 1, 4}, {0, 3, 1, 2, 2}, {0, 3, 2, 1, 5}, {1, 0, 2, 3, 0}, {1, 0, 3, 2, 3}, {1, 2, 0, 3, 1}, {1, 2, 3, 0, 4}, {1, 3, 0, 2, 2}, {1, 3, 2, 0, 5}, {2, 0, 1, 3, 0}, {2, 0, 3, 1, 3}, {2, 1, 0, 3, 1}, {2, 1, 3, 0, 4}, {2, 3, 0, 1, 2}, {2, 3, 1, 0, 5}, {3, 0, 1, 2, 0}, {3, 0, 2, 1, 3}, {3, 1, 0, 2, 1}, {3, 1, 2, 0, 4}, {3, 2, 0, 1, 2}, {3, 2, 1, 0, 5}};
     // mu, nu, rho, sig, im2
 
-    int nc = U.nc();
-    int ndim = U.ndim();
-    int rho, imn, im2;
+    mdp_int nc = U.nc();
+    mdp_int ndim = U.ndim();
+    int rho, im2;
     mdp_site x(U.lattice());
     mdp_site y(U.lattice());
     mdp_matrix b1(nc, nc), b2(nc, nc);
@@ -241,7 +241,7 @@ namespace MDP
         for (mdp_int nu = 0; nu < ndim; nu++)
           if (nu != mu)
           {
-            imn = (nu < mu) ? nu : (nu - 1);
+            mdp_int imn = (nu < mu) ? nu : (nu - 1);
             Delta1[imn](x, mu) = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
             y = x - nu;
             Delta1[imn](x, mu) += hermitian(U(y, nu)) * U(y, mu) * U(y + mu, nu);
@@ -263,7 +263,7 @@ namespace MDP
         mdp_int nu = epsilon[idx][1];
         rho = epsilon[idx][2];
         im2 = epsilon[idx][4];
-        imn = (nu < mu) ? nu : (nu - 1);
+        mdp_int imn = (nu < mu) ? nu : (nu - 1);
         Delta2[im2](x, mu) = U(x, rho) * Delta1[imn](x + rho, mu) * hermitian(U(x + mu, rho));
         y = x - rho;
         Delta2[im2](x, mu) += hermitian(U(y, rho)) * Delta1[imn](y, mu) * U(y + mu, rho);
@@ -302,7 +302,7 @@ namespace MDP
           for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
-              imn = (nu < mu) ? nu : (nu - 1);
+              mdp_int imn = (nu < mu) ? nu : (nu - 1);
               Delta1[imn](x, mu) = U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
             }
       }
@@ -315,7 +315,7 @@ namespace MDP
           for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
-              imn = (nu < mu) ? nu : (nu - 1);
+              mdp_int imn = (nu < mu) ? nu : (nu - 1);
               b2 = U(x, nu) * Delta1[imn](x + nu, mu) * hermitian(U(x + mu, nu));
               V(x, mu) += c[4] * b2;
             }
@@ -328,12 +328,12 @@ namespace MDP
           for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
-              imn = (nu < mu) ? nu : (nu - 1);
+              mdp_int imn = (nu < mu) ? nu : (nu - 1);
               y = x - nu;
               Delta1[imn](x, mu) = hermitian(U(y, nu)) * U(y, mu) * U(y + mu, nu);
             }
       }
-      for (imn = 0; imn < (ndim - 1); imn++)
+      for (mdp_int imn = 0; imn < (ndim - 1); imn++)
         Delta1[imn].update();
 
       forallsites(x)
@@ -342,7 +342,7 @@ namespace MDP
           for (mdp_int nu = 0; nu < ndim; nu++)
             if (nu != mu)
             {
-              imn = (nu < mu) ? nu : (nu - 1);
+              mdp_int imn = (nu < mu) ? nu : (nu - 1);
               y = x - nu;
               b2 = hermitian(U(y, nu)) * Delta1[imn](y, mu) * U(y + mu, nu);
               V(x, mu) += c[4] * b2;

@@ -15,7 +15,6 @@
 #define FERMIQCD_STAGGERED_PROPAGATOR_
 
 #include "mdp_field.h"
-#include "fermiqcd_global_vars.h"
 #include "fermiqcd_default_parameters.h"
 #include "fermiqcd_coefficients.h"
 #include "fermiqcd_gauge_field.h"
@@ -55,7 +54,7 @@ namespace MDP
     {
     }
 
-    staggered_propagator(const mdp_lattice &a, int nc_) : mdp_complex_field(a, a.ndim() * a.ndim() * nc_ * nc_), m_nc(nc_)
+    staggered_propagator(const mdp_lattice &a, mdp_int nc_) : mdp_complex_field(a, a.ndim() * a.ndim() * nc_ * nc_), m_nc(nc_)
     {
     }
 
@@ -106,7 +105,7 @@ namespace MDP
 
       double time = mdp.time();
 
-      if (isMainProcess() && shutup == false)
+      if (isMainProcess())
       {
         printf("BEGIN Generating ordinary propagator\n");
         fflush(stdout);
@@ -122,7 +121,7 @@ namespace MDP
           }
 
           x = binary2versor(a);
-          if (isMainProcess() && shutup == false)
+          if (isMainProcess())
           {
             printf("(source at (");
 
@@ -152,7 +151,7 @@ namespace MDP
           }
         }
 
-      if (isMainProcess() && shutup == false)
+      if (isMainProcess())
       {
         printf("END Generating ordinary propagator. Time: %f (sec)\n", mdp.time() - time);
         fflush(stdout);

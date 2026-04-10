@@ -117,7 +117,8 @@ namespace MDP
 
   void compute_swirls_field(gauge_field &U)
   {
-    int j, nc = U.nc();
+    int j;
+    mdp_int nc = U.nc();
     mdp_matrix A;
     U.swirls.allocate_mdp_matrix_field(U.lattice(), nc, nc);
     mdp_site x(U.lattice()), y(U.lattice());

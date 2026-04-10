@@ -458,7 +458,7 @@ namespace MDP
   /// checks which process of the lattice a stores locally the site of
   /// coordinates x0,x1,x2,...,x9
   /// to be used before calling mdp_site::set()
-  int on_which_process(const mdp_lattice &a, std::span<const int> x)
+  int on_which_process(const mdp_lattice &a, std::span<const mdp_int> x)
   {
     return a.where(x.data());
   }
@@ -469,8 +469,8 @@ namespace MDP
     static_assert(sizeof...(Args) > 0);
     static_assert(sizeof...(Args) <= VECTOR_MAX_DIM);
 
-    std::array<int, sizeof...(Args)> coords{args...};
-    return on_which_process(a, std::span<const int>(coords));
+    std::array<mdp_int, sizeof...(Args)> coords{args...};
+    return on_which_process(a, std::span<const mdp_int>(coords));
   }
 
 #ifdef MDP_LATTICE

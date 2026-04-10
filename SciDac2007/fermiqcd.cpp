@@ -61,7 +61,7 @@ public:
   {
   }
 
-  void init_cold(int LT, int LX, int LY, int LZ, int nc_)
+  void init_cold(int LT, int LX, int LY, int LZ, mdp_int nc_)
   {
     const Box L = {LT, LX, LY, LZ};
     m_os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;
@@ -75,7 +75,7 @@ public:
     m_counter = 0;
   }
 
-  void init_hot(int LT, int LX, int LY, int LZ, int nc_)
+  void init_hot(int LT, int LX, int LY, int LZ, mdp_int nc_)
   {
     const Box L = {LT, LX, LY, LZ};
     m_os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;

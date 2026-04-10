@@ -27,7 +27,7 @@ int main(int argc, char **argv)
   std::string plaqCorFileName = "corplaq." + tag;
   std::string startConfigFile;
 
-  mdp_int dim = 3;
+  mdp_int dim = 4;
   mdp_suint ncolors = 3;
   mdp_suint seed = time(0);
   mdp_uint ntherm = 0;

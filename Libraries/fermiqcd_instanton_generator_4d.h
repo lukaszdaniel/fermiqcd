@@ -56,7 +56,7 @@ namespace MDP
       bar[3] = -I * sigma[3];
     }
 
-    mdp_matrix make_singular_instanton(float xl[4], int mu, const SingleInstanton4D &instanton)
+    mdp_matrix make_singular_instanton(float xl[4], mdp_int mu, const SingleInstanton4D &instanton)
     {
       mdp_matrix A;
       float x2, x[4], rho2;
@@ -75,7 +75,7 @@ namespace MDP
       return A;
     }
 
-    mdp_matrix make_su2_link(mdp_site xn, int mu, const std::vector<SingleInstanton4D> &instantons)
+    mdp_matrix make_su2_link(mdp_site xn, mdp_int mu, const std::vector<SingleInstanton4D> &instantons)
     {
       mdp_matrix A(2, 2);
       mdp_matrix P = sigma[0];

@@ -44,7 +44,7 @@ using socket_fd_t = HANDLE;
 namespace MDP
 {
 #ifndef FERMIQCD
-  using mdp_int = int; // this in case this lib is used without fermiqcd
+  // using mdp_int = int; // this in case this lib is used without fermiqcd
 #endif
 
   /// @brief Parallel SIMulator used by class mdp_communicator

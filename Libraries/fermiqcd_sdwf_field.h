@@ -33,7 +33,7 @@ namespace MDP
     {
     }
 
-    sdwf_field(const mdp_lattice &a, int L5_, int nc_, int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
+    sdwf_field(const mdp_lattice &a, mdp_int L5_, mdp_int nc_, mdp_int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
     {
       // attention here that nspin_ is ignored in field allocation!
     }
@@ -71,21 +71,21 @@ namespace MDP
 
     /** @brief returns the \e x5 component of the vector stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int x5) const
+    mdp_matrix operator()(mdp_site x, mdp_int x5) const
     {
       return mdp_matrix(address(x, x5 * m_nc), m_nc, 1);
     }
 
     /** @brief returns the \e x5 component of the vector of colour \e i stored at site x
      */
-    mdp_complex &operator()(mdp_site x, int x5, int i)
+    mdp_complex &operator()(mdp_site x, mdp_int x5, int i)
     {
       return *(address(x, x5 * m_nc + i));
     }
 
     /** @brief returns the \e x5 const component of the vector of colour \e i stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, int x5, int i) const
+    const mdp_complex &operator()(mdp_site x, mdp_int x5, int i) const
     {
       return *(address(x, x5 * m_nc + i));
     }
@@ -96,12 +96,12 @@ namespace MDP
         m_data[i] = a;
     }
 
-    mdp_real component(mdp_site x, int mu)
+    mdp_real component(mdp_site x, mdp_int mu)
     {
       return x(mu) % 2;
     }
 
-    mdp_real eta(mdp_site x, int mu)
+    mdp_real eta(mdp_site x, mdp_int mu)
     {
       int tmp = 0;
       int i_max = (mu + ndim() - 1) % ndim();
@@ -141,7 +141,7 @@ namespace MDP
     mdp_real chiral_phase(mdp_site x)
     { // (Gamma5 (x) 1)
       int tmp = ndim() / 2;
-      for (int i = 1; i < ndim(); i += 2)
+      for (mdp_int i = 1; i < ndim(); i += 2)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }
@@ -149,7 +149,7 @@ namespace MDP
     mdp_real chiral_phase2(mdp_site x)
     { // (Gamma5 (x) Gamma5)
       int tmp = 0;
-      for (int i = 0; i < ndim(); i++)
+      for (mdp_int i = 0; i < ndim(); i++)
         tmp += x(i);
       return mdp_mod2sign(tmp);
     }

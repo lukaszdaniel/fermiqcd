@@ -22,13 +22,13 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  /// int L5=10; // size in 5th dimension
+  /// mdp_int L5=10; // size in 5th dimension
   /// fermi_field psi(lattice,L5,nc);
   /// mdp_site x(lattice);
   /// forallsites(x)
-  ///    for(int k=0; k<L5; k++)
-  ///      for(int spin=0; spin<4; spin++)
-  ///        for(int i=0; i<nc; i++)
+  ///    for(mdp_int k=0; k<L5; k++)
+  ///      for(mdp_int spin=0; spin<4; spin++)
+  ///        for(mdp_int i=0; i<nc; i++)
   ///          psi(x,k,spin,i)=0.0+0.0*I;
   /// @endverbatim
   class dwfermi_field : public mdp_complex_field
@@ -43,7 +43,7 @@ namespace MDP
     {
     }
 
-    dwfermi_field(const mdp_lattice &a, int L5_, int nc_, int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
+    dwfermi_field(const mdp_lattice &a, mdp_int L5_, mdp_int nc_, mdp_int nspin_ = 4) : mdp_complex_field(a, (L5_ * nc_ * nspin_)), m_nspin(nspin_), m_nc(nc_), m_L5(L5_)
     {
     }
 
@@ -51,7 +51,7 @@ namespace MDP
     {
     }
 
-    void allocate_dwfermi_field(const mdp_lattice &a, int L5_, int nc_, int nspin_ = 4)
+    void allocate_dwfermi_field(const mdp_lattice &a, mdp_int L5_, mdp_int nc_, mdp_int nspin_ = 4)
     {
       deallocate_field();
       m_L5 = L5_;
@@ -77,28 +77,28 @@ namespace MDP
 
     /** @brief returns the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    mdp_matrix operator()(mdp_site x, int L5_) const
+    mdp_matrix operator()(mdp_site x, mdp_int L5_) const
     {
       return mdp_matrix(address(x, L5_ * m_nc * m_nspin), m_nspin, m_nc);
     }
 
     /** @brief returns the vector of colour \e a stored at site x and site \e L5_ in 5-th dimension
      */
-    mdp_matrix operator()(mdp_site x, int L5_, int a) const
+    mdp_matrix operator()(mdp_site x, mdp_int L5_, int a) const
     {
       return mdp_matrix(address(x, (L5_ * m_nspin + a) * m_nc), m_nc, 1);
     }
 
     /** @brief returns the (a,i) component of the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    mdp_complex &operator()(mdp_site x, int L5_, int a, int i)
+    mdp_complex &operator()(mdp_site x, mdp_int L5_, int a, int i)
     {
       return *(address(x, (L5_ * m_nspin + a) * m_nc + i));
     }
 
     /** @brief returns the (a,i) const component of the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    const mdp_complex &operator()(mdp_site x, int L5_, int a, int i) const
+    const mdp_complex &operator()(mdp_site x, mdp_int L5_, int a, int i) const
     {
       return *(address(x, (L5_ * m_nspin + a) * m_nc + i));
     }

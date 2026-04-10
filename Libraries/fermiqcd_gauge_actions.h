@@ -132,12 +132,12 @@ namespace MDP
 
       for (int iter = 0; iter < n_iter; iter++)
         for (mdp_parity parity : {EVEN, ODD})
-          for (int mu = 0; mu < U.ndim(); mu++)
+          for (mdp_int mu = 0; mu < U.ndim(); mu++)
           {
             forallsitesofparity(x, parity)
             {
-              for (int i = 0; i < U.nc() - 1; i++)
-                for (int j = i + 1; j < U.nc(); j++)
+              for (mdp_int i = 0; i < U.nc() - 1; i++)
+                for (mdp_int j = i + 1; j < U.nc(); j++)
                 {
                   if (zeta == 1)
                     M = U(x, mu) * staple_H(U, x, mu);
@@ -148,7 +148,7 @@ namespace MDP
                   a[2] = M(j, i);
                   a[3] = M(j, j);
                   heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-                  for (int k = 0; k < U.nc(); k++)
+                  for (mdp_int k = 0; k < U.nc(); k++)
                   {
                     tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                     U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
@@ -201,9 +201,9 @@ namespace MDP
     ImprovedGaugeAction(const ImprovedGaugeAction &) = delete;
     ImprovedGaugeAction &operator=(const ImprovedGaugeAction &) = delete;
 
-    static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, mdp_int mu)
     {
-      int nc = U.nc();
+      mdp_int nc = U.nc();
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
       mdp_matrix b2(nc, nc);
@@ -214,7 +214,7 @@ namespace MDP
       tmp = 0;
       if (mu == 0)
       {
-        for (int nu = 1; nu < U.ndim(); nu++)
+        for (mdp_int nu = 1; nu < U.ndim(); nu++)
         {
           y0 = x + mu;
           y1 = y0 + nu;
@@ -228,7 +228,7 @@ namespace MDP
       }
       else
       {
-        int nu = 0;
+        mdp_int nu = 0;
         y0 = (x - mu) + nu;
         tmp += U(x + mu, nu) * hermitian(U(x - mu, nu) * U(y0, mu) * U(x + nu, mu)) * U(x - mu, mu);
 
@@ -253,9 +253,9 @@ namespace MDP
 
     // if min_nu==0 then rectangles_ij computes all 6 rectangles
 
-    static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, int mu, int min_nu = 1)
+    static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, mdp_int mu, mdp_int min_nu = 1)
     {
-      int nc = U.nc();
+      mdp_int nc = U.nc();
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
       mdp_matrix b2(nc, nc);
@@ -263,8 +263,9 @@ namespace MDP
       mdp_site y0(U.lattice());
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
-      int nu;
-      for (nu = min_nu; nu < U.ndim(); nu++)
+
+      for (mdp_int nu = min_nu; nu < U.ndim(); nu++)
+      {
         if (nu != mu)
         {
           y0 = x + mu;
@@ -294,6 +295,7 @@ namespace MDP
           y2 = y1 - mu;
           tmp += U(x + mu, mu) * hermitian(U(y2, mu) * U(y1, mu) * U(y0, nu)) * U(y2, nu);
         }
+      }
 
       return tmp;
     }
@@ -303,10 +305,10 @@ namespace MDP
     // see: hep-lat/0712010
     // //////////////////////////////////////////////////////
 
-    static mdp_matrix chair_H(const gauge_field &U, mdp_site x, int mu)
+    static mdp_matrix chair_H(const gauge_field &U, mdp_site x, mdp_int mu)
     {
-      int ndim = U.ndim();
-      int nc = U.nc();
+      mdp_int ndim = U.ndim();
+      mdp_int nc = U.nc();
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
       mdp_matrix b2(nc, nc);
@@ -317,9 +319,10 @@ namespace MDP
       mdp_site y4(U.lattice());
       mdp_site y5(U.lattice());
       tmp = 0;
-      for (int nu = 0; nu < ndim; nu++)
+      for (mdp_int nu = 0; nu < ndim; nu++)
+      {
         if (nu != mu)
-          for (int rho = 0; rho < ndim; rho++)
+          for (mdp_int rho = 0; rho < ndim; rho++)
             if ((rho != nu) && (rho != mu))
             {
               y1 = x + mu;
@@ -350,6 +353,7 @@ namespace MDP
               y5 = y4 + nu;
               tmp += hermitian(U(y4, mu) * U(y3, rho) * U(y2, nu)) * U(y4, nu) * U(y5, rho);
             }
+      }
       return tmp;
     }
 

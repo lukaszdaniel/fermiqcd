@@ -128,7 +128,7 @@ namespace MDP
     } milc_header;
 
     bool endian_swap = false;
-    mdp_uint size = sizeof(milc_header);
+    mdp_int size = sizeof(milc_header);
 
     std::ifstream fp(filename, std::ios::binary);
     if (!fp)

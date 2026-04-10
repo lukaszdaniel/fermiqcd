@@ -38,7 +38,7 @@ namespace MDP
     {
     }
 
-    staggered_field(const mdp_lattice &a, int nc_, int nspin_ = 4) : mdp_complex_field(a, (nc_)), m_nspin(nspin_), m_nc(nc_)
+    staggered_field(const mdp_lattice &a, mdp_int nc_, mdp_int nspin_ = 4) : mdp_complex_field(a, (nc_)), m_nspin(nspin_), m_nc(nc_)
     {
       // attention here that nspin_ is ignored in field allocation!
     }
@@ -95,12 +95,12 @@ namespace MDP
         m_data[i] = a;
     }
 
-    mdp_real component(mdp_site x, int mu)
+    mdp_real component(mdp_site x, mdp_int mu)
     {
       return x(mu) % 2;
     }
 
-    mdp_real eta(mdp_site x, int mu)
+    mdp_real eta(mdp_site x, mdp_int mu)
     {
 #ifdef USE_GOLTERMAN
       mdp_int i_max = (mu + ndim() - 1) % ndim();

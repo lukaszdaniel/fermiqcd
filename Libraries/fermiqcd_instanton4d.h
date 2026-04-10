@@ -27,12 +27,12 @@ namespace MDP
   {
   public:
     std::vector<mdp_real> p; // location of the instanton
-    int nc;
+    mdp_int nc;
     int sub_i, sub_j;
     mdp_real charge; // this is 1/g
     mdp_real lambda;
     mdp_matrix eta[4][4];
-    Instanton4D(int nc_, int sub_i_, int sub_j_, mdp_real charge_, mdp_real lambda_, const std::vector<mdp_real> &p_)
+    Instanton4D(mdp_int nc_, int sub_i_, int sub_j_, mdp_real charge_, mdp_real lambda_, const std::vector<mdp_real> &p_)
     {
       nc = nc_;
       sub_i = sub_i_;
@@ -129,15 +129,15 @@ namespace MDP
         }
       */
     }
-    mdp_matrix operator()(mdp_site &x, int mu) const
+    mdp_matrix operator()(mdp_site &x, mdp_int mu) const
     {
       int v[4];
-      for (int nu = 0; nu < 4; nu++)
+      for (mdp_int nu = 0; nu < 4; nu++)
         v[nu] = x(nu) - p[nu];
       float d2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];
       mdp_matrix A(nc, nc);
       A = 0;
-      for (int nu = 0; nu < 4; nu++)
+      for (mdp_int nu = 0; nu < 4; nu++)
         A += eta[mu][nu] * v[nu];
       return (2.0 * charge / (d2 + lambda * lambda)) * A;
     }
