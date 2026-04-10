@@ -15,6 +15,7 @@
 #include <functional>
 #include <filesystem>
 #include <string>
+#include <charconv>
 #include <vector>
 #include <fstream>
 #ifndef _WIN32
@@ -198,54 +199,77 @@ namespace MDP
 
   int parse_int(const std::string &a, const std::string &b, int value = 0)
   {
-    int i = a.find(std::string(":") + b);
-    if (i < 0)
+    auto key = ":" + b;
+    auto i = a.find(key);
+    if (i == std::string::npos)
       return value;
-    else
+
+    i += key.length();
+    auto j = a.find(":", i);
+    if (j == std::string::npos)
+      j = a.length();
+
+    int result = value;
+    auto str = std::string_view(a).substr(i, j - i);
+
+    auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+
+    if (ec == std::errc())
     {
-      i += b.length() + 2;
-      int j = a.find(":", i);
-      if (j < 0)
-        j = a.length();
-      sscanf(a.substr(i, j - i).c_str(), "%i", &value);
-      return value;
+      return result;
     }
+
+    return value;
   }
 
   mdp_uint parse_uint(const std::string &a, const std::string &b, mdp_uint value = 0)
   {
-    int i = a.find(std::string(":") + b);
-    if (i < 0)
+    auto key = ":" + b;
+    auto i = a.find(key);
+    if (i == std::string::npos)
       return value;
-    else
+
+    i += key.length();
+    auto j = a.find(":", i);
+    if (j == std::string::npos)
+      j = a.length();
+
+    mdp_uint result = value;
+    auto str = std::string_view(a).substr(i, j - i);
+
+    auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+
+    if (ec == std::errc())
     {
-      i += b.length() + 2;
-      int j = a.find(":", i);
-      if (j < 0)
-        j = a.length();
-#ifdef _WIN32
-      sscanf(a.substr(i, j - i).c_str(), "%u", &value);
-#else
-      sscanf(a.substr(i, j - i).c_str(), "%lu", &value);
-#endif
-      return value;
+      return result;
     }
+
+    return value;
   }
 
   float parse_float(const std::string &a, const std::string &b, float value = 0.0)
   {
-    int i = a.find(std::string(":") + b);
-    if (i < 0)
+    auto key = ":" + b;
+    auto i = a.find(key);
+    if (i == std::string::npos)
       return value;
-    else
+
+    i += key.length();
+    auto j = a.find(":", i);
+    if (j == std::string::npos)
+      j = a.length();
+
+    float result = value;
+    auto str = std::string_view(a).substr(i, j - i);
+
+    auto [ptr, ec] = std::from_chars(str.data(), str.data() + str.size(), result);
+
+    if (ec == std::errc())
     {
-      i += b.length() + 2;
-      int j = a.find(":", i);
-      if (j < 0)
-        j = a.length();
-      sscanf(a.substr(i, j - i).c_str(), "%f", &value);
-      return value;
+      return result;
     }
+
+    return value;
   }
 
   std::string parse_string(const std::string &a, const std::string &b, const std::string &value = "")

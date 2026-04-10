@@ -95,8 +95,7 @@ namespace MDP
      */
     mdp_matrix operator()(mdp_site x, mdp_suint a, mdp_suint b) const
     {
-      mdp_matrix tmp(address(x, (a * m_nspin + b) * m_nc * m_nc), m_nc, m_nc);
-      return tmp;
+      return mdp_matrix(address(x, (a * m_nspin + b) * m_nc * m_nc), m_nc, m_nc);
     }
 
     /** @brief returns the (i,j) component of the matrix \e alpha, \e beta stored at site x
@@ -195,11 +194,9 @@ namespace MDP
   void print_propagator(fermi_propagator &S)
   {
     begin_function("print_propagator");
-    int x0, x1, x2, x3;
+    mdp_int x0, x1, x2, x3;
     mdp_site x(S.lattice());
-    mdp_complex tmp;
     bool do_exit = false;
-    mdp_suint nc = S.nc();
     do
     {
       mdp << "\nCheck point!\n";
@@ -212,14 +209,18 @@ namespace MDP
         if (stringa == "quit")
           do_exit = true;
         else
-          sscanf(stringa.c_str(), "%i,%i,%i,%i", &x0, &x1, &x2, &x3);
+        {
+          std::stringstream ss(stringa);
+          char comma;
+          ss >> x0 >> comma >> x1 >> comma >> x2 >> comma >> x3;
+        }
       }
       mdp.broadcast(do_exit, 0);
       if (do_exit)
       {
         mdp << "\n";
         break;
-      };
+      }
       mdp.broadcast(x0, 0);
       mdp.broadcast(x1, 0);
       mdp.broadcast(x2, 0);
@@ -227,6 +228,7 @@ namespace MDP
       if (on_which_process(S.lattice(), x0, x1, x2, x3) == ME)
       {
         x.set(x0, x1, x2, x3);
+        mdp_suint nc = S.nc();
         for (mdp_suint color_source = 0; color_source < nc; color_source++)
           for (mdp_suint spin_source = 0; spin_source < 4; spin_source++)
           {
@@ -237,18 +239,17 @@ namespace MDP
               mdp << "[ ";
               for (mdp_suint color_sink = 0; color_sink < nc; color_sink++)
               {
-                tmp = S(x, spin_sink, spin_source, color_sink, color_source);
-                mdp << tmp;
+                mdp << S(x, spin_sink, spin_source, color_sink, color_source);
                 if (color_sink < nc - 1)
                   mdp << ",\t";
-              };
+              }
               mdp << " ]\n";
-            };
-          };
+            }
+          }
         fflush(stdout);
-      };
+      }
     } while (true);
-    begin_function("print_propagator");
+    end_function("print_propagator");
   }
 
   void smear_propagator(fermi_propagator &S, gauge_field &U, int smear_steps = 10, float alpha = 1.0)

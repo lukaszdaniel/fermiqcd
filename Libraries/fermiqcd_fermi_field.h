@@ -52,8 +52,8 @@ namespace MDP
     void allocate_fermi_field(const mdp_lattice &a, mdp_suint nc_, mdp_suint nspin_ = 4)
     {
       deallocate_field();
-      m_nc = nc_;
       m_nspin = nspin_;
+      m_nc = nc_;
       allocate_field(a, m_nspin * m_nc);
     }
 
@@ -136,11 +136,11 @@ namespace MDP
         if (stringa == "quit")
           do_exit = true;
         else
-#ifdef _WIN32
-          sscanf(stringa.c_str(), "%i,%i,%i,%i", &x0, &x1, &x2, &x3);
-#else
-          sscanf(stringa.c_str(), "%li,%li,%li,%li", &x0, &x1, &x2, &x3);
-#endif
+        {
+          std::stringstream ss(stringa);
+          char comma;
+          ss >> x0 >> comma >> x1 >> comma >> x2 >> comma >> x3;
+        }
       }
       mdp.broadcast(do_exit, 0);
       if (do_exit)

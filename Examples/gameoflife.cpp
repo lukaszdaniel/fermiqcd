@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     sum = 0, diff = 0;
     forallsites(x)
     {
-      diff = diff + abs(S(x) - newS(x));
+      diff = diff + std::abs(S(x) - newS(x));
       S(x) = newS(x);   // copy new board into board
       sum = sum + S(x); // compute number of sites alive
     }
