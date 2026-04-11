@@ -199,7 +199,7 @@ namespace MDP
 
     for (mdp_uint iter = 0; iter < n_iter; iter++)
       for (mdp_parity parity : {EVEN, ODD})
-        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
         {
           forallsitesofparity(x, parity)
           {
@@ -253,14 +253,13 @@ namespace MDP
   {
 
     mdp_real stats;
-    mdp_suint mu = 0;
     mdp_site x(U.lattice());
     mdp_real precision = 0;
     mdp_matrix e(U.nc(), U.nc());
     mdp_matrix m(U.nc() - 1, U.nc() - 1);
     mdp_real quadnorm;
     mdp_complex scalar;
-    e = U(x, mu);
+    e = U(x, 0);
 
     forallsites(x)
     {
@@ -394,7 +393,7 @@ namespace MDP
   /// @verbatim
   /// U.long_links(x,mu)=V(x,mu)*V(x+mu,mu)*V((x+mu)+mu,mu);
   /// @endverbatim
-  void compute_long_links(gauge_field &U, gauge_field &V, int length = 2)
+  void compute_long_links(gauge_field &U, gauge_field &V, mdp_sint length = 2)
   {
     if ((&(U.lattice()) != &(V.lattice())) || (U.nc() != V.nc()) || (U.ndim() != V.ndim()))
       error("fermiqcd_gauge_auxiliary_functions/compute_long_links: U and V are not compatible lattices");
@@ -457,9 +456,9 @@ namespace MDP
 
   /// takes a matrix M, performs a Cabibbo-Marinari cooling
   /// and returns the projected matrix
-  mdp_matrix project_SU(mdp_matrix M, int nstep = 1)
+  mdp_matrix project_SU(mdp_matrix M, mdp_uint nstep = 1)
   {
-    int i, j, k, l, step, nc = M.rows();
+    mdp_suint nc = M.rows();
     mdp_real e0, e1, e2, e3, dk, d;
     mdp_complex dc, u0, u1, u2, u3;
     mdp_matrix B(nc, nc);
@@ -470,34 +469,34 @@ namespace MDP
     // /////////////////
     // preconditioning
     // /////////////////
-    for (i = 0; i < nc; i++)
+    for (mdp_suint i = 0; i < nc; i++)
     {
-      for (j = 0; j < i; j++)
+      for (mdp_suint j = 0; j < i; j++)
       {
         dc = 0;
-        for (k = 0; k < nc; k++)
+        for (mdp_suint k = 0; k < nc; k++)
           dc += conj(C(k, j)) * C(k, i);
-        for (k = 0; k < nc; k++)
+        for (mdp_suint k = 0; k < nc; k++)
           C(k, i) -= dc * C(k, j);
       }
       d = 0;
-      for (k = 0; k < nc; k++)
+      for (mdp_suint k = 0; k < nc; k++)
         d += std::pow((double)abs(C(k, i)), (double)2.0);
       d = std::sqrt(d);
-      for (k = 0; k < nc; k++)
+      for (mdp_suint k = 0; k < nc; k++)
         C(k, i) /= d;
     }
     // ////////////////////////////
     // Cabibbo Marinari Projection
     // ////////////////////////////
-    for (i = 0; i < nc; i++)
-      for (j = 0; j < nc; j++)
-        for (k = 0; k < nc; k++)
+    for (mdp_suint i = 0; i < nc; i++)
+      for (mdp_suint j = 0; j < nc; j++)
+        for (mdp_suint k = 0; k < nc; k++)
           B(i, j) += conj(M(k, i)) * C(k, j);
-    for (step = 0; step < nstep; step++)
+    for (mdp_uint step = 0; step < nstep; step++)
     {
-      for (i = 0; i < nc - 1; i++)
-        for (j = i + 1; j < nc; j++)
+      for (mdp_suint i = 0; i < nc - 1; i++)
+        for (mdp_suint j = i + 1; j < nc; j++)
         {
           e0 = real(B(i, i)) + real(B(j, j));
           e1 = imag(B(i, j)) + imag(B(j, i));
@@ -509,17 +508,17 @@ namespace MDP
           u2 = mdp_complex(-e2, -e1) / dk;
           u3 = mdp_complex(e0, e3) / dk;
           // S=C;
-          for (k = 0; k < nc; k++)
+          for (mdp_suint k = 0; k < nc; k++)
           {
             S(k, i) = C(k, i) * u0 + C(k, j) * u1;
             S(k, j) = C(k, i) * u2 + C(k, j) * u3;
           }
           if ((i == nc - 2) && (j == nc - 1))
-            for (k = 0; k < nc; k++)
-              for (l = 0; l < nc - 2; l++)
+            for (mdp_suint k = 0; k < nc; k++)
+              for (mdp_suint l = 0; l < nc - 2; l++)
                 S(k, l) = C(k, l);
           if ((i != nc - 2) || (j != nc - 1) || (step != nstep - 1))
-            for (k = 0; k < nc; k++)
+            for (mdp_suint k = 0; k < nc; k++)
             {
               C(k, i) = B(k, i) * u0 + B(k, j) * u1;
               C(k, j) = B(k, i) * u2 + B(k, j) * u3;

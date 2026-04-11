@@ -221,7 +221,7 @@ namespace MDP
      * the current process or if the site is in a local copy of a remote
      * site
      */
-    int is_here() const
+    bool is_here() const
     {
       return ((m_idx >= 0) && (m_idx < lattice().enclosing_volume()));
     }
@@ -493,7 +493,7 @@ namespace MDP
   /// sites that moved around the boundary of the torus topology. this function
   /// returns false if this is one such site, true otherwise.
 #ifdef TWISTED_BOUNDARY
-  int in_block(mdp_site x)
+  bool in_block(mdp_site x)
   {
     for (mdp_uint mu = 0; (mu < BLOCKSITE) && mu < x.lattice().n_dimensions(); mu++)
       if (x.block(mu) != 0)

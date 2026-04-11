@@ -110,7 +110,7 @@ namespace MDP
   private:
     static constexpr int _NprocMax_ = 256;
     mdp_uint m_ndir;                          /* number of directions       */
-    int m_next_next;                          /* 1, 2 or 3 is the thickness of the boundary */
+    mdp_sint m_next_next;                     /* 1, 2 or 3 is the thickness of the boundary */
     std::vector<mdp_int> m_nx;                /* box containing the lattice */
     mdp_int m_local_volume;                   /* local volume               */
     mdp_int m_global_volume;                  /* global volume              */
@@ -175,7 +175,7 @@ namespace MDP
                                mdp_uint ndir_,
                                where_fn where_,
                                neighbour_fn neighbour_,
-                               int next_next_,
+                               mdp_sint next_next_,
                                bool local_random_)
     {
       deallocate_memory();
@@ -265,7 +265,7 @@ namespace MDP
           for (mdp_uint mu = 0; mu < m_ndir; mu++)
           {
             // calculate up and down points in mu direction given the neighbour topology
-            (*m_neighbour)(mu, x_dw, x, x_up, ndim(), m_nx.data());
+            m_neighbour(mu, x_dw, x, x_up, ndim(), m_nx.data());
 
             if (!is_valid_process(x_up) || !is_valid_process(x_dw))
               error("Incorrect partitioning");
@@ -285,8 +285,8 @@ namespace MDP
             {
               if ((nu != mu) || (m_next_next > 1))
               {
-                (*m_neighbour)(nu, x_dw_dw, x_dw, x_dw_up, ndim(), m_nx.data());
-                (*m_neighbour)(nu, x_up_dw, x_up, x_up_up, ndim(), m_nx.data());
+                m_neighbour(nu, x_dw_dw, x_dw, x_dw_up, ndim(), m_nx.data());
+                m_neighbour(nu, x_up_dw, x_up, x_up_up, ndim(), m_nx.data());
 
                 if (!is_valid_process(x_up_dw) ||
                     !is_valid_process(x_up_up) ||
@@ -305,8 +305,8 @@ namespace MDP
                 {
                   for (mdp_uint rho = 0; rho < m_ndir; rho++)
                   {
-                    (*m_neighbour)(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, ndim(), m_nx.data());
-                    (*m_neighbour)(rho, x_up_up_dw, x_up_up, x_up_up_up, ndim(), m_nx.data());
+                    m_neighbour(rho, x_dw_dw_dw, x_dw_dw, x_dw_dw_up, ndim(), m_nx.data());
+                    m_neighbour(rho, x_up_up_dw, x_up_up, x_up_up_up, ndim(), m_nx.data());
 
                     if (!is_valid_process(x_up_up_up) ||
                         !is_valid_process(x_up_up_dw) ||
@@ -442,7 +442,7 @@ namespace MDP
             translate_to_coordinates(lms_tmp, x);
 #endif
             mdp_parity x_parity = compute_parity(x);
-            if (((*m_where)(x, ndim(), m_nx.data()) == process) && (x_parity == parity))
+            if ((m_where(x, ndim(), m_nx.data()) == process) && (x_parity == parity))
             {
               mdp_int new_idx = m_stop[process][parity];
 #ifndef MDP_NO_LG
@@ -488,7 +488,7 @@ namespace MDP
 
         for (mdp_uint mu = 0; mu < m_ndir; ++mu)
         {
-          (*m_neighbour)(mu, x_dw, x, x_up, ndim(), m_nx.data());
+          m_neighbour(mu, x_dw, x, x_up, ndim(), m_nx.data());
 
           const mdp_int g_up = global_coordinate(x_up);
           const mdp_int g_dw = global_coordinate(x_dw);
@@ -658,7 +658,7 @@ namespace MDP
                           where_fn where_ = default_partitioning0,
                           neighbour_fn neighbour_ = torus_topology,
                           mdp_int random_seed_ = 0,
-                          int next_next_ = 1,
+                          mdp_sint next_next_ = 1,
                           bool local_random_ = true)
     {
       mdp.begin_function("allocate_lattice");
@@ -729,9 +729,9 @@ namespace MDP
      * @param x Point x[] to be inspected
      * @return Process ID
      */
-    int where(const mdp_int x[]) const
+    mdp_int where(const mdp_int x[]) const
     {
-      return (*m_where)(x, ndim(), m_nx.data());
+      return m_where(x, ndim(), m_nx.data());
     }
 
     mdp_int process(mdp_int local_idx) const
@@ -787,7 +787,7 @@ namespace MDP
       mdp_int x[MAX_DIM];
       translate_to_coordinates(global_idx, x);
 
-      return (*m_where)(x, ndim(), m_nx.data());
+      return m_where(x, ndim(), m_nx.data());
     }
 
     /** @brief Calculate parity of point x[]
@@ -822,10 +822,10 @@ namespace MDP
                 where_fn where_ = default_partitioning0,
                 neighbour_fn neighbour_ = torus_topology,
                 mdp_int random_seed_ = 0,
-                int next_next_ = 1,
+                mdp_sint next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice()
     {
-      if (ndir_ < 0)
+      if (ndir_ == 0)
         ndir_ = box.dim();
       allocate_lattice(box, ndir_, where_, neighbour_,
                        random_seed_, next_next_, local_random_);
@@ -844,7 +844,7 @@ namespace MDP
                 where_fn where_ = default_partitioning0,
                 neighbour_fn neighbour_ = torus_topology,
                 mdp_int random_seed_ = 0,
-                int next_next_ = 1,
+                mdp_sint next_next_ = 1,
                 bool local_random_ = true) : mdp_lattice(box, box.dim(), where_, neighbour_, random_seed_, next_next_, local_random_)
     {
     }
@@ -927,7 +927,7 @@ namespace MDP
       return m_global_volume;
     }
 
-    mdp_int boundary_thickness() const
+    mdp_sint boundary_thickness() const
     {
       return m_next_next;
     }
