@@ -44,6 +44,14 @@ namespace MDP
      */
     using mdp_int = int_fast32_t;
 
+    /** @brief Short int
+     *
+     * Suitable for small values
+     *
+     * Used for ranges -127 to 128
+     */
+    using mdp_sint = int_fast8_t;
+
     /** @brief unsigned int
      *
      * Suitable for large non-negative values
