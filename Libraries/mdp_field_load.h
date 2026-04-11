@@ -61,7 +61,7 @@ namespace MDP
   /// Best way to load a field
   template <class T>
   bool mdp_field<T>::load(std::string filename,
-                          int processIO,
+                          mdp_uint processIO,
                           mdp_int max_buffer_size,
                           bool load_header,
                           mdp_int skip_bytes,
@@ -88,7 +88,7 @@ namespace MDP
       auto short_buffer = std::make_unique<T[]>(m_field_components);
       mdp_request request;
 
-      for (int process = 0; process < Nproc; process++)
+      for (mdp_uint process = 0; process < Nproc; process++)
       {
         buffer_size[process] = 0;
       }
@@ -136,7 +136,7 @@ namespace MDP
           return false;
         }
 
-        for (mdp_uint d = 0; d < lattice().ndim(); d++)
+        for (mdp_suint d = 0; d < lattice().ndim(); d++)
         {
           if (tmp_header.box[d] != m_header.box[d])
           {
@@ -168,7 +168,7 @@ namespace MDP
 
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        int process = where_global(idx_gl);
+        mdp_uint process = where_global(idx_gl);
 
         if (process != NOWHERE)
         {
@@ -215,7 +215,7 @@ namespace MDP
 
           if (idx_gl == nvol_gl - 1)
           {
-            for (int process = 0; process < Nproc; process++)
+            for (mdp_uint process = 0; process < Nproc; process++)
               if ((process != ME) &&
                   (buffer_size[process] != max_buffer_size) &&
                   (buffer_size[process] > 0))
@@ -245,7 +245,7 @@ namespace MDP
 
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        int process = where_global(idx_gl);
+        mdp_uint process = where_global(idx_gl);
 
         if (process == ME)
         {

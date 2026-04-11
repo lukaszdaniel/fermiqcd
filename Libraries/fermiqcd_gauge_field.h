@@ -31,8 +31,8 @@ namespace MDP
   ///    U.load("myfield");
   ///    compute_em_field(U);
   ///    forallsites(x)
-  ///      for(mdp_uint mu=0; mu<U.ndim(); mu++)
-  ///        for(mdp_uint nu=mu+1; nu<U.ndim(); nu++)
+  ///      for(mdp_suint mu=0; mu<U.ndim(); mu++)
+  ///        for(mdp_suint nu=mu+1; nu<U.ndim(); nu++)
   ///          std::cout << U.em(x,mu,nu) << std::endl;
   /// @endverbatim
   /// Note that U.em(x,mu,nu) is \f$ a^2 G_{\mu\nu} \f$ and
@@ -42,7 +42,7 @@ namespace MDP
   private:
     mdp_suint m_nc;
 
-    int ordered_index(mdp_uint mu, mdp_uint nu) const
+    int ordered_index(mdp_suint mu, mdp_suint nu) const
     {
       // /////////////////////////
       // this maps mu, nu -> k  //
@@ -106,7 +106,7 @@ namespace MDP
 
     /** @brief returns the matrix in directions \e mu, \e nu stored at site x
      */
-    mdp_matrix operator()(mdp_site x, mdp_uint mu, mdp_uint nu) const
+    mdp_matrix operator()(mdp_site x, mdp_suint mu, mdp_suint nu) const
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
@@ -118,7 +118,7 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix in directions \e mu, \e nu stored at site x
      */
-    mdp_complex &operator()(mdp_site x, mdp_uint mu, mdp_uint nu, int i, int j)
+    mdp_complex &operator()(mdp_site x, mdp_suint mu, mdp_suint nu, int i, int j)
     {
 #ifdef CHECK_ALL
       if (mu >= nu)
@@ -130,7 +130,7 @@ namespace MDP
 
     /** @brief returns the (i,j) const component of the matrix in directions \e mu, \e nu stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, mdp_uint mu, mdp_uint nu,
+    const mdp_complex &operator()(mdp_site x, mdp_suint mu, mdp_suint nu,
                                   int i, int j) const
     {
 #ifdef CHECK_ALL
@@ -157,7 +157,7 @@ namespace MDP
   ///    mdp_site x(lattice);
   ///    // set_cold(U);
   ///    forallsites(x)
-  ///       for(mdp_uint mu=0; mu<U.ndim(); mu++)
+  ///       for(mdp_suint mu=0; mu<U.ndim(); mu++)
   ///          U(x,mu)=1;
   ///    U.update(); // synchronization
   ///    U.save("myfield");
@@ -223,7 +223,7 @@ namespace MDP
 
     /** @brief returns the matrix in direction \e mu stored at site x
      */
-    mdp_matrix operator()(mdp_site x, mdp_uint mu) const
+    mdp_matrix operator()(mdp_site x, mdp_suint mu) const
     {
 #ifndef TWISTED_BOUNDARY
       return mdp_matrix(address(x, mu * m_nc * m_nc), m_nc, m_nc);
@@ -246,7 +246,7 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix in direction \e mu stored at site x
      */
-    mdp_complex &operator()(mdp_site x, mdp_uint mu, int i, int j)
+    mdp_complex &operator()(mdp_site x, mdp_suint mu, int i, int j)
     {
 #ifdef TWISTED_BOUNDARY
       if (!in_block(x))
@@ -257,7 +257,7 @@ namespace MDP
 
     /** @brief returns the (i,j) const component of the matrix in direction \e mu stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, mdp_uint mu, int i, int j) const
+    const mdp_complex &operator()(mdp_site x, mdp_suint mu, int i, int j) const
     {
 #ifdef TWISTED_BOUNDARY
       if (!in_block(x))
@@ -271,7 +271,7 @@ namespace MDP
      * @note if \e sign is negative returned matrix is a hermitian matrix
      * if direction \e -mu
      */
-    mdp_matrix operator()(mdp_site x, int sign, mdp_uint mu) const
+    mdp_matrix operator()(mdp_site x, int sign, mdp_suint mu) const
     {
       if (sign == +1)
         return (*this)(x, mu);
@@ -286,7 +286,7 @@ namespace MDP
      *
      * @note if \e sign is negative returned element is conjugated
      */
-    mdp_complex operator()(mdp_site x, int sign, mdp_uint mu,
+    mdp_complex operator()(mdp_site x, int sign, mdp_suint mu,
                                  int i, int j) const
     {
       if (sign == +1)
@@ -315,7 +315,7 @@ namespace MDP
     static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
     static mdp_complex a, b, c, d, e, f, g, h, i;
 
-    for (mdp_uint mu = 1; mu < x.lattice().ndim(); mu++)
+    for (mdp_suint mu = 1; mu < x.lattice().ndim(); mu++)
     {
       block = x.block(mu);
       if (block != 0)
@@ -435,7 +435,7 @@ namespace MDP
     // static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
     static mdp_complex a, b, c, d, e, f, g, h, i;
 
-    for (mdp_uint mu = 1; mu < x.lattice().ndim(); mu++)
+    for (mdp_suint mu = 1; mu < x.lattice().ndim(); mu++)
     {
       block = x.block(mu);
       if (block != 0)

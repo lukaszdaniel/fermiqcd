@@ -52,7 +52,7 @@ namespace MDP
     static constexpr int Landau = 10;
 
     static void hit(gauge_field &U,
-                    mdp_uint mu,
+                    mdp_suint mu,
                     mdp_parity parity,
                     int i, int j,
                     mdp_real overrelaxation_boost = 1)
@@ -86,7 +86,7 @@ namespace MDP
       forallsitesofparity(x, parity)
       {
         a0 = a1 = a2 = a3 = 0;
-        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+        for (mdp_suint nu = 0; nu < U.ndim(); nu++)
           if (nu != mu)
           {
             U_up = U(x, nu);
@@ -117,7 +117,7 @@ namespace MDP
       W.update();
       forallsitesofparity(x, parity)
       {
-        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+        for (mdp_suint nu = 0; nu < U.ndim(); nu++)
           for (mdp_suint k = 0; k < U.nc(); k++)
           {
             x0 = U(x, nu, i, k);
@@ -128,7 +128,7 @@ namespace MDP
       }
       forallsitesofparity(x, opposite_parity)
       {
-        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+        for (mdp_suint nu = 0; nu < U.ndim(); nu++)
         {
           y = x + nu;
 #ifndef TWISTED_BOUNDARY
@@ -164,7 +164,7 @@ namespace MDP
       U.update();
     }
 
-    static void z3_fix(gauge_field &U, mdp_uint mu)
+    static void z3_fix(gauge_field &U, mdp_suint mu)
     {
       int i = 0;
       mdp_site x(U.lattice());
@@ -211,7 +211,7 @@ namespace MDP
     /// @param z3 if set to true fixes residual Z(n) symmetry due to lattice
     ///           torus topology
     static gaugefixing_stats fix(gauge_field &U,
-                                 mdp_uint mu = 0,
+                                 mdp_suint mu = 0,
                                  int max_steps = 1,
                                  mdp_real target_precision = 1e-5,
                                  mdp_real overrelaxation_boost = 1,
@@ -246,7 +246,7 @@ namespace MDP
         forallsites(x)
         {
           M = 0;
-          for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+          for (mdp_suint nu = 0; nu < U.ndim(); nu++)
             if (nu != mu)
             {
               M += U(x, nu) - U(x - nu, nu);

@@ -35,7 +35,7 @@ public:
 
     for (int iter = 0; iter < n_iter; iter++)
       for (mdp_parity parity : {EVEN, ODD})
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           forallsitesofparity(x, parity)
           {
@@ -90,7 +90,7 @@ void punched_ape_smearing(gauge_field &U,
   {
     std::cout << "smearing step " << iter << "/" << iterations << std::endl;
     V = U;
-    for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+    for (mdp_suint mu = 0; mu < U.ndim(); mu++)
     {
       forallsites(x)
       {
@@ -103,7 +103,7 @@ void punched_ape_smearing(gauge_field &U,
               continue;
           }
         U(x, mu) = (1.0 - alpha) * V(x, mu);
-        for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+        for (mdp_suint nu = 0; nu < U.ndim(); nu++)
           if (nu != mu)
             U(x, mu) += (1.0 - alpha) / 6 *
                         (V(x, nu) * V(x + nu, mu) * hermitian(V(x + mu, nu)) +

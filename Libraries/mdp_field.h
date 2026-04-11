@@ -421,7 +421,7 @@ namespace MDP
      * note that if i=1, field(x-mu) is assigned to field(x)
      * function requires communication
      */
-    void shift(int i, mdp_uint mu)
+    void shift(int i, mdp_suint mu)
     {
       mdp_field tmp(lattice(), m_field_components);
       mdp_site x(lattice());
@@ -514,7 +514,7 @@ namespace MDP
 
     /** Dimension of the field
      */
-    mdp_uint ndim() const
+    mdp_suint ndim() const
     {
       return m_lattice->n_dimensions();
     }
@@ -629,7 +629,7 @@ namespace MDP
      *   By default buffersize=1024 and it works reasonably fast.
      */
     bool load(std::string filename,
-              int processIO = 0,
+              mdp_uint processIO = 0,
               mdp_int max_buffer_size = 1024,
               bool load_header = true,
               mdp_int skip_bytes = 0,
@@ -639,7 +639,7 @@ namespace MDP
     /** @brief Best way to save a field
      */
     bool save(std::string filename,
-              int processIO = 0,
+              mdp_uint processIO = 0,
               mdp_int max_buffer_size = 1024,
               bool load_header = true,
               mdp_int skip_bytes = 0,
@@ -657,11 +657,11 @@ namespace MDP
     bool save_vtk(std::string filename,
                   int t = -1,
                   int component = -1,
-                  int processIO = 0,
+                  mdp_uint processIO = 0,
                   bool ASCII = false);
 
     bool save_as_float(const std::string &filename,
-                       int processIO = 0,
+                       mdp_uint processIO = 0,
                        mdp_int max_buffer_size = 1024,
                        bool load_header = true,
                        mdp_int skip_bytes = 0)
@@ -678,7 +678,7 @@ namespace MDP
     }
 
     bool load_as_float(const std::string &filename,
-                       int processIO = 0,
+                       mdp_uint processIO = 0,
                        mdp_int max_buffer_size = 1024,
                        bool load_header = true,
                        mdp_int skip_bytes = 0)
@@ -696,7 +696,7 @@ namespace MDP
     }
 
     bool load_as_double(const std::string &filename,
-                        int processIO = 0,
+                        mdp_uint processIO = 0,
                         mdp_int max_buffer_size = 1024,
                         bool load_header = true,
                         mdp_int skip_bytes = 0)
@@ -713,7 +713,7 @@ namespace MDP
     }
 
     bool save_as_double(const std::string &filename,
-                        int processIO = 0,
+                        mdp_uint processIO = 0,
                         mdp_int max_buffer_size = 1024,
                         bool load_header = true,
                         mdp_int skip_bytes = 0)

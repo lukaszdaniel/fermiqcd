@@ -57,7 +57,7 @@ namespace MDP
       if (psi_in.nc() != U.nc())
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
-      mdp_uint ndim = psi_in.lattice().ndim();
+      mdp_suint ndim = psi_in.lattice().ndim();
       mdp_suint nspin = psi_in.nspin();
       mdp_suint nc = psi_in.nc();
       mdp_suint L5 = psi_in.L5();
@@ -96,7 +96,7 @@ namespace MDP
       {
         for (mdp_suint l = 0; l < L5; l++)
         {
-          for (mdp_uint mu = 0; mu < ndim; mu++)
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             for (mdp_suint a = 0; a < nspin; a++)
             {
@@ -155,7 +155,7 @@ namespace MDP
       if (psi_in.nc() != U.nc())
         error("fermiqcd_dwfermi_algorithms/dwfermi_mul_Q_ONE: gauge and spinor have different nc");
 
-      mdp_uint ndim = psi_in.lattice().ndim();
+      mdp_suint ndim = psi_in.lattice().ndim();
       mdp_suint nspin = psi_in.nspin();
       mdp_suint nc = psi_in.nc();
       mdp_suint L5 = psi_in.L5();
@@ -194,7 +194,7 @@ namespace MDP
       {
         for (mdp_suint l = 0; l < L5; l++)
         {
-          for (mdp_uint mu = 0; mu < ndim; mu++)
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             for (mdp_suint a = 0; a < nspin; a++)
               for (mdp_suint i = 0; i < nc; i++)

@@ -57,7 +57,7 @@ namespace MDP
     double mytime; // total time
     bool wormholes_open;
     int my_id;
-    int my_nproc;
+    mdp_uint my_nproc;
 
 #ifndef PARALLEL
     double MPI_Wtime()
@@ -384,14 +384,14 @@ namespace MDP
 
     /** @brief Returns the unique id of this process
      */
-    int me()
+    mdp_uint me()
     {
       return my_id;
     }
 
     /** @brief Returns the total number of parallel processes for this job
      */
-    int nproc()
+    mdp_uint nproc()
     {
       return my_nproc;
     }
@@ -442,7 +442,7 @@ namespace MDP
       MPI_Comm_rank(communicator, &(my_id));
       MPI_Comm_size(communicator, &(my_nproc));
       print = true;
-      for (int i = 0; i < nproc(); i++)
+      for (mdp_uint i = 0; i < nproc(); i++)
       {
         if (me() == i)
           (*this) << "MPI PROCESS " << me()
@@ -487,7 +487,7 @@ namespace MDP
       auto a = std::make_unique<double[]>(nproc());
       auto b = std::make_unique<double[]>(nproc());
       auto c = std::make_unique<double[]>(nproc());
-      for (int i = 0; i < nproc(); i++)
+      for (mdp_uint i = 0; i < nproc(); i++)
         a[i] = b[i] = c[i] = 0;
       getcpuusage(a[me()], b[me()]);
       c[me()] = 100.0 * comm_time / (time());
@@ -495,10 +495,10 @@ namespace MDP
       add(b.get(), nproc());
       add(c.get(), nproc());
       char buffer[256];
-      for (int i = 0; i < nproc(); i++)
+      for (mdp_uint i = 0; i < nproc(); i++)
       {
         snprintf(buffer, 256,
-                 "* Process %i stats: CPU=%.2f%% PROCESS=%.2f%% COMM=%.2f%%\n",
+                 "* Process %lu stats: CPU=%.2f%% PROCESS=%.2f%% COMM=%.2f%%\n",
                  i, a[i], b[i], c[i]);
         (*this) << buffer;
       }

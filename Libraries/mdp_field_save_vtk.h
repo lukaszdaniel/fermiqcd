@@ -26,7 +26,7 @@ namespace MDP
   bool mdp_field<T>::save_vtk(std::string filename,
                               int t,
                               int component,
-                              int processIO,
+                              mdp_uint processIO,
                               bool ASCII)
   {
     filename = next_to_latest_file(filename);
@@ -47,7 +47,7 @@ namespace MDP
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
       auto short_buffer = std::make_unique<T[]>(m_field_components);
 
-      for (int process = 0; process < Nproc; process++)
+      for (mdp_uint process = 0; process < Nproc; process++)
         buffer_ptr[process] = 0;
 
       std::cout << "Saving file " << filename
@@ -88,7 +88,7 @@ namespace MDP
 
       for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        int process = where_global(idx_gl);
+        mdp_uint process = where_global(idx_gl);
 
         // --- Fill short_buffer ---
         if ((process != NOWHERE) && (process != processIO))
@@ -156,7 +156,7 @@ namespace MDP
 
       for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        int process = where_global(idx_gl);
+        mdp_uint process = where_global(idx_gl);
         if (process == ME)
         {
           local_index[buffer_size] = lattice().local(idx_gl);

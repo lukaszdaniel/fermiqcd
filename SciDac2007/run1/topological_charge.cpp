@@ -26,7 +26,7 @@ public:
       zeta = 1;
 
     mdp_parity parity = EVEN;
-    mdp_uint mu = 0;
+    mdp_suint mu = 0;
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
     mdp_site x(U.lattice());

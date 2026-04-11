@@ -37,7 +37,7 @@ namespace MDP
                       mdp_parity parity = EVENODD)
     {
       mdp_suint nc = U.nc();
-      mdp_uint ndim = U.ndim();
+      mdp_suint ndim = U.ndim();
       mdp_suint L5 = chi_in.L5();
 
       mdp_real mass;
@@ -94,7 +94,7 @@ namespace MDP
         // version non-optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mdp_uint mu = 0; mu < ndim; mu++)
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;

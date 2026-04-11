@@ -132,7 +132,7 @@ namespace MDP
 
       for (int iter = 0; iter < n_iter; iter++)
         for (mdp_parity parity : {EVEN, ODD})
-          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
             forallsitesofparity(x, parity)
             {
@@ -201,7 +201,7 @@ namespace MDP
     ImprovedGaugeAction(const ImprovedGaugeAction &) = delete;
     ImprovedGaugeAction &operator=(const ImprovedGaugeAction &) = delete;
 
-    static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, mdp_uint mu)
+    static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, mdp_suint mu)
     {
       mdp_suint nc = U.nc();
       mdp_matrix tmp(nc, nc);
@@ -214,7 +214,7 @@ namespace MDP
       tmp = 0;
       if (mu == 0)
       {
-        for (mdp_uint nu = 1; nu < U.ndim(); nu++)
+        for (mdp_suint nu = 1; nu < U.ndim(); nu++)
         {
           y0 = x + mu;
           y1 = y0 + nu;
@@ -228,7 +228,7 @@ namespace MDP
       }
       else
       {
-        mdp_uint nu = 0;
+        mdp_suint nu = 0;
         y0 = (x - mu) + nu;
         tmp += U(x + mu, nu) * hermitian(U(x - mu, nu) * U(y0, mu) * U(x + nu, mu)) * U(x - mu, mu);
 
@@ -253,7 +253,7 @@ namespace MDP
 
     // if min_nu==0 then rectangles_ij computes all 6 rectangles
 
-    static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, mdp_uint mu, mdp_uint min_nu = 1)
+    static mdp_matrix rectangles_ij_H(const gauge_field &U, mdp_site x, mdp_suint mu, mdp_suint min_nu = 1)
     {
       mdp_suint nc = U.nc();
       mdp_matrix tmp(nc, nc);
@@ -264,7 +264,7 @@ namespace MDP
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
 
-      for (mdp_uint nu = min_nu; nu < U.ndim(); nu++)
+      for (mdp_suint nu = min_nu; nu < U.ndim(); nu++)
       {
         if (nu != mu)
         {
@@ -305,9 +305,9 @@ namespace MDP
     // see: hep-lat/0712010
     // //////////////////////////////////////////////////////
 
-    static mdp_matrix chair_H(const gauge_field &U, mdp_site x, mdp_uint mu)
+    static mdp_matrix chair_H(const gauge_field &U, mdp_site x, mdp_suint mu)
     {
-      mdp_uint ndim = U.ndim();
+      mdp_suint ndim = U.ndim();
       mdp_suint nc = U.nc();
       mdp_matrix tmp(nc, nc);
       mdp_matrix b1(nc, nc);
@@ -319,10 +319,10 @@ namespace MDP
       mdp_site y4(U.lattice());
       mdp_site y5(U.lattice());
       tmp = 0;
-      for (mdp_uint nu = 0; nu < ndim; nu++)
+      for (mdp_suint nu = 0; nu < ndim; nu++)
       {
         if (nu != mu)
-          for (mdp_uint rho = 0; rho < ndim; rho++)
+          for (mdp_suint rho = 0; rho < ndim; rho++)
             if ((rho != nu) && (rho != mu))
             {
               y1 = x + mu;
@@ -370,7 +370,7 @@ namespace MDP
     static int strange_mapping(mdp_site &x)
     {
       int type = 0;
-      for (mdp_uint mu = 0; mu < x.lattice().n_dimensions(); mu++)
+      for (mdp_suint mu = 0; mu < x.lattice().n_dimensions(); mu++)
         type += (int)std::pow((float)iGauge_min, mu) * (x(mu) % iGauge_min);
       return type;
     }
@@ -419,7 +419,7 @@ namespace MDP
       if (U.nc() == 1)
         error("fermiqcd_gauge_algorithms/improved_heatbath(): U(1)? (use metropolis instead)");
       mdp_suint nc = U.nc();
-      mdp_uint ndim = U.ndim();
+      mdp_suint ndim = U.ndim();
       mdp_matrix M(nc, nc);
       mdp_site x(U.lattice());
       double time = mdp.time();
@@ -467,7 +467,7 @@ namespace MDP
           {
             if (strange_mapping(x) == type)
             {
-              for (mdp_uint mu = 0; mu < ndim; mu++)
+              for (mdp_suint mu = 0; mu < ndim; mu++)
                 for (mdp_suint i = 0; i < nc - 1; i++)
                   for (mdp_suint j = i + 1; j < nc; j++)
                   {

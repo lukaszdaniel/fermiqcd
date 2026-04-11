@@ -32,7 +32,7 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+      for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         U(x, mu) = mdp_identity(U.nc());
     }
     U.update();
@@ -49,7 +49,7 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+      for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         U(x, mu) = U.lattice().random(x).SU(U.nc());
     }
     U.update();
@@ -65,7 +65,7 @@ namespace MDP
 
     forallsitesandcopies(x)
     {
-      for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+      for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         if (max(inv(U(x, mu)) - hermitian(U(x, mu))) > precision)
           how_many++;
     }
@@ -75,7 +75,7 @@ namespace MDP
   }
 
   /// Compute average plaquette on plane mu-nu
-  mdp_real average_plaquette(const gauge_field &U, mdp_uint mu, mdp_uint nu)
+  mdp_real average_plaquette(const gauge_field &U, mdp_suint mu, mdp_suint nu)
   {
     double tmp = 0;
     mdp_site x(U.lattice());
@@ -97,8 +97,8 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_uint mu = 0; mu < U.ndim() - 1; mu++)
-        for (mdp_uint nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_suint mu = 0; mu < U.ndim() - 1; mu++)
+        for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
           tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
@@ -132,8 +132,8 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_uint mu = 1; mu < U.ndim() - 1; mu++)
-        for (mdp_uint nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_suint mu = 1; mu < U.ndim() - 1; mu++)
+        for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
           tmp += real(trace(plaquette(U, x, mu, nu)));
     }
     mdp.add(tmp);
@@ -199,7 +199,7 @@ namespace MDP
 
     for (mdp_uint iter = 0; iter < n_iter; iter++)
       for (mdp_parity parity : {EVEN, ODD})
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           forallsitesofparity(x, parity)
           {
@@ -362,8 +362,8 @@ namespace MDP
     */
     forallsites(x)
     {
-      for (mdp_uint mu = 0; mu < U.ndim() - 1; mu++)
-        for (mdp_uint nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_suint mu = 0; mu < U.ndim() - 1; mu++)
+        for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
         {
 
           A =
@@ -407,13 +407,13 @@ namespace MDP
     if (length == 2)
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < V.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < V.ndim(); mu++)
           U.long_links(x, mu) = V(x, mu) * V(x + mu, mu);
       }
     if (length == 3)
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < V.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < V.ndim(); mu++)
           U.long_links(x, mu) = V(x, mu) * V(x + mu, mu) * V((x + mu) + mu, mu);
       }
     U.long_links.update();
@@ -433,7 +433,7 @@ namespace MDP
   ///    // use quarks (will have antiperiodic boundary conditions)
   ///    set_antiperiodic_phases(U,mu,false);
   /// @endverbatim
-  void set_antiperiodic_phases(gauge_field &U, mdp_uint mu = 0, bool check = true)
+  void set_antiperiodic_phases(gauge_field &U, mdp_suint mu = 0, bool check = true)
   {
     begin_function("set_antiperiodic_phases");
     mdp_site x(U.lattice());
@@ -662,7 +662,7 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///   mdp_uint mu=0, nu=1;
+  ///   mdp_suint mu=0, nu=1;
   ///   gauge_field U(lattice,nc);
   ///   Path d = {{+1,mu},{+1,nu},{-1,mu},{-1,nu}};
   ///   mdp << "plaquette=" << average_path(U,d) << "\n";
@@ -709,7 +709,7 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///   mdp_uint mu=0, nu=1;
+  ///   mdp_suint mu=0, nu=1;
   ///   gauge_field U(lattice,nc);
   ///   Path d = {{+1,mu},{+1,nu},{-1,mu},{-1,nu}};
   ///   forallsites(x)

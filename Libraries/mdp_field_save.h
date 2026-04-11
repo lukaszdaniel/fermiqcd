@@ -61,7 +61,7 @@ namespace MDP
   /// Best way to save a field
   template <class T>
   bool mdp_field<T>::save(std::string filename,
-                          int processIO,
+                          mdp_uint processIO,
                           mdp_int max_buffer_size,
                           bool save_header,
                           mdp_int skip_bytes,
@@ -84,7 +84,7 @@ namespace MDP
       mdp_array<T, 3> large_buffer(Nproc, max_buffer_size, m_field_components);
       auto short_buffer = std::make_unique<T[]>(m_field_components);
 
-      for (int process = 0; process < Nproc; process++)
+      for (mdp_uint process = 0; process < Nproc; process++)
       {
         buffer_size[process] = 0;
         buffer_ptr[process] = 0;
@@ -119,7 +119,7 @@ namespace MDP
 
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        int process = where_global(idx_gl);
+        mdp_uint process = where_global(idx_gl);
 
         if ((process != NOWHERE) && (process != processIO))
         {
@@ -185,7 +185,7 @@ namespace MDP
 
       for (idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
-        int process = where_global(idx_gl);
+        mdp_uint process = where_global(idx_gl);
 
         if (process == ME)
         {

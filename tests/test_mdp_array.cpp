@@ -75,7 +75,7 @@ int main()
   // 10. Test dims() i size()
   const auto &dims = a.dims();
   std::cout << "Dims a: ";
-  for (mdp_uint i = 0; i < a.ndim(); i++)
+  for (mdp_suint i = 0; i < a.ndim(); i++)
     std::cout << dims[i] << " ";
   std::cout << "\nTotal size: " << a.size() << "\n";
 

@@ -96,12 +96,12 @@ namespace MDP
         m_data[i] = a;
     }
 
-    mdp_real component(mdp_site x, mdp_uint mu)
+    mdp_real component(mdp_site x, mdp_suint mu)
     {
       return x(mu) % 2;
     }
 
-    mdp_real eta(mdp_site x, mdp_uint mu)
+    mdp_real eta(mdp_site x, mdp_suint mu)
     {
       int tmp = 0;
       int i_max = (mu + ndim() - 1) % ndim();

@@ -139,7 +139,7 @@ namespace MDP
     return pattern.replace(i, 1, std::to_string(k).c_str());
   }
 
-  mdp_field_file_header get_info(const std::string &filename, int proc = 0)
+  mdp_field_file_header get_info(const std::string &filename, mdp_uint proc = 0)
   {
     mdp_field_file_header myheader;
     if (isSubProcess(proc))

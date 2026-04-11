@@ -47,7 +47,7 @@ namespace MDP
                       mdp_parity parity = EVENODD)
     {
 
-      mdp_uint ndim = U.ndim();
+      mdp_suint ndim = U.ndim();
       mdp_real sign = 1, two_mass = 1;
       if (coeff.has_key("mass"))
         two_mass = 2.0 * coeff["mass"];
@@ -82,7 +82,7 @@ namespace MDP
         // use non-naik improved action
         forallsitesofparity(x, parity)
         {
-          for (mdp_uint mu = 0; mu < ndim; mu++)
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             y = x + mu;
             dslash = U(x, mu) * chi_in(y);
@@ -97,7 +97,7 @@ namespace MDP
         // use naik improved action
         forallsitesofparity(x, parity)
         {
-          for (mdp_uint mu = 0; mu < ndim; mu++)
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             y = x + mu;
             dslash = U(x, mu) * chi_in(y);
@@ -142,7 +142,7 @@ namespace MDP
                       mdp_parity parity = EVENODD)
     {
       mdp_suint nc = U.nc();
-      mdp_uint ndim = U.ndim();
+      mdp_suint ndim = U.ndim();
       mdp_real sign = 1, two_mass = 1;
       if (coeff.has_key("mass"))
         two_mass = 2.0 * coeff["mass"];
@@ -184,7 +184,7 @@ namespace MDP
         // version optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mdp_uint mu = 0; mu < ndim; mu++)
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;
@@ -237,7 +237,7 @@ namespace MDP
         // version non-optimized for su3
         forallsitesofparity(x, parity)
         {
-          for (mdp_uint mu = 0; mu < ndim; mu++)
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             x_up = x + mu;
             x_dw = x - mu;

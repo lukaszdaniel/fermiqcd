@@ -262,7 +262,7 @@ namespace MDP
       // mdp_real im;
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           U(x, mu) = 0;
           for (mdp_int a = 0; a < numgen; a++)
@@ -302,7 +302,7 @@ namespace MDP
       mdp_site x(p_U.lattice());
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < p_U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < p_U.ndim(); mu++)
           tmp -= 0.5 * trace(p_U(x, mu) * p_U(x, mu));
       }
       mdp.add(tmp);
@@ -319,7 +319,7 @@ namespace MDP
         mdp_site x(U.lattice());
         forallsitesandcopies(x)
         {
-          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
             for (mdp_suint a = 0; a < V.nc(); a++)
             {
@@ -385,7 +385,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           U(x, mu) = exp(dt * p_U(x, mu) + 0.5 * dt * dt * f_U(x, mu)) * U(x, mu);
       }
       U.update();
@@ -404,7 +404,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < U_temp.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U_temp.ndim(); mu++)
           U_temp(x, mu) = 0;
       }
       // U_temp.update();
@@ -438,16 +438,16 @@ namespace MDP
 
       forallsitesandcopies(x)
       {
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           Udag(x, mu) = hermitian(U(x, mu));
       }
 
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           staple = 0;
-          for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+          for (mdp_suint nu = 0; nu < U.ndim(); nu++)
             if (nu != mu)
               staple = staple + U(x + mu, nu) * Udag(x + nu, mu) * Udag(x, nu) +
                        Udag(x + mu - nu, nu) * Udag(x - nu, mu) * U(x - nu, nu);
@@ -476,7 +476,7 @@ namespace MDP
         f_F.update();
         forallsites(x)
         {
-          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
             f_U(x, mu) -= utmp(x, mu);
         }
         f_U.update();
@@ -500,7 +500,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           Udag(x, mu) = hermitian(U(x, mu));
           Utr(x, mu) = transpose(U(x, mu));
@@ -515,7 +515,7 @@ namespace MDP
       {
         forallsites(x)
         {
-          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
             for (mdp_suint a = 0; a < U.nc(); a++)
@@ -539,7 +539,7 @@ namespace MDP
       {
         forallsites(x)
         {
-          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
             for (mdp_suint a = 0; a < fnc; a++)
@@ -563,7 +563,7 @@ namespace MDP
         mdp_real f;
         forallsites(x)
         {
-          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
             for (mdp_int g = 0; g < numgen; g++)

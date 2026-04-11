@@ -100,7 +100,7 @@ namespace MDP
       staggered_field psi(S.lattice(), S.nc());
       staggered_field chi(S.lattice(), S.nc());
       mdp_site x(S.lattice());
-      mdp_uint ndim = S.lattice().n_dimensions();
+      mdp_suint ndim = S.lattice().n_dimensions();
       mdp_suint nc = S.nc();
 
       double time = mdp.time();
@@ -125,7 +125,7 @@ namespace MDP
           {
             std::cout << "(source at (";
 
-            for (mdp_uint mu = 0; mu < ndim; mu++)
+            for (mdp_suint mu = 0; mu < ndim; mu++)
               std::cout << x(mu) << (mu < ndim - 1 ? ", " : "");
 
             std::cout << "), Color: " << j << "\n";

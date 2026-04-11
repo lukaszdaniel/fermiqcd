@@ -62,7 +62,7 @@ namespace MDP
         forallsites(x)
         {
           for (mdp_suint a = 0; a < psi.nspin(); a++)
-            for (mdp_uint mu = 1; mu < U.ndim(); mu++)
+            for (mdp_suint mu = 1; mu < U.ndim(); mu++)
               psi(x, a) += factor * (U(x, mu) * chi(x + mu, a) + U(x, -1, mu) * chi(x - mu, a));
         }
       }

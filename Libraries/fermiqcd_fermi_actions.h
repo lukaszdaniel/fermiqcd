@@ -64,7 +64,7 @@ namespace MDP
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
-      mdp_uint ndim = psi_in.lattice().n_dimensions();
+      mdp_suint ndim = psi_in.lattice().n_dimensions();
       mdp_suint nspin = psi_in.nspin();
       mdp_suint nc = psi_in.nc();
       mdp_real kappa_t = 0;
@@ -132,7 +132,7 @@ namespace MDP
 
       forallsites(x)
       {
-        for (mdp_uint mu = 0; mu < ndim; mu++)
+        for (mdp_suint mu = 0; mu < ndim; mu++)
         {
           for (mdp_suint a = 0; a < nspin; a++)
           {
@@ -153,8 +153,8 @@ namespace MDP
 
         if (cSW != 0)
         {
-          for (mdp_uint mu = 0; mu < ndim - 1; mu++)
-            for (mdp_uint nu = mu + 1; nu < ndim; nu++)
+          for (mdp_suint mu = 0; mu < ndim - 1; mu++)
+            for (mdp_suint nu = mu + 1; nu < ndim; nu++)
             {
               for (mdp_suint a = 0; a < nspin; a++)
                 psi_lo(a) = U.em(x, mu, nu) * psi_in(x, a);
@@ -214,7 +214,7 @@ namespace MDP
       if (parity != EVENODD)
         error("parity must be EVENODD here");
 
-      mdp_uint ndim = psi_in.lattice().n_dimensions();
+      mdp_suint ndim = psi_in.lattice().n_dimensions();
       mdp_suint nspin = psi_in.nspin();
       mdp_suint nc = psi_in.nc();
       mdp_real kappa_t = 0;
@@ -294,7 +294,7 @@ namespace MDP
           {
             psi_tmp[anc = a * nc + i] = 0;
           }
-        for (mdp_uint mu = 0; mu < ndim; mu++)
+        for (mdp_suint mu = 0; mu < ndim; mu++)
         {
           if (mu == 0)
           {
@@ -336,8 +336,8 @@ namespace MDP
 
         if (cSW != 0)
         {
-          for (mdp_uint mu = 0; mu < ndim - 1; mu++)
-            for (mdp_uint nu = mu + 1; nu < ndim; nu++)
+          for (mdp_suint mu = 0; mu < ndim - 1; mu++)
+            for (mdp_suint nu = mu + 1; nu < ndim; nu++)
             {
               for (mdp_suint a = 0; a < nspin; a++)
               {

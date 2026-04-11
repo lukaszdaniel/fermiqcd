@@ -264,7 +264,7 @@ namespace MDP
           forallsites(x)
           {
             V(x) = alpha * S(x, a, b);
-            for (mdp_uint mu = 0; mu < 4; mu++)
+            for (mdp_suint mu = 0; mu < 4; mu++)
               V(x) += U(x, mu) * S(x + mu, a, b) + hermitian(U(x - mu, mu)) * S(x - mu, a, b);
           }
           V.update();

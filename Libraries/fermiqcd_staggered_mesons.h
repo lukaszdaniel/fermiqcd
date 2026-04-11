@@ -25,7 +25,7 @@ namespace MDP
 {
 #ifndef TWISTED_BOUNDARY
 
-  static constexpr int KS_NDIM = 4;
+  static constexpr mdp_suint KS_NDIM = 4;
 
   class phase_field : public mdp_int_scalar_field
   {
@@ -47,7 +47,7 @@ namespace MDP
     int component(mdp_site x, mdp_site y)
     {
       int i = 0;
-      for (mdp_uint mu = 0; mu < KS_NDIM; mu++)
+      for (mdp_suint mu = 0; mu < KS_NDIM; mu++)
       {
         if (x(mu) / 2 != y(mu) / 2)
           return 0;
@@ -113,7 +113,7 @@ namespace MDP
     {
       for (mdp_suint c = 0; c < U.nc(); c++)
         out(x, c) = 0;
-      for (mdp_uint mu = 0; mu < KS_NDIM; mu++)
+      for (mdp_suint mu = 0; mu < KS_NDIM; mu++)
         A[mu] = x(mu) % 2;
       for (int i = 0; i < 16; i++)
         if (phases(x, i) != 0)
@@ -127,7 +127,7 @@ namespace MDP
           if (phases(x, i) != 0)
           {
             d = 0;
-            for (mdp_uint mu = 0; mu < KS_NDIM; mu++)
+            for (mdp_suint mu = 0; mu < KS_NDIM; mu++)
               if (B[mu] - A[mu] != 0)
               {
                 P[d][0] = B[mu] - A[mu];

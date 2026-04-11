@@ -52,7 +52,7 @@ namespace MDP
       ni = nf = np;
     }
 
-    for (mdp_int dp = 1; dp < Nproc; dp++)
+    for (mdp_uint dp = 1; dp < Nproc; dp++)
     {
       process = (ME + dp) % Nproc;
 

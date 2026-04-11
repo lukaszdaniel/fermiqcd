@@ -43,11 +43,11 @@ namespace MDP
       mdp_site y(U.lattice());
       mdp_matrix A(U.nc(), U.nc());
       mdp_matrix staples(U.nc(), U.nc());
-      for (mdp_uint m = 0; m < U.ndim() - 1; m++)
+      for (mdp_suint m = 0; m < U.ndim() - 1; m++)
       {
         forallsites(x)
         {
-          for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
             for (mdp_suint i = 0; i < U.nc(); i++)
               for (mdp_suint j = 0; j < U.nc(); j++)
@@ -114,12 +114,12 @@ namespace MDP
       {
         std::cout << "smearing step " << iter << "/" << iterations << std::endl;
         V = U;
-        for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+        for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           forallsites(x)
           {
             U(x, mu) = (1.0 - alpha) * V(x, mu);
-            for (mdp_uint nu = 0; nu < U.ndim(); nu++)
+            for (mdp_suint nu = 0; nu < U.ndim(); nu++)
             {
               if (nu != mu)
                 U(x, mu) += (1.0 - alpha) / 6 *
@@ -140,8 +140,8 @@ namespace MDP
     mdp_site x(U.lattice());
     forallsitesandcopies(x)
     {
-      for (mdp_uint mu = 0; mu < U.ndim() - 1; mu++)
-        for (mdp_uint nu = mu + 1; nu < U.ndim(); nu++)
+      for (mdp_suint mu = 0; mu < U.ndim() - 1; mu++)
+        for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
           U.em(x, mu, nu) -= 8.0 / 3.0 * I * trace(U.em(x, mu, nu));
     }
   }

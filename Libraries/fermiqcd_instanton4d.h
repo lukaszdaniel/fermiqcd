@@ -58,8 +58,8 @@ namespace MDP
       sigma_rot3[1] = std::cos(gamma) * sigma_rot2[1] + std::sin(gamma) * sigma_rot2[2];
       sigma_rot3[2] = -std::sin(gamma) * sigma_rot2[1] + std::cos(gamma) * sigma_rot2[2];
 
-      for (mdp_uint mu = 0; mu < 4; mu++)
-        for (mdp_uint nu = 0; nu < 4; nu++)
+      for (mdp_suint mu = 0; mu < 4; mu++)
+        for (mdp_suint nu = 0; nu < 4; nu++)
         {
           eta[mu][nu].dimension(nc, nc);
           eta[mu][nu] = 0;
@@ -85,8 +85,8 @@ namespace MDP
           }
         }
       /*
-      for (mdp_uint mu = 0; mu < 4; mu++)
-        for (mdp_uint nu = 0; nu < 4; nu++)
+      for (mdp_suint mu = 0; mu < 4; mu++)
+        for (mdp_suint nu = 0; nu < 4; nu++)
         {
           eta[mu][nu].dimension(nc, nc);
           for (mdp_suint i = 0; i < nc; i++)
@@ -129,15 +129,15 @@ namespace MDP
         }
       */
     }
-    mdp_matrix operator()(mdp_site &x, mdp_uint mu) const
+    mdp_matrix operator()(mdp_site &x, mdp_suint mu) const
     {
       int v[4];
-      for (mdp_uint nu = 0; nu < 4; nu++)
+      for (mdp_suint nu = 0; nu < 4; nu++)
         v[nu] = x(nu) - p[nu];
       float d2 = v[0] * v[0] + v[1] * v[1] + v[2] * v[2] + v[3] * v[3];
       mdp_matrix A(nc, nc);
       A = 0;
-      for (mdp_uint nu = 0; nu < 4; nu++)
+      for (mdp_suint nu = 0; nu < 4; nu++)
         A += eta[mu][nu] * v[nu];
       return (2.0 * charge / (d2 + lambda * lambda)) * A;
     }

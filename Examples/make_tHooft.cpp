@@ -6,16 +6,16 @@ int main(int argc, char **argv)
 {
   define_base_matrices("FERMILAB");
   mdp.open_wormholes(argc, argv);
-  int nc = 2;
+  mdp_suint nc = 2;
   constexpr Box L = {10, 40, 10, 10};
   mdp_lattice lattice(L, default_partitioning0, torus_topology, 0, 2, false);
   gauge_field U(lattice, nc);
   char filename[128];
   mdp_site x(lattice);
   set_cold(U);
-  std::vector<mdp_real> p(4);
+  std::vector<mdp_real> p(U.ndim());
 
-  for (int mu = 0; mu < 4; mu++)
+  for (mdp_suint mu = 0; mu < U.ndim(); mu++)
     p[mu] = L[mu] / 2;
 
   int i = 0, j = 0;
@@ -24,7 +24,7 @@ int main(int argc, char **argv)
 
   forallsites(x)
   {
-    for (mdp_uint mu = 0; mu < U.ndim(); mu++)
+    for (mdp_suint mu = 0; mu < U.ndim(); mu++)
       U(x, mu) = exp(-I * A(x, mu));
   }
 

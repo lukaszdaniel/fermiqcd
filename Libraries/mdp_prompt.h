@@ -47,7 +47,7 @@ namespace MDP
   std::string prompt(const std::string &filename,
                      const std::string &variable,
                      const std::string &def_val = "0.0",
-                     int p = 0)
+                     mdp_uint p = 0)
   {
     std::string response = def_val;
 
