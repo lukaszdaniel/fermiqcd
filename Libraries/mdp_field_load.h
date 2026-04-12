@@ -76,7 +76,7 @@ namespace MDP
       return false;
 
     mdp_int header_size = 0;
-    size_t idx_gl, nvol_gl = lattice().global_volume();
+    mdp_uint idx_gl, nvol_gl = lattice().global_volume();
     size_t psize = m_field_components * sizeof(T);
     double mytime = mdp.time();
     bool reversed_header_endianess = false;
@@ -128,11 +128,11 @@ namespace MDP
           std::cout << "Reversed header endianess\n";
 
         if (tmp_header.endianess != m_header.endianess)
-          fprintf(stderr, "Unrecognized endianess... trying to read anyway\n");
+          std::cerr << "Unrecognized endianess... trying to read anyway\n";
 
         if (tmp_header.ndim != m_header.ndim)
         {
-          fprintf(stderr, "mdp_field.load(): wrong ndim\n");
+          std::cerr << "mdp_field.load(): wrong ndim\n";
           return false;
         }
 
@@ -140,20 +140,20 @@ namespace MDP
         {
           if (tmp_header.box[d] != m_header.box[d])
           {
-            fprintf(stderr, "mdp_file.load(): wrong lattice size\n");
+            std::cerr << "mdp_file.load(): wrong lattice size\n";
             return false;
           }
         }
 
         if (tmp_header.bytes_per_site != m_header.bytes_per_site)
         {
-          fprintf(stderr, "mdp_file.load(): wrong type of field (%i bytes per site?)\n", tmp_header.bytes_per_site);
+          std::cerr << "mdp_file.load(): wrong type of field (" << tmp_header.bytes_per_site << " bytes per site?)\n";
           return false;
         }
 
         if (tmp_header.sites != m_header.sites)
         {
-          fprintf(stderr, "mdp_field.load(): wrong number of sites\n");
+          std::cerr << "mdp_field.load(): wrong number of sites\n";
           return false;
         }
 

@@ -14,6 +14,7 @@
 
 #include <ctime>
 #include <memory>
+#include <format>
 #ifdef PARALLEL
 #include "mpi.h"
 #endif
@@ -494,13 +495,11 @@ namespace MDP
       add(a.get(), nproc());
       add(b.get(), nproc());
       add(c.get(), nproc());
-      char buffer[256];
+
       for (mdp_uint i = 0; i < nproc(); i++)
       {
-        snprintf(buffer, 256,
-                 "* Process %lu stats: CPU=%.2f%% PROCESS=%.2f%% COMM=%.2f%%\n",
-                 i, a[i], b[i], c[i]);
-        (*this) << buffer;
+        (*this) << std::format("* Process {} stats: CPU={:.2f}% PROCESS={:.2f}% COMM={:.2f}%\n",
+                               i, a[i], b[i], c[i]);
       }
       (*this) << "* (above numbers make no sense under windows)\n";
 #endif

@@ -39,6 +39,7 @@ using socket_fd_t = HANDLE;
 #include <vector>
 #include <map>
 #include <fstream>
+#include <format>
 #include "mdp_global_vars.h"
 
 namespace MDP
@@ -211,9 +212,10 @@ namespace MDP
       fork_processes();
       close_sockets();
 
-      char buffer[256];
-      snprintf(buffer, 256, "process %i of %i created with pid=%i",
-               _processID, _processCount, getpid());
+      std::string buffer = std::format("process {} of {} created with pid={}",
+                                       _processID,
+                                       _processCount,
+                                       getpid());
       log(buffer, 1);
     }
 
@@ -242,8 +244,7 @@ namespace MDP
         _hash.reset();
       }
 
-      char buffer[256];
-      snprintf(buffer, 256, "process %i terminating", _processID);
+      std::string buffer = std::format("process {} terminating", _processID);
       log(buffer, 1);
 
       close_log();
@@ -283,23 +284,22 @@ namespace MDP
 
     void create_sockets()
     {
-      char filename[512];
       for (int source = 0; source < _processCount; source++)
       {
         for (int dest = 0; dest < _processCount; dest++)
         {
-          snprintf(filename, 512, ".fifo.%i.%i", source, dest);
+          std::string filename = std::format(".fifo.{}.{}", source, dest);
 #ifndef _WIN32
-          while (mkfifo(filename, 0666) < 0)
+          while (mkfifo(filename.c_str(), 0666) < 0)
           {
             if (errno == EEXIST)
-              unlink(filename);
+              unlink(filename.c_str());
             else
               throw std::string("PSIM ERROR: unable to mkfifo ") + filename;
           }
 
-          _socketFD[_processCount * source + dest][COMM_RECV] = open(filename, O_RDONLY | O_NONBLOCK);
-          _socketFD[_processCount * source + dest][COMM_SEND] = open(filename, O_WRONLY);
+          _socketFD[_processCount * source + dest][COMM_RECV] = open(filename.c_str(), O_RDONLY | O_NONBLOCK);
+          _socketFD[_processCount * source + dest][COMM_SEND] = open(filename.c_str(), O_WRONLY);
           int flags = fcntl(_socketFD[_processCount * source + dest][COMM_RECV], F_GETFL, 0);
           fcntl(_socketFD[_processCount * source + dest][COMM_RECV], F_SETFL, flags & ~O_NONBLOCK);
 
@@ -310,7 +310,7 @@ namespace MDP
           }
 
 #else
-          std::string pipeName = R"(\\.\pipe\)" + std::string(filename);
+          std::string pipeName = R"(\\.\pipe\)" + filename;
 
           HANDLE hPipe = CreateNamedPipeA(
               pipeName.c_str(),
@@ -332,22 +332,16 @@ namespace MDP
         }
       }
 
-      char buffer[256];
       for (int source = 0; source < _processCount; source++)
         for (int dest = 0; dest < _processCount; dest++)
         {
           int idx = _processCount * source + dest;
-#ifndef _WIN32
-          snprintf(buffer, 256, "_socketFD[%i*%i+%i]={%i,%i}",
-                   source, _processCount, dest,
-                   _socketFD[idx][COMM_SEND],
-                   _socketFD[idx][COMM_RECV]);
-#else
-          snprintf(buffer, 256, "_socketFD[%i*%i+%i]={%p,%p}",
-                   source, _processCount, dest,
-                   (void *)_socketFD[idx][COMM_SEND],
-                   (void *)_socketFD[idx][COMM_RECV]);
-#endif
+
+          std::string buffer = std::format("PSIM: _socketFD[{}*{}+{}]={{{},{}}}",
+                                           source, _processCount, dest,
+                                           _socketFD[idx][COMM_SEND],
+                                           _socketFD[idx][COMM_RECV]);
+
           log(buffer);
         }
     }
@@ -401,11 +395,9 @@ namespace MDP
           (processID >= _processCount))
       {
 
-        char buffer[256];
-        snprintf(buffer, 256, "PSIM ERROR: process %i referencing %i.",
-                 _processID, processID);
+        std::string buffer = std::format("PSIM ERROR: process {} referencing {}.", _processID, processID);
         log(buffer);
-        throw std::string(buffer);
+        throw buffer;
       }
     }
 
@@ -446,14 +438,15 @@ namespace MDP
                      SendRecv method,
                      SendRecvStep step)
     {
-
-      char buffer[256];
       const char cmdSendRecv[2][8] = {"send", "recv"};
       const char stepSendRecv[3][12] = {"starting...", "failed!", "success."};
 
-      snprintf(buffer, 256, "%i %s(%i,%s) %s",
-               _processID, cmdSendRecv[method],
-               sourcedestProcessID, tag.c_str(), stepSendRecv[step]);
+      std::string buffer = std::format("{} {}({},{}) {}",
+                                       _processID,
+                                       cmdSendRecv[method],
+                                       sourcedestProcessID,
+                                       tag,
+                                       stepSendRecv[step]);
       log(buffer);
     }
 
@@ -479,11 +472,10 @@ namespace MDP
                      const void *pdataToSend, mdp_int dataSize)
     {
       static int counter = 0;
-      char filename[512];
       counter++;
       int destIndex = get_dest_index(destProcessID);
-      snprintf(filename, 512, ".fifo.%i.%i.%i", _processID, destProcessID, counter);
-      int fd = open(filename, O_WRONLY | O_CREAT, 0700);
+      std::string filename_str = std::format(".fifo.{}.{}.{}", _processID, destProcessID, counter);
+      int fd = open(filename_str.c_str(), O_WRONLY | O_CREAT, 0700);
       if (write(fd, pdataToSend, dataSize) != dataSize)
       {
         log("PSIM ERROR: failure to write to socket");
@@ -517,7 +509,6 @@ namespace MDP
     void recv_buffer(int sourceProcessID,
                      void *pdataToReceive, mdp_int dataSize)
     {
-      char filename[512];
       int counter;
       int sourceIndex = get_source_index(sourceProcessID);
       if (ipc_read(_socketFD[sourceIndex][COMM_RECV], &counter, sizeof(counter)) != sizeof(counter))
@@ -525,8 +516,9 @@ namespace MDP
         log("PSIM ERROR: timeout error in reading from socket");
         throw std::string("PSIM ERROR: timeout error in reading from socket");
       }
-      snprintf(filename, 512, ".fifo.%i.%i.%i", sourceProcessID, _processID, counter);
-      int fd = open(filename, O_RDONLY);
+
+      std::string filename_str = std::format(".fifo.{}.{}.{}", sourceProcessID, _processID, counter);
+      int fd = open(filename_str.c_str(), O_RDONLY);
       if (read(fd, (char *)pdataToReceive, dataSize) != dataSize)
       {
         log("PSIM ERROR: timeout error in reading from socket");
@@ -534,7 +526,7 @@ namespace MDP
       }
       else
       {
-        unlink(filename);
+        unlink(filename_str.c_str());
       }
       close(fd);
     }
@@ -598,15 +590,7 @@ namespace MDP
 
     void doBegEndLog(const std::string &method, BegEnd begEnd)
     {
-      char buffer[256];
-      char *be;
-
-      if (begEnd == LOG_BEGIN)
-        be = (char *)"BEGIN";
-      else
-        be = (char *)"END";
-
-      snprintf(buffer, 256, "%i %s [%s]", _processID, be, method.c_str());
+      std::string buffer = std::format("%i %s [%s]", _processID, (begEnd == LOG_BEGIN ? "BEGIN" : "END"), method.c_str());
       log(buffer);
     }
 
