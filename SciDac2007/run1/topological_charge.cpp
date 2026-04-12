@@ -85,7 +85,7 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
   mdp_site x4(lattice);
   mdp_site x3(cube);
   mdp_real_scalar_field Q4(lattice);
-  char filename[128];
+  std::string filename;
 
   for (int i1 = 0; i1 < c1; i1++)
   {
@@ -102,7 +102,7 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
         Q3(x3) = Q4(x4);
       }
       std::cout << "dumping...\n";
-      snprintf(filename, 128, "topological.%.3i.%.3i.%.3i.vtk", code, i1, t);
+      filename = std::format("topological.{:03d}.{:03d}.{:03d}.vtk", code, i1, t);
       dump(Q3, 0, filename);
     }
   }
@@ -118,7 +118,7 @@ int main(int argc, char **argv)
   mdp_lattice lattice(L);
   gauge_field U(lattice, nc);
   gauge_field V(lattice, nc);
-  char filename[128];
+  std::string filename;
 
   coefficients gauge;
   gauge["beta"] = 5.8;
@@ -138,7 +138,7 @@ int main(int argc, char **argv)
   {
     std::cout << k << std::endl;
     ModifiedWilsonGaugeAction::heatbath(U, gauge, 1000);
-    snprintf(filename, 128, "gauge_32x16x16x16.%.5i.mdp", k);
+    filename = std::format("gauge_32x16x16x16.{:05d}.mdp", k);
     U.save(filename);
     V = U;
     save_top_charge(V, k, 1, 20, 0, 1);

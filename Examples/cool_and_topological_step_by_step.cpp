@@ -13,12 +13,12 @@ void test_gauge(int nt, int nx, const char *filename)
                       torus_topology,
                       0, 1, false);
   gauge_field U(lattice, nc);
-  char filename2[200];
+  std::string filename2;
   U.load(filename);
   // U.switch_endianess_4bytes();
   for (int k = 0; k <= 20; k += 5)
   {
-    snprintf(filename2, 200, "%s.topological_charge_%i.vtk", filename, k);
+    filename2 = std::format("{}.topological_charge_{}.vtk", filename, k);
     float tc = topological_charge_vtk(U, filename2, 0);
     mdp << "topological_charge=" << tc << "\n";
     ApeSmearing::smear(U, 0.7, 5, 10);

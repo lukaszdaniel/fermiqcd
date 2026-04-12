@@ -34,7 +34,7 @@ int main(int argc, char **argv)
   coefficients quark;
   quark["kappa"] = 0.130;
   int L8 = 8;
-  char filename[128];
+  std::string filename;
 
   set_cold(U);
 #ifndef TEST
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
         }
       }
     }
-    snprintf(filename, 128, "wave.%.3i.mdp", k);
+    filename = std::format("wave.{:03d}.mdp", k);
     s.save(filename);
   }
   mdp.close_wormholes();

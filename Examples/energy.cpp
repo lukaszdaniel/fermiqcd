@@ -6,7 +6,7 @@ void compute_energy(int nt, int nx, const std::string &filename)
 {
   const Box L = {nt, nx, nx, nx};
   int nc = 3;
-  char output[512];
+  std::string output;
   mdp_lattice lattice(L,
                       default_partitioning<1>,
                       torus_topology,
@@ -29,7 +29,7 @@ void compute_energy(int nt, int nx, const std::string &filename)
   }
 
   /// FIX FILE NAMES depends on T, beta, and K
-  snprintf(output, 512, "%s.e2b2.vtk", filename.c_str());
+  output = std::format("{}.e2b2.vtk", filename);
   q.save_vtk(output, 0);
 }
 

@@ -42,15 +42,23 @@ namespace MDP
      *
      * Used for ranges (roughly) +/- 2 bln
      */
-    using mdp_int = int_fast32_t;
+    using mdp_int = int32_t;
 
     /** @brief Short int
      *
      * Suitable for small values
      *
+     * Used for ranges -32767, to 32767
+     */
+    using mdp_sint = int16_t;
+
+    /** @brief Short short int
+     *
+     * Suitable for small values
+     *
      * Used for ranges -128 to 127
      */
-    using mdp_sint = int_fast8_t;
+    using mdp_ssint = int8_t;
 
     /** @brief unsigned int
      *
@@ -58,15 +66,23 @@ namespace MDP
      *
      * Used for ranges from 0 to (roughly) 4 bln
      */
-    using mdp_uint = uint_fast32_t;
+    using mdp_uint = uint32_t;
 
     /** @brief Short unsigned int
      *
      * Suitable for small non-negative values
      *
+     * Used for ranges 0 to 65535
+     */
+    using mdp_suint = uint16_t;
+
+    /** @brief Short short unsigned int
+     *
+     * Suitable for small non-negative values
+     *
      * Used for ranges 0 to 255
      */
-    using mdp_suint = uint_fast8_t;
+    using mdp_ssuint = uint8_t;
 
 #ifdef USE_SINGLE_PRECISION
     using mdp_real = float;
@@ -81,7 +97,7 @@ namespace MDP
         EVENODD = 2
     };
 
-    constexpr mdp_uint NOWHERE = std::numeric_limits<mdp_int>::max();
+    constexpr mdp_int NOWHERE = std::numeric_limits<mdp_int>::max();
 
     /// Each program should have a name
     const char *mdp_program_name = "A generic test program";

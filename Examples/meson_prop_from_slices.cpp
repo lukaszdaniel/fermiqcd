@@ -22,7 +22,7 @@ void meson_prop_from_slice(int nt, int nx, const char *filename)
   fermi_propagator S(lattice, nc);
   mdp_real_scalar_field Q(space);
   mdp << "success in allocating vector\n";
-  char filename2[128];
+  std::string filename2;
   S.load(filename);
   mdp_matrix A = Gamma5 * Gamma[1];
   mdp_complex w = 0;
@@ -40,7 +40,7 @@ void meson_prop_from_slice(int nt, int nx, const char *filename)
               Q(y) += real(w * trace(S(x, a, b) * hermitian(S(x, d, c))));
           }
   }
-  snprintf(filename2, 128, "%s.meson.vtk", filename);
+  filename2 = std::format("{}.meson.vtk", filename);
   Q.save_vtk(filename2);
 }
 

@@ -62,9 +62,9 @@ int main(int argc, char **argv)
   }
 
   mdp_field_file_header header;
-  int verbose = false, clean = false;
+  bool verbose = false, clean = false;
   char input[1024] = "";
-  char output[1024] = "";
+  std::string output;
   mdp_real lkappa = 0.10, lcsw = 0.0, hkappa = 0.10, hcsw = 0.0;
   mdp_real ap = 1e-10, rp = 1e-8;
   enum
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
   // load it if it exists already
   light_quark["kappa"] = lkappa;
   light_quark["c_{sw}"] = lcsw;
-  snprintf(output, 1024, "fp_%s_l_kappa%.4f_csw%.4f", input, lkappa, lcsw);
+  output = std::format("fp_{}_l_kappa{:.4f}_csw{:.4f}", input, lkappa, lcsw);
   if (file_exists(output) && !clean)
     Sl.load(output);
   else
@@ -240,7 +240,7 @@ int main(int argc, char **argv)
   // load it if it exists already
   heavy_quark["kappa"] = hkappa;
   heavy_quark["c_{sw}"] = hcsw;
-  snprintf(output, 1024, "fp_%s_l_kappa%.4f_csw%.4f", input, hkappa, hcsw);
+  output = std::format("fp_{}_l_kappa{:.4f}_csw{:.4f}", input, hkappa, hcsw);
   if (file_exists(output) && !clean)
     Sh.load(output);
   else

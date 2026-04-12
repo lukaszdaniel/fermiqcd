@@ -458,7 +458,7 @@ namespace MDP
       return _processCount * source + _processID;
     }
 
-    /** @brief detDestIndex
+    /** @brief get_dest_index
      */
     int get_dest_index(int dest)
     {
@@ -474,8 +474,8 @@ namespace MDP
       static int counter = 0;
       counter++;
       int destIndex = get_dest_index(destProcessID);
-      std::string filename_str = std::format(".fifo.{}.{}.{}", _processID, destProcessID, counter);
-      int fd = open(filename_str.c_str(), O_WRONLY | O_CREAT, 0700);
+      std::string filename = std::format(".fifo.{}.{}.{}", _processID, destProcessID, counter);
+      int fd = open(filename.c_str(), O_WRONLY | O_CREAT, 0700);
       if (write(fd, pdataToSend, dataSize) != dataSize)
       {
         log("PSIM ERROR: failure to write to socket");
@@ -517,8 +517,8 @@ namespace MDP
         throw std::string("PSIM ERROR: timeout error in reading from socket");
       }
 
-      std::string filename_str = std::format(".fifo.{}.{}.{}", sourceProcessID, _processID, counter);
-      int fd = open(filename_str.c_str(), O_RDONLY);
+      std::string filename = std::format(".fifo.{}.{}.{}", sourceProcessID, _processID, counter);
+      int fd = open(filename.c_str(), O_RDONLY);
       if (read(fd, (char *)pdataToReceive, dataSize) != dataSize)
       {
         log("PSIM ERROR: timeout error in reading from socket");
@@ -526,7 +526,7 @@ namespace MDP
       }
       else
       {
-        unlink(filename_str.c_str());
+        unlink(filename.c_str());
       }
       close(fd);
     }

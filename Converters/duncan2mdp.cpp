@@ -116,7 +116,7 @@ void process_gauge(std::ifstream &file_fp,
 
             MDP_fp.seekp(byte_pos, std::ios::beg);
             MDP_fp.write(reinterpret_cast<const char *>(buffer),
-                      static_cast<std::streamsize>(buffer_size));
+                         static_cast<std::streamsize>(buffer_size));
           }
 }
 

@@ -20,7 +20,7 @@ int main(int argc, char **argv)
   mdp_site x3(cube);
   mdp_matrix A, B, C;
   mdp_complex d = 0.0;
-  char name[100];
+  std::string name;
   coefficients gauge;
   gauge["beta"] = 5.0;
 #if 0
@@ -91,7 +91,7 @@ int main(int argc, char **argv)
                    (F(x3, 6) + F(x3, 7) + F(x3, 8) - F(x3, 9) - F(x3, 10) - F(x3, 11)) / L[0] / (conf + 1));
     }
     std::cout << "saving vtk file\n";
-    snprintf(name, 100, "qqbar_%i.vtk", conf);
+    name = std::format("qqbar_{}.vtk", conf);
     dump(Q3, 0, name);
   }
   // compute correlatiton between three (or four) polyakov lines.

@@ -12,6 +12,7 @@
 #include <ctime>
 #include <memory>
 #include <fstream>
+#include <format>
 
 using Complex = std::complex<float>;
 #define Nspace nx[1] * nx[2] * nx[3]
@@ -253,7 +254,7 @@ void read_t_gauge(short_field &U, std::ifstream &file,
 void read_t_prop(short_field &S, char fileprefix[],
                  char precision, char swap, int time)
 {
-  char filename[200];
+  std::string filename;
   long bytes_to_read;
   long bytes_read;
   int x1, x2, x3;
@@ -285,9 +286,8 @@ void read_t_prop(short_field &S, char fileprefix[],
     {
 
       // Construct filename
-      snprintf(filename, 200, "%s%01d%01dT%02d", fileprefix, source_spin,
-               source_colour, time);
-      printf("Opening file: %s\n", filename);
+      filename = std::format("{}{:01d}{:01d}T{:02d}", fileprefix, source_spin, source_colour, time);
+      printf("Opening file: %s\n", filename.c_str());
 
       // Open, read, check and close file
       std::ifstream fp(filename, std::ios::binary);

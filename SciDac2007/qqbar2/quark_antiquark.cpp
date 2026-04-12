@@ -137,7 +137,7 @@ int main(int argc, char **argv)
   mdp_site x(lattice), y(lattice);
   mdp_site x3(cube), x3b(cube);
   mdp_complex d;
-  char filename[100];
+  std::string filename;
   coefficients gauge;
   gauge["beta"] = 2.2;
   std::vector<mdp_site> sites;
@@ -164,13 +164,13 @@ int main(int argc, char **argv)
   {
 #if 0
     WilsonGaugeAction::heatbath(V, gauge, 50);
-    snprintf(filename, 100, "gauge_from_hot_10x16x10x10.%.3i.fixed.mdp", conf);
+    filename = std::format("gauge_from_hot_10x16x10x10.{:03d}.fixed.mdp", conf);
     V.save(filename);
 
     U = V;
     ApeSmearing::smear(U, 0.7, 20, 10);
 #endif
-    snprintf(filename, 100, "gauge_from_hot_10x16x10x10.%.3i.fixed.mdp", conf);
+    filename = std::format("gauge_from_hot_10x16x10x10.{:03d}.fixed.mdp", conf);
     U.load(filename);
 
     // GaugeFixing::fix(U, GaugeFixing::Landau, 20);
@@ -281,7 +281,7 @@ int main(int argc, char **argv)
       Q3(x3) -= m;
     }
     std::cout << "saving vtk file\n";
-    snprintf(filename, 100, "energy_density_E2B2_XYZ.%.3i.vtk", conf);
+    filename = std::format("energy_density_E2B2_XYZ.{:03d}.vtk", conf);
     dump(Q3, 0, filename);
   }
 

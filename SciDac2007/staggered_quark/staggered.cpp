@@ -26,7 +26,7 @@ int main(int argc, char **argv)
   mdp_lattice space(L_space);
   mdp_real_vector_field s(space, 3);
   mdp_site x3(space);
-  char filename[128];
+  std::string filename;
   for (int t = 0; t < L[0] - 1; t++)
   {
     forallsites(x3)
@@ -36,11 +36,11 @@ int main(int argc, char **argv)
       s(x3, 1) = imag(phi(x, 0));
       s(x3, 2) = abs(phi(x, 0));
     }
-    snprintf(filename, 128, "staggered.real.%.3i.vtk", t);
+    filename = std::format("staggered.real.{:03d}.vtk", t);
     dump(s, 0, filename);
-    snprintf(filename, 128, "staggered.imag.%.3i.vtk", t);
+    filename = std::format("staggered.imag.{:03d}.vtk", t);
     dump(s, 1, filename);
-    snprintf(filename, 128, "staggered.abs.%.3i.vtk", t);
+    filename = std::format("staggered.abs.{:03d}.vtk", t);
     dump(s, 2, filename);
 
     forallsites(x)

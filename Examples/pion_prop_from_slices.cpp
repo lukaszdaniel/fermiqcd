@@ -22,7 +22,7 @@ void pion_prop_from_slice(int nt, int nx, const char *filename)
   fermi_propagator S(lattice, nc);
   mdp_real_scalar_field Q(space);
   mdp << "success in allocating vector\n";
-  char filename2[128];
+  std::string filename2;
   S.load(filename);
   forallsites(x)
   {
@@ -34,7 +34,7 @@ void pion_prop_from_slice(int nt, int nx, const char *filename)
           for (mdp_suint j = 0; j < S.nc(); j++)
             Q(y) += std::pow(abs(S(x, a, b, i, j)), 2);
   }
-  snprintf(filename2, 128, "%s.pion.vtk", filename);
+  filename2 = std::format("{}.pion.vtk", filename);
   Q.save_vtk(filename2);
 }
 

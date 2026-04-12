@@ -6,7 +6,7 @@ void polyakov(int nt, int nx, const std::string &filename)
 {
   const Box L = {nt, nx, nx, nx};
   const Box L_space = {nx, nx, nx};
-  char output[512];
+  std::string output;
   mdp_lattice lattice(L,
                       default_partitioning<1>,
                       torus_topology,
@@ -43,9 +43,9 @@ void polyakov(int nt, int nx, const std::string &filename)
     q(y, 1) = imag(z);
   }
   /// FIX FILE NAMES depends on T, beta, and K
-  snprintf(output, 512, "%s.polyakov.real.vtk", filename.c_str());
+  output = std::format("{}.polyakov.real.vtk", filename);
   q.save_vtk(output, -1, 0, 0, false);
-  snprintf(output, 512, "%s.polyakov.real.vtk", filename.c_str());
+  output = std::format("{}.polyakov.imag.vtk", filename);
   q.save_vtk(output, -1, 1, 0, false);
 }
 

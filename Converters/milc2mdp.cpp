@@ -222,7 +222,7 @@ void process_gauge(std::ifstream &MILC_fp, std::ofstream &MDP_fp, int nx[4], boo
     }
 
     MDP_fp.write(reinterpret_cast<const char *>(U.m_data.get()),
-        static_cast<std::streamsize>(U.size * sizeof(Complex)));
+                 static_cast<std::streamsize>(U.size * sizeof(Complex)));
 
     if (!MDP_fp)
     {

@@ -27,7 +27,7 @@ int main(int argc, char **argv)
   mdp_lattice space(L_space);
   mdp_real_vector_field s(space, 9);
   mdp_site x3(space);
-  char filename[128];
+  std::string filename;
   for (int t = 0; t < L[0] - 1; t++)
   {
     forallsites(x3)
@@ -43,23 +43,23 @@ int main(int argc, char **argv)
       s(x3, 7) = imag(phi(x, 3, 0));
       s(x3, 8) = std::sqrt(real(phi(x, 0, 0) * conj(phi(x, 0, 0)) + phi(x, 1, 0) * conj(phi(x, 1, 0)) + phi(x, 2, 0) * conj(phi(x, 2, 0)) + phi(x, 3, 0) * conj(phi(x, 3, 0))));
     }
-    snprintf(filename, 128, "wilson.s0.real.%.3i.vtk", t);
+    filename = std::format("wilson.s0.real.{:03d}.vtk", t);
     dump(s, 0, filename);
-    snprintf(filename, 128, "wilson.s0.imag%.3i.vtk", t);
+    filename = std::format("wilson.s0.imag.{:03d}.vtk", t);
     dump(s, 1, filename);
-    snprintf(filename, 128, "wilson.s1.real.%.3i.vtk", t);
+    filename = std::format("wilson.s1.real.{:03d}.vtk", t);
     dump(s, 2, filename);
-    snprintf(filename, 128, "wilson.s1.imag.%.3i.vtk", t);
+    filename = std::format("wilson.s1.imag.{:03d}.vtk", t);
     dump(s, 3, filename);
-    snprintf(filename, 128, "wilson.s2.real.%.3i.vtk", t);
+    filename = std::format("wilson.s2.real.{:03d}.vtk", t);
     dump(s, 4, filename);
-    snprintf(filename, 128, "wilson.s2.imag.%.3i.vtk", t);
+    filename = std::format("wilson.s2.imag.{:03d}.vtk", t);
     dump(s, 5, filename);
-    snprintf(filename, 128, "wilson.s3.real.%.3i.vtk", t);
+    filename = std::format("wilson.s3.real.{:03d}.vtk", t);
     dump(s, 6, filename);
-    snprintf(filename, 128, "wilson.s3.imag.%.3i.vtk", t);
+    filename = std::format("wilson.s3.imag.{:03d}.vtk", t);
     dump(s, 7, filename);
-    snprintf(filename, 128, "wilson.squared.%.3i.vtk", t);
+    filename = std::format("wilson.squared.{:03d}.vtk", t);
     dump(s, 8, filename);
   };
 

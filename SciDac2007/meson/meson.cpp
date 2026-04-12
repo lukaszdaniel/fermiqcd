@@ -19,7 +19,7 @@ int main(int argc, char **argv)
   mdp_lattice space(L_space);
   mdp_real_vector_field s(space, L[0]);
   mdp_site x3(space);
-  char filename[128];
+  std::string filename;
   set_cold(U);
 
   for (int t = 0; t < L[0]; t++)
@@ -45,7 +45,7 @@ int main(int argc, char **argv)
         for (int b = 0; b < 4; b++)
           s(x3, t) += real(phi(x, b, 0) * conj(phi(x, b, 0)));
       }
-      snprintf(filename, 128, "meson.%.3i.vtk", t);
+      filename = std::format("meson.{:03d}.vtk", t);
       dump(s, t, filename);
     }
   }

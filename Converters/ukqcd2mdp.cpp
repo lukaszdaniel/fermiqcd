@@ -12,6 +12,7 @@
 #include <ctime>
 #include <memory>
 #include <fstream>
+#include <format>
 
 using Complex = std::complex<float>;
 #define Nspace nx[1] * nx[2] * nx[3]
@@ -117,7 +118,7 @@ void read_t_gauge(short_field &U, char fileprefix[],
                   char precision, char swap, int time)
 {
 
-  char filename[200];
+  std::string filename;
   long file_length = Ndim * 12 * sizeof(float); // file length in bytes (one time slice)
   long bytes_read;                              // monitor how many bytes we read
   int x1, x2, x3, mu, a, b, muf;
@@ -141,9 +142,9 @@ void read_t_gauge(short_field &U, char fileprefix[],
     file_length = Nspace * Ndim * 12 * sizeof(double);
 
   // CARE HERE!
-  snprintf(filename, 200, "%sT%02d", fileprefix, time);
+  filename = std::format("{}T{:02d}", fileprefix, time);
 
-  printf("Opening file: %s\n", filename);
+  printf("Opening file: %s\n", filename.c_str());
 
   // Open, read, check and close the file! Allocate storage space in
   // buffer[].
@@ -262,7 +263,7 @@ void read_t_gauge(short_field &U, char fileprefix[],
 void read_t_prop(short_field &S, char fileprefix[],
                  char precision, char swap, int time)
 {
-  char filename[200];
+  std::string filename;
   std::unique_ptr<unsigned char[]> buffer;
   long bytes_to_read;
   long bytes_read;
@@ -295,9 +296,8 @@ void read_t_prop(short_field &S, char fileprefix[],
     {
 
       // Construct filename
-      snprintf(filename, 200, "%s%01d%01dT%02d", fileprefix, source_spin,
-               source_colour, time);
-      printf("Opening file: %s\n", filename);
+      filename = std::format("{}{:01d}{:01d}T{:02d}", fileprefix, source_spin, source_colour, time);
+      printf("Opening file: %s\n", filename.c_str());
 
       // Open, read, check and close file
       std::ifstream fp(filename, std::ios::binary);

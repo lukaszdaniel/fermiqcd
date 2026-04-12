@@ -18,3 +18,4 @@ tests/gauge.hot
 tests/make_tHooft.exe.sum.vtk
 tests/make_tHooft.exe.vtk
 tests/gauge.cold.polyakov.real.vtk
+tests/gauge.cold.polyakov.imag.vtk

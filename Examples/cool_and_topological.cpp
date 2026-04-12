@@ -14,13 +14,13 @@ void test_gauge(int nt, int nx, const char *filename)
                       0, 1, false);
   gauge_field U(lattice, nc);
   mdp << "success in allocating vector\n";
-  char filename2[128];
+  std::string filename2;
   U.load(filename);
   // U.switch_endianess_4bytes();
   ApeSmearing::smear(U, 0.7, 20, 10);
-  snprintf(filename2, 128, "%s.cooled20", filename);
+  filename2 = std::format("{}.cooled20", filename);
   U.save(filename2);
-  snprintf(filename2, 128, "%s.topological_charge_20.vtk", filename);
+  filename2 = std::format("{}.topological_charge_20.vtk", filename);
   float tc = topological_charge_vtk(U, filename2, 0);
   mdp << "topological_charge=" << tc << "\n";
 }

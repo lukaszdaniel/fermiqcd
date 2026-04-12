@@ -10,7 +10,7 @@ int main(int argc, char **argv)
   constexpr Box L = {10, 40, 10, 10};
   mdp_lattice lattice(L, default_partitioning0, torus_topology, 0, 2, false);
   gauge_field U(lattice, nc);
-  char filename[128];
+  std::string filename;
   mdp_site x(lattice);
   set_cold(U);
   std::vector<mdp_real> p(4);
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
     mdp << "k=" << k << "\n";
     // if (k > 0)
     //   ApeSmearing::smear(U, 0.7, 1, 10);
-    snprintf(filename, 128, "%s.%i.vtk", argv[0], k);
+    filename = std::format("{}.{}.vtk", argv[0], k);
     mdp << "top=" << topological_charge_vtk(U, filename) << "\n";
   }
   mdp.close_wormholes();

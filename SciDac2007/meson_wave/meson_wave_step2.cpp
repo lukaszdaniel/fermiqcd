@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   mdp_complex_vector_field s(space, 16);
   mdp_complex_scalar_field sum(space);
   mdp_real_scalar_field Q(space);
-  char filename[128];
+  std::string filename;
 
   forallsites(x)
       sum(x) = 0;
@@ -31,7 +31,7 @@ int main(int argc, char **argv)
   for (int k = 0; k < 1000; k++)
   {
     std::cout << k << std::endl;
-    snprintf(filename, 128, "wave.%.3i.mdp", k);
+    filename = std::format("wave.{:03d}.mdp", k);
     s.load(filename);
 
     forallsites(x)
@@ -63,7 +63,7 @@ int main(int argc, char **argv)
       Q(x) = std::pow(abs(sum(x)), 2) / (k + 1) + 1e-12;
     }
 
-    snprintf(filename, 128, "meson_wave_plus.%.3i.vtk", k);
+    filename = std::format("meson_wave_plus.{:03d}.vtk", k);
     dump(Q, 0, filename);
   }
   mdp.close_wormholes();

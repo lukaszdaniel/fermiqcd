@@ -6,7 +6,7 @@ void compute_plaquette(mdp_int nt, mdp_int nx, const std::string &filename)
 {
   const Box L = {nt, nx, nx, nx};
   mdp_int nc = 3;
-  char output[512];
+  std::string output;
   mdp_lattice lattice(L,
                       default_partitioning<1>,
                       torus_topology,
@@ -28,7 +28,7 @@ void compute_plaquette(mdp_int nt, mdp_int nx, const std::string &filename)
   }
 
   /// FIX FILE NAMES depends on T, beta, and K
-  snprintf(output, 512, "%s.plaquette.vtk", filename.c_str());
+  output = std::format("{}.plaquette.vtk", filename);
   q.save_vtk(output, 0);
 }
 
