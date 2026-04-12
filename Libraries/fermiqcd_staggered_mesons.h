@@ -61,28 +61,27 @@ namespace MDP
       int A[KS_NDIM], B[KS_NDIM];
       mdp_matrix G1, G2, ZETA_H;
       mdp_site x(lattice());
-      int i, mu, nu;
       ZETA_H = hermitian(ZETA);
       forallsites(x)
       {
         G1 = mdp_identity(KS_NDIM);
-        for (mu = 1; mu <= KS_NDIM; mu++)
+        for (int mu = 1; mu <= KS_NDIM; mu++)
         {
-          nu = mu % KS_NDIM;
+          int nu = mu % KS_NDIM;
           A[nu] = x(nu) % 2;
           if (A[nu] != 0)
             G1 = -1.0 * Gamma[nu] * G1;
         }
-        for (i = 0; i < 16; i++)
+        for (int i = 0; i < 16; i++)
         {
           B[0] = (i >> 3) & 0x1;
           B[1] = (i >> 2) & 0x1;
           B[2] = (i >> 1) & 0x1;
           B[3] = (i >> 0) & 0x1;
           G2 = mdp_identity(KS_NDIM);
-          for (mu = 1; mu <= KS_NDIM; mu++)
+          for (int mu = 1; mu <= KS_NDIM; mu++)
           {
-            nu = mu % KS_NDIM;
+            int nu = mu % KS_NDIM;
             if (B[nu] != 0)
               G2 = G2 * Gamma[nu];
           }

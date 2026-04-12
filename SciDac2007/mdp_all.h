@@ -514,7 +514,7 @@ namespace MDP
   class SignalHandler
   {
   public:
-    virtual void handler(int s) = 0; // metoda wirtualna
+    virtual void handler(int s) = 0;
 
     void catch_signal(int signalnum);
 

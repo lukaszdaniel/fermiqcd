@@ -75,7 +75,7 @@ namespace MDP
       wormholes_open = false;
     }
 
-    virtual ~mdp_communicator()
+    ~mdp_communicator()
     {
     }
 

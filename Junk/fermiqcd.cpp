@@ -320,7 +320,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       }
     forallsites(x) // FIX G1 !!!!!!!!
     {
-      if (x(TIME) >= 0)
+      if (x(TIME) > 0)
       {
         z.set((NT + 2 * t0 - x(TIME)) % NT, x(1), x(2), x(3));
         forspincolor(a, i, U.nc())

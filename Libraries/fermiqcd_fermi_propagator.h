@@ -163,8 +163,8 @@ namespace MDP
             the source is smeared before the inversion
             the sink must be smeared using smear_sink.
           */
-          if (smf != nullptr)
-            (*smf)(psi, U, smear_coeff);
+          if (smf)
+            smf(psi, U, smear_coeff);
           stats = mul_invQ(chi, psi, U, coeff,
                            absolute_precision, relative_precision, max_steps);
 

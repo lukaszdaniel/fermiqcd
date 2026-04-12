@@ -91,7 +91,8 @@ namespace MDP
             for (mdp_suint i = 0; i < U.nc(); i++)
               psi(x, a, i) = S(x, a, b, i, j);
         }
-        (*smf)(psi, U, coeff);
+        if (smf)
+          smf(psi, U, coeff);
         forallsitesandcopies(x)
         {
           for (mdp_suint a = 0; a < S.nspin(); a++)

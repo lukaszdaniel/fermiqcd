@@ -48,7 +48,7 @@ namespace MDP
      *
      * Suitable for small values
      *
-     * Used for ranges -127 to 128
+     * Used for ranges -128 to 127
      */
     using mdp_sint = int_fast8_t;
 
