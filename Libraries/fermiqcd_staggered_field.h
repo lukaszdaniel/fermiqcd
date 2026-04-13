@@ -24,7 +24,7 @@ namespace MDP
   /// staggered_field psi(lattice,nc);
   /// mdp_site x(lattice);
   /// forallsites(x)
-  ///   for(int i=0; i<nc; i++)
+  ///   for(mdp_suint i=0; i<nc; i++)
   ///     psi(x,i)=0.0+0.0*I;
   /// @endverbatim
   class staggered_field : public mdp_complex_field

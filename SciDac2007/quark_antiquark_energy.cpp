@@ -8,7 +8,7 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int nc = 3;
+  mdp_suint nc = 3;
   constexpr Box L = {12, 12, 12, 12};
   constexpr Box L_space = {12, 12, 12};
   mdp_lattice lattice(L);
@@ -41,14 +41,14 @@ int main(int argc, char **argv)
 
     x.set(0, L[1] / 4, L[2] / 2, L[3] / 2);
     A = U(x, 0);
-    for (int k = 1; k < L[0]; k++)
+    for (mdp_uint k = 1; k < L[0]; k++)
     {
       x = x + 0;
       A = A * U(x, 0);
     }
     x.set(0, L[1] * 3 / 4, L[2] / 2, L[3] / 2);
     B = U(x, 0);
-    for (int k = 1; k < L[0]; k++)
+    for (mdp_uint k = 1; k < L[0]; k++)
     {
       x = x + 0;
       B = B * U(x, 0);
@@ -75,7 +75,7 @@ int main(int argc, char **argv)
 #if 0
     for (int k = 0; k < 6; k++)
     {
-      for (int mu = 0; mu < 12; mu++)
+      for (mdp_suint mu = 0; mu < 12; mu++)
       {
         forallsitesofparity(x3, k % 2)
         {

@@ -84,21 +84,21 @@ namespace MDP
 
     /** @brief returns the vector of colour \e a stored at site x and site \e L5_ in 5-th dimension
      */
-    mdp_matrix operator()(mdp_site x, mdp_suint L5_, int a) const
+    mdp_matrix operator()(mdp_site x, mdp_suint L5_, mdp_suint a) const
     {
       return mdp_matrix(address(x, (L5_ * m_nspin + a) * m_nc), m_nc, 1);
     }
 
     /** @brief returns the (a,i) component of the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    mdp_complex &operator()(mdp_site x, mdp_suint L5_, int a, int i)
+    mdp_complex &operator()(mdp_site x, mdp_suint L5_, mdp_suint a, int i)
     {
       return *(address(x, (L5_ * m_nspin + a) * m_nc + i));
     }
 
     /** @brief returns the (a,i) const component of the matrix stored at site x and site \e L5_ in 5-th dimension
      */
-    const mdp_complex &operator()(mdp_site x, mdp_suint L5_, int a, int i) const
+    const mdp_complex &operator()(mdp_site x, mdp_suint L5_, mdp_suint a, int i) const
     {
       return *(address(x, (L5_ * m_nspin + a) * m_nc + i));
     }

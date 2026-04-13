@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int nc = 3;
+  mdp_suint nc = 3;
   constexpr Box box = {8, 4, 4, 4};
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
@@ -26,14 +26,14 @@ int main(int argc, char **argv)
 
   compute_em_field(U);
   for (int alpha = 0; alpha < 4; alpha++)
-    for (int i = 0; i < nc; i++)
+    for (mdp_suint i = 0; i < nc; i++)
     {
       source = 0;
       x.set(0, 0, 0, 0);
       source(x, alpha, i) = 1;
       mul_invQ(sink, source, U, quark, /*absolute_precison=*/1E-6);
       for (int beta = 0; beta < 4; beta++)
-        for (int j = 0; j < nc; j++)
+        for (mdp_suint j = 0; j < nc; j++)
         {
           forallsites(x)
           {

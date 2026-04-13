@@ -501,7 +501,7 @@ namespace MDP
                     a[2] = M(j, i);
                     a[3] = M(j, j);
                     heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-                    for (mdp_int k = 0; k < U.nc(); k++)
+                    for (mdp_suint k = 0; k < U.nc(); k++)
                     {
                       tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                       U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);

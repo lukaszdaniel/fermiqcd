@@ -21,11 +21,11 @@ namespace MDP
   // //////////////////////////////////////////////////////
 
   void torus_topology(const mdp_suint mu,
-                      mdp_int x_dw[],
-                      const mdp_int x[],
-                      mdp_int x_up[],
+                      mdp_uint x_dw[],
+                      const mdp_uint x[],
+                      mdp_uint x_up[],
                       const mdp_suint ndim,
-                      const mdp_int nx[])
+                      const mdp_uint nx[])
   {
     for (mdp_suint nu = 0; nu < ndim; nu++)
       if (nu == mu)
@@ -38,11 +38,11 @@ namespace MDP
   }
 
   void box_topology(const mdp_suint mu,
-                    mdp_int x_dw[],
-                    const mdp_int x[],
-                    mdp_int x_up[],
+                    mdp_uint x_dw[],
+                    const mdp_uint x[],
+                    mdp_uint x_up[],
                     const mdp_suint ndim,
-                    const mdp_int nx[])
+                    const mdp_uint nx[])
   {
     torus_topology(mu, x_dw, x, x_up, ndim, nx);
     if (x[mu] == 0)
@@ -52,11 +52,11 @@ namespace MDP
   }
 
   void moebious_topology(const mdp_suint mu,
-                         mdp_int x_dw[],
-                         const mdp_int x[],
-                         mdp_int x_up[],
+                         mdp_uint x_dw[],
+                         const mdp_uint x[],
+                         mdp_uint x_up[],
                          const mdp_suint ndim,
-                         const mdp_int nx[])
+                         const mdp_uint nx[])
   {
     torus_topology(mu, x_dw, x, x_up, ndim, nx);
     if (mu == 0)
@@ -69,11 +69,11 @@ namespace MDP
   }
 
   void open_cylinder(const mdp_suint mu,
-                     mdp_int x_dw[],
-                     const mdp_int x[],
-                     mdp_int x_up[],
+                     mdp_uint x_dw[],
+                     const mdp_uint x[],
+                     mdp_uint x_up[],
                      const mdp_suint ndim,
-                     const mdp_int nx[])
+                     const mdp_uint nx[])
   {
     torus_topology(mu, x_dw, x, x_up, ndim, nx);
     if ((mu == 0) && (x[0] == 0))

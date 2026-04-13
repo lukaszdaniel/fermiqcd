@@ -32,9 +32,9 @@ int main()
   }
 
   // loop over all possible paths
-  for (int mu = 1; mu < 4; mu++)
+  for (mdp_suint mu = 1; mu < 4; mu++)
   {
-    for (int nu = mu + 1; nu < 4; nu++)
+    for (mdp_suint nu = mu + 1; nu < 4; nu++)
     {
       // build each path
       for (int i = 0; i < size1; i++)
@@ -60,8 +60,8 @@ int main()
 
   std::cout << std::endl;
 
-  constexpr int mu = 0;
-  constexpr int nu = 1;
+  constexpr mdp_suint mu = 0;
+  constexpr mdp_suint nu = 1;
   const Path base_path({{1, mu}, {1, mu}, {1, nu}, {-1, mu}, {-1, mu}, {-1, nu}});
   std::cout << "path      0 = ";
   for (auto &[orientation, direction] : base_path)

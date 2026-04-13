@@ -87,21 +87,21 @@ namespace MDP
 
     /** @brief returns the vector of spin \e a stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int a) const
+    mdp_matrix operator()(mdp_site x, mdp_suint a) const
     {
       return mdp_matrix(address(x, a * m_nc), m_nc, 1);
     }
 
     /** @brief returns the (a,i) component of the matrix stored at site x
      */
-    mdp_complex &operator()(mdp_site x, int a, int i)
+    mdp_complex &operator()(mdp_site x, mdp_suint a, int i)
     {
       return *(address(x, a * m_nc + i));
     }
 
     /** @brief returns the (a,i) const component of the matrix stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, int a, int i) const
+    const mdp_complex &operator()(mdp_site x, mdp_suint a, int i) const
     {
       return *(address(x, a * m_nc + i));
     }
@@ -121,7 +121,7 @@ namespace MDP
   void print_fermi_field(fermi_field &psi)
   {
     begin_function("print_fermi_field");
-    mdp_int x0, x1, x2, x3;
+    mdp_uint x0, x1, x2, x3;
     mdp_site x(psi.lattice());
     bool do_exit = false;
     do

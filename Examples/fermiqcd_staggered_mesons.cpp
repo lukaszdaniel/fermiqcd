@@ -20,8 +20,8 @@ int main(int argc, char **argv)
   printf("COMPUTING C2(t) FOR STAGGERED MESON: %s\n", argv[1]);
 
   float seed = 0;
-  int Nt = 24, Ns = 8;
-  int Nc = 3;
+  mdp_uint Nt = 24, Ns = 8;
+  mdp_suint Nc = 3;
   const Box box = {Nt, Ns, Ns, Ns};
 
   mdp_real pU, u0 = 0.8629;
@@ -92,19 +92,19 @@ int main(int argc, char **argv)
       prop = make_meson(U, V, Gamma[0] * Gamma5, Gamma4, mass_a, mass_b,
                         wall_source, wall_source, 1e-5);
 
-    for (int t = 0; t < Nt; t++)
+    for (mdp_uint t = 0; t < Nt; t++)
       c2(t) = real(prop(0, t));
 
     float x, dx;
 
     if (isMainProcess())
     {
-      for (int t = 0; t < Nt; t = t + 2)
+      for (mdp_uint t = 0; t < Nt; t = t + 2)
       {
         c2.plain(t);
         x = c2.mean();
         dx = c2.j_err();
-        printf("%i,\t%e,\t%e\n", t, log(x), dx / x);
+        printf("%u,\t%e,\t%e\n", t, log(x), dx / x);
       }
       printf("\n");
     }

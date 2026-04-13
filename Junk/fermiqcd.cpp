@@ -49,8 +49,8 @@ void plaquette_vtk(const gauge_field &U, const std::string &filename)
     if (x(TIME) == 0)
     {
       q(x) = 0;
-      for (int mu = 0; mu < 4; mu++)
-        for (int nu = mu + 1; nu < 4; nu++)
+      for (mdp_suint mu = 0; mu < 4; mu++)
+        for (mdp_suint nu = mu + 1; nu < 4; nu++)
           q(x) += real(trace(plaquette(U, x, mu, nu)));
     }
   }
@@ -59,9 +59,9 @@ void plaquette_vtk(const gauge_field &U, const std::string &filename)
 
 void polyakov_vtk(const gauge_field &U, const std::string &filename)
 {
-  int LX = U.lattice().size(1);
-  int LY = U.lattice().size(2);
-  int LZ = U.lattice().size(3);
+  mdp_uint LX = U.lattice().size(1);
+  mdp_uint LY = U.lattice().size(2);
+  mdp_uint LZ = U.lattice().size(3);
   Box L = {LX, LY, LZ};
   mdp_lattice space(L,
                     default_partitioning<0>,
@@ -75,7 +75,7 @@ void polyakov_vtk(const gauge_field &U, const std::string &filename)
   forallsites(y)
       V(y) = 1;
 
-  for (int t = 0; t < L[0]; t++)
+  for (mdp_uint t = 0; t < L[0]; t++)
   {
     forallsites(y)
     {
@@ -127,8 +127,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   std::vector<mdp_real> pion(U.lattice().size(TIME));
   std::vector<mdp_real> meson(U.lattice().size(TIME));
   std::vector<mdp_real> current(U.lattice().size(TIME));
-  int NT = U.lattice().size(TIME);
-  int L[3];
+  mdp_uint NT = U.lattice().size(TIME);
+  mdp_uint L[3];
   L[0] = U.lattice().size(1);
   L[1] = U.lattice().size(2);
   L[2] = U.lattice().size(3);
@@ -152,10 +152,10 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     S = fermi_propagator(U.lattice(), U.nc());
   }
 
-  int t0 = arguments.get("-quark", "source_t", 0);
-  int x0 = arguments.get("-quark", "source_x", 0);
-  int y0 = arguments.get("-quark", "source_y", 0);
-  int z0 = arguments.get("-quark", "source_z", 0);
+  mdp_uint t0 = arguments.get("-quark", "source_t", 0);
+  mdp_uint x0 = arguments.get("-quark", "source_x", 0);
+  mdp_uint y0 = arguments.get("-quark", "source_y", 0);
+  mdp_uint z0 = arguments.get("-quark", "source_z", 0);
   if (arguments.get("-quark", "source_point", "zero|center") == "center")
   {
     t0 = 0;
@@ -166,7 +166,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
 
   std::string source_type = arguments.get("-quark", "source_type", "point|wall");
   for (int a = 0; a < 4; a++)
-    for (int i = 0; i < nc; i++)
+    for (mdp_suint i = 0; i < nc; i++)
     {
       mdp << "quark source spin=" << a << " color=" << i << "\n";
       if (source_type == "point")
@@ -218,7 +218,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       {
         if (a == 0 && i == 0)
         {
-          for (int t = 0; t < NT; t++)
+          for (mdp_uint t = 0; t < NT; t++)
             pion[(t - t0 + NT) % NT] = 0.0;
           Q = 0;
         }
@@ -260,7 +260,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   if (arguments.have("-meson"))
   {
     Q = 0;
-    for (int t = 0; t < NT; t++)
+    for (mdp_uint t = 0; t < NT; t++)
       meson[t] = 0;
     G1 = Gamma5 * parse_gamma(arguments.get("-meson", "source_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I"));
     G2 = parse_gamma(arguments.get("-meson", "sink_gamma", "5|0|1|2|3|01|02|03|12|13|05|15|25|35|I")) * Gamma5;
@@ -296,9 +296,9 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     G3 = Gamma5 * parse_gamma(arguments.get("-current_static", "current_gamma", "I|0|1|2|3|5|01|02|03|12|13|05|15|25|35"));
     G4 = G2 * (1 - Gamma[0]) / 2 * G1;
     mdp_matrix_field Sh(U.lattice(), U.nc(), U.nc());
-    for (int t = 0; t < NT; t++)
+    for (mdp_uint t = 0; t < NT; t++)
       meson[t] = 0;
-    for (int t = 0; t < U.lattice().size(TIME) / 2; t++)
+    for (mdp_uint t = 0; t < U.lattice().size(TIME) / 2; t++)
       if (t == 0)
       {
         forallsites(x)
@@ -354,7 +354,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     {
       forspincolor(b, j, U.nc())
       {
-        for (int t = 0; t < U.lattice().size(TIME); t++)
+        for (mdp_uint t = 0; t < U.lattice().size(TIME); t++)
           open_prop[a][b][i][j][t] = 0.0;
         for (int c = 0; c < 4; c++)
           for (int d = 0; d < 4; d++)
@@ -375,11 +375,11 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       rotate = true;
     G1 = G2 = Gamma5 * parse_gamma(op4q.substr(0, op4q.find("x") - 1));
     // others operators may be 0Tx0T,1Tx1T,5Tx5T,etc.
-    for (int t1 = 0; t1 < NT / 2; t1++)
-      for (int t2 = 0; t2 < NT / 2; t2++)
+    for (mdp_uint t1 = 0; t1 < NT / 2; t1++)
+      for (mdp_uint t2 = 0; t2 < NT / 2; t2++)
       {
-        int t1s = (NT + t0 - t1) % NT;
-        int t2s = (NT + t0 + t2) % NT;
+        mdp_uint t1s = (NT + t0 - t1) % NT;
+        mdp_uint t2s = (NT + t0 + t2) % NT;
         mdp_real c3a = 0;
         mdp_real c3b = 0;
         // manually add other contractions....
@@ -453,14 +453,14 @@ int main(int argc, char **argv)
   define_base_matrices(arguments.get("-quark", "matrices", "FERMILAB|MILC|UKQCD|Minkowsy-Dirac|Minkowsy-Chiral"));
   coefficients gauge;
   coefficients quark;
-  mdp_int size[4];
+  mdp_uint size[4];
   std::string filename, newfilename, vtkfilename;
   std::vector<std::string> filenames;
-  int nt = arguments.get("-gauge", "nt", 16);
-  int nx = arguments.get("-gauge", "nx", 4);
-  int ny = arguments.get("-gauge", "ny", nx);
-  int nz = arguments.get("-gauge", "nz", ny);
-  int nc = arguments.get("-gauge", "nc", 3);
+  mdp_uint nt = arguments.get("-gauge", "nt", 16);
+  mdp_uint nx = arguments.get("-gauge", "nx", 4);
+  mdp_uint ny = arguments.get("-gauge", "ny", nx);
+  mdp_uint nz = arguments.get("-gauge", "nz", ny);
+  mdp_uint nc = arguments.get("-gauge", "nc", 3);
   size[0] = nt;
   size[1] = nx;
   size[2] = ny;

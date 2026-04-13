@@ -42,7 +42,7 @@ namespace MDP
   private:
     mdp_suint m_nc;
 
-    int ordered_index(mdp_suint mu, mdp_suint nu) const
+    mdp_suint ordered_index(mdp_suint mu, mdp_suint nu) const
     {
       // /////////////////////////
       // this maps mu, nu -> k  //
@@ -59,7 +59,7 @@ namespace MDP
 
       if (mu > nu)
       {
-        mdp_uint num_of_elements = ((ndim() * (ndim() - 1)) / 2);
+        mdp_suint num_of_elements = ((ndim() * (ndim() - 1)) / 2);
         return mu + (nu * (2 * ndim() - nu - 3)) / 2 - 1 + num_of_elements;
       }
 
@@ -112,7 +112,7 @@ namespace MDP
       if (mu >= nu)
         error("em(x,mu,nu) for mu>=nu is not defined");
 #endif
-      int k = ordered_index(mu, nu);
+      mdp_suint k = ordered_index(mu, nu);
       return mdp_matrix(address(x, k * m_nc * m_nc), m_nc, m_nc);
     }
 
@@ -124,7 +124,7 @@ namespace MDP
       if (mu >= nu)
         error("em(x,mu,nu) for mu>=nu is not defined");
 #endif
-      int k = ordered_index(mu, nu);
+      mdp_suint k = ordered_index(mu, nu);
       return *(address(x, (k * m_nc + i) * m_nc + j));
     }
 
@@ -137,7 +137,7 @@ namespace MDP
       if (mu >= nu)
         error("em(x,mu,nu) for mu>=nu is not defined");
 #endif
-      int k = ordered_index(mu, nu);
+      mdp_suint k = ordered_index(mu, nu);
       return *(address(x, (k * m_nc + i) * m_nc + j));
     }
   };
@@ -311,7 +311,7 @@ namespace MDP
 #ifdef TWISTED_BOUNDARY
   void twist_boundary(mdp_matrix &M, mdp_site &x)
   {
-    static int block;
+    static mdp_int block;
     static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
     static mdp_complex a, b, c, d, e, f, g, h, i;
 
@@ -431,7 +431,7 @@ namespace MDP
                         gauge_field &omega)
   {
     begin_function("gauge_field__twist_eat_matrices");
-    static int block;
+    static mdp_int block;
     // static mdp_complex z = exp(mdp_complex(0, 2.0 * Pi / 3.0));
     static mdp_complex a, b, c, d, e, f, g, h, i;
 

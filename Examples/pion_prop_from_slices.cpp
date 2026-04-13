@@ -4,11 +4,11 @@
 
 using namespace MDP;
 
-void pion_prop_from_slice(int nt, int nx, const char *filename)
+void pion_prop_from_slice(mdp_uint nt, mdp_uint nx, const char *filename)
 {
   const Box box = {nt, nx, nx, nx};
   const Box box_space = {nx, nx, nx};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box,
                       default_partitioning0,
                       torus_topology,
@@ -28,8 +28,8 @@ void pion_prop_from_slice(int nt, int nx, const char *filename)
   {
     y.set(x(1), x(2), x(3));
     Q(y) = 0;
-    for (int a = 0; a < S.nspin(); a++)
-      for (int b = 0; b < S.nspin(); b++)
+    for (mdp_suint a = 0; a < S.nspin(); a++)
+      for (mdp_suint b = 0; b < S.nspin(); b++)
         for (mdp_suint i = 0; i < S.nc(); i++)
           for (mdp_suint j = 0; j < S.nc(); j++)
             Q(y) += std::pow(abs(S(x, a, b, i, j)), 2);
@@ -46,8 +46,8 @@ int main(int argc, char **argv)
   assert(header.ndim == 4);
   assert(header.box[2] == header.box[1]);
   assert(header.box[3] == header.box[1]);
-  int nt = header.box[0];
-  int nx = header.box[1];
+  mdp_uint nt = header.box[0];
+  mdp_uint nx = header.box[1];
   pion_prop_from_slice(nt, nx, argv[1]);
   mdp.close_wormholes();
   return 0;

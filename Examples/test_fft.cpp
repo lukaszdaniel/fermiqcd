@@ -5,7 +5,7 @@ using namespace MDP;
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int nc = 3;
+  mdp_suint nc = 3;
   constexpr Box L = {8, 4, 4, 4};
   mdp_lattice lattice(L);
   fermi_field psi(lattice, nc);

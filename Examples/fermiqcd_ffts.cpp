@@ -40,7 +40,7 @@ void test2()
     set_random(psi);
     mdp_site x(lattice);
 
-    for (int t = 0; t < box[0]; t++)
+    for (mdp_uint t = 0; t < box[0]; t++)
     {
         if (on_which_process(lattice, t) == ME)
         {

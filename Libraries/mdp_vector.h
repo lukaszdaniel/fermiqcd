@@ -23,8 +23,8 @@ namespace MDP
   class mdp_vector
   {
   public:
-    using value_type = mdp_int;
-    static constexpr std::size_t dim = VECTOR_MAX_DIM;
+    using value_type = mdp_uint;
+    static constexpr mdp_uint dim = VECTOR_MAX_DIM;
 
   private:
     std::array<value_type, dim> m_x{};
@@ -36,7 +36,7 @@ namespace MDP
     constexpr mdp_vector(std::initializer_list<value_type> init) noexcept
     {
       std::copy_n(init.begin(),
-                  std::min(init.size(), dim),
+                  std::min(init.size(), size_t(dim)),
                   m_x.begin());
     }
 
@@ -51,7 +51,7 @@ namespace MDP
   };
 
   [[nodiscard]]
-  constexpr mdp_vector binary2versor(mdp_int a) noexcept
+  constexpr mdp_vector binary2versor(mdp_uint a) noexcept
   {
     mdp_vector v;
     for (std::size_t i = 0; i < mdp_vector::dim; ++i)
@@ -60,7 +60,7 @@ namespace MDP
   }
 
   [[nodiscard]]
-  constexpr mdp_int vector2binary(const mdp_vector &v)
+  constexpr mdp_uint vector2binary(const mdp_vector &v)
   {
 #ifdef CHECK_ALL
     for (std::size_t i = 0; i < mdp_vector::dim; ++i)
@@ -70,9 +70,9 @@ namespace MDP
     }
 #endif
 
-    mdp_int result = 0;
+    mdp_uint result = 0;
     for (std::size_t i = 0; i < mdp_vector::dim; ++i)
-      result |= (static_cast<mdp_int>(v[i]) << i);
+      result |= (static_cast<mdp_uint>(v[i]) << i);
 
     return result;
   }

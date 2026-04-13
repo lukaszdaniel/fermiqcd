@@ -69,7 +69,7 @@ class Command:
 
 
 NC_SWITCH = """
-   int nc=0;
+   mdp_suint nc = 0;
    switch(header.bytes_per_site) {
       case 4*4*1: precision=4; nc=1; break;
       case 8*4*1: precision=8; nc=1; break;
@@ -208,7 +208,7 @@ def generate_code(instruction, warnings, commands):
                 dims = s.args.get("TxXxYxZ", "").replace("x", ",")
                 program += f"   constexpr Box L = {{{dims}}};\n"
                 program += "   mdp_lattice spacetime(L);\n"
-                program += f"   int nc = {s.args.get('nc', 3)};\n"
+                program += f"   mdp_suint nc = {s.args.get('nc', 3)};\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 program += "   set_cold(U);\n"
                 have_gauge = True
@@ -216,7 +216,7 @@ def generate_code(instruction, warnings, commands):
                 dims = s.args.get("TxXxYxZ", "").replace("x", ",")
                 program += f"   constexpr Box L = {{{dims}}};\n"
                 program += "   mdp_lattice spacetime(L);\n"
-                program += f"   int nc = {s.args.get('nc', 3)};\n"
+                program += f"   mdp_suint nc = {s.args.get('nc', 3)};\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 program += "   set_hot(U);\n"
                 have_gauge = True
@@ -225,7 +225,7 @@ def generate_code(instruction, warnings, commands):
                 program += "   const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};\n"
                 program += NC_SWITCH
                 program += "   mdp_lattice spacetime(L);\n"
-                program += f"   int nc = header.nc;\n"
+                program += f"   mdp_suint nc = header.nc;\n"
                 program += "   gauge_field U(spacetime, nc);\n"
                 precision = s.args.get("precision", "double")
                 if precision == "float":
@@ -237,7 +237,7 @@ def generate_code(instruction, warnings, commands):
             if s.command == "loop":
                 j = len(loops)
                 loops.append(int(s.args.get("end", s.args.get("n", 1))))
-                program += f"{SPACE}for(int i{j} = 0; i{j} < {s.args.get('n', 1)}; i{j}++) {{\n"
+                program += f"{SPACE}for(mdp_uint i{j} = 0; i{j} < {s.args.get('n', 1)}; i{j}++) {{\n"
                 indent += 1
             elif s.command == "load":
                 precision = s.args.get("precision", "double")

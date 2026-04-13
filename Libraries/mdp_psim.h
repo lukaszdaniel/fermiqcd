@@ -76,13 +76,13 @@ namespace MDP
   {
   private:
     // Typed Constants
-    static constexpr int PROCESS_COUNT_MIN = 1;   // minimum number of processes
-    static constexpr int PROCESS_COUNT_MAX = 128; // maximum number of processes
-    // static constexpr int CONN_LIST_IGNORE = -1;     // connections that cannot occur
-    static constexpr int PROCESS_PARENT = 0;           // The parent process ID number
-    static constexpr int COMM_RECV = 0;                // socket array indicator for reading
-    static constexpr int COMM_SEND = 1;                // socket array indicator for writing
-    static constexpr int COMM_TIMEOUT_DEFAULT = 86400; // 1 day default
+    static constexpr mdp_uint PROCESS_COUNT_MIN = 1;         // minimum number of processes
+    static constexpr mdp_uint PROCESS_COUNT_MAX = 128;       // maximum number of processes
+    // static constexpr mdp_int CONN_LIST_IGNORE = -1;       // connections that cannot occur
+    static constexpr mdp_uint PROCESS_PARENT = 0;            // The parent process ID number
+    static constexpr mdp_suint COMM_RECV = 0;                // socket array indicator for reading
+    static constexpr mdp_suint COMM_SEND = 1;                // socket array indicator for writing
+    static constexpr mdp_uint COMM_TIMEOUT_DEFAULT = 86400;  // 1 day default
 
     // common enum values for logging routines
     enum BegEnd
@@ -107,12 +107,12 @@ namespace MDP
     // Set this to true if you want verbose testing description
 
     // Class variables
-    int _verbatim;            // 0 for no output, 1 for some, 2 more
-    int _processCount;        // Holds the number of processes
+    mdp_suint _verbatim;      // 0 for no output, 1 for some, 2 more
+    mdp_uint _processCount;   // Holds the number of processes
     std::string _logFileName; // filename of the log file
     bool _doLogging;          // do logging or not?
     std::ofstream _logfileFD; // file descriptor for the logging file
-    int _processID;           // process ID of "this" process
+    mdp_uint _processID;      // process ID of "this" process
 
     /** @brief 2D array to hold all of the sockets
      *
@@ -123,7 +123,7 @@ namespace MDP
 
     /** @brief defaults to COMM_TIMEOUT_DEFAULT
      */
-    int _commTimeout;
+    mdp_uint _commTimeout;
 
     /** @brief Hash Map to hold out of sequence (send/receive) data
      */
@@ -194,7 +194,7 @@ namespace MDP
      *
      * @note Used by the constructor ONLY
      */
-    void psim_begin(int processCount, const std::string &logFileName, int verbatim)
+    void psim_begin(mdp_uint processCount, const std::string &logFileName, mdp_suint verbatim)
     {
       _processCount = processCount;
       _logFileName = logFileName;
@@ -223,9 +223,9 @@ namespace MDP
      */
     void psim_end()
     {
-      for (int source = 0; source < _processCount; source++)
+      for (mdp_uint source = 0; source < _processCount; source++)
       {
-        for (int dest = 0; dest < _processCount; dest++)
+        for (mdp_uint dest = 0; dest < _processCount; dest++)
         {
           if (dest == _processID)
             ipc_close(_socketFD[_processCount * source + dest][COMM_SEND]);
@@ -253,7 +253,7 @@ namespace MDP
     /** @brief Used by the constructor, this method sets up values and
      * some of the needed resources.
      */
-    void initialize(int processCount)
+    void initialize(mdp_uint processCount)
     {
       _processCount = processCount;
       _processID = PROCESS_PARENT;
@@ -284,9 +284,9 @@ namespace MDP
 
     void create_sockets()
     {
-      for (int source = 0; source < _processCount; source++)
+      for (mdp_uint source = 0; source < _processCount; source++)
       {
-        for (int dest = 0; dest < _processCount; dest++)
+        for (mdp_uint dest = 0; dest < _processCount; dest++)
         {
           std::string filename = std::format(".fifo.{}.{}", source, dest);
 #ifndef _WIN32
@@ -332,10 +332,10 @@ namespace MDP
         }
       }
 
-      for (int source = 0; source < _processCount; source++)
-        for (int dest = 0; dest < _processCount; dest++)
+      for (mdp_uint source = 0; source < _processCount; source++)
+        for (mdp_uint dest = 0; dest < _processCount; dest++)
         {
-          int idx = _processCount * source + dest;
+          mdp_uint idx = _processCount * source + dest;
 
           std::string buffer = std::format("PSIM: _socketFD[{}*{}+{}]={{{},{}}}",
                                            source, _processCount, dest,
@@ -348,8 +348,8 @@ namespace MDP
 
     void close_sockets()
     {
-      for (int source = 0; source < _processCount; source++)
-        for (int dest = 0; dest < _processCount; dest++)
+      for (mdp_uint source = 0; source < _processCount; source++)
+        for (mdp_uint dest = 0; dest < _processCount; dest++)
         {
           if (dest != _processID)
             ipc_close(_socketFD[_processCount * source + dest][COMM_RECV]);
@@ -364,7 +364,7 @@ namespace MDP
     {
       _processID = 0;
 #ifndef _WIN32
-      for (int i = 1; i < _processCount; i++)
+      for (mdp_uint i = 1; i < _processCount; i++)
       {
         pid_t pid = fork();
 
@@ -387,7 +387,7 @@ namespace MDP
     /** @brief Verifies that the destination process ID is valid. This
      * is done before data is sent or received.
      */
-    void check_process_id(int processID)
+    void check_process_id(mdp_uint processID)
     {
 
       if ((processID == _processID) ||
@@ -433,7 +433,7 @@ namespace MDP
     /** @brief Centralizes the repetitive task of logging the steps
      * during send and receive.
      */
-    void logSendRecv(int sourcedestProcessID,
+    void logSendRecv(mdp_uint sourcedestProcessID,
                      std::string tag,
                      SendRecv method,
                      SendRecvStep step)
@@ -452,7 +452,7 @@ namespace MDP
 
     /** @brief get_source_index
      */
-    int get_source_index(int source)
+    mdp_uint get_source_index(mdp_uint source)
     {
       check_process_id(source);
       return _processCount * source + _processID;
@@ -460,7 +460,7 @@ namespace MDP
 
     /** @brief get_dest_index
      */
-    int get_dest_index(int dest)
+    mdp_uint get_dest_index(mdp_uint dest)
     {
       check_process_id(dest);
       return _processCount * _processID + dest;
@@ -468,12 +468,12 @@ namespace MDP
 
     /** @brief Handles the sending of binary data.
      */
-    void send_buffer(int destProcessID,
+    void send_buffer(mdp_uint destProcessID,
                      const void *pdataToSend, mdp_int dataSize)
     {
-      static int counter = 0;
+      static mdp_uint counter = 0;
       counter++;
-      int destIndex = get_dest_index(destProcessID);
+      mdp_uint destIndex = get_dest_index(destProcessID);
       std::string filename = std::format(".fifo.{}.{}.{}", _processID, destProcessID, counter);
       int fd = open(filename.c_str(), O_WRONLY | O_CREAT, 0700);
       if (write(fd, pdataToSend, dataSize) != dataSize)
@@ -491,7 +491,7 @@ namespace MDP
 
     /** @brief Sends a data tag and a vector of chars (as binary data).
      */
-    void send_binary(int destProcessID,
+    void send_binary(mdp_uint destProcessID,
                      const std::string &tag,
                      const std::vector<char> &data)
     {
@@ -506,11 +506,11 @@ namespace MDP
 
     /** @brief Handles the receiving of binary data through the sockets.
      */
-    void recv_buffer(int sourceProcessID,
+    void recv_buffer(mdp_uint sourceProcessID,
                      void *pdataToReceive, mdp_int dataSize)
     {
-      int counter;
-      int sourceIndex = get_source_index(sourceProcessID);
+      mdp_uint counter;
+      mdp_uint sourceIndex = get_source_index(sourceProcessID);
       if (ipc_read(_socketFD[sourceIndex][COMM_RECV], &counter, sizeof(counter)) != sizeof(counter))
       {
         log("PSIM ERROR: timeout error in reading from socket");
@@ -534,7 +534,7 @@ namespace MDP
     /** @brief Receives data utilizing a data tag to make sure that the
      * data coming in is what was expected.
      */
-    void recv_binary(int sourceProcessID,
+    void recv_binary(mdp_uint sourceProcessID,
                      const std::string &tag,
                      std::vector<char> &data)
     {
@@ -598,16 +598,16 @@ namespace MDP
     /** @brief Provide the number of processes to create and the name of
      * the logfile if desired and "" if no logfile is needed.
      */
-    mdp_psim(int processCount, const std::string &logFileName = ".psim.log", int verbatim = 0)
+    mdp_psim(mdp_uint processCount, const std::string &logFileName = ".psim.log", mdp_suint verbatim = 0)
     {
       psim_begin(processCount, logFileName, verbatim);
     }
 
     mdp_psim(int argc, char **argv)
     {
-      int processCount = parse_argv_nprocs(argc, argv);
+      mdp_uint processCount = parse_argv_nprocs(argc, argv);
       std::string logFileName = parse_argv_logfile(argc, argv);
-      int verbatim = parse_argv_verbatim(argc, argv);
+      mdp_suint verbatim = parse_argv_verbatim(argc, argv);
       psim_begin(processCount, logFileName, verbatim);
     }
 
@@ -630,7 +630,7 @@ namespace MDP
     // ***                                                             ***
     // *******************************************************************
 
-    void log(const std::string &message, int level = 2)
+    void log(const std::string &message, mdp_suint level = 2)
     {
       if (_doLogging)
       {
@@ -648,7 +648,7 @@ namespace MDP
     /** @brief Returns an integer identifying which process is currently
      * executing.
      */
-    int id() const
+    mdp_uint id() const
     {
       return _processID;
     }
@@ -656,7 +656,7 @@ namespace MDP
     /** @brief Returns an integer identifying the current number of
      * active processes.
      */
-    int nprocs() const
+    mdp_uint nprocs() const
     {
       return _processCount;
     }
@@ -685,11 +685,11 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void send(int destProcessID, const std::string &dataTag, T &dataToSend)
+    void send(mdp_uint destProcessID, const std::string &dataTag, T &dataToSend)
     {
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);
       std::vector<char> data(sizeof(T));
-      for (unsigned int k = 0; k < sizeof(T); k++)
+      for (mdp_uint k = 0; k < sizeof(T); k++)
         data[k] = ((char *)&dataToSend)[k];
       send_binary(destProcessID, dataTag, data);
       // std::cout << _processID << "->" << destProcessID << " " << dataTag << " " << dataToSend << std::endl;
@@ -706,12 +706,12 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void send(int destProcessID, const std::string &dataTag,
+    void send(mdp_uint destProcessID, const std::string &dataTag,
               T *pdataToSend, mdp_int dataSize)
     {
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_START);
       std::vector<char> data(sizeof(T) * dataSize);
-      for (size_t k = 0; k < data.size(); k++)
+      for (mdp_uint k = 0; k < data.size(); k++)
         data[k] = ((char *)pdataToSend)[k];
       send_binary(destProcessID, dataTag, data);
       logSendRecv(destProcessID, dataTag, LOG_SR_SEND, LOG_SR_SUCCESS);
@@ -727,7 +727,7 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void recv(int sourceProcessID, const std::string &dataTag, T &dataToReceive)
+    void recv(mdp_uint sourceProcessID, const std::string &dataTag, T &dataToReceive)
     {
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_START);
       std::vector<char> data;
@@ -737,7 +737,7 @@ namespace MDP
         log("PSIM ERROR: recv invalid data)");
         throw std::string("PSIM ERROR: recv invalid data)");
       };
-      for (unsigned int k = 0; k < sizeof(T); k++)
+      for (mdp_uint k = 0; k < sizeof(T); k++)
         ((char *)&dataToReceive)[k] = data[k];
       // std::cout << _processID << "<-" << sourceProcessID << " " << dataTag << " " << dataToReceive << std::endl;
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_SUCCESS);
@@ -753,7 +753,7 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void recv(int sourceProcessID, const std::string &dataTag,
+    void recv(mdp_uint sourceProcessID, const std::string &dataTag,
               T *pdataToReceive, mdp_int dataSize)
     {
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_START);
@@ -764,7 +764,7 @@ namespace MDP
         log("PSIM ERROR: recv invalid data size");
         throw std::string("PSIM ERROR: recv invalid data size");
       }
-      for (size_t k = 0; k < data.size(); k++)
+      for (mdp_uint k = 0; k < data.size(); k++)
         ((char *)pdataToReceive)[k] = data[k];
       logSendRecv(sourceProcessID, dataTag, LOG_SR_RECV, LOG_SR_SUCCESS);
     }
@@ -779,13 +779,13 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    void broadcast(int sourceProcessID, T &data)
+    void broadcast(mdp_uint sourceProcessID, T &data)
     {
       static std::string tag = "BROADCAST:0";
       doBegEndLog(tag, LOG_BEGIN);
       if (_processID == sourceProcessID)
       {
-        for (int i = 0; i < _processCount; i++)
+        for (mdp_uint i = 0; i < _processCount; i++)
         {
           if (i != sourceProcessID)
           {
@@ -805,13 +805,13 @@ namespace MDP
     }
 
     template <class T>
-    void broadcast(int sourceProcessID, T *data, int dataSize)
+    void broadcast(mdp_uint sourceProcessID, T *data, mdp_int dataSize)
     {
       static std::string tag = "BROADCASTV:0";
       doBegEndLog(tag, LOG_BEGIN);
       if (_processID == sourceProcessID)
       {
-        for (int i = 0; i < _processCount; i++)
+        for (mdp_uint i = 0; i < _processCount; i++)
         {
           if (i != sourceProcessID)
             send(i, tag, data, dataSize);
@@ -839,7 +839,7 @@ namespace MDP
     // *******************************************************************
 
     template <class T>
-    std::vector<T> collect(int dest, T &data)
+    std::vector<T> collect(mdp_uint dest, T &data)
     {
       static std::string tag = "COLLECT";
       std::vector<T> dataList;
@@ -855,7 +855,7 @@ namespace MDP
       {
         dataList[dest] = data;
 
-        for (int i = 0; i < _processCount; i++)
+        for (mdp_uint i = 0; i < _processCount; i++)
         {
           if (i != dest)
           {

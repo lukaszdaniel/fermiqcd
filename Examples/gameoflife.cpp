@@ -20,9 +20,9 @@ int ruleofgame(int a00, int a01, int a02,
 // START OPTIONAL
 
 // parallelize by diagonal stripes and punch hole in board
-mdp_uint myownpartitioning(const mdp_int x[],
+mdp_uint myownpartitioning(const mdp_uint x[],
                       [[maybe_unused]] const mdp_suint ndim,
-                      [[maybe_unused]] const mdp_int nx[])
+                      [[maybe_unused]] const mdp_uint nx[])
 {
   if (x[0] == 2 && x[1] == 3)
     return NOWHERE;
@@ -31,11 +31,11 @@ mdp_uint myownpartitioning(const mdp_int x[],
 
 // make topology with a hole
 void board_with_hole(const mdp_suint mu,
-                     mdp_int x_dw[],
-                     const mdp_int x[],
-                     mdp_int x_up[],
+                     mdp_uint x_dw[],
+                     const mdp_uint x[],
+                     mdp_uint x_up[],
                      const mdp_suint ndim,
-                     const mdp_int nx[])
+                     const mdp_uint nx[])
 {
   for (mdp_suint nu = 0; nu < ndim; nu++)
     if (nu == mu)

@@ -4,10 +4,10 @@
 
 using namespace MDP;
 
-void test_gauge(int nt, int nx, const char *filename)
+void test_gauge(mdp_uint nt, mdp_uint nx, const char *filename)
 {
   const Box box = {nt, nx, nx, nx};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box,
                       default_partitioning0,
                       torus_topology,
@@ -29,8 +29,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int nt, nx;
-  sscanf(argv[1], "%ix%i", &nt, &nx);
+  mdp_uint nt, nx;
+  sscanf(argv[1], "%ux%u", &nt, &nx);
   test_gauge(nt, nx, argv[2]);
   mdp.close_wormholes();
   return 0;

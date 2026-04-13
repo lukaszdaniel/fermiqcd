@@ -363,10 +363,10 @@ public:
   char program_version[60];
   char creation_date[60];
   uint32_t endianess;
-  int32_t ndim;
-  int32_t box[10];
-  int32_t bytes_per_site;
-  int32_t sites;
+  uint16_t ndim;
+  uint32_t box[10];
+  uint32_t bytes_per_site;
+  uint32_t sites;
 
   _generic_field_file_header()
   {

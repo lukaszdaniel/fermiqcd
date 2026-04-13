@@ -2,7 +2,7 @@
 
 using namespace MDP;
 
-void polyakov(int nt, int nx, const std::string &filename)
+void polyakov(mdp_uint nt, mdp_uint nx, const std::string &filename)
 {
   const Box L = {nt, nx, nx, nx};
   const Box L_space = {nx, nx, nx};
@@ -27,7 +27,7 @@ void polyakov(int nt, int nx, const std::string &filename)
 
   U.load(filename);
 
-  for (int t = 0; t < L[0]; t++)
+  for (mdp_uint t = 0; t < L[0]; t++)
   {
     forallsites(y)
     {
@@ -57,8 +57,8 @@ int main(int argc, char **argv)
   assert(header.ndim == 4);
   assert(header.box[2] == header.box[1]);
   assert(header.box[3] == header.box[1]);
-  int nt = header.box[0];
-  int nx = header.box[1];
+  mdp_uint nt = header.box[0];
+  mdp_uint nx = header.box[1];
   polyakov(nt, nx, "gauge.cold");
   mdp.close_wormholes();
   return 0;

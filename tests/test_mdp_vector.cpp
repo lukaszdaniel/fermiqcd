@@ -31,7 +31,7 @@ void test_initializer_truncation()
       11, 12, 13, 14, 15, 16, 17, 18, 19, 20};
 
   for (std::size_t i = 0; i < mdp_vector::dim; ++i)
-    assert(v[i] == static_cast<mdp_int>(i + 1));
+    assert(v[i] == static_cast<mdp_uint>(i + 1));
 }
 
 void test_operator_access()
@@ -39,10 +39,10 @@ void test_operator_access()
   mdp_vector v;
 
   for (std::size_t i = 0; i < mdp_vector::dim; ++i)
-    v[i] = static_cast<mdp_int>(i * 2);
+    v[i] = static_cast<mdp_uint>(i * 2);
 
   for (std::size_t i = 0; i < mdp_vector::dim; ++i)
-    assert(v[i] == static_cast<mdp_int>(i * 2));
+    assert(v[i] == static_cast<mdp_uint>(i * 2));
 }
 
 void test_const_access()
@@ -59,9 +59,9 @@ void test_iterators()
   mdp_vector v;
   std::iota(v.begin(), v.end(), 0);
 
-  mdp_int sum = std::accumulate(v.begin(), v.end(), 0);
+  mdp_uint sum = std::accumulate(v.begin(), v.end(), 0);
 
-  mdp_int expected = (mdp_vector::dim - 1) * mdp_vector::dim / 2;
+  mdp_uint expected = (mdp_vector::dim - 1) * mdp_vector::dim / 2;
   assert(sum == expected);
 }
 
@@ -86,9 +86,9 @@ void test_binary2versor_zero()
 
 void test_binary2versor_full()
 {
-  mdp_int all_ones = 0;
+  mdp_uint all_ones = 0;
   for (std::size_t i = 0; i < mdp_vector::dim; ++i)
-    all_ones |= (static_cast<mdp_int>(1) << i);
+    all_ones |= (static_cast<mdp_uint>(1) << i);
 
   mdp_vector v = binary2versor(all_ones);
 
@@ -102,7 +102,7 @@ void test_vector2binary_basic()
 {
   mdp_vector v{1, 0, 1};
 
-  mdp_int result = vector2binary(v);
+  mdp_uint result = vector2binary(v);
 
   assert(result == 0b101);
 }
@@ -120,9 +120,9 @@ void test_vector2binary_full()
   for (std::size_t i = 0; i < mdp_vector::dim; ++i)
     v[i] = 1;
 
-  mdp_int expected = 0;
+  mdp_uint expected = 0;
   for (std::size_t i = 0; i < mdp_vector::dim; ++i)
-    expected |= (static_cast<mdp_int>(1) << i);
+    expected |= (static_cast<mdp_uint>(1) << i);
 
   assert(vector2binary(v) == expected);
 }
@@ -151,7 +151,7 @@ constexpr bool test_constexpr()
   static_assert(v[2] == 0);
   static_assert(v[3] == 1);
 
-  constexpr mdp_int x = vector2binary(v);
+  constexpr mdp_uint x = vector2binary(v);
   static_assert(x == 0b1011);
 
   return true;

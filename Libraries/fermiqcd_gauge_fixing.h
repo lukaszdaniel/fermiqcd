@@ -173,7 +173,7 @@ namespace MDP
                               exp(2.0 * Pi * I / 3.0),
                               exp(4.0 * Pi * I / 3.0)};
       mdp_real alpha[3];
-      for (mdp_int t = 0; t < U.lattice().size(mu) - 1; t++)
+      for (mdp_uint t = 0; t < U.lattice().size(mu) - 1; t++)
       {
         A = mdp_zero(U.nc());
         forallsites(x)

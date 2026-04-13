@@ -194,7 +194,7 @@ namespace MDP
   void print_propagator(fermi_propagator &S)
   {
     begin_function("print_propagator");
-    mdp_int x0, x1, x2, x3;
+    mdp_uint x0, x1, x2, x3;
     mdp_site x(S.lattice());
     bool do_exit = false;
     do

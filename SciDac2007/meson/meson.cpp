@@ -22,7 +22,7 @@ int main(int argc, char **argv)
   std::string filename;
   set_cold(U);
 
-  for (int t = 0; t < L[0]; t++)
+  for (mdp_uint t = 0; t < L[0]; t++)
   {
     forallsites(x3)
     {
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     psi(x, a, 0) = 1;
     mul_invQ(phi, psi, U, quark, 1e-7);
 
-    for (int t = 0; t < L[0]; t++)
+    for (mdp_uint t = 0; t < L[0]; t++)
     {
       forallsites(x3)
       {

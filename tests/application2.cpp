@@ -3,7 +3,7 @@
 
 using namespace MDP;
 
-float resistance(int x0, int x1, int mu)
+float resistance(mdp_uint x0, mdp_uint x1, mdp_suint mu)
 {
   return (Pi / 100 * (x0 + 0 * x1 + 0 * mu));
 }

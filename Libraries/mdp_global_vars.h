@@ -97,7 +97,7 @@ namespace MDP
         EVENODD = 2
     };
 
-    constexpr mdp_int NOWHERE = std::numeric_limits<mdp_int>::max();
+    constexpr mdp_uint NOWHERE = std::numeric_limits<mdp_uint>::max();
 
     /// Each program should have a name
     const char *mdp_program_name = "A generic test program";

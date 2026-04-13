@@ -153,7 +153,7 @@ namespace MDP
       {
         y = x;
         L(x) = U(x, 0);
-        for (mdp_int i = 1; i < U.lattice().size(0); i++)
+        for (mdp_uint i = 1; i < U.lattice().size(0); i++)
         {
           y = y + 0;
           L(x) *= U(y, 0);
@@ -328,10 +328,10 @@ namespace MDP
     L = PolyakovField(U);
     for (mdp_suint mu = 1; mu < U.ndim(); mu++)
     {
-      for (mdp_int i = 0; i < U.lattice().size(1); i++)
+      for (mdp_uint i = 0; i < U.lattice().size(1); i++)
       {
         proj(mu - 1, i) = 0.0;
-        for (mdp_int k = 0; k < U.lattice().size(1); k++)
+        for (mdp_uint k = 0; k < U.lattice().size(1); k++)
         {
           if (mu == 1)
             x.set(0, i, k);

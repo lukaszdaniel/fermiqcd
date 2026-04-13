@@ -104,7 +104,7 @@ namespace MDP
     struct
     {
       mdp_uint magic_number; /* Identifies file format */
-      mdp_int dims[4];       /* Full lattice dimensions */
+      mdp_uint dims[4];       /* Full lattice dimensions */
       /* Date and time stamp - used to
          check consistency between the
          ASCII header file and the

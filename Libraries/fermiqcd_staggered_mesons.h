@@ -65,23 +65,23 @@ namespace MDP
       forallsites(x)
       {
         G1 = mdp_identity(KS_NDIM);
-        for (int mu = 1; mu <= KS_NDIM; mu++)
+        for (mdp_suint mu = 1; mu <= KS_NDIM; mu++)
         {
-          int nu = mu % KS_NDIM;
+          mdp_suint nu = mu % KS_NDIM;
           A[nu] = x(nu) % 2;
           if (A[nu] != 0)
             G1 = -1.0 * Gamma[nu] * G1;
         }
-        for (int i = 0; i < 16; i++)
+        for (mdp_int i = 0; i < 16; i++)
         {
           B[0] = (i >> 3) & 0x1;
           B[1] = (i >> 2) & 0x1;
           B[2] = (i >> 1) & 0x1;
           B[3] = (i >> 0) & 0x1;
           G2 = mdp_identity(KS_NDIM);
-          for (int mu = 1; mu <= KS_NDIM; mu++)
+          for (mdp_suint mu = 1; mu <= KS_NDIM; mu++)
           {
-            int nu = mu % KS_NDIM;
+            mdp_suint nu = mu % KS_NDIM;
             if (B[nu] != 0)
               G2 = G2 * Gamma[nu];
           }
@@ -206,8 +206,8 @@ namespace MDP
     if (source2_type != local_source)
       error("fermiqcd_staggered_mesons/make_meson: source option not implemented");
 
-    int t, t_source, nsources = 1, sourcestep = 1;
-    int nt = U.lattice().size(0);
+    constexpr mdp_uint nsources = 1, sourcestep = 1;
+    mdp_uint nt = U.lattice().size(0);
     mdp_suint nc = U.nc();
     mdp_complex c;
     mdp_site x(U.lattice());
@@ -225,7 +225,7 @@ namespace MDP
     U.update();
     V.update();
 
-    for (t_source = 0; t_source < nsources * sourcestep; t_source += sourcestep)
+    for (mdp_uint t_source = 0; t_source < nsources * sourcestep; t_source += sourcestep)
     {
       for (mdp_suint i = 0; i < U.nc(); i++)
       {
@@ -260,7 +260,7 @@ namespace MDP
           c = mdp_complex(0, 0);
           for (mdp_suint j = 0; j < U.nc(); j++)
             c += conj(anti_prop(x, j)) * tmp(x, j);
-          t = (x(0) - t_source + nt) % nt;
+          mdp_uint t = (x(0) - t_source + nt) % nt;
           if (t % 2 == 1)
             t--;
           prop(0, t) += c;

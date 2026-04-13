@@ -20,7 +20,7 @@ int main(int argc, char **argv)
    coefficients coeff;
    constexpr Box L = {4, 4, 4, 4};
    mdp_lattice spacetime(L);
-   int nc = 3;
+   mdp_suint nc = 3;
    gauge_field U(spacetime, nc);
    set_hot(U);
 

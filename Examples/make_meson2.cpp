@@ -44,8 +44,8 @@ int main(int argc, char **argv)
   // //////////////////////////////////////////////////////
   // declare parameters of the simulation
   // //////////////////////////////////////////////////////
-  int Nt = 12, Nx = 4, Ny = 4, Nz = 4; // lattice size
-  int Nc = 3;                          // set colors, SU(Nc)
+  mdp_uint Nt = 12, Nx = 4, Ny = 4, Nz = 4; // lattice size
+  mdp_suint Nc = 3;                         // set colors, SU(Nc)
   // float        beta=5.7;      // set lattice spacing
   float mq = 0.2 * GeV; // set light quark pole-mass
   float mh = 0.7 * GeV; // set heavy quark pole-mass
@@ -169,13 +169,13 @@ int main(int argc, char **argv)
     //
     // as function of t = t_x
     // ////////////////////////////////////////////////////
-    for (int t = 0; t < Nt; t++)
+    for (mdp_uint t = 0; t < Nt; t++)
     {
       F(0, t) = 0;
     }
     forallsites(x)
     {
-      int t = x(0);
+      mdp_uint t = x(0);
       for (int i = 0; i < 4; i++)
         for (int j = 0; j < 4; j++)
           F(config, t) +=
@@ -189,7 +189,7 @@ int main(int argc, char **argv)
     mdp << "==================================\n";
     mdp << "t\tC2\t\t(error)\n";
     mdp << "==================================\n";
-    for (int t = 0; t < Nt; t++)
+    for (mdp_uint t = 0; t < Nt; t++)
     {
       mdp.barrier(); // syncronize output if in parallel!
       if (on_which_process(lattice, t) == ME)

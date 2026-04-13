@@ -28,7 +28,7 @@ int main(int argc, char **argv)
   mdp_real_vector_field s(space, 9);
   mdp_site x3(space);
   std::string filename;
-  for (int t = 0; t < L[0] - 1; t++)
+  for (mdp_uint t = 0; t < L[0] - 1; t++)
   {
     forallsites(x3)
     {

@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 
   forallsites(x)
   {
-    for (int mu = 0; mu < 4; mu++)
+    for (mdp_suint mu = 0; mu < 4; mu++)
       U(x, mu) = lattice.random(x).SU(3);
   }
 
@@ -30,8 +30,8 @@ int main(int argc, char **argv)
 
     forallsites(x)
     {
-      for (int mu = 0; mu < 4; mu++)
-        for (int nu = 0; nu < 4; nu++)
+      for (mdp_suint mu = 0; mu < 4; mu++)
+        for (mdp_suint nu = 0; nu < 4; nu++)
           if (mu != nu)
           {
             // d={{1,mu},{1,nu},{-1,mu},{-1,nu}};

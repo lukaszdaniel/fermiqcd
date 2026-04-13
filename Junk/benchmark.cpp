@@ -9,7 +9,7 @@ void test_wilson()
   mdp << "START TESTING CLOVER ACTIONS\n";
 
   constexpr Box box = {64, 10, 10, 10};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   fermi_field psi(lattice, nc);
@@ -56,7 +56,7 @@ void test_clover()
   mdp << "START TESTING CLOVER ACTIONS\n";
 
   constexpr Box box = {64, 6, 6, 6};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   fermi_field psi(lattice, nc);
@@ -105,7 +105,7 @@ void test_staggered()
   mdp << "START TESTING STAGGERED ACTIONS\n";
 
   constexpr Box box = {64, 6, 6, 6};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box, default_partitioning<0>,
                       torus_topology, 0, 3);
   gauge_field U(lattice, nc);
@@ -166,7 +166,7 @@ void test_asqtad()
   mdp << "START TESTING STAGGERED ACTIONS\n";
 
   constexpr Box box = {64, 6, 6, 6};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box, default_partitioning<0>,
                       torus_topology, 0, 3);
   gauge_field U(lattice, nc);

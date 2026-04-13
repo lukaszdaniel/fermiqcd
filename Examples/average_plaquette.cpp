@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 
   x.set(0, 0, 0, 0);
   y.set(31, 23, 23, 23);
-  for (int mu = 0; mu < 4; mu++)
+  for (mdp_suint mu = 0; mu < 4; mu++)
     U(y, mu) = U(x, mu);
   std::cout << average_plaquette(U) << std::endl;
 

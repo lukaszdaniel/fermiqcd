@@ -14,10 +14,10 @@ void accumulate_c2(mdp_array<mdp_complex, 1> &c2,
   G2 = hermitian(Gamma5 * G2);
   forallsites(x)
   {
-    for (int a = 0; a < 4; a++)
-      for (int b = 0; b < 4; b++)
-        for (int c = 0; c < 4; c++)
-          for (int d = 0; d < 4; d++)
+    for (mdp_suint a = 0; a < 4; a++)
+      for (mdp_suint b = 0; b < 4; b++)
+        for (mdp_suint c = 0; c < 4; c++)
+          for (mdp_suint d = 0; d < 4; d++)
             for (mdp_suint i = 0; i < Sl.nc(); i++)
               for (mdp_suint j = 0; j < Sl.nc(); j++)
               {
@@ -148,7 +148,7 @@ int main(int argc, char **argv)
   if (header.ndim != 4)
     error("Sorry, mesons only in 4D");
 
-  int nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
+  mdp_suint nc = (mdp_suint)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
   Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
 
   // //////////////////////////////
@@ -250,7 +250,7 @@ int main(int argc, char **argv)
   }
 
   // contract propagators with gamma matrices and make meson
-  for (int t = 0; t < lattice.size(0); t++)
+  for (mdp_uint t = 0; t < lattice.size(0); t++)
     c2(t) = 0;
   switch (meson)
   {
@@ -261,20 +261,20 @@ int main(int argc, char **argv)
     accumulate_c2(c2, Sl, Gamma5, Sh, Gamma5);
     break;
   case v:
-    for (int mu = 1; mu < 4; mu++)
+    for (mdp_suint mu = 1; mu < 4; mu++)
       accumulate_c2(c2, Sl, Gamma[mu], Sh, Gamma[mu]);
     break;
   case pv:
-    for (int mu = 1; mu < 4; mu++)
+    for (mdp_suint mu = 1; mu < 4; mu++)
       accumulate_c2(c2, Sl, Gamma5 * Gamma[mu], Sh, Gamma5 * Gamma[mu]);
     break;
   case i0:
-    for (int mu = 1; mu < 4; mu++)
+    for (mdp_suint mu = 1; mu < 4; mu++)
       accumulate_c2(c2, Sl, Sigma[0][mu], Sh, Sigma[0][mu]);
     break;
   case ij:
-    for (int mu = 1; mu < 4; mu++)
-      for (int nu = 1; nu < 4; nu++)
+    for (mdp_suint mu = 1; mu < 4; mu++)
+      for (mdp_suint nu = 1; nu < 4; nu++)
         if (nu > mu)
           accumulate_c2(c2, Sl, Sigma[mu][nu], Sh, Sigma[mu][nu]);
     break;
@@ -285,7 +285,7 @@ int main(int argc, char **argv)
   if (mdp.me() == 0)
     mdp.enablePrinting();
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
-  for (int t = 0; t < lattice.size(0); t++)
+  for (mdp_uint t = 0; t < lattice.size(0); t++)
   {
     mdp << t << ", " << real(c2(t)) << ", " << imag(c2(t)) << "\n";
   }

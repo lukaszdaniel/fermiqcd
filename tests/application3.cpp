@@ -7,7 +7,7 @@ using namespace MDP;
 class scalar_field : public mdp_real_scalar_field
 {
 public:
-  const int ndim;
+  const mdp_suint ndim;
 
   scalar_field(const mdp_lattice &a) : mdp_real_scalar_field(a), ndim(a.n_dimensions())
   {
@@ -18,7 +18,7 @@ public:
 class ising_field : public mdp_int_scalar_field
 {
 public:
-  const int ndim;
+  const mdp_suint ndim;
   mdp_real beta;
   mdp_real kappa;
   mdp_real magnetic_field;
@@ -54,7 +54,7 @@ void montecarlo_multihit(ising_field &S, scalar_field &H, int n_iter = 1, int n_
         for (int hit = 0; hit < n_hits; hit++)
         {
           delta_action = S.kappa * (H(x) + S.magnetic_field);
-          for (int mu = 0; mu < S.ndim; mu++)
+          for (mdp_suint mu = 0; mu < S.ndim; mu++)
             delta_action -= S(x + mu) + S(x - mu);
           new_spin = (S.lattice().random(x).plain() > 0.5) ? 1 : -1;
           delta_action *= S.beta * (new_spin - S(x));

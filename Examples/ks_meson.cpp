@@ -27,9 +27,9 @@ int main(int argc, char **argv)
   }
 
   mdp_field_file_header header;
-  int nc;
+  mdp_suint nc;
   int i = 0;
-  int verbose = false;
+  bool verbose = false;
   char meson[1024] = "5x5";
   char input[1024] = "";
   mdp_real lmass = 0.10, hmass = 0.10, u0 = -1.0;
@@ -92,7 +92,7 @@ int main(int argc, char **argv)
     error("Unable to access input gauge configuration\n");
   if (header.ndim != 4)
     error("Sorry, mesons only in 4D");
-  nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
+  nc = (mdp_suint)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
   Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
 
   // //////////////////////////////
@@ -213,7 +213,7 @@ int main(int argc, char **argv)
   if (mdp.me() == 0)
     mdp.enablePrinting();
   mdp << "t, Real(c2(t)), Imag(c2(t))\n";
-  for (int t = 0; t < lattice.size(0); t += 2)
+  for (mdp_uint t = 0; t < lattice.size(0); t += 2)
   {
     mdp << t << ", " << real(prop(0, t)) << ", " << imag(prop(0, t)) << "\n";
   }

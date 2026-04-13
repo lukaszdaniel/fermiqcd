@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int nc = 3;
+  mdp_suint nc = 3;
   constexpr Box box = {8, 4, 4, 4};
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
@@ -27,7 +27,7 @@ int main(int argc, char **argv)
 
   forallsites(x)
   {
-    for (int mu = 1; mu < 3; mu++)
+    for (mdp_suint mu = 1; mu < 3; mu++)
     {
       mdp_matrix G1 = Gamma[mu] * Gamma5;
       for (int a = 0; a < 4; a++)

@@ -116,8 +116,8 @@ namespace MDP
         struct stat statbuf;
         stat(filename.c_str(), &statbuf);
         int total_size = statbuf.st_size;
-        int actual_size = tmp_header.box[0];
-        for (mdp_int d = 1; d < tmp_header.ndim; d++)
+        mdp_uint actual_size = tmp_header.box[0];
+        for (mdp_suint d = 1; d < tmp_header.ndim; d++)
           actual_size *= tmp_header.box[d];
 
         tmp_header.sites = actual_size;

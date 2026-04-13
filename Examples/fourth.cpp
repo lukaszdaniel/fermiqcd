@@ -15,7 +15,7 @@ int main(int argc, char **argv)
 
   forallsites(x)
   {
-    for (int mu = 0; mu < 4; mu++)
+    for (mdp_suint mu = 0; mu < 4; mu++)
       U(x, mu) = lattice.random(x).SU(3);
   }
 

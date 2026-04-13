@@ -169,7 +169,7 @@ namespace MDP
     topological_charge(Q, U);
     Q.save_vtk(filename, t_slice);
     cumulate_field(Q, filename).save_vtk(filename.replace(filename.rfind("."), 1, ".sum."), t_slice);
-    for (int t = U.lattice().size(3) - 1; t > 0; t--)
+    for (mdp_uint t = U.lattice().size(3) - 1; t > 0; t--)
     {
       forallsites(x)
       {

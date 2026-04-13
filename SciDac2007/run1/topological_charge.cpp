@@ -37,10 +37,10 @@ public:
     for (int iter = 0; iter < n_iter; iter++)
     {
 
-      x.set(int(U.lattice().size(0) * mdp_global_random.plain()),
-            int(U.lattice().size(1) * mdp_global_random.plain()),
-            int(U.lattice().size(2) * mdp_global_random.plain()),
-            int(U.lattice().size(3) * mdp_global_random.plain()));
+      x.set(mdp_uint(U.lattice().size(0) * mdp_global_random.plain()),
+            mdp_uint(U.lattice().size(1) * mdp_global_random.plain()),
+            mdp_uint(U.lattice().size(2) * mdp_global_random.plain()),
+            mdp_uint(U.lattice().size(3) * mdp_global_random.plain()));
 
       for (mu = 0; mu < U.ndim(); mu++)
       {
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int nc = 3;
+  mdp_suint nc = 3;
   // constexpr Box L = {10, 10, 10, 10};
   constexpr Box L = {32, 16, 16, 16};
   mdp_lattice lattice(L);
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
   forallsites(x)
   {
     if (x(1) > L[1] / 2)
-      for (int mu = 0; mu < 4; mu++)
+      for (mdp_suint mu = 0; mu < 4; mu++)
         U(x, mu) = 1;
   }
 #endif

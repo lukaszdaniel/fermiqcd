@@ -57,7 +57,7 @@ namespace MDP
 #endif
     double mytime; // total time
     bool wormholes_open;
-    int my_id;
+    mdp_uint my_id;
     mdp_uint my_nproc;
 
 #ifndef PARALLEL
@@ -80,7 +80,7 @@ namespace MDP
     }
 
     template <class T>
-    void put(T &obj, int destination)
+    void put(T &obj, mdp_uint destination)
     {
 #ifdef PARALLEL
       mdp_request r;
@@ -95,7 +95,7 @@ namespace MDP
     }
 
     template <class T>
-    void put(T &obj, int destination, [[maybe_unused]] mdp_request &r)
+    void put(T &obj, mdp_uint destination, [[maybe_unused]] mdp_request &r)
     {
 #ifdef PARALLEL
       MPI_Isend(&obj, sizeof(T) / sizeof(char), MPI_CHAR, destination,
@@ -108,7 +108,7 @@ namespace MDP
     }
 
     template <class T>
-    void put(T *objptr, mdp_int length, int destination)
+    void put(T *objptr, mdp_uint length, mdp_uint destination)
     {
 #ifdef PARALLEL
       mdp_request r;
@@ -123,7 +123,7 @@ namespace MDP
     }
 
     template <class T>
-    void put(T *objptr, mdp_int length, int destination, [[maybe_unused]] mdp_request &r)
+    void put(T *objptr, mdp_uint length, mdp_uint destination, [[maybe_unused]] mdp_request &r)
     {
 #ifdef PARALLEL
       if (MPI_Isend(objptr, length * sizeof(T) / sizeof(char), MPI_CHAR, destination,
@@ -137,7 +137,7 @@ namespace MDP
     }
 
     template <class T>
-    void get(T &obj, int source)
+    void get(T &obj, mdp_uint source)
     {
 #ifdef PARALLEL
       MPI_Status status;
@@ -151,7 +151,7 @@ namespace MDP
     }
 
     template <class T>
-    void get(T *objptr, mdp_int length, int source)
+    void get(T *objptr, mdp_uint length, mdp_uint source)
     {
 #ifdef PARALLEL
       MPI_Status status;
@@ -194,16 +194,16 @@ namespace MDP
 #endif
 
 #ifdef PARALLEL
-    void add(double *obj1, double *obj2, mdp_int length)
+    void add(double *obj1, double *obj2, mdp_uint length)
     {
       MPI_Allreduce(obj1, obj2, length, MPI_DOUBLE, MPI_SUM, communicator);
     }
 #else // not PARALLEL
     template <typename T>
-    void add(T *obj1, T *obj2, mdp_int length)
+    void add(T *obj1, T *obj2, mdp_uint length)
     {
 #ifndef NO_POSIX
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
       {
         obj2[i] = nodes->add(obj1[i]);
       }
@@ -262,75 +262,75 @@ namespace MDP
       add(a.address(), a.rows() * a.cols());
 #else
 #ifndef NO_POSIX
-      for (unsigned int i = 0; i < a.size(); i++)
+      for (mdp_uint i = 0; i < a.size(); i++)
         a.address()[i] = nodes->add(a.address()[i]);
 #endif
 #endif
     }
 
 #ifdef PARALLEL
-    void add(mdp_int *obj1, mdp_int length)
+    void add(mdp_int *obj1, mdp_uint length)
     {
       auto obj2 = std::make_unique<mdp_int[]>(length);
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj2[i] = 0;
       MPI_Allreduce(obj1, obj2.get(), length, MPI_LONG, MPI_SUM, communicator);
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj1[i] = obj2[i];
     }
 
-    void add(float *obj1, mdp_int length)
+    void add(float *obj1, mdp_uint length)
     {
       auto obj2 = std::make_unique<float[]>(length);
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj2[i] = 0;
       MPI_Allreduce(obj1, obj2.get(), length, MPI_FLOAT, MPI_SUM, communicator);
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj1[i] = obj2[i];
     }
 
-    void add(double *obj1, mdp_int length)
+    void add(double *obj1, mdp_uint length)
     {
       auto obj2 = std::make_unique<double[]>(length);
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj2[i] = 0;
       MPI_Allreduce(obj1, obj2.get(), length, MPI_DOUBLE, MPI_SUM, communicator);
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj1[i] = obj2[i];
     }
 
-    void add(mdp_complex *obj1, mdp_int length)
+    void add(mdp_complex *obj1, mdp_uint length)
     {
       auto obj2 = std::make_unique<mdp_complex[]>(length);
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj2[i] = 0;
 #ifdef USE_SINGLE_PRECISION
       MPI_Allreduce(obj1, obj2.get(), 2 * length, MPI_FLOAT, MPI_SUM, communicator);
 #else
       MPI_Allreduce(obj1, obj2.get(), 2 * length, MPI_DOUBLE, MPI_SUM, communicator);
 #endif
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj1[i] = obj2[i];
     }
 #else // not PARALLEL
     template <typename T>
-    void add(T *obj1, mdp_int length)
+    void add(T *obj1, mdp_uint length)
     {
 #ifndef NO_POSIX
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         obj1[i] = nodes->add(obj1[i]);
 #endif
     }
 #endif
 
-    void add(mdp_matrix *a, mdp_int length)
+    void add(mdp_matrix *a, mdp_uint length)
     {
 #ifdef PARALLEL
-      for (mdp_int i = 0; i < length; i++)
+      for (mdp_uint i = 0; i < length; i++)
         add(a[i]);
 #else // not PARALLEL
 #ifndef NO_POSIX
-      for (mdp_int j = 0; j < length; j++)
+      for (mdp_uint j = 0; j < length; j++)
         for (mdp_uint i = 0; i < a[j].size(); i++)
           a[j].address()[i] = nodes->add(a[j].address()[i]);
 #endif
@@ -356,7 +356,7 @@ namespace MDP
     }
 
     template <class T>
-    void broadcast(T *obj, mdp_int length, int p)
+    void broadcast(T *obj, mdp_uint length, mdp_uint p)
     {
 #ifdef PARALLEL
       MPI_Bcast(obj, length * sizeof(T) / sizeof(char), MPI_CHAR, p, communicator);
@@ -375,7 +375,7 @@ namespace MDP
 #endif
     }
 
-    void wait([[maybe_unused]] mdp_request *r, [[maybe_unused]] int length)
+    void wait([[maybe_unused]] mdp_request *r, [[maybe_unused]] mdp_uint length)
     {
 #ifdef PARALLEL
       MPI_Status status;
@@ -404,7 +404,7 @@ namespace MDP
 #endif
     }
 
-    int tag(int i, int j)
+    mdp_uint tag(mdp_uint i, mdp_uint j)
     {
       return i * nproc() + j;
     }

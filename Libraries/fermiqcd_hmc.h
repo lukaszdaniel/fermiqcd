@@ -283,7 +283,7 @@ namespace MDP
       mdp_real re, im;
       forallsites(x)
       {
-        for (mdp_int alpha = 0; alpha < F.nspin(); alpha++)
+        for (mdp_suint alpha = 0; alpha < F.nspin(); alpha++)
         {
           for (mdp_suint i = 0; i < F.nc(); i++)
           {

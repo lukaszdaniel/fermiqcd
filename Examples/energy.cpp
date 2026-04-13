@@ -2,10 +2,10 @@
 
 using namespace MDP;
 
-void compute_energy(int nt, int nx, const std::string &filename)
+void compute_energy(mdp_uint nt, mdp_uint nx, const std::string &filename)
 {
   const Box L = {nt, nx, nx, nx};
-  int nc = 3;
+  mdp_suint nc = 3;
   std::string output;
   mdp_lattice lattice(L,
                       default_partitioning<1>,
@@ -22,8 +22,8 @@ void compute_energy(int nt, int nx, const std::string &filename)
     if (x(0) == 0)
     {
       q(x) = 0;
-      for (int mu = 0; mu < 4; mu++)
-        for (int nu = mu + 1; nu < 4; nu++)
+      for (mdp_suint mu = 0; mu < 4; mu++)
+        for (mdp_suint nu = mu + 1; nu < 4; nu++)
           q(x) += std::pow(abs(trace(U.em(x, mu, nu))), 2);
     }
   }
@@ -41,8 +41,8 @@ int main(int argc, char **argv)
   assert(header.ndim == 4);
   assert(header.box[2] == header.box[1]);
   assert(header.box[3] == header.box[1]);
-  int nt = header.box[0];
-  int nx = header.box[1];
+  mdp_uint nt = header.box[0];
+  mdp_uint nx = header.box[1];
   compute_energy(nt, nx, argv[1]);
   mdp.close_wormholes();
   return 0;

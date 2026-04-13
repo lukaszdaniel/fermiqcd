@@ -33,10 +33,10 @@ namespace MDP
            mdp_int offset = 0, mdp_int coeff = 1)
   {
     mdp_complex phase = exp(2.0 * Pi * I * (1.0 * sign / n));
-    for (int i = 0; i < n; i++)
+    for (mdp_int i = 0; i < n; i++)
     {
       fft_f[offset + coeff * i] = 0;
-      for (int j = 0; j < n; j++)
+      for (mdp_int j = 0; j < n; j++)
         fft_f[offset + coeff * i] += f[offset + coeff * j] * pow(phase, i * j);
       fft_f[offset + coeff * i] /= std::sqrt(n);
     }
@@ -101,7 +101,7 @@ namespace MDP
     }
   }
 
-  void fermi_field_fft(int t,
+  void fermi_field_fft(mdp_uint t,
                        fermi_field &psi_out,
                        const fermi_field &psi_in,
                        int sign)
@@ -110,7 +110,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    mdp_int size = psi_in.lattice().size(1);
+    mdp_uint size = psi_in.lattice().size(1);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)
@@ -127,50 +127,50 @@ namespace MDP
         psi_out(x) = psi_in(x);
     }
 
-    for (mdp_int spin = 0; spin < psi_out.nspin(); spin++)
+    for (mdp_suint spin = 0; spin < psi_out.nspin(); spin++)
       for (mdp_suint color = 0; color < psi_out.nc(); color++)
       {
-        for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)
-          for (mdp_int x3 = 0; x3 < psi_out.lattice().size(3); x3++)
+        for (mdp_uint x2 = 0; x2 < psi_out.lattice().size(2); x2++)
+          for (mdp_uint x3 = 0; x3 < psi_out.lattice().size(3); x3++)
           {
-            for (mdp_int i = 0; i < psi_out.lattice().size(1); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(1); i++)
             {
               x.set(t, i, x2, x3);
               v[i] = psi_out(x, spin, color);
             }
             dft(u.get(), v.get(), psi_out.lattice().size(1), sign);
-            for (mdp_int i = 0; i < psi_out.lattice().size(1); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(1); i++)
             {
               x.set(t, i, x2, x3);
               psi_out(x, spin, color) = u[i];
             }
           }
-        for (mdp_int x1 = 0; x1 < psi_out.lattice().size(1); x1++)
-          for (mdp_int x3 = 0; x3 < psi_out.lattice().size(3); x3++)
+        for (mdp_uint x1 = 0; x1 < psi_out.lattice().size(1); x1++)
+          for (mdp_uint x3 = 0; x3 < psi_out.lattice().size(3); x3++)
           {
-            for (mdp_int i = 0; i < psi_out.lattice().size(2); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(2); i++)
             {
               x.set(t, x1, i, x3);
               v[i] = psi_out(x, spin, color);
             }
             dft(u.get(), v.get(), psi_out.lattice().size(2), sign);
-            for (mdp_int i = 0; i < psi_out.lattice().size(2); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(2); i++)
             {
               x.set(t, x1, i, x3);
               psi_out(x, spin, color) = u[i];
             }
           }
 
-        for (mdp_int x1 = 0; x1 < psi_out.lattice().size(1); x1++)
-          for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)
+        for (mdp_uint x1 = 0; x1 < psi_out.lattice().size(1); x1++)
+          for (mdp_uint x2 = 0; x2 < psi_out.lattice().size(2); x2++)
           {
-            for (mdp_int i = 0; i < psi_out.lattice().size(3); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(3); i++)
             {
               x.set(t, x1, x2, i);
               v[i] = psi_out(x, spin, color);
             }
             dft(u.get(), v.get(), psi_out.lattice().size(3), sign);
-            for (mdp_int i = 0; i < psi_out.lattice().size(3); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(3); i++)
             {
               x.set(t, x1, x2, i);
               psi_out(x, spin, color) = u[i];
@@ -187,7 +187,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    mdp_int size = psi_in.lattice().size(0);
+    mdp_uint size = psi_in.lattice().size(0);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)
@@ -203,20 +203,20 @@ namespace MDP
       psi_out(x) = psi_in(x);
     }
 
-    for (mdp_int spin = 0; spin < psi_out.nspin(); spin++)
+    for (mdp_suint spin = 0; spin < psi_out.nspin(); spin++)
       for (mdp_suint color = 0; color < psi_out.nc(); color++)
       {
-        for (mdp_int x1 = 0; x1 < psi_out.lattice().size(1); x1++)
-          for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)
-            for (mdp_int x3 = 0; x3 < psi_out.lattice().size(3); x3++)
+        for (mdp_uint x1 = 0; x1 < psi_out.lattice().size(1); x1++)
+          for (mdp_uint x2 = 0; x2 < psi_out.lattice().size(2); x2++)
+            for (mdp_uint x3 = 0; x3 < psi_out.lattice().size(3); x3++)
             {
-              for (mdp_int i = 0; i < psi_out.lattice().size(0); i++)
+              for (mdp_uint i = 0; i < psi_out.lattice().size(0); i++)
               {
                 x.set(i, x1, x2, x3);
                 v[i] = psi_out(x, spin, color);
               }
               dft(u.get(), v.get(), psi_out.lattice().size(0), sign);
-              for (mdp_int i = 0; i < psi_out.lattice().size(0); i++)
+              for (mdp_uint i = 0; i < psi_out.lattice().size(0); i++)
               {
                 x.set(i, x1, x2, x3);
                 psi_out(x, spin, color) = u[i];
@@ -233,14 +233,14 @@ namespace MDP
                        const fermi_field &psi_in,
                        int sign, bool ttime = false)
   {
-    for (mdp_int t = 0; t < psi_in.lattice().size(0); t++)
+    for (mdp_uint t = 0; t < psi_in.lattice().size(0); t++)
       fermi_field_fft(t, psi_out, psi_in, sign);
 
     if (ttime)
       fermi_field_fft_t(psi_out, psi_out, sign);
   }
 
-  void mdp_complex_field_fft(int t,
+  void mdp_complex_field_fft(mdp_uint t,
                              mdp_field<mdp_complex> &psi_out,
                              const mdp_field<mdp_complex> &psi_in,
                              int sign)
@@ -249,7 +249,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    mdp_int size = psi_in.lattice().size(1);
+    mdp_uint size = psi_in.lattice().size(1);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)
@@ -263,53 +263,53 @@ namespace MDP
     forallsites(x)
     {
       if (x(0) == t)
-        for (mdp_int k = 0; k < psi_in.size_per_site(); k++)
+        for (mdp_uint k = 0; k < psi_in.size_per_site(); k++)
           psi_out(x, k) = psi_in(x, k);
     }
 
-    for (mdp_int k = 0; k < psi_in.size_per_site(); k++)
+    for (mdp_uint k = 0; k < psi_in.size_per_site(); k++)
     {
-      for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)
-        for (mdp_int x3 = 0; x3 < psi_out.lattice().size(3); x3++)
+      for (mdp_uint x2 = 0; x2 < psi_out.lattice().size(2); x2++)
+        for (mdp_uint x3 = 0; x3 < psi_out.lattice().size(3); x3++)
         {
-          for (mdp_int i = 0; i < psi_out.lattice().size(1); i++)
+          for (mdp_uint i = 0; i < psi_out.lattice().size(1); i++)
           {
             x.set(t, i, x2, x3);
             v[i] = psi_out(x, k);
           }
           dft(u.get(), v.get(), psi_out.lattice().size(1), sign);
-          for (mdp_int i = 0; i < psi_out.lattice().size(1); i++)
+          for (mdp_uint i = 0; i < psi_out.lattice().size(1); i++)
           {
             x.set(t, i, x2, x3);
             psi_out(x, k) = u[i];
           }
         }
-      for (mdp_int x1 = 0; x1 < psi_out.lattice().size(1); x1++)
-        for (mdp_int x3 = 0; x3 < psi_out.lattice().size(3); x3++)
+      for (mdp_uint x1 = 0; x1 < psi_out.lattice().size(1); x1++)
+        for (mdp_uint x3 = 0; x3 < psi_out.lattice().size(3); x3++)
         {
-          for (mdp_int i = 0; i < psi_out.lattice().size(2); i++)
+          for (mdp_uint i = 0; i < psi_out.lattice().size(2); i++)
           {
             x.set(t, x1, i, x3);
             v[i] = psi_out(x, k);
           }
           dft(u.get(), v.get(), psi_out.lattice().size(2), sign);
-          for (mdp_int i = 0; i < psi_out.lattice().size(2); i++)
+          for (mdp_uint i = 0; i < psi_out.lattice().size(2); i++)
           {
             x.set(t, x1, i, x3);
             psi_out(x, k) = u[i];
           }
         }
 
-      for (mdp_int x1 = 0; x1 < psi_out.lattice().size(1); x1++)
-        for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)
+      for (mdp_uint x1 = 0; x1 < psi_out.lattice().size(1); x1++)
+        for (mdp_uint x2 = 0; x2 < psi_out.lattice().size(2); x2++)
         {
-          for (mdp_int i = 0; i < psi_out.lattice().size(3); i++)
+          for (mdp_uint i = 0; i < psi_out.lattice().size(3); i++)
           {
             x.set(t, x1, x2, i);
             v[i] = psi_out(x, k);
           }
           dft(u.get(), v.get(), psi_out.lattice().size(3), sign);
-          for (mdp_int i = 0; i < psi_out.lattice().size(3); i++)
+          for (mdp_uint i = 0; i < psi_out.lattice().size(3); i++)
           {
             x.set(t, x1, x2, i);
             psi_out(x, k) = u[i];
@@ -326,7 +326,7 @@ namespace MDP
     if (psi_in.lattice().n_dimensions() != 4)
       error("fft3D requires TxXxXxX");
 
-    mdp_int size = psi_in.lattice().size(0);
+    mdp_uint size = psi_in.lattice().size(0);
     if (psi_in.lattice().size(2) > size)
       size = psi_in.lattice().size(2);
     if (psi_in.lattice().size(3) > size)
@@ -339,23 +339,23 @@ namespace MDP
 
     forallsites(x)
     {
-      for (mdp_int k = 0; k < psi_in.size_per_site(); k++)
+      for (mdp_uint k = 0; k < psi_in.size_per_site(); k++)
         psi_out(x, k) = psi_in(x, k);
     }
 
-    for (mdp_int k = 0; k < psi_in.size_per_site(); k++)
+    for (mdp_uint k = 0; k < psi_in.size_per_site(); k++)
     {
-      for (mdp_int x1 = 0; x1 < psi_out.lattice().size(1); x1++)
-        for (mdp_int x2 = 0; x2 < psi_out.lattice().size(2); x2++)
-          for (mdp_int x3 = 0; x3 < psi_out.lattice().size(3); x3++)
+      for (mdp_uint x1 = 0; x1 < psi_out.lattice().size(1); x1++)
+        for (mdp_uint x2 = 0; x2 < psi_out.lattice().size(2); x2++)
+          for (mdp_uint x3 = 0; x3 < psi_out.lattice().size(3); x3++)
           {
-            for (mdp_int i = 0; i < psi_out.lattice().size(0); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(0); i++)
             {
               x.set(i, x1, x2, x3);
               v[i] = psi_out(x, k);
             }
             dft(u.get(), v.get(), psi_out.lattice().size(0), sign);
-            for (mdp_int i = 0; i < psi_out.lattice().size(0); i++)
+            for (mdp_uint i = 0; i < psi_out.lattice().size(0); i++)
             {
               x.set(i, x1, x2, x3);
               psi_out(x, k) = u[i];
@@ -372,7 +372,7 @@ namespace MDP
                              const mdp_field<mdp_complex> &psi_in,
                              int sign, bool ttime = false)
   {
-    for (mdp_int t = 0; t < psi_in.lattice().size(0); t++)
+    for (mdp_uint t = 0; t < psi_in.lattice().size(0); t++)
       mdp_complex_field_fft(t, psi_out, psi_in, sign);
 
     if (ttime)

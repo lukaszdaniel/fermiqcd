@@ -20,11 +20,11 @@ int main(int argc, char **argv)
     error("Unable to access gauge configuration\n");
   if (header.ndim != 4)
     error("sorry, only in 4D");
-  int nc = (int)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
-  int LT = header.box[0];
-  int LX = header.box[1];
-  int LY = header.box[2];
-  int LZ = header.box[3];
+  mdp_suint nc = (mdp_suint)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
+  mdp_uint LT = header.box[0];
+  mdp_uint LX = header.box[1];
+  mdp_uint LY = header.box[2];
+  mdp_uint LZ = header.box[3];
   const Box L = {LT, LX, LY, LZ}; // lattice size
 
   // create lattice and read it in
@@ -47,8 +47,8 @@ int main(int argc, char **argv)
     path[i + size1 + size2][0] = -1;
   }
   // loop over all possible paths
-  for (int mu = 1; mu < 4; mu++)
-    for (int nu = mu + 1; nu < 4; nu++)
+  for (mdp_suint mu = 1; mu < 4; mu++)
+    for (mdp_suint nu = mu + 1; nu < 4; nu++)
     {
       // build each path
       for (int i = 0; i < size1; i++)

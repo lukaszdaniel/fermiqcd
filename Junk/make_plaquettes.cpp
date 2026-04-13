@@ -2,7 +2,7 @@
 
 using namespace MDP;
 
-mdp_real average_plaquette1(const gauge_field &U, int mu, int nu)
+mdp_real average_plaquette1(const gauge_field &U, mdp_suint mu, mdp_suint nu)
 {
   const mdp_lattice &lattice = U.lattice();
   mdp_site x(lattice);
@@ -14,7 +14,7 @@ mdp_real average_plaquette1(const gauge_field &U, int mu, int nu)
   return sum / (lattice.size() * U.nc());
 }
 
-mdp_real average_plaquette2(const gauge_field &U, int mu, int nu)
+mdp_real average_plaquette2(const gauge_field &U, mdp_suint mu, mdp_suint nu)
 {
   const mdp_lattice &lattice = U.lattice();
   mdp_site x(lattice);
@@ -27,11 +27,11 @@ mdp_real average_plaquette2(const gauge_field &U, int mu, int nu)
 int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
-  int nc = 3;
+  mdp_suint nc = 3;
   constexpr Box box = {8, 4, 4, 4};
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
-  int mu = 0, nu = 1;
+  mdp_suint mu = 0, nu = 1;
   set_hot(U);
   mdp << "average_plaquette  : " << average_plaquette(U, mu, nu) << "\n";
   mdp << "average_plaquette1 : " << average_plaquette1(U, mu, nu) << "\n";

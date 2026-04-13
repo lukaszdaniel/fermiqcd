@@ -152,7 +152,7 @@ namespace MDP
         if (four_mass_sq != 0)
           forallsitesofparity(x, parity)
           {
-            for (mdp_int i = 0; i < nc; i++)
+            for (mdp_suint i = 0; i < nc; i++)
               t(x, i) += four_mass_sq * p(x, i);
           }
 

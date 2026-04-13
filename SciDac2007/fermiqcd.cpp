@@ -61,7 +61,7 @@ public:
   {
   }
 
-  void init_cold(int LT, int LX, int LY, int LZ, mdp_suint nc_)
+  void init_cold(mdp_uint LT, mdp_uint LX, mdp_uint LY, mdp_uint LZ, mdp_suint nc_)
   {
     const Box L = {LT, LX, LY, LZ};
     m_os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;
@@ -75,7 +75,7 @@ public:
     m_counter = 0;
   }
 
-  void init_hot(int LT, int LX, int LY, int LZ, mdp_suint nc_)
+  void init_hot(mdp_uint LT, mdp_uint LX, mdp_uint LY, mdp_uint LZ, mdp_suint nc_)
   {
     const Box L = {LT, LX, LY, LZ};
     m_os << "making an lattice TxXxYxZ=" << LT << "x" << LX << "x" << LY << "x" << LZ << std::endl;
@@ -93,7 +93,7 @@ public:
     const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
     // (4-8)*4*(1-4-9-25-36-49-64-81-100)
     int precision = 4;
-    int nc = 1;
+    mdp_suint nc = 1;
     switch (header.bytes_per_site)
     {
     case 4 * 4 * 1:

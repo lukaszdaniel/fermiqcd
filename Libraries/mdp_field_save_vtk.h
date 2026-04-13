@@ -33,7 +33,7 @@ namespace MDP
     std::string tempfile = filename + ".tmp";
 
     int max_buffer_size = 1024;
-    mdp_int nvol_gl = lattice().global_volume();
+    mdp_uint nvol_gl = lattice().global_volume();
     double mytime = mdp.time();
     m_header.reset();
 
@@ -63,10 +63,10 @@ namespace MDP
       if (!ofs)
         throw std::ios_base::failure("Unable to open temporary VTK file for writing");
 
-      int space_volume = lattice().size() / lattice().size(0);
-      int LZ = lattice().size(1);
-      int LY = lattice().size(2);
-      int LX = lattice().size(3);
+      mdp_uint space_volume = lattice().size() / lattice().size(0);
+      mdp_uint LZ = lattice().size(1);
+      mdp_uint LY = lattice().size(2);
+      mdp_uint LX = lattice().size(3);
       if (lattice().n_dimensions() == 3)
       {
         space_volume = lattice().size();
@@ -86,7 +86,7 @@ namespace MDP
           << "SPACING 1 1 1\n"
           << "POINT_DATA " << LX * LY * LZ << "\n";
 
-      for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+      for (mdp_uint idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
         mdp_uint process = where_global(idx_gl);
 
@@ -114,11 +114,11 @@ namespace MDP
 
         if (process != NOWHERE)
         {
-          int timeslice = idx_gl / space_volume;
-          if (idx_gl % space_volume == 0 && (t < 0 || timeslice == t))
+          mdp_uint timeslice = idx_gl / space_volume;
+          if (idx_gl % space_volume == 0 && (t < 0 || timeslice == mdp_uint(t)))
             ofs << "\nSCALARS scalars_t" << timeslice << " float\nLOOKUP_TABLE default\n";
 
-          if (t < 0 || timeslice == t || lattice().n_dimensions() == 3)
+          if (t < 0 || timeslice == mdp_uint(t) || lattice().n_dimensions() == 3)
           {
             for (mdp_uint fc = 0; fc < m_field_components; fc++)
             {
@@ -154,7 +154,7 @@ namespace MDP
       mdp_array<T, 2> local_buffer(max_buffer_size, m_field_components);
       mdp_request request;
 
-      for (mdp_int idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
+      for (mdp_uint idx_gl = 0; idx_gl < nvol_gl; idx_gl++)
       {
         mdp_uint process = where_global(idx_gl);
         if (process == ME)
@@ -196,7 +196,7 @@ namespace MDP
       fields[filename] = new mdp_field<mdp_real>(field.lattice(), field.size_per_site());
       forallsites(p)
       {
-        for (int i = 0; i < field.size_per_site(); i++)
+        for (mdp_uint i = 0; i < field.size_per_site(); i++)
           (*fields[filename])(p, i) = field(p, i);
       }
       counter[filename] = 1;
@@ -206,7 +206,7 @@ namespace MDP
       int k = counter[filename];
       forallsites(p)
       {
-        for (int i = 0; i < field.size_per_site(); i++)
+        for (mdp_uint i = 0; i < field.size_per_site(); i++)
           (*fields[filename])(p, i) = (k * (*fields[filename])(p, i) + field(p, i)) / (k + 1);
       }
       counter[filename]++;
@@ -219,7 +219,7 @@ namespace MDP
                 std::string filename,
                 int t = -1,
                 int component = -1,
-                int processIO = 0,
+                mdp_uint processIO = 0,
                 bool ASCII = false)
   {
     static std::map<std::string, int> counter;
@@ -231,7 +231,7 @@ namespace MDP
       fields[filename] = new mdp_field<mdp_real>(field.lattice(), field.size_per_site());
       forallsites(p)
       {
-        for (int i = 0; i < field.size_per_site(); i++)
+        for (mdp_uint i = 0; i < field.size_per_site(); i++)
           (*fields[filename])(p, i) = field(p, i);
       }
       counter[filename] = 1;
@@ -241,7 +241,7 @@ namespace MDP
       k = counter[filename];
       forallsites(p)
       {
-        for (int i = 0; i < field.size_per_site(); i++)
+        for (mdp_uint i = 0; i < field.size_per_site(); i++)
           (*fields[filename])(p, i) = (k * (*fields[filename])(p, i) + field(p, i)) / (k + 1);
       }
       counter[filename]++;

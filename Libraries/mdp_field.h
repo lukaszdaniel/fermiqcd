@@ -136,11 +136,11 @@ namespace MDP
     char file_id[60];
     char program_version[60];
     char creation_date[60];
-    uint32_t endianess;
-    int32_t ndim;
-    int32_t box[10];
-    int32_t bytes_per_site;
-    int32_t sites;
+    mdp_uint endianess;
+    mdp_suint ndim;
+    mdp_uint box[10];
+    mdp_uint bytes_per_site;
+    mdp_uint sites;
 
     mdp_field_file_header()
     {
@@ -229,7 +229,7 @@ namespace MDP
   private:
     void fill_header()
     {
-      mdp_uint i;
+      mdp_suint i;
       m_header.bytes_per_site = sizeof(T) * m_field_components;
       m_header.sites = lattice().size();
       m_header.ndim = lattice().n_dimensions();
@@ -241,7 +241,7 @@ namespace MDP
 
     /** @brief only used by mdp_field::load() and mdp_field::save()
      */
-    mdp_int where_global(mdp_int global_idx) const
+    mdp_uint where_global(mdp_uint global_idx) const
     {
       return lattice().where_global(global_idx);
     }
@@ -298,9 +298,9 @@ namespace MDP
     mdp_field(const mdp_field &field)
     {
       allocate_field(field.lattice(), field.m_field_components);
-      mdp_int i_min = physical_local_start(EVENODD);
-      mdp_int i_max = physical_local_stop(EVENODD);
-      for (mdp_int i = i_min; i < i_max; i++)
+      mdp_uint i_min = physical_local_start(EVENODD);
+      mdp_uint i_max = physical_local_stop(EVENODD);
+      for (mdp_uint i = i_min; i < i_max; i++)
         m_data[i] = field.m_data[i];
     }
 
@@ -572,36 +572,36 @@ namespace MDP
 
     /** @brief lattice size in units of sizeof(T)
      */
-    mdp_int global_size() const
+    mdp_uint global_size() const
     {
       return m_field_components * lattice().global_volume();
     }
 
-    mdp_int physical_size() const
+    mdp_uint physical_size() const
     {
       return m_size;
     }
 
-    mdp_int size_per_site() const
+    mdp_uint size_per_site() const
     {
       return m_field_components;
     }
 
-    mdp_int physical_local_start(mdp_parity i = EVENODD) const
+    mdp_uint physical_local_start(mdp_parity i = EVENODD) const
     {
       if (i == EVENODD)
         i = EVEN;
       return m_field_components * lattice().start0(ME, i);
     }
 
-    mdp_int physical_local_stop(mdp_parity i = EVENODD) const
+    mdp_uint physical_local_stop(mdp_parity i = EVENODD) const
     {
       if (i == EVENODD)
         i = ODD;
       return m_field_components * lattice().stop0(ME, i);
     }
 
-    T *physical_address(mdp_int i = 0)
+    T *physical_address(mdp_uint i = 0)
     {
       return m_data.get() + i;
     }
@@ -750,10 +750,10 @@ namespace MDP
                        mdp_parity parity = EVENODD)
   {
     double n2 = 0;
-    mdp_int i_min = psi.physical_local_start(parity);
-    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_uint i_min = psi.physical_local_start(parity);
+    mdp_uint i_max = psi.physical_local_stop(parity);
 
-    for (mdp_int i = i_min; i < i_max; i++)
+    for (mdp_uint i = i_min; i < i_max; i++)
       n2 += abs2(psi[i]);
 
     mdp.add(n2);
@@ -765,10 +765,10 @@ namespace MDP
                              mdp_parity parity = EVENODD)
   {
     mdp_complex n2 = 0;
-    mdp_int i_min = psi.physical_local_start(parity);
-    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_uint i_min = psi.physical_local_start(parity);
+    mdp_uint i_max = psi.physical_local_stop(parity);
 
-    for (mdp_int i = i_min; i < i_max; i++)
+    for (mdp_uint i = i_min; i < i_max; i++)
       n2 += conj(psi[i]) * chi[i];
 
     mdp.add(n2);
@@ -782,10 +782,10 @@ namespace MDP
   {
 
     double n2 = 0;
-    mdp_int i_min = psi.physical_local_start(parity);
-    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_uint i_min = psi.physical_local_start(parity);
+    mdp_uint i_max = psi.physical_local_stop(parity);
 
-    for (mdp_int i = i_min; i < i_max; i++)
+    for (mdp_uint i = i_min; i < i_max; i++)
     {
       n2 +=
           real(chi[i]) * real(psi[i]) +
@@ -801,10 +801,10 @@ namespace MDP
                                mdp_parity parity = EVENODD)
   {
     double n2 = 0;
-    mdp_int i_min = psi.physical_local_start(parity);
-    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_uint i_min = psi.physical_local_start(parity);
+    mdp_uint i_max = psi.physical_local_stop(parity);
 
-    for (mdp_int i = i_min; i < i_max; i++)
+    for (mdp_uint i = i_min; i < i_max; i++)
     {
       n2 +=
           real(psi[i]) * imag(chi[i]) +
@@ -819,10 +819,10 @@ namespace MDP
                             mdp_complex_field &chi,
                             mdp_parity parity = EVENODD)
   {
-    mdp_int i_min = psi.physical_local_start(parity);
-    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_uint i_min = psi.physical_local_start(parity);
+    mdp_uint i_max = psi.physical_local_stop(parity);
 
-    for (mdp_int i = i_min; i < i_max; i++)
+    for (mdp_uint i = i_min; i < i_max; i++)
       psi[i] += alpha * chi[i];
   }
 
@@ -831,11 +831,11 @@ namespace MDP
                             mdp_complex_field &chi,
                             mdp_parity parity = EVENODD)
   {
-    mdp_int i_min = psi.physical_local_start(parity);
-    mdp_int i_max = psi.physical_local_stop(parity);
+    mdp_uint i_min = psi.physical_local_start(parity);
+    mdp_uint i_max = psi.physical_local_stop(parity);
 
     // this needs optimization.
-    for (mdp_int i = i_min; i < i_max; i++)
+    for (mdp_uint i = i_min; i < i_max; i++)
       psi[i] += alpha * chi[i];
   }
 
@@ -850,11 +850,11 @@ namespace MDP
                             mdp_parity parity = EVENODD)
   {
     double residue = 0, num = 0, den = 0;
-    mdp_int i_min = p.physical_local_start(parity);
-    mdp_int i_max = q.physical_local_stop(parity);
+    mdp_uint i_min = p.physical_local_start(parity);
+    mdp_uint i_max = q.physical_local_stop(parity);
 
     // this needs optimization.
-    for (mdp_int i = i_min; i < i_max;)
+    for (mdp_uint i = i_min; i < i_max;)
     {
       num += abs2(p[i]);
       den += abs2(q[i]);

@@ -7,7 +7,9 @@ using namespace MDP;
 class parameters
 {
 public:
-  int L, T, ndim, nspin, nc, read_in;
+  mdp_uint L, T;
+  mdp_suint ndim, nspin, nc;
+  int read_in;
   int therm, sweeps, gap, seed, nf;
   mdp_real trajectory_length, beta, timestep, mass;
   mdp_real cg_absolute_precision, cg_relative_precision, cg_max_steps;
@@ -39,11 +41,11 @@ public:
 
   void read(const std::string &filename)
   {
-    L = (int)val(prompt(filename, "L", "8"));
-    T = (int)val(prompt(filename, "T", "16"));
-    ndim = (int)val(prompt(filename, "NDIM", "4"));
-    nspin = (int)val(prompt(filename, "NSPIN", "4"));
-    nc = (int)val(prompt(filename, "NC", "2"));
+    L = (mdp_uint)val(prompt(filename, "L", "8"));
+    T = (mdp_uint)val(prompt(filename, "T", "16"));
+    ndim = (mdp_suint)val(prompt(filename, "NDIM", "4"));
+    nspin = (mdp_suint)val(prompt(filename, "NSPIN", "4"));
+    nc = (mdp_suint)val(prompt(filename, "NC", "2"));
     therm = (int)val(prompt(filename, "THERMALIZATION_STEPS", "100"));
     sweeps = (int)val(prompt(filename, "SWEEPS", "400"));
     seed = (int)val(prompt(filename, "SEED", "1"));

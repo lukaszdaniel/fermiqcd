@@ -114,7 +114,7 @@ int main(int argc, char **argv)
     {
       WilsonGaugeAction::heatbath(U, coeff);
       relaxation(U, relax_freq);
-      if ((unit_freq > 0) and (i % unit_freq == 0))
+      if ((unit_freq > 0) && (i % unit_freq == 0))
       {
         stats = unitarize(U);
         log << i << " " << std::setprecision(12) << stats << "\n";
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 
       mdp_complex average = 0;
 
-      for (mdp_int j = 0; j < U.lattice().size(1); j++)
+      for (mdp_uint j = 0; j < U.lattice().size(1); j++)
       {
         average += a(0, j);
       }
@@ -186,12 +186,12 @@ int main(int argc, char **argv)
       polycorfile << "# PAR_0\t" << real(average) << "\n";
       polycorfile << "# PAR_1\t" << imag(average) << "\n";
 
-      for (mdp_int k = 0; k < U.lattice().size(1); k++)
+      for (mdp_uint k = 0; k < U.lattice().size(1); k++)
       {
         cor[k] = 0;
         for (mdp_uint mu = 1; mu < U.ndim(); mu++)
         {
-          for (mdp_int j = 0; j < U.lattice().size(1); j++)
+          for (mdp_uint j = 0; j < U.lattice().size(1); j++)
           {
             cor[k] += real(a(mu - 1, j) * conj(a(mu - 1, (k + j) % U.lattice().size(1))));
           }

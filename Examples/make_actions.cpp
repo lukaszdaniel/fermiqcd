@@ -4,7 +4,7 @@
 
 using namespace MDP;
 
-void test_gauge(int nt, int nx, int ny, int nz, int nc)
+void test_gauge(mdp_uint nt, mdp_uint nx, mdp_uint ny, mdp_uint nz, mdp_suint nc)
 {
   mdp << "START TESTING GAUGE ACTION\n";
   const Box box = {nt, nx, ny, nz};
@@ -23,7 +23,7 @@ void test_gauge(int nt, int nx, int ny, int nz, int nc)
   mdp << "END TESTING GAUGE ACTION\n";
 }
 
-void test_gauge_improved(int nt, int nx, int ny, int nz, int nc)
+void test_gauge_improved(mdp_uint nt, mdp_uint nx, mdp_uint ny, mdp_uint nz, mdp_suint nc)
 {
   mdp << "START TESTING IMPROVED GAUGE ACTION\n";
   const Box box = {nt, nx, ny, nz};
@@ -41,7 +41,7 @@ void test_gauge_improved(int nt, int nx, int ny, int nz, int nc)
   mdp << "END TESTING IMPROVED GAUGE ACTION\n";
 }
 
-void test_fermi(int nt, int nx, int ny, int nz, int nc)
+void test_fermi(mdp_uint nt, mdp_uint nx, mdp_uint ny, mdp_uint nz, mdp_suint nc)
 {
   mdp << "START TESTING CLOVER ACTIONS\n";
   const Box box = {nt, nx, ny, nz};
@@ -92,7 +92,7 @@ void test_fermi(int nt, int nx, int ny, int nz, int nc)
   mdp << "END TESTING CLOVER ACTIONS\n";
 }
 
-void test_staggered(int nt, int nx, int ny, int nz, int nc)
+void test_staggered(mdp_uint nt, mdp_uint nx, mdp_uint ny, mdp_uint nz, mdp_suint nc)
 {
   mdp << "START TESTING STAGGERED ACTIONS\n";
   const Box box = {nt, nx, ny, nz};
@@ -155,11 +155,11 @@ void test_staggered(int nt, int nx, int ny, int nz, int nc)
   mdp << "END TESTING STAGGERED ACTIONS\n";
 }
 
-void test_dwfermi(int nt, int nx, int ny, int nz, int nc)
+void test_dwfermi(mdp_uint nt, mdp_uint nx, mdp_uint ny, mdp_uint nz, mdp_suint nc)
 {
   mdp << "START TESTING DOMAIN WALL ACTIONS\n";
   const Box box = {nt, nx, ny, nz};
-  int L5 = 10;
+  mdp_suint L5 = 10;
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   dwfermi_field psi(lattice, L5, nc);

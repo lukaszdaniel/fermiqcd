@@ -69,7 +69,7 @@ namespace MDP
 
     /** @brief returns the matrix of colour \e a stored at site x
      */
-    mdp_matrix operator()(mdp_site x, int a) const
+    mdp_matrix operator()(mdp_site x, mdp_suint a) const
     {
       mdp_matrix tmp(address(x, a * m_nc * m_nc), m_nc, m_nc);
       return tmp;
@@ -77,14 +77,14 @@ namespace MDP
 
     /** @brief returns the (i,j) component of the matrix of colour \e a stored at site x
      */
-    mdp_complex &operator()(mdp_site x, int a, int i, int j)
+    mdp_complex &operator()(mdp_site x, mdp_suint a, int i, int j)
     {
       return *(address(x) + a * m_nc * m_nc + i * m_nc + j);
     }
 
     /** @brief returns the (i,j) const component of the matrix of colour \e a stored at site x
      */
-    const mdp_complex &operator()(mdp_site x, int a, int i, int j) const
+    const mdp_complex &operator()(mdp_site x, mdp_suint a, int i, int j) const
     {
       return *(address(x) + a * m_nc * m_nc + i * m_nc + j);
     }

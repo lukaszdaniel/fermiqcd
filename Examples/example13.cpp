@@ -9,7 +9,7 @@ int main(int argc, char **argv)
   constexpr Box mybox = {10, 10};
   mdp_lattice mylattice(mybox);
   mdp_site x(mylattice);
-  int mu = 0;
+  mdp_suint mu = 0;
   if (isMainProcess())
   {
     x.set(0, 0);

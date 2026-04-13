@@ -262,7 +262,7 @@ namespace MDP
         rsign = +1;
 
       mdp_site x(psi_in.lattice());
-      int inc, anc, bnc;
+      mdp_suint inc, anc, bnc;
       mdp_real coeff_kappa = 0;
       mdp_real coeff_sum = 0;
       mdp_complex coeff_dif = 0;

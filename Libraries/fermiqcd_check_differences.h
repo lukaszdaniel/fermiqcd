@@ -26,11 +26,11 @@ namespace MDP
     if (&chi.lattice() != &psi.lattice())
       error("check_differences()\nFields defined on different lattices");
 
-    mdp_int i_min = psi.physical_local_start();
-    mdp_int i_max = psi.physical_local_stop();
+    mdp_uint i_min = psi.physical_local_start();
+    mdp_uint i_max = psi.physical_local_stop();
     mdp_real max = 0.0;
 
-    for (mdp_int i = i_min; i < i_max; i++)
+    for (mdp_uint i = i_min; i < i_max; i++)
     {
       mdp_real tmp = std::abs(chi[i] - psi[i]);
       if (tmp > max)

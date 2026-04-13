@@ -51,7 +51,7 @@ namespace MDP
       if (coeff.has_key("steps"))
         error("WupperthalSmearing::smear()\nCoefficient 'steps' undefined.");
       mdp_real factor = coeff["factor"];
-      int steps = coeff["steps"];
+      mdp_suint steps = coeff["steps"];
 
       fermi_field chi(psi.lattice(), psi.nc(), psi.nspin());
       mdp_site x(psi.lattice());

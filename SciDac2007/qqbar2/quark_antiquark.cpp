@@ -176,14 +176,14 @@ int main(int argc, char **argv)
     // GaugeFixing::fix(U, GaugeFixing::Landau, 20);
 
 #if 0
-    for (int shift0 = 0; shift0 < L[0]; shift0++)
+    for (mdp_uint shift0 = 0; shift0 < L[0]; shift0++)
     {
 #endif
-      for (int shift1 = 0; shift1 < L[1]; shift1++)
+      for (mdp_uint shift1 = 0; shift1 < L[1]; shift1++)
       {
-        for (int shift2 = 0; shift2 < L[2]; shift2++)
+        for (mdp_uint shift2 = 0; shift2 < L[2]; shift2++)
         {
-          for (int shift3 = 0; shift3 < L[3]; shift3++)
+          for (mdp_uint shift3 = 0; shift3 < L[3]; shift3++)
           {
 
             x.set(3, 5, L[2] / 2, L[3] / 2);
@@ -203,7 +203,7 @@ int main(int argc, char **argv)
 
             forallsites(x)
             {
-              for (int mu = 0; mu < 4; mu++)
+              for (mdp_suint mu = 0; mu < 4; mu++)
                 W(x, mu) = U(x - 3, mu);
             }
             W.update();
@@ -212,7 +212,7 @@ int main(int argc, char **argv)
 
           forallsites(x)
           {
-            for (int mu = 0; mu < 4; mu++)
+            for (mdp_suint mu = 0; mu < 4; mu++)
               W(x, mu) = U(x - 2, mu);
           }
           W.update();
@@ -221,7 +221,7 @@ int main(int argc, char **argv)
 
         forallsites(x)
         {
-          for (int mu = 0; mu < 4; mu++)
+          for (mdp_suint mu = 0; mu < 4; mu++)
             W(x, mu) = U(x - 1, mu);
         }
         W.update();
@@ -231,7 +231,7 @@ int main(int argc, char **argv)
 #if 0
       forallsites(x)
       {
-        for (int mu = 0; mu < 4; mu++)
+        for (mdp_suint mu = 0; mu < 4; mu++)
           W(x, mu) = U(x - 0, mu);
       }
       W.update();

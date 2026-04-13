@@ -18,7 +18,7 @@ int main(int argc, char **argv)
   constexpr Box L_space = {10, 10, 10};
   mdp_lattice lattice(L);
   mdp_site x(lattice);
-  int nc = 2;
+  mdp_suint nc = 2;
   gauge_field U(lattice, nc);
   fermi_field chi(lattice, nc);
   fermi_field psi(lattice, nc);
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
   {
     for (int b = 0; b < 4; b++)
       for (int c = 0; c < 4; c++)
-        for (int i = 0; i < nc; i++)
+        for (mdp_suint i = 0; i < nc; i++)
           s(x3, 4 * c + b) = 0;
   }
 
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
     }
     for (int a = 0; a < 2; a++)
     {
-      for (int j = 0; j < nc; j++)
+      for (mdp_suint j = 0; j < nc; j++)
       {
         // make source x=(0,x3)
         chi = 0;
@@ -87,7 +87,7 @@ int main(int argc, char **argv)
         // make other source at x=(L[0]/2,x3) by mul by heavy quark propagator
         chi = 0;
         x.set(L8, x0(0), x0(1), x0(2));
-        for (int k = 0; k < nc; k++)
+        for (mdp_suint k = 0; k < nc; k++)
           chi(x, Gamma5_idx[a], k) = Gamma5_val[a] * A(j, k);
 
         chi.update();
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
           x.set(L8 / 2, x3(0), x3(1), x3(2));
           for (int b = 0; b < 4; b++)
             for (int c = 0; c < 4; c++)
-              for (int i = 0; i < nc; i++)
+              for (mdp_suint i = 0; i < nc; i++)
                 s(x3, 4 * c + b) += phi(x, c, i) * conj(psi(x, b, i));
         }
       }

@@ -8,7 +8,7 @@ void test_gauge()
 {
   mdp << "\n\nSTART TESTING GAUGE ACTION\n";
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   coefficients coeff;
@@ -29,7 +29,7 @@ void test_gauge_improved()
 {
   mdp << "\n\nSTART TESTING IMPROVED GAUGE ACTION\n";
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box, default_partitioning<0>,
                       torus_topology, 0, 3);
   gauge_field U(lattice, nc);
@@ -47,7 +47,7 @@ void test_gauge_improved()
 void test_fermi()
 {
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
+  mdp_suint nc = 3;
 
   mdp << "\n\nSTART TESTING CLOVER ACTIONS\n";
 
@@ -106,7 +106,7 @@ void test_fermi()
 void test_staggered()
 {
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
+  mdp_suint nc = 3;
 
   mdp << "\n\nSTART TESTING STAGGERED ACTIONS\n";
 
@@ -166,8 +166,8 @@ void test_staggered()
 void test_dwfermi()
 {
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
-  int L5 = 5;
+  mdp_suint nc = 3;
+  mdp_suint L5 = 5;
 
   mdp << "\n\nSTART TESTING DOMAIN WALL ACTIONS\n";
 
@@ -215,8 +215,8 @@ void test_dwfermi()
 void test_sdwf()
 {
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
-  int L5 = 5;
+  mdp_suint nc = 3;
+  mdp_suint L5 = 5;
 
   if (isMainProcess())
     printf("\n\nTEST SDWF FIELDS\n\n");

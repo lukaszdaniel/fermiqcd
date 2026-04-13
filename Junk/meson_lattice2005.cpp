@@ -6,12 +6,12 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);   // START
   define_base_matrices("FERMIQCD"); // set Gamma convention
-  int n = 3;
+  mdp_suint nc = 3;
   constexpr mdp_suint nconfig = 100;
   constexpr Box L = {16, 8, 8, 8};
   mdp_lattice lattice(L);         // declare lattice
-  gauge_field U(lattice, n);      // declare fields
-  fermi_propagator S(lattice, n); // declare propagator
+  gauge_field U(lattice, nc);      // declare fields
+  fermi_propagator S(lattice, nc); // declare propagator
   mdp_site x(lattice);            // declare a site var
   coefficients gauge;
   gauge["beta"] = 6.0; // set parameters
@@ -20,7 +20,7 @@ int main(int argc, char **argv)
   quark["c_{SW}"] = 0.0;
   default_fermi_action = FermiCloverActionFast::mul_Q;
   mdp_array<float, 1> Cpi(L[TIME]); // declare and zero Cpi
-  for (int t = 0; t < L[TIME]; t++)
+  for (mdp_uint t = 0; t < L[TIME]; t++)
     Cpi(t) = 0;
   set_hot(U);
   for (mdp_suint k = 0; k < nconfig; k++)
@@ -35,7 +35,7 @@ int main(int argc, char **argv)
         for (int b = 0; b < 4; b++)                        // sink spin
         Cpi[x(TIME)] += real(trace(S(x, a, b) * hermitian(S(x, a, b))));
     mdp.add(Cpi.address(), Cpi.size()); // parallel add
-    for (int t = 0; t < L[TIME]; t++)
+    for (mdp_uint t = 0; t < L[TIME]; t++)
       mdp << t << " " << Cpi(t) << "\n"; // print output
   }
   mdp.close_wormholes(); // STOP

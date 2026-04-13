@@ -34,8 +34,8 @@ int main(int argc, char **argv)
   default_fermi_action = FermiCloverActionFast::mul_Q;
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
 
-  constexpr int nt = 12;
-  int nc = 3;
+  constexpr mdp_uint nt = 12;
+  mdp_suint nc = 3;
   // double alpha=0.0;
 
   constexpr Box mybox = {nt, 4, 4, 4};
@@ -73,11 +73,11 @@ int main(int argc, char **argv)
 
 #else
 
-  for (int t = 0; t < nt; t++)
+  for (mdp_uint t = 0; t < nt; t++)
     C2(t) = 0;
 
   for (int a = 0; a < 4; a++)
-    for (int i = 0; i < nc; i++)
+    for (mdp_suint i = 0; i < nc; i++)
     {
       psi = 0;
       x.set(0, 0, 0, 0);
@@ -111,7 +111,7 @@ int main(int argc, char **argv)
       forallsites(x)
       {
         for (int b = 0; b < 4; b++)
-          for (int j = 0; j < nc; j++)
+          for (mdp_suint j = 0; j < nc; j++)
             C2(x(0)) += phi(x, b, j) * conj(chi(x, b, j));
       }
     }
@@ -119,8 +119,8 @@ int main(int argc, char **argv)
 #endif
 
   mdp.add(C2.address(), nt);
-  for (int t = 0; t < nt; t++)
-    printf("%i\t%e\t%e\n", t, real(C2(t)), imag(C2(t)));
+  for (mdp_uint t = 0; t < nt; t++)
+    printf("%u\t%e\t%e\n", t, real(C2(t)), imag(C2(t)));
 
   mdp.close_wormholes();
 };

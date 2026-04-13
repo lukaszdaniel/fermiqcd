@@ -54,7 +54,7 @@ void montecarlo_multihit(ising_field &S, scalar_field &H, int n_iter = 1, int n_
         for (int hit = 0; hit < n_hits; hit++)
         {
           delta_action = S.kappa * (H(x) + S.magnetic_field);
-          for (int mu = 0; mu < S.ndim; mu++)
+          for (mdp_suint mu = 0; mu < S.ndim; mu++)
             delta_action -= S(x + mu) + S(x - mu);
           new_spin = (S.lattice().random(x).plain() > 0.5) ? 1 : -1;
           delta_action *= S.beta * (new_spin - S(x));

@@ -24,12 +24,12 @@ namespace MDP
   void set_random(mdp_field<mdp_complex> &chi,
                   mdp_parity parity = EVENODD)
   {
-    int i_max = chi.size_per_site();
+    mdp_uint i_max = chi.size_per_site();
     mdp_site x(chi.lattice());
 
     forallsitesofparity(x, parity)
     {
-      for (mdp_int i = 0; i < i_max; i++)
+      for (mdp_uint i = 0; i < i_max; i++)
       {
         *chi.address(x, i) = chi.lattice().random(x).gaussian();
       }
@@ -43,16 +43,16 @@ namespace MDP
   /// can choose parity=EVEN, ODD or EVENODD
   /// attention! does not set to zero other timeslices!!!
   void set_wall_random(mdp_field<mdp_complex> &chi,
-                       mdp_int t = 0,
+                       mdp_uint t = 0,
                        mdp_parity parity = EVENODD)
   {
-    int i_max = chi.size_per_site();
+    mdp_uint i_max = chi.size_per_site();
     mdp_site x(chi.lattice());
 
     forallsitesofparity(x, parity)
     {
       if (x(0) == t)
-        for (mdp_int i = 0; i < i_max; i++)
+        for (mdp_uint i = 0; i < i_max; i++)
         {
           *chi.address(x, i) = chi.lattice().random(x).gaussian();
         }
@@ -65,11 +65,11 @@ namespace MDP
   void set_zero(mdp_field<mdp_complex> &chi,
                 mdp_parity parity = EVENODD)
   {
-    int i_max = chi.size_per_site();
+    mdp_uint i_max = chi.size_per_site();
     mdp_site x(chi.lattice());
     forallsitesofparity(x, parity)
     {
-      for (mdp_int i = 0; i < i_max; i++)
+      for (mdp_uint i = 0; i < i_max; i++)
       {
         *chi.address(x, i) = mdp_complex(0, 0);
       }

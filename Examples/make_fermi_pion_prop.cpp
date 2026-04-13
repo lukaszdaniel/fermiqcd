@@ -6,7 +6,7 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int nc = 3;
+  mdp_suint nc = 3;
   constexpr Box box = {8, 4, 4, 4};
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);

@@ -7,7 +7,7 @@ using namespace MDP;
 void test_fermi()
 {
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
+  mdp_suint nc = 3;
 
   mdp << "\n\nTEST FERMI FIELDS\n\n";
 

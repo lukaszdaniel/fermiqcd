@@ -7,7 +7,7 @@ using namespace MDP;
 void test_gauge()
 {
   constexpr Box box = {4, 4, 4, 4};
-  int nc = 3;
+  mdp_suint nc = 3;
   mdp_lattice lattice(box);
   gauge_field U(lattice, nc);
   set_hot(U);
