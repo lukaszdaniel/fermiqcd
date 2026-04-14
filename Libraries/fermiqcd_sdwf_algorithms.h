@@ -25,7 +25,7 @@
 
 namespace MDP
 {
-  const double MDP_SDWF_SGN = 1.0;
+  constexpr double MDP_SDWF_SGN = 1.0;
 
   void project(staggered_field &psi, sdwf_field &chi, gauge_field &U)
   {

@@ -69,7 +69,7 @@ namespace MDP
     {
       mdp.begin_function("BiConugateGradientStabilizedInverter");
       const std::string filename_prefix = inversion_vtk_prefix;
-      const int tc = 0;
+      constexpr int tc = 0;
       std::string filename1, filename2;
       int step = 0;
       fieldT p(psi_in);

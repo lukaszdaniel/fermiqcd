@@ -67,7 +67,7 @@ int main(int argc, char **argv)
   //   plaq_cor_meas_freq = par.i("plaq-cor-meas-freq");
   if (par.defined_i("seed"))
     seed = par.i("seed");
-  if (not par.defined_d("beta"))
+  if (!par.defined_d("beta"))
   {
     std::cerr << "Beta undefined. Exiting..." << std::endl;
     exit(1);
@@ -140,10 +140,10 @@ int main(int argc, char **argv)
   const mdp_real as = 1.0 * (U.ndim() - 2) * (U.ndim() - 1) / 2;
   const mdp_real at = 1.0 * U.ndim() - 1;
 
-  // const mdp_real c1 = -1.0 / 12; // Symanzik
-  // const mdp_real c1 = -0.331;     // Iwasaki
-  // const mdp_real c1 = -1.4088;   // DBW2
-  // const mdp_real c0 = 1 - 8 * c1;
+  // constexpr mdp_real c1 = -1.0 / 12; // Symanzik
+  // constexpr mdp_real c1 = -0.331;     // Iwasaki
+  // constexpr mdp_real c1 = -1.4088;   // DBW2
+  // constexpr mdp_real c0 = 1 - 8 * c1;
   mdp_complex polyakov;
 
   //  SWEEPING

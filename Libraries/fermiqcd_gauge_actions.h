@@ -201,6 +201,8 @@ namespace MDP
     ImprovedGaugeAction(const ImprovedGaugeAction &) = delete;
     ImprovedGaugeAction &operator=(const ImprovedGaugeAction &) = delete;
 
+    static constexpr mdp_ssuint iGauge_min = 4; // the minimum number of gauge terms in the action
+
     static mdp_matrix rectangles_0i_H(const gauge_field &U, mdp_site x, mdp_suint mu)
     {
       mdp_suint nc = U.nc();
@@ -361,11 +363,6 @@ namespace MDP
     // new_heatbath uses an improved gauge action!
     // both isotropic (param.zeta=1) and anisotropic
     // ////////////////////////////////////////////////////////////////////
-
-    enum
-    {
-      iGauge_min = 4
-    };
 
     static int strange_mapping(mdp_site &x)
     {

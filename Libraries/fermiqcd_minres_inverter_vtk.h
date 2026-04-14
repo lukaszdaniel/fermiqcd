@@ -75,7 +75,7 @@ namespace MDP
       mdp.begin_function("MinimumResidueInverter");
 
       const std::string filename_prefix = inversion_vtk_prefix;
-      const int tc = 0;
+      constexpr int tc = 0;
 
       fieldT q(psi_in);
       fieldT r(psi_in);
