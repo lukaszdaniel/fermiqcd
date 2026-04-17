@@ -488,7 +488,7 @@ namespace MDP
     template <class T2>
     void operator*=(const T2 a)
     {
-      if (a == 1.0) [[unlikely]]
+      if (a == T2(1.0)) [[unlikely]]
         return;
 
       for (mdp_uint i = 0; i < m_size; i++)
@@ -498,7 +498,7 @@ namespace MDP
     template <class T2>
     void operator/=(const T2 a)
     {
-      if (a == 1.0) [[unlikely]]
+      if (a == T2(1.0)) [[unlikely]]
         return;
 
       for (mdp_uint i = 0; i < m_size; i++)

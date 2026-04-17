@@ -32,7 +32,7 @@ namespace MDP
 /// Loop on all sites stored by this process with given parity
 // if pofx is EVENODD=2 then loops on even and odd sites
 #define forallsitesandcopiesofparity(x, pofx)                                           \
-     for (int __process = 0; __process < Nproc; __process++)                            \
+     for (mdp_uint __process = 0; __process < Nproc; __process++)                            \
           for (x.start(), x.set_local(x.lattice().start0(__process, mdp_parity(pofx % 2)));       \
                x.local_index() < x.lattice().stop0(__process, mdp_parity((pofx + (pofx % 2)) / 2)); \
                x.next())

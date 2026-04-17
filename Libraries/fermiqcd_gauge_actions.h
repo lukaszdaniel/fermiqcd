@@ -32,7 +32,8 @@ namespace MDP
   ///
   /// Example:
   /// @verbatim
-  ///    int ns=2, steps=10;
+  ///    int steps=10;
+  ///    mdp_suint nc=2;
   ///    gauge_field U(lattice,nc);
   ///    coefficients gauge;
   ///    U.load("myfield.0000");
@@ -107,7 +108,7 @@ namespace MDP
 
     static gauge_stats heatbath(gauge_field &U,
                                 coefficients &coeff,
-                                int n_iter = 1)
+                                mdp_uint n_iter = 1)
     {
       begin_function("WilsonGaugeAction__heatbath");
       if (U.nc() == 1)
@@ -130,7 +131,7 @@ namespace MDP
 
       mdp << coeff;
 
-      for (int iter = 0; iter < n_iter; iter++)
+      for (mdp_uint iter = 0; iter < n_iter; iter++)
         for (mdp_parity parity : {EVEN, ODD})
           for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
@@ -169,7 +170,8 @@ namespace MDP
   ///
   /// Example using the MILC improved action:
   /// @verbatim
-  ///    int ns=2, steps=10;
+  ///    int steps=10;
+  ///    mdp_suint nc=2;
   ///    gauge_field U(lattice,nc);
   ///    coefficients gauge;
   ///    U.load("myfield.0000");
@@ -182,7 +184,8 @@ namespace MDP
   /// @endverbatim
   /// Example using the Morningstar unisotropic improved action:
   /// @verbatim
-  ///    int ns=2, steps=10;
+  ///    int steps=10;
+  ///    mdp_suint nc=2;
   ///    gauge_field U(lattice,nc);
   ///    coefficients gauge;
   ///    U.load("myfield.0000");
@@ -265,7 +268,7 @@ namespace MDP
       mdp_site y0(U.lattice());
       mdp_site y1(U.lattice());
       mdp_site y2(U.lattice());
-
+      tmp = 0;
       for (mdp_suint nu = min_nu; nu < U.ndim(); nu++)
       {
         if (nu != mu)
@@ -364,18 +367,18 @@ namespace MDP
     // both isotropic (param.zeta=1) and anisotropic
     // ////////////////////////////////////////////////////////////////////
 
-    static int strange_mapping(mdp_site &x)
+    static mdp_uint strange_mapping(mdp_site &x)
     {
-      int type = 0;
+      mdp_uint type = 0;
       for (mdp_suint mu = 0; mu < x.lattice().n_dimensions(); mu++)
-        type += (int)std::pow((float)iGauge_min, mu) * (x(mu) % iGauge_min);
+        type += (mdp_uint)std::pow(1.0 * iGauge_min, mu) * (x(mu) % iGauge_min);
       return type;
     }
 
   public:
     static gauge_stats heatbath(gauge_field &U,
                                 coefficients &coeff,
-                                int n_iter = 1,
+                                mdp_uint n_iter = 1,
                                 std::string model = "MILC")
     {
 
@@ -457,8 +460,8 @@ namespace MDP
 
       mdp << coeff;
 
-      for (mdp_int iter = 0; iter < n_iter; iter++)
-        for (mdp_int type = 0; type < (int)std::pow((float)iGauge_min, U.ndim()); type++)
+      for (mdp_uint iter = 0; iter < n_iter; iter++)
+        for (mdp_uint type = 0; type < (mdp_uint)std::pow(1.0 * iGauge_min, U.ndim()); type++)
         {
           forallsites(x)
           {
