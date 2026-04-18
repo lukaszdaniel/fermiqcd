@@ -93,7 +93,7 @@ namespace MDP
                          coefficients &coeff,
                          mdp_real absolute_precision = fermi_inversion_precision,
                          mdp_real relative_precision = 0,
-                         int max_steps = 2000,
+                         mdp_uint max_steps = 2000,
                          void (*smf)(staggered_field &, gauge_field &) = nullptr/*,
                          int comp = 0*/)
     {

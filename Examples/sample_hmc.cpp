@@ -116,7 +116,7 @@ int main(int argc, char **argv)
   for (int i = 0; i < 100; i++)
   {
     hmc.step();
-    mdp << "acceptance=" << (float)hmc.acceptance_rate() << "\n";
+    mdp << "acceptance=" << hmc.acceptance_rate() << "\n";
   }
 
   mdp.close_wormholes();

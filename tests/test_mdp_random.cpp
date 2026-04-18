@@ -13,9 +13,9 @@ double kolmogorov_smirnov_stat(std::vector<double> &data)
 
   for (int i = 0; i < n; ++i)
   {
-    double Fi = (i + 1) / (double)n;
+    double Fi = (i + 1.0) / n;
     double Dp = Fi - data[i];
-    double Dm = data[i] - (i / (double)n);
+    double Dm = data[i] - ((1.0 * i) / n);
 
     D_plus = std::max(D_plus, Dp);
     D_minus = std::max(D_minus, Dm);

@@ -70,10 +70,10 @@ namespace MDP
                                               mdp_parity parity = EVEN,
                                               mdp_real absolute_precision = staggered_inversion_precision,
                                               mdp_real relative_precision = 0,
-                                              int max_steps = 2000)
+                                              mdp_uint max_steps = 2000)
     {
 
-      int step = 0;
+      mdp_uint step = 0;
       mdp_parity opposite_parity = EVENODD;
       mdp_suint nc = psi_in.nc();
       double beta, norm, four_mass_sq;
@@ -211,7 +211,7 @@ namespace MDP
                                     coefficients &coeff,
                                     mdp_real absolute_precision = staggered_inversion_precision,
                                     mdp_real relative_precision = 0,
-                                    int max_steps = 2000)
+                                    mdp_uint max_steps = 2000)
     {
 
       mdp_site x(U.lattice());

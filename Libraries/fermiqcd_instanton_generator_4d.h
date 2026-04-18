@@ -23,11 +23,11 @@ namespace MDP
   class SingleInstanton4D
   {
   public:
-    float x[4];
-    float rho;
-    int charge; // +1 or -1;
+    mdp_real x[4];
+    mdp_real rho;
+    mdp_sint charge; // +1 or -1;
 
-    SingleInstanton4D(float x0, float x1, float x2, float x3, float rho, int charge)
+    SingleInstanton4D(mdp_real x0, mdp_real x1, mdp_real x2, mdp_real x3, mdp_real rho, mdp_sint charge)
     {
       x[0] = x0;
       x[1] = x1;
@@ -56,13 +56,13 @@ namespace MDP
       bar[3] = -I * sigma[3];
     }
 
-    mdp_matrix make_singular_instanton(float xl[4], mdp_suint mu, const SingleInstanton4D &instanton)
+    mdp_matrix make_singular_instanton(mdp_real xl[4], mdp_suint mu, const SingleInstanton4D &instanton)
     {
       mdp_matrix A;
-      float x2, x[4], rho2;
-      for (int i = 0; i < 4; i++)
-        x[i] = std::min((float)xl[i] - instanton.x[i],
-                        (float)(*lattice).size(i) - xl[i] + instanton.x[i]);
+      mdp_real x2, x[4], rho2;
+      for (mdp_suint i = 0; i < 4; i++)
+        x[i] = std::min(xl[i] - instanton.x[i],
+                        (*lattice).size(i) - xl[i] + instanton.x[i]);
       x2 = x[0] * x[0] + x[1] * x[1] + x[2] * x[2] + x[3] * x[3];
 
       rho2 = std::pow(instanton.rho, 2);
@@ -79,13 +79,13 @@ namespace MDP
     {
       mdp_matrix A(2, 2);
       mdp_matrix P = sigma[0];
-      float x[4], a[3], norm_a;
-      int steps = 5;
-      float dx = 1.0 / steps;
-      float precision = 0.0001;
-      for (int i = 0; i < 4; i++)
+      mdp_real x[4], a[3], norm_a;
+      mdp_suint steps = 5;
+      mdp_real dx = 1.0 / steps;
+      mdp_real precision = 0.0001;
+      for (mdp_suint i = 0; i < 4; i++)
         x[i] = xn(i);
-      for (int m = 0; m < steps; m++)
+      for (mdp_suint m = 0; m < steps; m++)
       {
         x[mu] = (0.5 + m) / steps + xn(mu);
         for (size_t k = 0; k < instantons.size(); k++)
@@ -118,8 +118,8 @@ namespace MDP
         {
           A = make_su2_link(x, mu, instantons);
           U(x, mu) = 1;
-          for (int i = 0; i < 2; i++)
-            for (int j = 0; j < 2; j++)
+          for (mdp_suint i = 0; i < 2; i++)
+            for (mdp_suint j = 0; j < 2; j++)
               U(x, mu, i, j) = A(i, j);
         }
       }

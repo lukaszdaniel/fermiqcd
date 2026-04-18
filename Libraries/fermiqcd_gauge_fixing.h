@@ -212,13 +212,13 @@ namespace MDP
     ///           torus topology
     static gaugefixing_stats fix(gauge_field &U,
                                  mdp_suint mu = 0,
-                                 int max_steps = 1,
+                                 mdp_uint max_steps = 1,
                                  mdp_real target_precision = 1e-5,
                                  mdp_real overrelaxation_boost = 1,
                                  bool z3 = false)
     {
       gaugefixing_stats stats;
-      int step = 0;
+      mdp_uint step = 0;
       mdp_site x(U.lattice());
       double action = 0;
       double precision = 0;
@@ -256,7 +256,7 @@ namespace MDP
           M = M - hermitian(M);
           for (mdp_suint i = 0; i < U.nc(); i++)
             for (mdp_suint j = 0; j < U.nc(); j++)
-              precision += (double)std::pow(abs(M(i, j)), 2);
+              precision += std::pow(abs(M(i, j)), 2);
         }
         mdp.add(precision);
         mdp.add(action);

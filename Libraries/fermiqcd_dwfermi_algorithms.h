@@ -61,7 +61,7 @@ namespace MDP
              gauge_field &U,
              coefficients &coeff)
   {
-    (*default_dwfermi_action)(psi_out, psi_in, U, coeff);
+    default_dwfermi_action(psi_out, psi_in, U, coeff);
   }
 
   /// Pointer to the current dwfermi inverter
@@ -69,7 +69,7 @@ namespace MDP
                                               dwfermi_field &,
                                               gauge_field &,
                                               coefficients &,
-                                              mdp_real, mdp_real, int) =
+                                              mdp_real, mdp_real, mdp_uint) =
       &(MinRes::inverter<dwfermi_field, gauge_field>);
 
   /// Execute the default dwfermi inverter
@@ -79,9 +79,9 @@ namespace MDP
                            coefficients &coeff,
                            mdp_real absolute_precision = dwfermi_inversion_precision,
                            mdp_real relative_precision = 0,
-                           int max_steps = 2000)
+                           mdp_uint max_steps = 2000)
   {
-    return (*default_dwfermi_inverter)(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
+    return default_dwfermi_inverter(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
   }
 } // namespace MDP
 

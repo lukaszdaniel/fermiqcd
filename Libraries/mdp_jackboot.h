@@ -134,7 +134,7 @@ namespace MDP
       std::unique_ptr<float[]> average = std::make_unique<float[]>(m_narg);
 
       if (m_conf == 0)
-        return (*f)(&m_data[0], m_handle);
+        return f(&m_data[0], m_handle);
 
       for (int i = 0; i < m_narg; i++)
       {
@@ -143,7 +143,7 @@ namespace MDP
           average[i] += m_data[j * m_narg + i] / (m_conf + 1);
       }
 
-      return (*f)(average.get(), m_handle);
+      return f(average.get(), m_handle);
     }
 
     /** @brief Calculate Jacknife error
@@ -170,10 +170,9 @@ namespace MDP
       float stddev = 0;
 
       for (int j = 0; j <= m_conf; j++)
-        stddev += (float)std::pow(
-            (double)(*f)(&(average[j * m_narg]), m_handle) - mean0, 2.0);
+        stddev += std::pow(f(&(average[j * m_narg]), m_handle) - mean0, 2.0);
 
-      return (float)std::sqrt(stddev * m_conf / (m_conf + 1));
+      return std::sqrt(stddev * m_conf / (m_conf + 1));
     }
 
     /** @brief Calculate Bootstrap error
@@ -202,10 +201,10 @@ namespace MDP
 
       for (int x = 1; x < nboot; x++)
       {
-        vx = (*f)(&(average[x * m_narg]), m_handle);
+        vx = f(&(average[x * m_narg]), m_handle);
         for (int y = x - 1; y >= 0; y--)
         {
-          vy = (*f)(&(average[y * m_narg]), m_handle);
+          vy = f(&(average[y * m_narg]), m_handle);
           if (vy > vx)
             for (int i = 0; i < m_narg; i++)
             {
@@ -218,10 +217,10 @@ namespace MDP
         }
       }
 
-      vx = (*f)(&(average[((int)((float)nboot * 0.16)) * m_narg]), m_handle);
-      vy = (*f)(&(average[((int)((float)nboot * 0.84)) * m_narg]), m_handle);
+      vx = f(&(average[((int)(nboot * 0.16)) * m_narg]), m_handle);
+      vy = f(&(average[((int)(nboot * 0.84)) * m_narg]), m_handle);
 
-      return (float)(vy - vx) / 2.0;
+      return (vy - vx) / 2.0;
     }
   };
 } // namespace MDP

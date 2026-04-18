@@ -430,13 +430,13 @@ namespace MDP
       if (model == "Morningstar")
       {
 
-        c_tp = 4.0 * zeta / (3.0 * std::pow((double)u_s * u_t, (double)2.0));
-        c_tr = -1.0 * zeta / (12.0 * std::pow((double)u_s, (double)4.0) * std::pow((double)u_t, (double)2.0));
-        c_sp = 5.0 / (3.0 * zeta * std::pow((double)u_s, (double)4.0));
-        c_sr = -1.0 / (12.0 * zeta * std::pow((double)u_s, (double)6.0));
+        c_tp = 4.0 * zeta / (3.0 * std::pow(u_s * u_t, 2.0));
+        c_tr = -1.0 * zeta / (12.0 * std::pow(u_s, 4.0) * std::pow(u_t, 2.0));
+        c_sp = 5.0 / (3.0 * zeta * std::pow(u_s, 4.0));
+        c_sr = -1.0 / (12.0 * zeta * std::pow(u_s, 6.0));
 
-        c_p = 1.0 * std::pow((double)u_s, (double)-4.0);
-        c_r = -0.05 * std::pow((double)u_s, (double)-6.0);
+        c_p = 1.0 * std::pow(u_s, -4.0);
+        c_r = -0.05 * std::pow(u_s, -6.0);
         c_c = 0;
       }
       else if (model == "MILC")
@@ -447,8 +447,8 @@ namespace MDP
 
         alpha_s = -4.0 * std::log(u_s) / 3.0684;
         c_p = 1.0;
-        c_r = -0.05 * std::pow((double)u_s, (double)-2.0) * (1.0 + 0.4805 * alpha_s);
-        c_c = -1.00 * std::pow((double)u_s, (double)-2.0) * (0.03325 * alpha_s);
+        c_r = -0.05 * std::pow(u_s, -2.0) * (1.0 + 0.4805 * alpha_s);
+        c_c = -1.00 * std::pow(u_s, -2.0) * (0.03325 * alpha_s);
       }
       else
       {

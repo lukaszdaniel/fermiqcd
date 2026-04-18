@@ -30,7 +30,7 @@ namespace MDP
   double walltime()
   {
 #ifdef NO_POSIX
-    return (double)clock() / CLOCKS_PER_SEC;
+    return (1.0 * clock()) / CLOCKS_PER_SEC;
 #else
     double mic, time;
     double mega = 0.000001;
@@ -55,8 +55,8 @@ namespace MDP
       base_usec = tp.tv_usec;
     }
 
-    time = (double)(tp.tv_sec - base_sec);
-    mic = (double)(tp.tv_usec - base_usec);
+    time = 1.0 * (tp.tv_sec - base_sec);
+    mic = 1.0 * (tp.tv_usec - base_usec);
     time = (time + mic * mega);
     return (time);
 #endif

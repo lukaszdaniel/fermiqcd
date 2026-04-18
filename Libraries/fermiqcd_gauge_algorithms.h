@@ -481,7 +481,7 @@ namespace MDP
       }
       d = 0;
       for (mdp_suint k = 0; k < nc; k++)
-        d += std::pow((double)abs(C(k, i)), (double)2.0);
+        d += std::pow(abs(C(k, i)), 2.0);
       d = std::sqrt(d);
       for (mdp_suint k = 0; k < nc; k++)
         C(k, i) /= d;

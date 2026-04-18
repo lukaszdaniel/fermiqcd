@@ -189,11 +189,11 @@ public:
     m_counter = 0;
   }
 
-  void wilson_heatbath(float beta, int steps = 1)
+  void wilson_heatbath(float beta, mdp_uint steps = 1)
   {
     coefficients gauge;
     gauge["beta"] = beta;
-    for (int step = 0; step < steps; step++)
+    for (mdp_uint step = 0; step < steps; step++)
     {
       (*this) << "WilsonGaugeAction::heatbath(beta=" << beta << ") step=" << step << "\n";
       WilsonGaugeAction::heatbath(*m_pU, gauge, 1);

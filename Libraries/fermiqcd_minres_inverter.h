@@ -83,7 +83,7 @@ namespace MDP
                                     coefficients &coeff,
                                     mdp_real absolute_precision = mdp_precision,
                                     mdp_real relative_precision = 0,
-                                    int max_steps = 2000)
+                                    mdp_uint max_steps = 2000)
     {
 
       mdp.begin_function("MinimumResidueInverter");
@@ -92,7 +92,7 @@ namespace MDP
       fieldT r(psi_in);
       double residue, rresidue = -1, old_rresidue;
       mdp_complex alpha;
-      mdp_int step = 0;
+      mdp_uint step = 0;
       double time = mdp.time();
       inversion_stats stats;
 
@@ -168,7 +168,7 @@ namespace MDP
                                          coefficients &coeff,
                                          mdp_real absolute_precision = mdp_precision,
                                          mdp_real relative_precision = 0,
-                                         int max_steps = 2000)
+                                         mdp_uint max_steps = 2000)
   {
     return MinRes::inverter(psi_out, psi_in, U, coeff,
                             absolute_precision,

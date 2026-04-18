@@ -73,7 +73,7 @@ namespace MDP
              coefficients &coeff,
              mdp_parity parity = EVENODD)
   {
-    (*default_fermi_action)(psi_out, psi_in, U, coeff, parity);
+    default_fermi_action(psi_out, psi_in, U, coeff, parity);
   }
 
   /// Pointer to the current Wilson/Clover inverter
@@ -81,7 +81,7 @@ namespace MDP
                                             fermi_field &,
                                             gauge_field &,
                                             coefficients &,
-                                            mdp_real, mdp_real, int) = &(MinRes::inverter<fermi_field, gauge_field>);
+                                            mdp_real, mdp_real, mdp_uint) = &(MinRes::inverter<fermi_field, gauge_field>);
 
   /// Executes the current Wilson/Clover inverter
   inversion_stats mul_invQ(fermi_field &psi_out,
@@ -90,9 +90,9 @@ namespace MDP
                            coefficients &coeff,
                            mdp_real absolute_precision = fermi_inversion_precision,
                            mdp_real relative_precision = 0,
-                           int max_steps = 2000)
+                           mdp_uint max_steps = 2000)
   {
-    return (*default_fermi_inverter)(psi_out,
+    return default_fermi_inverter(psi_out,
                                      psi_in,
                                      U,
                                      coeff,

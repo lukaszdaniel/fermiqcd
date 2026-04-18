@@ -126,7 +126,7 @@ namespace MDP
                          coefficients &coeff,
                          mdp_real absolute_precision = fermi_inversion_precision,
                          mdp_real relative_precision = 0,
-                         int max_steps = 2000,
+                         mdp_uint max_steps = 2000,
                          void (*smf)(fermi_field &,
                                      gauge_field &,
                                      coefficients &) = nullptr,
@@ -252,11 +252,11 @@ namespace MDP
     end_function("print_propagator");
   }
 
-  void smear_propagator(fermi_propagator &S, gauge_field &U, int smear_steps = 10, float alpha = 1.0)
+  void smear_propagator(fermi_propagator &S, gauge_field &U, mdp_uint smear_steps = 10, mdp_real alpha = 1.0)
   {
     mdp_matrix_field V(U.lattice(), U.nc(), U.nc());
     mdp_site x(U.lattice());
-    for (mdp_int n = 0; n < smear_steps; n++)
+    for (mdp_uint n = 0; n < smear_steps; n++)
     {
       for (mdp_suint a = 0; a < 4; a++)
         for (mdp_suint b = 0; b < 4; b++)

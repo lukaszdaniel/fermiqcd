@@ -91,7 +91,7 @@ namespace MDP
              coefficients &coeff,
              mdp_parity parity = EVENODD)
   {
-    (*default_sdwf_action)(psi_out, psi_in, U, coeff, parity);
+    default_sdwf_action(psi_out, psi_in, U, coeff, parity);
   }
 
   // ////////////////////////////////////////////////
@@ -102,7 +102,7 @@ namespace MDP
                                            sdwf_field &,
                                            gauge_field &,
                                            coefficients &,
-                                           mdp_real, mdp_real, int) = BiConjugateGradientStabilizedInverter<sdwf_field, gauge_field>;
+                                           mdp_real, mdp_real, mdp_uint) = BiConjugateGradientStabilizedInverter<sdwf_field, gauge_field>;
 
   inversion_stats mul_invQ(sdwf_field &psi_out,
                            sdwf_field &psi_in,
@@ -110,9 +110,9 @@ namespace MDP
                            coefficients &coeff,
                            mdp_real absolute_precision = sdwf_inversion_precision,
                            mdp_real relative_precision = 0,
-                           int max_steps = 2000)
+                           mdp_uint max_steps = 2000)
   {
-    return (*default_sdwf_inverter)(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
+    return default_sdwf_inverter(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
   }
 
   void compute_swirls_field(gauge_field &U)
@@ -126,13 +126,11 @@ namespace MDP
       if (x(0) % 2 == 0)
       {
         U.swirls(x) = 0;
-        // for(k=0; k<mdp_permutations(4); k++) { this gave some problems
         y = x;
         A = mdp_identity(nc);
-        for (mdp_int k = 0; k < 1; k++)
+        for (mdp_suint k = 0; k < 1; k++)
         {
-          //  k=(int) ((float) mdp_permutations(4)*Random.plain());
-          for (mdp_uint i = 0; i < U.ndim(); i++)
+          for (mdp_suint i = 0; i < U.ndim(); i++)
           {
             mdp_uint j = mdp_permutation(4, k, i);
             if (y(j) % 2 == 0)
@@ -157,7 +155,7 @@ namespace MDP
       if (x(0) % 2 == 1)
       {
         y = x;
-        for (mdp_uint i = 0; i < U.ndim(); i++)
+        for (mdp_suint i = 0; i < U.ndim(); i++)
           if (y(i) % 2 == 0)
             y = y + i;
           else

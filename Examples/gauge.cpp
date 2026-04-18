@@ -70,7 +70,7 @@ int main(int argc, char **argv)
     if (header.ndim != 4)
       error("Sorry, mesons only in 4D");
 
-    nc = (mdp_suint)sqrt((double)header.bytes_per_site / (4 * sizeof(mdp_complex)));
+    nc = (mdp_suint)sqrt((1.0 * header.bytes_per_site) / (4 * sizeof(mdp_complex)));
     L = header.box;
   }
 

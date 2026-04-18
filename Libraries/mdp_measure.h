@@ -84,7 +84,7 @@ namespace MDP
 
     void operator<<(float x)
     {
-      float err2 = m_num * (std::pow((double)m_error, (double)2.0) + m_mean * m_mean) + std::pow((double)x, (double)2.0);
+      float err2 = m_num * (std::pow(m_error, 2.0) + m_mean * m_mean) + std::pow(x, 2.0);
       ++m_num;
       m_mean = (m_mean * (m_num - 1) + x) / m_num;
       m_error = std::sqrt(err2 / m_num - m_mean * m_mean);
@@ -137,7 +137,7 @@ namespace MDP
       mdp_measure tmp;
       tmp.m_mean = m_mean / b.m_mean;
       tmp.m_error = m_error / std::fabs(b.m_mean) +
-                    std::fabs(m_mean) / std::pow((double)b.m_mean, (double)2.0) * b.m_error;
+                    std::fabs(m_mean) / std::pow(b.m_mean, 2.0) * b.m_error;
       tmp.m_num = 1;
       return tmp;
     }
@@ -233,7 +233,7 @@ namespace MDP
   mdp_measure operator/(float a, mdp_measure b)
   {
     float mean = a / b.getmean();
-    float error = std::fabs(a) / std::pow((double)b.getmean(), (double)2.0) * b.getmerr();
+    float error = std::fabs(a) / std::pow(b.getmean(), 2.0) * b.getmerr();
     return mdp_measure(mean, error);
   }
 
@@ -249,8 +249,8 @@ namespace MDP
 
   mdp_measure pow(mdp_measure a, float b)
   {
-    float mean = std::pow((double)a.getmean(), (double)b);
-    float error = a.getmerr() * b * std::pow((double)a.getmean(), (double)b - 1);
+    float mean = std::pow(a.getmean(), b);
+    float error = a.getmerr() * b * std::pow(a.getmean(), b - 1);
 
     return mdp_measure(mean, error);
   }

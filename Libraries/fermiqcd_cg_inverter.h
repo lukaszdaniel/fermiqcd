@@ -58,11 +58,11 @@ namespace MDP
                                     coefficients &coeff,
                                     mdp_real absolute_precision = mdp_precision,
                                     mdp_real relative_precision = 0,
-                                    int max_steps = 2000,
+                                    mdp_uint max_steps = 2000,
                                     bool qdaggerq = false)
     {
       mdp.begin_function("ConjugateGradientInverter");
-      int step = 0;
+      mdp_uint step = 0;
       double residue, rresidue = -1;
       // double old_rresidue;
       double time = mdp.time();

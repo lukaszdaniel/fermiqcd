@@ -101,7 +101,7 @@ namespace MDP
       {
         x = m_prng.plain();
         y = m_prng.plain();
-      } while ((*fp)(x, a) >= y);
+      } while (fp(x, a) >= y);
       return x;
     }
 

@@ -52,7 +52,7 @@ namespace MDP
              coefficients &coeff,
              mdp_parity parity = EVENODD)
   {
-    (*default_staggered_action)(psi_out, psi_in, U, coeff, parity);
+    default_staggered_action(psi_out, psi_in, U, coeff, parity);
   }
 
   // ////////////////////////////////////////////////
@@ -65,7 +65,7 @@ namespace MDP
                                                 staggered_field &,
                                                 gauge_field &,
                                                 coefficients &,
-                                                mdp_real, mdp_real, int) = &(BiCGStab::inverter<staggered_field, gauge_field>);
+                                                mdp_real, mdp_real, mdp_uint) = &(BiCGStab::inverter<staggered_field, gauge_field>);
 
   /** @brief Executes current Staggered/Asqtad inverter
    */
@@ -74,9 +74,9 @@ namespace MDP
                            gauge_field &U,
                            coefficients &coeff,
                            mdp_real absolute_precision = staggered_inversion_precision,
-                           mdp_real relative_precision = 0, int max_steps = 2000)
+                           mdp_real relative_precision = 0, mdp_uint max_steps = 2000)
   {
-    return (*default_staggered_inverter)(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
+    return default_staggered_inverter(psi_out, psi_in, U, coeff, absolute_precision, relative_precision, max_steps);
   }
 
   // ////////////////////////////////////////////////////////////
@@ -93,7 +93,7 @@ namespace MDP
   {
     begin_function("lepage_coefficients");
 
-    mdp_real u0 = std::pow((double)plaquette, (double)0.25);
+    mdp_real u0 = std::pow(plaquette, 0.25);
     mdp_array<mdp_real, 1> c(6);
 
     c[0] = c[1] = c[2] = c[3] = c[4] = c[5] = 0.0;

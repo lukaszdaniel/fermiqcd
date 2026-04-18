@@ -65,13 +65,13 @@ namespace MDP
                                     coefficients &coeff,
                                     mdp_real absolute_precision = mdp_precision,
                                     mdp_real relative_precision = 0,
-                                    int max_steps = 2000)
+                                    mdp_uint max_steps = 2000)
     {
       mdp.begin_function("BiConugateGradientStabilizedInverter");
       const std::string filename_prefix = inversion_vtk_prefix;
       constexpr int tc = 0;
       std::string filename1, filename2;
-      int step = 0;
+      mdp_uint step = 0;
       fieldT p(psi_in);
       fieldT q(psi_in);
       fieldT r(psi_in);
@@ -206,7 +206,7 @@ namespace MDP
                                                            coefficients &coeff,
                                                            mdp_real absolute_precision = mdp_precision,
                                                            mdp_real relative_precision = 0,
-                                                           int max_steps = 2000)
+                                                           mdp_uint max_steps = 2000)
   {
     return BiCGStabVtk::inverter(psi_out, psi_in, U, coeff,
                                  absolute_precision,

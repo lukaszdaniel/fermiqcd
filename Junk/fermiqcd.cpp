@@ -358,7 +358,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
           open_prop[a][b][i][j][t] = 0.0;
         for (int c = 0; c < 4; c++)
           for (int d = 0; d < 4; d++)
-            if (G(c, d) != 0.0)
+            if (G(c, d) != mdp_complex(0.0))
               forallsites(x)
               {
                 for (mdp_suint k = 0; k < U.nc(); k++)
@@ -390,7 +390,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
               {
                 mdp_complex g1 = G1(b, a);
                 mdp_complex g2 = G2(d, c);
-                if (g1 != 0.0 && g2 != 0.0)
+                if (g1 != mdp_complex(0.0) && g2 != mdp_complex(0.0))
                 {
                   for (mdp_suint i = 0; i < U.nc(); i++)
                     for (mdp_suint j = 0; j < U.nc(); j++)
@@ -435,7 +435,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     {
       for (int a = 0; a < 4; a++)
         for (int b = 0; b < 4; b++)
-          if (G1(a, b) != 0.0)
+          if (G1(a, b) != mdp_complex(0.0))
             for (mdp_suint i = 0; i < U.nc(); i++)
               Q(x) += std::pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
     }
