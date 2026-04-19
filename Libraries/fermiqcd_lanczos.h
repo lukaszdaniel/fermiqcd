@@ -53,7 +53,7 @@ namespace MDP
       static fieldT p(psi);
       static fieldT q(psi);
       static fieldT r(psi);
-      static double alpha, beta;
+      static mdp_real alpha, beta;
       static mdp_site x(psi.lattice());
 
       if (init || force)
@@ -66,7 +66,7 @@ namespace MDP
 
         psi.update();
         q = psi;
-        double norm = std::sqrt(norm_square(q));
+        mdp_real norm = std::sqrt(norm_square(q));
         q /= norm;
         p = 0.0;
         r = 0.0;
@@ -96,7 +96,7 @@ namespace MDP
       {
         // this prints some data for check
         static fieldT s(psi);
-        double pp, qq;
+        mdp_real pp, qq;
         mdp_complex pq, qr, ps;
         mdp_site x(psi.lattice());
 

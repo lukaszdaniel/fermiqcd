@@ -27,12 +27,12 @@ namespace MDP
   public:
     mdp_real target_absolute_precision;
     mdp_real target_relative_precision;
-    int max_steps;
+    mdp_uint max_steps;
     mdp_real residue;
     mdp_real absolute_precision;
     mdp_real relative_precision;
-    int steps;
-    int mul_Q_steps;
+    mdp_uint steps;
+    mdp_uint mul_Q_steps;
     mdp_real time;
   };
 
@@ -90,7 +90,7 @@ namespace MDP
 
       fieldT q(psi_in);
       fieldT r(psi_in);
-      double residue, rresidue = -1, old_rresidue;
+      mdp_real residue, rresidue = -1, old_rresidue;
       mdp_complex alpha;
       mdp_uint step = 0;
       double time = mdp.time();

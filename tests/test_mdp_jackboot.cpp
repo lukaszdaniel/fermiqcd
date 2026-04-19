@@ -3,11 +3,11 @@
 
 using namespace MDP;
 
-constexpr int n = 100;
+constexpr mdp_suint n = 100;
 
-float f1(const float *x, [[maybe_unused]] const void *a) { return x[0] / x[1]; }
+mdp_real f1(const mdp_real *x, [[maybe_unused]] const void *a) { return x[0] / x[1]; }
 
-float f2(const float *x, [[maybe_unused]] const void *a) { return x[0] * x[1]; }
+mdp_real f2(const mdp_real *x, [[maybe_unused]] const void *a) { return x[0] * x[1]; }
 
 int main()
 {
@@ -16,7 +16,7 @@ int main()
   mdp_matrix A;
   mdp_jackboot jb(n, 2);
 
-  for (int i = 0; i < n; i++)
+  for (mdp_suint i = 0; i < n; i++)
   {
     A = Random.SU(6) + Random.gaussian();
     jb(i, 0) = real(det(inv(A))); // test operator()(conf,arg)
@@ -27,7 +27,7 @@ int main()
   // 2. Test address()
   // =========================
   {
-    float *ptr = jb.address(0);
+    mdp_real *ptr = jb.address(0);
     assert(ptr != nullptr);
     std::cout << "[OK] address() works\n";
   }
@@ -37,8 +37,8 @@ int main()
   // =========================
   {
     jb.set_conf(0);
-    float v0 = jb(0);
-    float v1 = jb(1);
+    mdp_real v0 = jb(0);
+    mdp_real v1 = jb(1);
 
     std::cout << "[INFO] set_conf + operator()(arg): "
               << v0 << ", " << v1 << "\n";
@@ -49,10 +49,10 @@ int main()
   // =========================
   {
     jb.plain(0);
-    float mean0 = jb.mean();
+    mdp_real mean0 = jb.mean();
 
     jb.plain(1);
-    float mean1 = jb.mean();
+    mdp_real mean1 = jb.mean();
 
     std::cout << "[PLAIN] mean(x[0]) = " << mean0 << "\n";
     std::cout << "[PLAIN] mean(x[1]) = " << mean1 << "\n";
@@ -63,9 +63,9 @@ int main()
   // =========================
   jb.f = f1;
 
-  float mean_f1 = jb.mean();
-  float jerr_f1 = jb.j_err();
-  float berr_f1 = jb.b_err(200);
+  mdp_real mean_f1 = jb.mean();
+  mdp_real jerr_f1 = jb.j_err();
+  mdp_real berr_f1 = jb.b_err(200);
 
   std::cout << "\n[f1] x[0]/x[1]\n";
   std::cout << "mean       = " << mean_f1 << "\n";
@@ -77,9 +77,9 @@ int main()
   // =========================
   jb.f = f2;
 
-  float mean_f2 = jb.mean();
-  float jerr_f2 = jb.j_err();
-  float berr_f2 = jb.b_err(200);
+  mdp_real mean_f2 = jb.mean();
+  mdp_real jerr_f2 = jb.j_err();
+  mdp_real berr_f2 = jb.b_err(200);
 
   std::cout << "\n[f2] x[0]*x[1]\n";
   std::cout << "mean       = " << mean_f2 << "\n";
@@ -105,7 +105,7 @@ int main()
   // =========================
   {
     jb.plain(0);
-    float m = jb.mean();
+    mdp_real m = jb.mean();
 
     assert(std::isfinite(m));
     std::cout << "\n[OK] mean() is finite\n";

@@ -18,49 +18,48 @@
 
 namespace MDP
 {
-  // SU(n) generator
   // Example:
   // #include "fermiqcd.h"
   // int main() {
   //  SU_Generators g(3);
-  //  for(int a=0; a<g.ngenerators; a++)
+  //  for(mdp_uint a=0; a<g.ngenerators; a++)
   //    std::cout << "g=" << g.lambda(a) << std::endl;
   //  return 0;
   // }
   class SU_Generators
   {
   public:
-    const int n;
-    const int ngenerators;
+    const mdp_uint n;
+    const mdp_uint ngenerators;
 
   private:
     std::vector<mdp_matrix> m_lambda;
 
-    mdp_matrix build_matrix(int a)
+    mdp_matrix build_matrix(mdp_uint a)
     {
 
-      int pos1 = (n * (n - 1) / 2);
-      int pos2 = (n * (n - 1));
+      mdp_uint pos1 = (n * (n - 1) / 2);
+      mdp_uint pos2 = (n * (n - 1));
       mdp_matrix mat(n, n);
       mdp_complex mult = 0;
       std::vector<mdp_complex> vec(ngenerators);
-      for (int i = 0; i < ngenerators; i++)
+      for (mdp_uint i = 0; i < ngenerators; i++)
         vec[i] = (i == a) ? 1 : 0;
 
-      for (int i = 0, a = 0; i < n; i++)
+      for (mdp_uint i = 0, a = 0; i < n; i++)
       {
         mat(i, i) = 0;
-        for (int j = i + 1; j < n; j++)
+        for (mdp_uint j = i + 1; j < n; j++)
         {
           mat(i, j) = 0.5 * (vec[a] - I * vec[pos1 + a]);
           mat(j, i) = 0.5 * (vec[a] + I * vec[pos1 + a]);
           a++;
         }
       }
-      for (int i = 0; i < n - 1; i++)
+      for (mdp_uint i = 0; i < n - 1; i++)
       {
         mult = vec[pos2 + i] * (1.0 / std::sqrt(2. + 2. / (1. + i)) / (1. + i));
-        for (int j = 0; j < i + 1; j++)
+        for (mdp_uint j = 0; j < i + 1; j++)
         {
           mat(j, j) += mult;
         }
@@ -70,13 +69,13 @@ namespace MDP
     }
 
   public:
-    SU_Generators(int N) : n(N), ngenerators(n * n - 1), m_lambda(ngenerators)
+    SU_Generators(mdp_uint N) : n(N), ngenerators(n * n - 1), m_lambda(ngenerators)
     {
-      for (int a = 0; a < ngenerators; a++)
+      for (mdp_uint a = 0; a < ngenerators; a++)
         m_lambda[a] = build_matrix(a);
     }
 
-    const mdp_matrix &lambda(int m) const
+    const mdp_matrix &lambda(mdp_uint m) const
     {
       return m_lambda[m];
     }

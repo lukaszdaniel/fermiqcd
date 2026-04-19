@@ -14,6 +14,7 @@
 
 #include <cmath>
 #include <memory>
+#include "mdp_global_vars.h"
 #include "mdp_macros.h"
 #include "mdp_random.h"
 
@@ -24,7 +25,7 @@ namespace MDP
   /// Example:
   /// @verbatim
   ///    mdp_jackboot jb(10,2);
-  ///    for(int k=0; k<10; k++) {
+  ///    for(mdp_uint k=0; k<10; k++) {
   ///       jb(k,0)=mdp_global_random.plain();
   ///       jb(k,1)=mdp_global_random.plain();
   ///    }
@@ -40,11 +41,11 @@ namespace MDP
   class mdp_jackboot
   {
   private:
-    int m_nconf;
-    int m_narg;
-    int m_conf;
-    std::unique_ptr<float[]> m_data;
-    int m_mdp_jackboot_plain_int;
+    mdp_uint m_nconf;
+    mdp_uint m_narg;
+    mdp_uint m_conf;
+    std::unique_ptr<mdp_real[]> m_data;
+    mdp_uint m_mdp_jackboot_plain_int;
     const void *m_handle;
 
     /** @brief Initialize jackboot dataset
@@ -52,42 +53,42 @@ namespace MDP
      * @param nconf_ Number of datasets
      * @param narg_ Number of variables
      */
-    void dimension(int nconf_, int narg_ = 1)
+    void dimension(mdp_uint nconf_, mdp_uint narg_ = 1)
     {
       m_nconf = nconf_;
       m_narg = narg_;
       m_conf = 0;
       m_handle = nullptr;
 
-      m_data = std::make_unique<float[]>(m_nconf * m_narg);
+      m_data = std::make_unique<mdp_real[]>(m_nconf * m_narg);
 
-      for (int i = 0; i < m_nconf; i++)
-        for (int j = 0; j < m_narg; j++)
+      for (mdp_uint i = 0; i < m_nconf; i++)
+        for (mdp_uint j = 0; j < m_narg; j++)
           m_data[i * m_narg + j] = 0;
     }
 
-    void makesample(int p[], int nboot)
+    void makesample(mdp_uint p[], mdp_uint nboot)
     {
-      for (int boot = 0; boot < nboot; boot++)
-        for (int j = 0; j <= m_conf; j++)
-          p[j + (m_conf + 1) * boot] = (int)((m_conf + 1) * mdp_global_random.plain());
+      for (mdp_uint boot = 0; boot < nboot; boot++)
+        for (mdp_uint j = 0; j <= m_conf; j++)
+          p[j + (m_conf + 1) * boot] = (mdp_uint)((m_conf + 1) * mdp_global_random.plain());
     }
 
-    static float mdp_jackboot_plain(const float x[], const void *a)
+    static mdp_real mdp_jackboot_plain(const mdp_real x[], const void *a)
     {
-      const int *i_ptr = static_cast<const int *>(a);
+      const mdp_uint *i_ptr = static_cast<const mdp_uint *>(a);
       return x[*i_ptr];
     }
 
   public:
-    float (*f)(const float *, const void *);
+    mdp_real (*f)(const mdp_real *, const void *);
 
     /** @brief allocate container for nconf_ datasets of nargs_ numbers each
      *
      * @param nconf_ Number of datasets
      * @param narg_ Number of variables
      */
-    mdp_jackboot(int nconf_, int narg_ = 1)
+    mdp_jackboot(mdp_uint nconf_, mdp_uint narg_ = 1)
     {
       dimension(nconf_, narg_);
     }
@@ -96,32 +97,29 @@ namespace MDP
     {
     }
 
-    float *address(int conf)
+    mdp_real *address(mdp_uint conf)
     {
       return m_data.get() + conf * m_narg;
     }
 
-    float &operator()(int present_conf, int arg)
+    mdp_real &operator()(mdp_uint present_conf, mdp_uint arg)
     {
       m_conf = present_conf;
       return m_data[m_conf * m_narg + arg];
     }
 
-    float &operator()(int arg)
+    mdp_real &operator()(mdp_uint arg)
     {
       return m_data[m_conf * m_narg + arg];
     }
 
-    void set_conf(int conf)
+    void set_conf(mdp_uint conf)
     {
       m_conf = conf;
     }
 
-    void plain(int i)
+    void plain(mdp_uint i)
     {
-      if ((i < 0) || (i >= m_narg))
-        error("incorrect mdp_jackboot.plain() argument");
-
       m_mdp_jackboot_plain_int = i;
       m_handle = (const void *)&m_mdp_jackboot_plain_int;
       f = mdp_jackboot_plain;
@@ -129,17 +127,17 @@ namespace MDP
 
     /** @brief Calculate sample mean
      */
-    float mean()
+    mdp_real mean()
     {
-      std::unique_ptr<float[]> average = std::make_unique<float[]>(m_narg);
+      std::unique_ptr<mdp_real[]> average = std::make_unique<mdp_real[]>(m_narg);
 
       if (m_conf == 0)
         return f(&m_data[0], m_handle);
 
-      for (int i = 0; i < m_narg; i++)
+      for (mdp_uint i = 0; i < m_narg; i++)
       {
         average[i] = 0;
-        for (int j = 0; j <= m_conf; j++)
+        for (mdp_uint j = 0; j <= m_conf; j++)
           average[i] += m_data[j * m_narg + i] / (m_conf + 1);
       }
 
@@ -148,28 +146,28 @@ namespace MDP
 
     /** @brief Calculate Jacknife error
      */
-    float j_err()
+    mdp_real j_err()
     {
-      std::unique_ptr<float[]> average = std::make_unique<float[]>((m_conf + 1) * m_narg);
+      std::unique_ptr<mdp_real[]> average = std::make_unique<mdp_real[]>((m_conf + 1) * m_narg);
 
       if (m_conf < 2)
         return 0;
 
-      for (int i = 0; i < m_narg; i++)
-        for (int j = 0; j <= m_conf; j++)
+      for (mdp_uint i = 0; i < m_narg; i++)
+        for (mdp_uint j = 0; j <= m_conf; j++)
         {
           average[j * m_narg + i] = 0;
-          for (int k = 0; k <= m_conf; k++)
+          for (mdp_uint k = 0; k <= m_conf; k++)
             // typo noticed by Chris Schroeder was fixed!
             if (j != k)
               average[j * m_narg + i] +=
                   (m_data[k * m_narg + i] / (m_nconf - 1));
         }
 
-      float mean0 = mean();
-      float stddev = 0;
+      mdp_real mean0 = mean();
+      mdp_real stddev = 0;
 
-      for (int j = 0; j <= m_conf; j++)
+      for (mdp_uint j = 0; j <= m_conf; j++)
         stddev += std::pow(f(&(average[j * m_narg]), m_handle) - mean0, 2.0);
 
       return std::sqrt(stddev * m_conf / (m_conf + 1));
@@ -179,46 +177,47 @@ namespace MDP
      *
      * @param nboot Number of boostrap iterations
      */
-    float b_err(int nboot = 100)
+    mdp_real b_err(mdp_uint nboot = 100)
     {
-      float vx, vy, tmp;
-      std::unique_ptr<float[]> average = std::make_unique<float[]>(nboot * m_narg);
-      std::unique_ptr<int[]> p = std::make_unique<int[]>((m_conf + 1) * nboot);
+      mdp_real vx, vy;
+      std::unique_ptr<mdp_real[]> average = std::make_unique<mdp_real[]>(nboot * m_narg);
+      std::unique_ptr<mdp_uint[]> p = std::make_unique<mdp_uint[]>((m_conf + 1) * nboot);
 
       makesample(p.get(), nboot);
 
       if (m_conf == 0)
         return 0;
 
-      for (int i = 0; i < m_narg; i++)
-        for (int boot = 0; boot < nboot; boot++)
+      for (mdp_uint i = 0; i < m_narg; i++)
+        for (mdp_uint boot = 0; boot < nboot; boot++)
         {
           average[boot * m_narg + i] = 0;
-          for (int j = 0; j <= m_conf; j++)
+          for (mdp_uint j = 0; j <= m_conf; j++)
             average[boot * m_narg + i] += m_data[p[j + (m_conf + 1) * boot] * m_narg + i];
           average[boot * m_narg + i] /= m_conf + 1;
         }
 
-      for (int x = 1; x < nboot; x++)
+      for (mdp_uint x = 1; x < nboot; x++)
       {
         vx = f(&(average[x * m_narg]), m_handle);
-        for (int y = x - 1; y >= 0; y--)
+        for (mdp_uint y = x; y > 0; y--)
         {
-          vy = f(&(average[y * m_narg]), m_handle);
+          vy = f(&(average[(y - 1) * m_narg]), m_handle);
           if (vy > vx)
-            for (int i = 0; i < m_narg; i++)
+            for (mdp_uint i = 0; i < m_narg; i++)
             {
-              tmp = average[(y + 1) * m_narg + i];
-              average[(y + 1) * m_narg + i] = average[y * m_narg + i];
-              average[y * m_narg + i] = tmp;
+              std::swap(average[y * m_narg + i], average[(y - 1) * m_narg + i]);
+              // mdp_real tmp = average[y * m_narg + i];
+              // average[y * m_narg + i] = average[(y - 1) * m_narg + i];
+              // average[(y - 1) * m_narg + i] = tmp;
             }
           else
             y = -1;
         }
       }
 
-      vx = f(&(average[((int)(nboot * 0.16)) * m_narg]), m_handle);
-      vy = f(&(average[((int)(nboot * 0.84)) * m_narg]), m_handle);
+      vx = f(&(average[(mdp_uint(nboot * 0.16)) * m_narg]), m_handle);
+      vy = f(&(average[(mdp_uint(nboot * 0.84)) * m_narg]), m_handle);
 
       return (vy - vx) / 2.0;
     }

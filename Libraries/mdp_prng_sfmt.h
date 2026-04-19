@@ -31,24 +31,24 @@ namespace MDP
   {
   private:
     bool initialized;
-    static constexpr unsigned int MEXP = 19937;
-    static constexpr unsigned int N = 156;
-    static constexpr unsigned int N32 = 624;
-    static constexpr unsigned int POS1 = 122;
-    static constexpr unsigned int SL1 = 18;
-    static constexpr unsigned int SL2 = 1;
-    static constexpr unsigned int SR1 = 11;
-    static constexpr unsigned int SR2 = 1;
-    unsigned int idx;
+    static constexpr mdp_uint MEXP = 19937;
+    static constexpr mdp_uint N = 156;
+    static constexpr mdp_uint N32 = 624;
+    static constexpr mdp_uint POS1 = 122;
+    static constexpr mdp_uint SL1 = 18;
+    static constexpr mdp_uint SL2 = 1;
+    static constexpr mdp_uint SR1 = 11;
+    static constexpr mdp_uint SR2 = 1;
+    mdp_uint idx;
 
     struct W128_T
     {
-      unsigned int u[4];
+      mdp_uint u[4];
     };
 
     using w128_t = struct W128_T;
     w128_t sfmt[N];
-    unsigned int *psfmt32;
+    mdp_uint *psfmt32;
 
     /**
      * @brief Ensures that the internal state satisfies the SFMT period property.
@@ -59,13 +59,13 @@ namespace MDP
      */
     void period_certification(void)
     {
-      static unsigned int parity[4] = {PARITY1, PARITY2, PARITY3, PARITY4};
-      unsigned int inner = 0;
-      unsigned int work;
+      static mdp_uint parity[4] = {PARITY1, PARITY2, PARITY3, PARITY4};
+      mdp_uint inner = 0;
+      mdp_uint work;
 
-      for (unsigned int i = 0; i < 4; i++)
+      for (mdp_suint i = 0; i < 4; i++)
         inner ^= psfmt32[i] & parity[i];
-      for (unsigned int i = 16; i > 0; i >>= 1)
+      for (mdp_suint i = 16; i > 0; i >>= 1)
         inner ^= inner >> i;
       inner &= 1;
       /* check OK */
@@ -74,10 +74,10 @@ namespace MDP
         return;
       }
       /* check NG, and modification */
-      for (unsigned int i = 0; i < 4; i++)
+      for (mdp_suint i = 0; i < 4; i++)
       {
         work = 1;
-        for (unsigned int j = 0; j < 32; j++)
+        for (mdp_suint j = 0; j < 32; j++)
         {
           if ((work & parity[i]) != 0)
           {
@@ -99,19 +99,19 @@ namespace MDP
      * @param in Pointer to the input 128-bit value.
      * @param shift Number of bytes to shift.
      */
-    void rshift128(w128_t *out, w128_t const *in, int shift)
+    void rshift128(w128_t *out, w128_t const *in, mdp_uint shift)
     {
-      size_t th = ((size_t)in->u[3] << 32) | ((unsigned int)in->u[2]);
-      size_t tl = ((size_t)in->u[1] << 32) | ((unsigned int)in->u[0]);
+      size_t th = ((size_t)in->u[3] << 32) | ((mdp_uint)in->u[2]);
+      size_t tl = ((size_t)in->u[1] << 32) | ((mdp_uint)in->u[0]);
 
       size_t oh = th >> (shift * 8);
       size_t ol = tl >> (shift * 8);
       ol |= th << (64 - shift * 8);
 
-      out->u[1] = (unsigned int)(ol >> 32);
-      out->u[0] = (unsigned int)ol;
-      out->u[3] = (unsigned int)(oh >> 32);
-      out->u[2] = (unsigned int)oh;
+      out->u[1] = (mdp_uint)(ol >> 32);
+      out->u[0] = (mdp_uint)ol;
+      out->u[3] = (mdp_uint)(oh >> 32);
+      out->u[2] = (mdp_uint)oh;
     }
 
     /**
@@ -124,19 +124,19 @@ namespace MDP
      * @param in Pointer to the input 128-bit value.
      * @param shift Number of bytes to shift.
      */
-    void lshift128(w128_t *out, w128_t const *in, int shift)
+    void lshift128(w128_t *out, w128_t const *in, mdp_uint shift)
     {
-      size_t th = ((size_t)in->u[3] << 32) | ((unsigned int)in->u[2]);
-      size_t tl = ((size_t)in->u[1] << 32) | ((unsigned int)in->u[0]);
+      size_t th = ((size_t)in->u[3] << 32) | ((mdp_uint)in->u[2]);
+      size_t tl = ((size_t)in->u[1] << 32) | ((mdp_uint)in->u[0]);
 
       size_t oh = th << (shift * 8);
       size_t ol = tl << (shift * 8);
       oh |= tl >> (64 - shift * 8);
 
-      out->u[1] = (unsigned int)(ol >> 32);
-      out->u[0] = (unsigned int)ol;
-      out->u[3] = (unsigned int)(oh >> 32);
-      out->u[2] = (unsigned int)oh;
+      out->u[1] = (mdp_uint)(ol >> 32);
+      out->u[0] = (mdp_uint)ol;
+      out->u[3] = (mdp_uint)(oh >> 32);
+      out->u[2] = (mdp_uint)oh;
     }
 
     /**
@@ -200,9 +200,9 @@ namespace MDP
      *
      * @return 32-bit pseudorandom unsigned integer.
      */
-    unsigned int gen_rand32()
+    mdp_uint gen_rand32()
     {
-      unsigned int r;
+      mdp_uint r;
       assert(initialized);
 
       if (idx >= N32)
@@ -230,12 +230,12 @@ namespace MDP
      *
      * @param seed Initial seed value.
      */
-    void initialize(unsigned int seed)
+    void initialize(mdp_uint seed)
     {
-      psfmt32 = (unsigned int *)&(sfmt[0].u[0]);
+      psfmt32 = (mdp_uint *)&(sfmt[0].u[0]);
 
       psfmt32[0] = seed;
-      for (unsigned int i = 1; i < N32; i++)
+      for (mdp_suint i = 1; i < N32; i++)
       {
         psfmt32[i] = 1812433253UL * (psfmt32[i - 1] ^ (psfmt32[i - 1] >> 30)) + i;
       }
@@ -251,11 +251,11 @@ namespace MDP
      * The value is generated from a 32-bit random integer and normalized
      * to the interval [0, 1].
      *
-     * @return Random float in the range [0, 1].
+     * @return Random mdp_real in the range [0, 1].
      */
-    inline float plain() noexcept
+    inline mdp_real plain() noexcept
     {
-      unsigned int v = gen_rand32();
+      mdp_uint v = gen_rand32();
       return v * (1.0 / 4294967295.0);
     }
   };

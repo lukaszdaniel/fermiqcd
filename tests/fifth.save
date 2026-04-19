@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=5729
+PSIM LOG: process 0 of 1 created with pid=7392
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -23,19 +23,19 @@ Lattice created.
 <coefficient name="beta">6</coefficient>
 </print_coefficients>
 	<stats>
-		<time>0.190117</time>
+		<time>0.098266</time>
 	</stats>
 </WilsonGaugeAction__heatbath>
-(0.0823613,1.06368e-20)
+(0.0823613,-5.35765e-20)
 <close_wormholes>
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=8.67% PROCESS=8.86% COMM=0.00%
+* Process 0 stats: CPU=9.74% PROCESS=10.07% COMM=0.00%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 0.858193 sec.
+PROCESS 0 ENDING AFTER 0.50904 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating

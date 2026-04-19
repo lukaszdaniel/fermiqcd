@@ -34,10 +34,10 @@ namespace MDP
     mdp_complex c1 = Gamma5_val[1];
     mdp_complex c2 = Gamma5_val[2];
     mdp_complex c3 = Gamma5_val[3];
-    int i0 = Gamma5_idx[0];
-    int i1 = Gamma5_idx[1];
-    int i2 = Gamma5_idx[2];
-    int i3 = Gamma5_idx[3];
+    mdp_suint i0 = Gamma5_idx[0];
+    mdp_suint i1 = Gamma5_idx[1];
+    mdp_suint i2 = Gamma5_idx[2];
+    mdp_suint i3 = Gamma5_idx[3];
     forallsites(x)
     {
       for (mdp_uint i = 0; i < 3; i++)

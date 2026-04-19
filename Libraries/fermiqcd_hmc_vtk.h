@@ -47,17 +47,17 @@ namespace MDP
     std::unique_ptr<FermiClass> to_old_f_F;
 
   public:
-    static constexpr int FUNDAMENTAL = 0;
-    static constexpr int SYMMETRIC = 1;
-    static constexpr int ANTISYMMETRIC = 2;
-    static constexpr int SO4 = 14;
+    static constexpr mdp_suint FUNDAMENTAL = 0;
+    static constexpr mdp_suint SYMMETRIC = 1;
+    static constexpr mdp_suint ANTISYMMETRIC = 2;
+    static constexpr mdp_suint SO4 = 14;
     coefficients coeff;
-    double bs, bs_old;
-    double fs, fs_old;
+    mdp_real bs, bs_old;
+    mdp_real fs, fs_old;
     mdp_real s_old;
-    int numgen;
-    int accepted;
-    int steps;
+    mdp_uint numgen;
+    mdp_uint accepted;
+    mdp_uint steps;
     std::vector<mdp_matrix> S;
     std::vector<mdp_matrix> lambda;
 
@@ -115,7 +115,7 @@ namespace MDP
       FermiClass &old_F = *(to_old_F);
       FermiClass &old_f_F = *(to_old_f_F);
 
-      double h_old, k_old, k_new, s_new, h_new;
+      mdp_real h_old, k_old, k_new, s_new, h_new;
 
       // IS THIS NEEDD?
       // U.update();
@@ -143,7 +143,7 @@ namespace MDP
       old_f_U = f_U;
       old_f_F = f_F;
 
-      for (int i = 0; i < coeff["trajectory_length"]; i++)
+      for (mdp_int i = 0; i < coeff["trajectory_length"]; i++)
         compute_fields_evolution(U, p_U, f_U, F, p_F, f_F);
 
       s_new = compute_action(U, V, F);
@@ -153,10 +153,9 @@ namespace MDP
       std::cout << "h_new " << h_new << std::endl;
 
       // metropolis test
-      float random_number = mdp_global_random.plain();
+      mdp_real random_number = mdp_global_random.plain();
       mdp.broadcast(random_number, 0);
-      bool always_accept = false;
-      if (always_accept || random_number < std::exp(h_old - h_new))
+      if (random_number < std::exp(h_old - h_new))
       {
         // ACCEPT
         mdp << "DH: " << std::abs(h_new - h_old) / h_new << "\n";
@@ -180,7 +179,7 @@ namespace MDP
 
     mdp_real acceptance_rate()
     {
-      return (mdp_real)accepted / steps;
+      return (1.0 * accepted) / steps;
     }
 
     // methods that are specific for the particular action
@@ -193,16 +192,16 @@ namespace MDP
         numgen = g.ngenerators;
         to_V = to_U; // default
         lambda.resize(g.ngenerators);
-        for (int a = 0; a < lambda.size(); a++)
+        for (mdp_uint a = 0; a < lambda.size(); a++)
           lambda[a] = g.lambda(a);
       }
       else if (coeff["representation"] == SYMMETRIC)
       {
         SU_Generators g(U.nc());
         numgen = g.ngenerators;
-        int dimrep = U.nc() * (U.nc() + 1) / 2;
+        mdp_uint dimrep = U.nc() * (U.nc() + 1) / 2;
         lambda.resize(g.ngenerators);
-        for (int a = 0; a < lambda.size(); a++)
+        for (mdp_uint a = 0; a < lambda.size(); a++)
           lambda[a] = g.lambda(a);
         owned_V = std::make_unique<GaugeClass>(U.lattice(), dimrep);
         to_V = owned_V.get();
@@ -234,7 +233,7 @@ namespace MDP
         SO_Generators g(4);
         numgen = g.ngenerators;
         lambda.resize(g.ngenerators);
-        for (mdp_int a = 0; a < lambda.size(); a++)
+        for (mdp_uint a = 0; a < lambda.size(); a++)
           lambda[a] = g.lambda(a);
         to_V = to_U;
       }
@@ -268,7 +267,7 @@ namespace MDP
         for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
           U(x, mu) = 0;
-          for (mdp_int a = 0; a < numgen; a++)
+          for (mdp_uint a = 0; a < numgen; a++)
           {
             re = U.lattice().random(x).gaussian();
             // im = U.lattice().random(x).gaussian();
@@ -346,10 +345,10 @@ namespace MDP
 
     mdp_real compute_action(GaugeClass &U, GaugeClass &V, FermiClass &F)
     {
-      double action_gauge = 0.0, action_fermi = 0.0;
+      mdp_real action_gauge = 0.0, action_fermi = 0.0;
       mdp_site x(U.lattice());
       FermiClass inverse_F(F);
-      double c = coeff["beta"] * (U.ndim() * (U.ndim() - 1) * U.lattice().global_volume()) / 2;
+      mdp_real c = coeff["beta"] * (U.ndim() * (U.ndim() - 1) * U.lattice().global_volume()) / 2;
       action_gauge = -c * average_plaquette(U);
       if (coeff["dynamical_fermions"] > 0)
       {
@@ -472,7 +471,6 @@ namespace MDP
 
       if (coeff["dynamical_fermions"] > 0)
       {
-
         compute_effective_links(U, V);
         CG2::inverter(sol, F, V, coeff,
                       coeff["cg_absolute_precision"],
@@ -580,7 +578,7 @@ namespace MDP
           for (mdp_suint mu = 0; mu < U.ndim(); mu++)
           {
             dum = 0;
-            for (mdp_int g = 0; g < numgen; g++)
+            for (mdp_uint g = 0; g < numgen; g++)
             {
               f = 2.0 * trace(lambda[g] * tmp2 * Udag(x, mu)).real() - 2.0 * trace(lambda[g] * U(x, mu) * tmp1).real();
               dum = dum - f * lambda[g];

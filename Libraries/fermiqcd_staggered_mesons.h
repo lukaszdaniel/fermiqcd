@@ -44,9 +44,9 @@ namespace MDP
     {
     }
 
-    int component(mdp_site x, mdp_site y)
+    mdp_int component(mdp_site x, mdp_site y)
     {
-      int i = 0;
+      mdp_uint i = 0;
       for (mdp_suint mu = 0; mu < KS_NDIM; mu++)
       {
         if (x(mu) / 2 != y(mu) / 2)
@@ -58,7 +58,7 @@ namespace MDP
 
     void compute(mdp_matrix GAMMA, mdp_matrix ZETA)
     {
-      int A[KS_NDIM], B[KS_NDIM];
+      mdp_uint A[KS_NDIM], B[KS_NDIM];
       mdp_matrix G1, G2, ZETA_H;
       mdp_site x(lattice());
       ZETA_H = hermitian(ZETA);
@@ -85,7 +85,7 @@ namespace MDP
             if (B[nu] != 0)
               G2 = G2 * Gamma[nu];
           }
-          *address(x, i) = (int)(0.25 * real(trace(G1 * GAMMA * G2 * ZETA_H)));
+          *address(x, i) = (mdp_int)(0.25 * real(trace(G1 * GAMMA * G2 * ZETA_H)));
         }
       }
     }
@@ -101,8 +101,9 @@ namespace MDP
     mdp_site x1(U.lattice());
     mdp_site x2(U.lattice());
     mdp_site y(U.lattice());
-    int A[KS_NDIM], B[KS_NDIM], P[4][2];
-    int d, i0, i1, i2, i3;
+    mdp_uint A[KS_NDIM], B[KS_NDIM];
+    mdp_int P[4][2];
+    mdp_uint d, i0, i1, i2, i3;
     mdp_matrix paths, path;
     path = mdp_identity(U.nc());
     paths.dimension(U.nc(), U.nc());
@@ -114,7 +115,7 @@ namespace MDP
         out(x, c) = 0;
       for (mdp_suint mu = 0; mu < KS_NDIM; mu++)
         A[mu] = x(mu) % 2;
-      for (int i = 0; i < 16; i++)
+      for (mdp_suint i = 0; i < 16; i++)
         if (phases(x, i) != 0)
         {
           B[0] = (i >> 3) & 0x1;
@@ -188,16 +189,16 @@ namespace MDP
     }
   }
 
-  constexpr int local_source = 1; // 2^0
-  constexpr int wall_source = 2;  // 2^1
+  constexpr mdp_suint local_source = 1; // 2^0
+  constexpr mdp_suint wall_source = 2;  // 2^1
 
   mdp_matrix make_meson(gauge_field &U, gauge_field &V,
                         mdp_matrix GAMMA,
                         mdp_matrix ZETA,
                         coefficients &coeff1,
                         coefficients &coeff2,
-                        int source1_type = wall_source,
-                        int source2_type = wall_source & local_source,
+                        mdp_suint source1_type = wall_source,
+                        mdp_suint source2_type = wall_source & local_source,
                         mdp_real precision = 1e-7)
   {
 
@@ -272,12 +273,11 @@ namespace MDP
 
   mdp_matrix GoldstonBoson_5x5(gauge_field &U,         // input gauge field
                                gauge_field &V,         // input fat and link links
-                               coefficients &coeff/*,    // input quark mass
-                               float precision = 1e-6*/) // color source index
+                               coefficients &coeff)    // input quark mass
   {
     // // Local variable /////////////
-    unsigned int t_source = 0;             // location of the source (timeslice)
-    unsigned int t, nt                     // number of timeslices
+    constexpr mdp_suint t_source = 0;      // location of the source (timeslice)
+    mdp_uint t, nt                         // number of timeslices
                     = U.lattice().size(0); //
     mdp_matrix tmp(nt, U.nc());            // auxiliary var
     mdp_matrix prop(2, nt);                // output vector
@@ -343,7 +343,7 @@ namespace MDP
                                                      //
     }
     // // Normalize output and retrun //////////////////
-    int volume = U.lattice().size(1) *
+    mdp_uint volume = U.lattice().size(1) *
                  U.lattice().size(2) *
                  U.lattice().size(3);
     for (t = 0; t < nt; t++)

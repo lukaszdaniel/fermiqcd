@@ -47,7 +47,7 @@ namespace MDP
     mdp_prng m_prng;
 #endif
     bool m_has_gauss = false;
-    float m_gauss_cache = 0;
+    mdp_real m_gauss_cache = 0;
 
   public:
     mdp_random(mdp_int k = 0) : m_prng()
@@ -62,18 +62,18 @@ namespace MDP
     }
 
     /// return a uniform random number in (0,1)
-    inline float plain() noexcept
+    inline mdp_real plain() noexcept
     {
       return m_prng.plain();
     }
 
-    inline double uniform() noexcept
+    inline mdp_real uniform() noexcept
     {
-      return static_cast<double>(m_prng.plain());
+      return m_prng.plain();
     }
 
     /// returns a gaussian random number
-    float gaussian(float sigma = 1.0f) noexcept
+    mdp_real gaussian(mdp_real sigma = 1.0) noexcept
     {
       if (m_has_gauss)
       {
@@ -81,11 +81,11 @@ namespace MDP
         return m_gauss_cache * sigma;
       }
 
-      float u1 = m_prng.plain();
-      float u2 = m_prng.plain();
+      mdp_real u1 = m_prng.plain();
+      mdp_real u2 = m_prng.plain();
 
-      float r = std::sqrt(-2.0f * std::log(u1));
-      float theta = 2.0f * Pi * u2;
+      mdp_real r = std::sqrt(-2.0f * std::log(u1));
+      mdp_real theta = 2.0f * Pi * u2;
 
       m_gauss_cache = r * std::cos(theta);
       m_has_gauss = true;
@@ -93,10 +93,10 @@ namespace MDP
       return sigma * r * std::sin(theta);
     }
 
-    /// draws a random float in (0,1) from a distribution using accept-reject
-    double distribution(float (*fp)(float, void *), void *a = nullptr)
+    /// draws a random mdp_real in (0,1) from a distribution using accept-reject
+    mdp_real distribution(mdp_real (*fp)(mdp_real, void *), void *a = nullptr)
     {
-      float x, y;
+      mdp_real x, y;
       do
       {
         x = m_prng.plain();
@@ -106,30 +106,30 @@ namespace MDP
     }
 
     /// returns a random SU(n) matrix using Cabibbo-Marinari
-    mdp_matrix SU(int n) noexcept
+    mdp_matrix SU(mdp_suint n) noexcept
     {
       if (n == 1)
       {
         mdp_matrix tmp(1, 1);
-        float alpha = 2.0 * Pi * m_prng.plain();
+        mdp_real alpha = 2.0 * Pi * m_prng.plain();
         tmp(0, 0) = mdp_complex(std::cos(alpha), std::sin(alpha));
         return tmp;
       }
 
       mdp_matrix M = mdp_identity(n);
 
-      for (int i = 0; i < n - 1; ++i)
+      for (mdp_suint i = 0; i < n - 1; ++i)
       {
-        for (int j = i + 1; j < n; ++j)
+        for (mdp_suint j = i + 1; j < n; ++j)
         {
-          float alpha = Pi * m_prng.plain();
-          float phi = 2.0f * Pi * m_prng.plain();
+          mdp_real alpha = Pi * m_prng.plain();
+          mdp_real phi = 2.0f * Pi * m_prng.plain();
 
-          float z = 2.0f * m_prng.plain() - 1.0f;
-          float s = std::sqrt(1.0f - z * z);
+          mdp_real z = 2.0f * m_prng.plain() - 1.0f;
+          mdp_real s = std::sqrt(1.0f - z * z);
 
-          float sa, ca;
-          float sp, cp;
+          mdp_real sa, ca;
+          mdp_real sp, cp;
 
 #if 0 // defined(__GNUC__)
           __builtin_sincosf(alpha, &sa, &ca);
@@ -141,10 +141,10 @@ namespace MDP
           cp = std::cos(phi);
 #endif
 
-          float a0 = ca;
-          float a1 = sa * s * cp;
-          float a2 = sa * s * sp;
-          float a3 = sa * z;
+          mdp_real a0 = ca;
+          mdp_real a1 = sa * s * cp;
+          mdp_real a2 = sa * s * sp;
+          mdp_real a3 = sa * z;
 
           mdp_complex *row_i = &M(i, 0);
           mdp_complex *row_j = &M(j, 0);
@@ -154,7 +154,7 @@ namespace MDP
           mdp_complex C(-a2, a1);
           mdp_complex D(a0, -a3);
 
-          for (int k = 0; k < n; ++k)
+          for (mdp_suint k = 0; k < n; ++k)
           {
             mdp_complex xi = row_i[k];
             mdp_complex xj = row_j[k];
@@ -169,7 +169,7 @@ namespace MDP
     }
 
     /// skip n numbers from the sequence
-    void skip(size_t n)
+    void skip(mdp_uint n)
     {
       while (n--) [[likely]]
         m_prng.plain();

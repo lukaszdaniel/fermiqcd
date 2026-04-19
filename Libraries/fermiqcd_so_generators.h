@@ -22,27 +22,27 @@ namespace MDP
   // #include "fermiqcd.h"
   // int main() {
   //  SO_Generators g(4);
-  //  for(int a=0; a<g.ngenerators; a++)
+  //  for(mdp_uint a=0; a<g.ngenerators; a++)
   //    std::cout << "g=" << g.lambda(a) << std::endl;
   //  return 0;
   // }
   class SO_Generators
   {
   public:
-    const int n;
-    const int ngenerators;
+    const mdp_uint n;
+    const mdp_uint ngenerators;
 
   private:
     std::vector<mdp_matrix> m_lambda;
 
   public:
-    SO_Generators(int N) : n(N), ngenerators(n * (n - 1) / 2), m_lambda(ngenerators)
+    SO_Generators(mdp_uint N) : n(N), ngenerators(n * (n - 1) / 2), m_lambda(ngenerators)
     {
       mdp_matrix temp(n, n);
       mdp_complex z = 1.0 / std::sqrt(2.0);
-      int k = 0;
-      for (int j = 0; j < n - 1; j++)
-        for (int i = j + 1; i < n; i++)
+      mdp_uint k = 0;
+      for (mdp_uint j = 0; j < n - 1; j++)
+        for (mdp_uint i = j + 1; i < n; i++)
         {
           temp = 0;
           temp(i, j) = z;
@@ -51,7 +51,7 @@ namespace MDP
         }
     }
 
-    const mdp_matrix &lambda(int m) const
+    const mdp_matrix &lambda(mdp_uint m) const
     {
       return m_lambda[m];
     }

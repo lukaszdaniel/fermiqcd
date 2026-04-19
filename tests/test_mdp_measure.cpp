@@ -115,7 +115,7 @@ void test_log()
 void test_sampling()
 {
   mdp_measure a(5, 2);
-  float x;
+  mdp_real x;
   a >> x;
 
   assert_near(x, 6.40774, 1e-6, "sampling (gaussian)");
@@ -129,8 +129,9 @@ void test_edge_division()
 
   auto c = a / b;
   assert(std::isfinite(c.getmean()));
-  assert_near(c.getmean(), 1e6, 1e-6, "div mean");
-  assert_near(c.getmerr(), 100000104448, 1e-6, "div error");
+  assert_near(c.getmean(), 1000000, 1e-6, "div mean");
+  assert_near(c.getmerr(), 100000100000, 1e-6, "div error");
+  // std::cerr << std::setprecision(15) << c.getmean() << " +/- " << c.getmerr() << "\n";
 }
 
 int main()

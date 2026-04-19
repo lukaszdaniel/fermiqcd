@@ -30,15 +30,23 @@ namespace MDP
 {
   /** @brief Gamma matrices and relatives!
    */
-  mdp_complex Gamma_val[4][4], Sigma_val[4][4][4];
-  int Gamma_idx[4][4], Sigma_idx[4][4][4];
-  mdp_complex Gamma5_val[4], GammaxGamma5_val[4][4];
-  int Gamma5_idx[4], GammaxGamma5_idx[4][4];
-  mdp_complex Gamma_valr[4][4], Sigma_valr[4][4][4];
-  int Gamma_idxr[4][4], Sigma_idxr[4][4][4];
-  mdp_complex Gamma5_valr[4], GammaxGamma5_valr[4][4];
-  int Gamma5_idxr[4], GammaxGamma5_idxr[4][4];
-  int G16_idx[16][4];
+  mdp_complex Gamma_val[4][4];
+  mdp_complex Sigma_val[4][4][4];
+  mdp_suint Gamma_idx[4][4];
+  mdp_suint Sigma_idx[4][4][4];
+  mdp_complex Gamma5_val[4];
+  mdp_complex GammaxGamma5_val[4][4];
+  mdp_suint Gamma5_idx[4];
+  mdp_suint GammaxGamma5_idx[4][4];
+  mdp_complex Gamma_valr[4][4];
+  mdp_complex Sigma_valr[4][4][4];
+  mdp_suint Gamma_idxr[4][4];
+  mdp_suint Sigma_idxr[4][4][4];
+  mdp_complex Gamma5_valr[4];
+  mdp_complex GammaxGamma5_valr[4][4];
+  mdp_suint Gamma5_idxr[4];
+  mdp_suint GammaxGamma5_idxr[4][4];
+  mdp_suint G16_idx[16][4];
   mdp_complex G16_val[16][4];
 
   mdp_matrix Gamma[4], Gamma4, Gamma5, Pleft, Pright, Lambda[9];
@@ -61,7 +69,7 @@ namespace MDP
   {
     begin_function("define_base_matrices");
 
-    for (int i = 0; i < 4; i++)
+    for (mdp_suint i = 0; i < 4; i++)
       Gamma[i].dimension(4, 4);
 
     Gamma5.dimension(4, 4);
@@ -217,7 +225,7 @@ namespace MDP
 
     /* sigma matrices SU(2) generators */
 
-    for (int i = 0; i < 4; i++)
+    for (mdp_suint i = 0; i < 4; i++)
       sigma[i].dimension(2, 2);
     sigma[0](0, 0) = +1;
     sigma[0](1, 1) = +1;
@@ -230,7 +238,7 @@ namespace MDP
 
     /* Lambda matrices SU(3) generators */
 
-    for (int i = 0; i < 9; i++)
+    for (mdp_suint i = 0; i < 9; i++)
       Lambda[i].dimension(3, 3);
 
     Lambda[0](0, 0) = +1;
@@ -266,8 +274,8 @@ namespace MDP
 
     mdp_matrix tmp;
 
-    for (int i = 0; i < 4; i++)
-      for (int j = 0; j < 4; j++)
+    for (mdp_suint i = 0; i < 4; i++)
+      for (mdp_suint j = 0; j < 4; j++)
       {
         Sigma[i][j].dimension(4, 4);
         if (i != j)
@@ -278,8 +286,8 @@ namespace MDP
 
     /* Filling arrays for fast Gamma multiplication */
 
-    for (mdp_int a = 0; a < 4; a++)
-      for (mdp_int b = 0; b < 4; b++)
+    for (mdp_suint a = 0; a < 4; a++)
+      for (mdp_suint b = 0; b < 4; b++)
       {
         if (Gamma5(a, b) != mdp_complex(0, 0))
         {
@@ -293,8 +301,8 @@ namespace MDP
     for (mdp_suint mu = 0; mu < 4; mu++)
     {
       tmp = Gamma[mu] * Gamma5;
-      for (mdp_int a = 0; a < 4; a++)
-        for (mdp_int b = 0; b < 4; b++)
+      for (mdp_suint a = 0; a < 4; a++)
+        for (mdp_suint b = 0; b < 4; b++)
         {
           if (Gamma[mu](a, b) != mdp_complex(0, 0))
           {

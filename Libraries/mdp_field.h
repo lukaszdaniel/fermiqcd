@@ -749,7 +749,7 @@ namespace MDP
   mdp_real norm_square(mdp_complex_field &psi,
                        mdp_parity parity = EVENODD)
   {
-    double n2 = 0;
+    mdp_real n2 = 0;
     mdp_uint i_min = psi.physical_local_start(parity);
     mdp_uint i_max = psi.physical_local_stop(parity);
 
@@ -781,7 +781,7 @@ namespace MDP
                                mdp_parity parity = EVENODD)
   {
 
-    double n2 = 0;
+    mdp_real n2 = 0;
     mdp_uint i_min = psi.physical_local_start(parity);
     mdp_uint i_max = psi.physical_local_stop(parity);
 
@@ -800,7 +800,7 @@ namespace MDP
                                mdp_complex_field &chi,
                                mdp_parity parity = EVENODD)
   {
-    double n2 = 0;
+    mdp_real n2 = 0;
     mdp_uint i_min = psi.physical_local_start(parity);
     mdp_uint i_max = psi.physical_local_stop(parity);
 
@@ -849,7 +849,7 @@ namespace MDP
                             mdp_complex_field &q,
                             mdp_parity parity = EVENODD)
   {
-    double residue = 0, num = 0, den = 0;
+    mdp_real residue = 0, num = 0, den = 0;
     mdp_uint i_min = p.physical_local_start(parity);
     mdp_uint i_max = q.physical_local_stop(parity);
 

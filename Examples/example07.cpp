@@ -3,18 +3,18 @@
 
 using namespace MDP;
 
-constexpr int n = 100;
+constexpr mdp_suint n = 100;
 
-float f1(const float *x, [[maybe_unused]] const void *a) { return x[0] / x[1]; }
+mdp_real f1(const mdp_real *x, [[maybe_unused]] const void *a) { return x[0] / x[1]; }
 
-float f2(const float *x, [[maybe_unused]] const void *a) { return x[0] * x[1]; }
+mdp_real f2(const mdp_real *x, [[maybe_unused]] const void *a) { return x[0] * x[1]; }
 
 int main()
 {
    mdp_matrix A;
    mdp_jackboot jb(n, 2);
 
-   for (int i = 0; i < n; i++)
+   for (mdp_suint i = 0; i < n; i++)
    {
       A = Random.SU(6) + Random.gaussian();
       jb(i, 0) = real(det(inv(A)));

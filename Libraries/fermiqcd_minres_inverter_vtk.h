@@ -75,12 +75,12 @@ namespace MDP
       mdp.begin_function("MinimumResidueInverter");
 
       const std::string filename_prefix = inversion_vtk_prefix;
-      constexpr int tc = 0;
+      constexpr mdp_int tc = 0;
 
       fieldT q(psi_in);
       fieldT r(psi_in);
       mdp_real_scalar_field s(psi_in.lattice());
-      double residue, rresidue = -1, old_rresidue;
+      mdp_real residue, rresidue = -1, old_rresidue;
       mdp_complex alpha;
       mdp_uint step = 0;
       double time = mdp.time();

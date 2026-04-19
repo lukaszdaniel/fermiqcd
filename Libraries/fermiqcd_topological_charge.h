@@ -27,7 +27,7 @@ namespace MDP
   class HypSmearing
   {
   public:
-    static std::vector<float> s_alpha;
+    static std::vector<mdp_real> s_alpha;
 
     static bool contains(const std::vector<int> &set, int x)
     {
@@ -37,7 +37,7 @@ namespace MDP
   public:
     static void smear_aux(gauge_field &U,
                           // const std::vector<int> &set,
-                          int cooling_steps = 10)
+                          mdp_uint cooling_steps = 10)
     {
       mdp_site x(U.lattice());
       mdp_site y(U.lattice());
@@ -95,7 +95,7 @@ namespace MDP
     }
   };
 
-  std::vector<float> HypSmearing::s_alpha;
+  std::vector<mdp_real> HypSmearing::s_alpha;
 #endif
 
   // from Bonnet et al. Phys Rev D 62, 094509
@@ -105,12 +105,12 @@ namespace MDP
   public:
     static void smear(gauge_field &U,
                       mdp_real alpha = 0.7,
-                      int iterations = 20,
-                      int cooling_steps = 10)
+                      mdp_uint iterations = 20,
+                      mdp_uint cooling_steps = 10)
     {
       gauge_field V(U.lattice(), U.nc());
       mdp_site x(U.lattice());
-      for (int iter = 0; iter < iterations; iter++)
+      for (mdp_uint iter = 0; iter < iterations; iter++)
       {
         std::cout << "smearing step " << iter << "/" << iterations << std::endl;
         V = U;
@@ -162,7 +162,7 @@ namespace MDP
     Q.update();
   }
 
-  float topological_charge_vtk(gauge_field &U, std::string filename, int t_slice = -1)
+  mdp_real topological_charge_vtk(gauge_field &U, std::string filename, mdp_int t_slice = -1)
   {
     mdp_real_scalar_field Q(U.lattice()), P(U.lattice());
     mdp_site x(U.lattice());
@@ -184,7 +184,7 @@ namespace MDP
       P.update();
     }
     P.save_vtk(filename.replace(filename.rfind(".sum."), 5, ".flat."), 0);
-    double total = 0.0;
+    mdp_real total = 0.0;
     forallsites(x) total += Q(x);
     mdp.add(total);
     return total;

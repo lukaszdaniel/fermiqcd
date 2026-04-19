@@ -77,7 +77,7 @@ namespace MDP
   /// Compute average plaquette on plane mu-nu
   mdp_real average_plaquette(const gauge_field &U, mdp_suint mu, mdp_suint nu)
   {
-    double tmp = 0;
+    mdp_real tmp = 0;
     mdp_site x(U.lattice());
     // U.update();
     forallsites(x)
@@ -91,7 +91,7 @@ namespace MDP
   /// Compute average plaquette (all planes)
   mdp_real average_plaquette(const gauge_field &U)
   {
-    double tmp = 0;
+    mdp_real tmp = 0;
     mdp_site x(U.lattice());
     // U.update();
 

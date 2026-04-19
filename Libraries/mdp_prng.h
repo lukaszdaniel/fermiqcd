@@ -23,13 +23,13 @@ namespace MDP
   class mdp_prng
   {
   private:
-    static constexpr float cd = 7654321.0f / 16777216.0f;
-    static constexpr float cm = 16777213.0f / 16777216.0f;
-    static constexpr unsigned long N = 97;
-    float m_c;
-    int m_ui;
-    int m_uj;
-    std::array<float, N> m_u;
+    static constexpr mdp_real cd = 7654321.0f / 16777216.0f;
+    static constexpr mdp_real cm = 16777213.0f / 16777216.0f;
+    static constexpr mdp_suint N = 97;
+    mdp_real m_c;
+    mdp_suint m_ui;
+    mdp_suint m_uj;
+    std::array<mdp_real, N> m_u;
 
   public:
     mdp_prng(mdp_int k = 0) : m_c(362436.0f / 16777216.0f), m_ui(N - 1), m_uj(32)
@@ -61,13 +61,13 @@ namespace MDP
       if ((ijkl < 0) || (ijkl > 900000000))
         error("Wrong initialization for random number generator");
 
-      int ij = ijkl / 30082;
-      int kl = ijkl % 30082;
+      mdp_int ij = ijkl / 30082;
+      mdp_int kl = ijkl % 30082;
 
-      int i = ((ij / 177) % 177) + 2;
-      int j = (ij % 177) + 2;
-      int k = ((kl / 169) % 178) + 1;
-      int l = kl % 169;
+      mdp_int i = ((ij / 177) % 177) + 2;
+      mdp_int j = (ij % 177) + 2;
+      mdp_int k = ((kl / 169) % 178) + 1;
+      mdp_int l = kl % 169;
       if ((i <= 0) || (i > 178))
         error("Wrong initialization for random number generator");
       if ((j <= 0) || (j > 178))
@@ -79,14 +79,14 @@ namespace MDP
       if (i == 1 && j == 1 && k == 1)
         error("Wrong initialization for random number generator");
 
-      for (unsigned int ii = 0; ii < m_u.size(); ii++)
+      for (mdp_suint ii = 0; ii < m_u.size(); ii++)
       {
-        float s = 0.0f;
-        float t = 0.5f;
+        mdp_real s = 0.0f;
+        mdp_real t = 0.5f;
 
-        for (unsigned int jj = 0; jj < 24; jj++)
+        for (mdp_suint jj = 0; jj < 24; jj++)
         {
-          int m = (((i * j) % 179) * k) % 179;
+          mdp_int m = (((i * j) % 179) * k) % 179;
 
           i = j;
           j = k;
@@ -107,11 +107,11 @@ namespace MDP
     /**
      * @brief Returns a pseudorandom floating-point value in the range [0, 1].
      *
-     * @return Random float in the range [0, 1].
+     * @return Random mdp_real in the range [0, 1].
      */
-    inline float plain() noexcept
+    inline mdp_real plain() noexcept
     {
-      float luni = m_u[m_ui] - m_u[m_uj];
+      mdp_real luni = m_u[m_ui] - m_u[m_uj];
       if (luni < 0.0f)
         luni += 1.0f;
 

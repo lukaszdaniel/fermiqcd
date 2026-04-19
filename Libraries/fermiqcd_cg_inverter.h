@@ -63,8 +63,8 @@ namespace MDP
     {
       mdp.begin_function("ConjugateGradientInverter");
       mdp_uint step = 0;
-      double residue, rresidue = -1;
-      // double old_rresidue;
+      mdp_real residue, rresidue = -1;
+      // mdp_real old_rresidue;
       double time = mdp.time();
       inversion_stats stats;
 
@@ -77,7 +77,7 @@ namespace MDP
       fieldT solnew(psi_in);
       fieldT b(psi_in);
 
-      double alpha, beta, rrtmp, rrtmp2, psdot;
+      mdp_real alpha, beta, rrtmp, rrtmp2, psdot;
 
       // mdp << "\tstep\tresidue\t\ttime (sec)\n";
 

@@ -69,7 +69,7 @@ namespace MDP
     {
       mdp.begin_function("BiConugateGradientStabilizedInverter");
       const std::string filename_prefix = inversion_vtk_prefix;
-      constexpr int tc = 0;
+      constexpr mdp_int tc = 0;
       std::string filename1, filename2;
       mdp_uint step = 0;
       fieldT p(psi_in);
@@ -80,7 +80,7 @@ namespace MDP
 
       mdp_real_scalar_field sv(psi_in.lattice());
       mdp_site x(psi_in.lattice());
-      double residue, rresidue = -1, old_rresidue;
+      mdp_real residue, rresidue = -1, old_rresidue;
       mdp_complex alpha, beta, rho, rho_old, omega;
       double time = mdp.time();
       inversion_stats stats;
@@ -157,7 +157,7 @@ namespace MDP
               sv(x) += std::log(real(r(x, a, k) * conj(r(x, a, k))) + mdp_precision);
           }
         }
-        filename2 = filename_prefix + ".residue." + std::to_string(step) + ".vtk";
+        filename2 = std::format("{}_residue_{}.vtk", filename_prefix, step);
         sv.save_vtk(filename2, tc);
 
         mdp_add_scaled_field(r, -omega, t);

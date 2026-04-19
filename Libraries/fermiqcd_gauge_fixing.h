@@ -48,13 +48,13 @@ namespace MDP
     GaugeFixing &operator=(const GaugeFixing &) = delete;
 
   public:
-    static constexpr int Coulomb = 0;
-    static constexpr int Landau = 10;
+    static constexpr mdp_suint Coulomb = 0;
+    static constexpr mdp_suint Landau = 10;
 
     static void hit(gauge_field &U,
                     mdp_suint mu,
                     mdp_parity parity,
-                    int i, int j,
+                    mdp_suint i, mdp_suint j,
                     mdp_real overrelaxation_boost = 1)
     {
 
@@ -166,7 +166,7 @@ namespace MDP
 
     static void z3_fix(gauge_field &U, mdp_suint mu)
     {
-      int i = 0;
+      mdp_suint i = 0;
       mdp_site x(U.lattice());
       mdp_matrix A;
       mdp_complex phase[3] = {mdp_complex(1, 0),
@@ -220,8 +220,8 @@ namespace MDP
       gaugefixing_stats stats;
       mdp_uint step = 0;
       mdp_site x(U.lattice());
-      double action = 0;
-      double precision = 0;
+      mdp_real action = 0;
+      mdp_real precision = 0;
       mdp_matrix M(U.nc(), U.nc());
 
       stats.max_steps = max_steps;

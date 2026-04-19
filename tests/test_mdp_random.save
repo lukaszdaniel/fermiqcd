@@ -23,7 +23,7 @@ lag 10: r = 0.000386976 (+/-0.00223607)
 Generator: mdp_prng_sfmt
 
 [Kolmogorov-Smirnov]
-D = 0.000381213
+D = 0.000381216
 p-value = 0.999818
 Result: OK
 

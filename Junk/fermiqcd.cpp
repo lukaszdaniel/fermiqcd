@@ -165,7 +165,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   }
 
   std::string source_type = arguments.get("-quark", "source_type", "point|wall");
-  for (int a = 0; a < 4; a++)
+  for (mdp_suint a = 0; a < 4; a++)
     for (mdp_suint i = 0; i < nc; i++)
     {
       mdp << "quark source spin=" << a << " color=" << i << "\n";
@@ -328,7 +328,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
           forspincolor(b, j, U.nc())
           {
             s1 = s2 = 0;
-            for (int c = 0; c < 4; c++)
+            for (mdp_suint c = 0; c < 4; c++)
             {
               s1 += conj(S(z, c, a, j, i)) * G3(c, b);
               for (mdp_suint k = 0; k < U.nc(); k++)
@@ -356,8 +356,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       {
         for (mdp_uint t = 0; t < U.lattice().size(TIME); t++)
           open_prop[a][b][i][j][t] = 0.0;
-        for (int c = 0; c < 4; c++)
-          for (int d = 0; d < 4; d++)
+        for (mdp_suint c = 0; c < 4; c++)
+          for (mdp_suint d = 0; d < 4; d++)
             if (G(c, d) != mdp_complex(0.0))
               forallsites(x)
               {
@@ -370,9 +370,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     }
     mdp_matrix G1, G2;
     std::string op4q = arguments.get("-4quark", "operator", "5Ix5I|0Ix0I|1Ix1I|2Ix2I|3Ix3I|05Ix05I|15Ix15I|25Ix25I|35Ix35I|01Ix01I|02Ix02I|03Ix03I|12Ix12I|13Ix13I|23Ix23I|5Tx5T|0Tx0T|1Tx1T|2Tx2T|3Tx3T|05Tx05T|15Tx15T|25Tx25T|35Tx35T|01Tx01T|02Tx02T|03Tx03T|12Tx12T|13Tx13T|23Tx23T");
-    bool rotate = false;
-    if (op4q[op4q.size() - 1] == 'T')
-      rotate = true;
+    bool rotate = (op4q[op4q.size() - 1] == 'T');
+
     G1 = G2 = Gamma5 * parse_gamma(op4q.substr(0, op4q.find("x") - 1));
     // others operators may be 0Tx0T,1Tx1T,5Tx5T,etc.
     for (mdp_uint t1 = 0; t1 < NT / 2; t1++)
@@ -383,10 +382,10 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         mdp_real c3a = 0;
         mdp_real c3b = 0;
         // manually add other contractions....
-        for (int a = 0; a < 4; a++)
-          for (int b = 0; b < 4; b++)
-            for (int c = 0; c < 4; c++)
-              for (int d = 0; d < 4; d++)
+        for (mdp_suint a = 0; a < 4; a++)
+          for (mdp_suint b = 0; b < 4; b++)
+            for (mdp_suint c = 0; c < 4; c++)
+              for (mdp_suint d = 0; d < 4; d++)
               {
                 mdp_complex g1 = G1(b, a);
                 mdp_complex g2 = G2(d, c);
@@ -433,8 +432,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     Q = 0;
     forallsites(x)
     {
-      for (int a = 0; a < 4; a++)
-        for (int b = 0; b < 4; b++)
+      for (mdp_suint a = 0; a < 4; a++)
+        for (mdp_suint b = 0; b < 4; b++)
           if (G1(a, b) != mdp_complex(0.0))
             for (mdp_suint i = 0; i < U.nc(); i++)
               Q(x) += std::pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
@@ -600,7 +599,7 @@ int main(int argc, char **argv)
       }
       if (arguments.have("-topcharge_vtk"))
       {
-        float tc = topological_charge_vtk(U, newfilename + ".topcharge.vtk", -1);
+        mdp_real tc = topological_charge_vtk(U, newfilename + ".topcharge.vtk", -1);
         mdp << "topcharge = " << tc << "\n";
       }
       if (arguments.have("-quark"))
