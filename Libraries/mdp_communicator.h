@@ -55,20 +55,20 @@ namespace MDP
 #else
     MPI_Comm communicator;
 #endif
-    double mytime; // total time
+    mdp_real mytime; // total time
     bool wormholes_open;
     mdp_uint my_id;
     mdp_uint my_nproc;
 
 #ifndef PARALLEL
-    double MPI_Wtime()
+    mdp_real MPI_Wtime()
     {
       return walltime();
     }
 #endif
 
   public:
-    double comm_time; // time spent in communications
+    mdp_real comm_time; // time spent in communications
 
     mdp_communicator() : mdp_log()
     {
@@ -417,7 +417,7 @@ namespace MDP
 
     /** @brief returns the time in seconds since call to mdp_communicator::open_wormholes
      */
-    double time()
+    mdp_real time()
     {
       return MPI_Wtime() - mytime;
     }

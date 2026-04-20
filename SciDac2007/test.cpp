@@ -24,19 +24,19 @@ int main(int argc, char **argv)
    gauge_field U(spacetime, nc);
    set_hot(U);
 
-   for (int i0 = 0; i0 < 10; i0++)
+   for (mdp_suint i0 = 0; i0 < 10; i0++)
    {
       coeff["beta"] = 5.0;
       WilsonGaugeAction::heatbath(U, coeff, 1);
       mdp << "average plaquette = " << average_plaquette(U) << "\n";
    }
 
-   for (int i0 = 0; i0 < 10; i0++)
+   for (mdp_suint i0 = 0; i0 < 10; i0++)
    {
       ApeSmearing::smear(U, 0.7, 1, 10);
       mdp << "average plaquette = " << average_plaquette(U) << "\n";
       {
-         float tc = topological_charge_vtk(U, "topological_charge_*.vtk", -1);
+         mdp_real tc = topological_charge_vtk(U, "topological_charge_*.vtk", -1);
          mdp << "total topological charge = " << tc << "\n";
       }
    }

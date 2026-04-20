@@ -27,13 +27,13 @@
 
 namespace MDP
 {
-  double walltime()
+  mdp_real walltime()
   {
 #ifdef NO_POSIX
     return (1.0 * clock()) / CLOCKS_PER_SEC;
 #else
-    double mic, time;
-    double mega = 0.000001;
+    mdp_real mic, time;
+    mdp_real mega = 0.000001;
     struct timeval tp;
 #ifdef HAVE_NO_TIMEZONE
     struct timezone

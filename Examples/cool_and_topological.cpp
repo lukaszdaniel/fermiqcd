@@ -21,7 +21,7 @@ void test_gauge(mdp_uint nt, mdp_uint nx, const char *filename)
   filename2 = std::format("{}.cooled20", filename);
   U.save(filename2);
   filename2 = std::format("{}.topological_charge_20.vtk", filename);
-  float tc = topological_charge_vtk(U, filename2, 0);
+  mdp_real tc = topological_charge_vtk(U, filename2, 0);
   mdp << "topological_charge=" << tc << "\n";
 }
 

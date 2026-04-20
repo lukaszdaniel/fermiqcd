@@ -108,8 +108,8 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
                 const mdp_args &arguments, const std::string &newfilename)
 {
 
-  float abs_precision = arguments.get("-quark", "abs_precision", 1e-12);
-  float rel_precision = arguments.get("-quark", "rel_precision", 1e-12);
+  mdp_real abs_precision = arguments.get("-quark", "abs_precision", 1e-12);
+  mdp_real rel_precision = arguments.get("-quark", "rel_precision", 1e-12);
   std::string quark_action = arguments.get("-quark", "action", "clover_fast|clover_slow");
   std::string inverter = arguments.get("-quark", "alg", "bicgstab|minres|bicgstabvtk|minresvtk");
   mdp << "using action=" << quark_action << " inverter=" << inverter << "\n";
@@ -246,7 +246,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
   if (use_propagator)
   {
     int smear_steps = arguments.get("-quark", "smear_steps", 0);
-    float smear_alpha = arguments.get("-quark", "smear_alpha", 1.0);
+    mdp_real smear_alpha = arguments.get("-quark", "smear_alpha", 1.0);
     smear_propagator(S, U, smear_steps, smear_alpha);
   }
   if (arguments.have("-pion"))
@@ -531,16 +531,16 @@ int main(int argc, char **argv)
     }
     else if (gauge_start == "instantons")
     {
-      float t0 = arguments.get("-gauge", "t0", 0);
-      float x0 = arguments.get("-gauge", "x0", 0);
-      float y0 = arguments.get("-gauge", "y0", 0);
-      float z0 = arguments.get("-gauge", "z0", 0);
-      float r0 = arguments.get("-gauge", "r0", 1.0);
-      float t1 = arguments.get("-gauge", "t1", 1);
-      float x1 = arguments.get("-gauge", "x1", 1);
-      float y1 = arguments.get("-gauge", "y1", 1);
-      float z1 = arguments.get("-gauge", "z1", 1);
-      float r1 = arguments.get("-gauge", "r1", 0.0);
+      mdp_real t0 = arguments.get("-gauge", "t0", 0);
+      mdp_real x0 = arguments.get("-gauge", "x0", 0);
+      mdp_real y0 = arguments.get("-gauge", "y0", 0);
+      mdp_real z0 = arguments.get("-gauge", "z0", 0);
+      mdp_real r0 = arguments.get("-gauge", "r0", 1.0);
+      mdp_real t1 = arguments.get("-gauge", "t1", 1);
+      mdp_real x1 = arguments.get("-gauge", "x1", 1);
+      mdp_real y1 = arguments.get("-gauge", "y1", 1);
+      mdp_real z1 = arguments.get("-gauge", "z1", 1);
+      mdp_real r1 = arguments.get("-gauge", "r1", 0.0);
       InstantonGenerator4D generator;
       std::vector<SingleInstanton4D> instantons;
       instantons.push_back(SingleInstanton4D(t0, x0, y0, z0, std::abs(r0), (r0 > 0) ? +1 : -1));

@@ -34,7 +34,7 @@ namespace MDP
 
     int max_buffer_size = 1024;
     mdp_uint nvol_gl = lattice().global_volume();
-    double mytime = mdp.time();
+    mdp_real mytime = mdp.time();
     m_header.reset();
 
     if (lattice().n_dimensions() < 3 || lattice().n_dimensions() > 4)

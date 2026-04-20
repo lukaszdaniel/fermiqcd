@@ -46,16 +46,16 @@ int main(int argc, char **argv)
   // //////////////////////////////////////////////////////
   mdp_uint Nt = 12, Nx = 4, Ny = 4, Nz = 4; // lattice size
   mdp_suint Nc = 3;                         // set colors, SU(Nc)
-  // float        beta=5.7;      // set lattice spacing
-  float mq = 0.2 * GeV; // set light quark pole-mass
-  float mh = 0.7 * GeV; // set heavy quark pole-mass
+  // mdp_real beta = 5.7;      // set lattice spacing
+  mdp_real mq = 0.2 * GeV; // set light quark pole-mass
+  mdp_real mh = 0.7 * GeV; // set heavy quark pole-mass
 
   // //////////////////////////////////////////////////////
   // additional parameters (they only depend on beta!)
   // //////////////////////////////////////////////////////
-  float a = 0.91 / GeV; // lattice spacing
-  // float        cSW    =1.57;
-  float kappa_c = 0.14315;
+  mdp_real a = 0.91 / GeV; // lattice spacing
+  // mdp_real cSW = 1.57;
+  mdp_real kappa_c = 0.14315;
 
   // //////////////////////////////////////////////////////
   // setting the parameters for the light and heavy quarks
@@ -75,8 +75,8 @@ int main(int argc, char **argv)
   // //////////////////////////////////////////////////////
   // choose inversion method and action for computation
   // //////////////////////////////////////////////////////
-  float absolute_precision = 1e-12;
-  float relative_precision = 1e-8;
+  mdp_real absolute_precision = 1e-12;
+  mdp_real relative_precision = 1e-8;
   default_fermi_inverter = MinimumResidueInverter<fermi_field, gauge_field>;
   default_fermi_action = FermiCloverActionFast::mul_Q;
 
@@ -131,7 +131,7 @@ int main(int argc, char **argv)
   // create and skip 100 gauge configuration
   // for each print average plaquette to check termalization
   // //////////////////////////////////////////////////////
-  for (int i = 0; i < 100; i++)
+  for (mdp_suint i = 0; i < 100; i++)
   {
     WilsonGaugeAction::heatbath(U, gauge_coeff);
     mdp << "average_plaquette=" << average_plaquette(U) << "\n";
@@ -145,7 +145,7 @@ int main(int argc, char **argv)
 
     // skip 10 gauge configurations and
     // for each print average plaquette
-    for (int i = 0; i < 10; i++)
+    for (mdp_suint i = 0; i < 10; i++)
     {
       WilsonGaugeAction::heatbath(U, gauge_coeff);
       mdp << "average_plaquette=" << average_plaquette(U) << "\n";
@@ -176,8 +176,8 @@ int main(int argc, char **argv)
     forallsites(x)
     {
       mdp_uint t = x(0);
-      for (int i = 0; i < 4; i++)
-        for (int j = 0; j < 4; j++)
+      for (mdp_suint i = 0; i < 4; i++)
+        for (mdp_suint j = 0; j < 4; j++)
           F(config, t) +=
               real(trace(Sq(x, i, j) * hermitian(Sh(x, i, j))));
     }

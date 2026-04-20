@@ -103,7 +103,7 @@ namespace MDP
       mdp_suint ndim = S.lattice().n_dimensions();
       mdp_suint nc = S.nc();
 
-      double time = mdp.time();
+      mdp_real time = mdp.time();
 
       if (isMainProcess())
       {

@@ -9,17 +9,17 @@ int main(int argc, char **argv)
   mdp_suint nc = 3;
   constexpr mdp_suint nconfig = 100;
   constexpr Box L = {16, 8, 8, 8};
-  mdp_lattice lattice(L);         // declare lattice
+  mdp_lattice lattice(L);          // declare lattice
   gauge_field U(lattice, nc);      // declare fields
   fermi_propagator S(lattice, nc); // declare propagator
-  mdp_site x(lattice);            // declare a site var
+  mdp_site x(lattice);             // declare a site var
   coefficients gauge;
   gauge["beta"] = 6.0; // set parameters
   coefficients quark;
   quark["kappa"] = 0.1234;
   quark["c_{SW}"] = 0.0;
   default_fermi_action = FermiCloverActionFast::mul_Q;
-  mdp_array<float, 1> Cpi(L[TIME]); // declare and zero Cpi
+  mdp_array<mdp_real, 1> Cpi(L[TIME]); // declare and zero Cpi
   for (mdp_uint t = 0; t < L[TIME]; t++)
     Cpi(t) = 0;
   set_hot(U);
@@ -31,8 +31,8 @@ int main(int argc, char **argv)
       compute_em_field(U);
     fermi_propagator::generate(S, U, quark, 1e-20, 1e-12); // make propagator
     forallsites(x)                                         // contract pion
-        for (int a = 0; a < 4; a++)                        // source spin
-        for (int b = 0; b < 4; b++)                        // sink spin
+        for (mdp_suint a = 0; a < 4; a++)                  // source spin
+        for (mdp_suint b = 0; b < 4; b++)                  // sink spin
         Cpi[x(TIME)] += real(trace(S(x, a, b) * hermitian(S(x, a, b))));
     mdp.add(Cpi.address(), Cpi.size()); // parallel add
     for (mdp_uint t = 0; t < L[TIME]; t++)

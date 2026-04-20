@@ -5,7 +5,7 @@ using namespace MDP;
 
 struct mystruct
 {
-  float value; /* or any other structure */
+  mdp_real value; /* or any other structure */
 };
 
 int main(int argc, char **argv)

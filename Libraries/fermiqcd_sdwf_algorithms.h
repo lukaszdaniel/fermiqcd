@@ -25,7 +25,7 @@
 
 namespace MDP
 {
-  constexpr double MDP_SDWF_SGN = 1.0;
+  constexpr mdp_real MDP_SDWF_SGN = 1.0;
 
   void project(staggered_field &psi, sdwf_field &chi, gauge_field &U)
   {
@@ -44,7 +44,7 @@ namespace MDP
   }
 
   void project(staggered_field &psi, sdwf_field &chi, gauge_field &U,
-               int sign, mdp_suint L)
+               mdp_int sign, mdp_suint L)
   {
     mdp_site x(chi.lattice());
     mdp_site y(chi.lattice());

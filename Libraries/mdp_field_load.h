@@ -78,7 +78,7 @@ namespace MDP
     mdp_int header_size = 0;
     mdp_uint idx_gl, nvol_gl = lattice().global_volume();
     size_t psize = m_field_components * sizeof(T);
-    double mytime = mdp.time();
+    mdp_real mytime = mdp.time();
     bool reversed_header_endianess = false;
 
     if (isSubProcess(processIO))

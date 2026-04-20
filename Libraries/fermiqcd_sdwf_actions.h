@@ -182,7 +182,7 @@ namespace MDP
 
 #if 0
       // NORMALIZE NOW
-      double norm = 0.0;
+      mdp_real norm = 0.0;
       forallsites(x)
       {
         for (mdp_suint x5 = 0; x5 < L5; x5++)

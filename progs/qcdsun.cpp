@@ -36,12 +36,12 @@ int main(int argc, char **argv)
   mdp_suint relax_freq = 1;
   mdp_suint poly_meas_freq = 0;
   mdp_suint poly_cor_meas_freq = 0;
-  // unsigned short int plaq_cor_meas_freq = 0;
+  // mdp_suint plaq_cor_meas_freq = 0;
 
-  // unsigned int ns = par.i("nsmear");
-  // double epsilon = par.d("epsilon");
-  // double norm = par.d("norm");
-  // unsigned int nsiter = par.i("nsiter");
+  // mdp_suint ns = par.i("nsmear");
+  // mdp_real epsilon = par.d("epsilon");
+  // mdp_real norm = par.d("norm");
+  // mdp_uint nsiter = par.i("nsiter");
 
   bool field_loaded = false;
   // bool z3symmetry = true;
@@ -169,7 +169,7 @@ int main(int argc, char **argv)
     if ((poly_cor_meas_freq > 0) && (i % poly_cor_meas_freq == 0))
     {
 
-      std::unique_ptr<double[]> cor = std::make_unique<double[]>(U.lattice().size(1));
+      std::unique_ptr<mdp_real[]> cor = std::make_unique<mdp_real[]>(U.lattice().size(1));
 
       mdp_matrix a(U.ndim() - 1, U.lattice().size(1));
       a = PolyCor(U);

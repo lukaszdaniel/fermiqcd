@@ -9,7 +9,7 @@ public:
   std::unique_ptr<mdp_lattice> m_plattice;
   std::unique_ptr<gauge_field> m_pU;
   std::string m_prefix;
-  unsigned int m_counter;
+  mdp_uint m_counter;
   std::ofstream m_os;
 
   std::string make_prefix()
@@ -19,7 +19,7 @@ public:
     std::string s = ctime(&time0);
     while (1)
     {
-      int i = s.find(" ");
+      mdp_int i = s.find(" ");
       if (i >= 0)
         s = s.replace(i, 1, "_");
       else
@@ -83,7 +83,7 @@ public:
     m_os << "making a hot gauge configuration U with nc=" << nc_ << std::endl;
     m_pU = std::make_unique<gauge_field>(*m_plattice, nc_);
     set_hot(*m_pU);
-    m_prefix = std::string("C") + std::to_string((int)mdp.time());
+    m_prefix = std::string("C") + std::to_string((mdp_uint)mdp.time());
     m_counter = 0;
   }
 
@@ -92,7 +92,7 @@ public:
     mdp_field_file_header header = get_info(filename);
     const Box L = {header.box[0], header.box[1], header.box[2], header.box[3]};
     // (4-8)*4*(1-4-9-25-36-49-64-81-100)
-    int precision = 4;
+    mdp_suint precision = 4;
     mdp_suint nc = 1;
     switch (header.bytes_per_site)
     {
@@ -189,7 +189,7 @@ public:
     m_counter = 0;
   }
 
-  void wilson_heatbath(float beta, mdp_uint steps = 1)
+  void wilson_heatbath(mdp_real beta, mdp_uint steps = 1)
   {
     coefficients gauge;
     gauge["beta"] = beta;
@@ -202,36 +202,36 @@ public:
     m_counter += steps;
   }
 
-  void ape_smearing(float alpha = 0.7, int iterations = 20, int cooling_steps = 10)
+  void ape_smearing(mdp_real alpha = 0.7, mdp_uint iterations = 20, mdp_uint cooling_steps = 10)
   {
     (*this) << "starting Ape smering...\n";
     ApeSmearing::smear(*m_pU, alpha, iterations, cooling_steps);
     (*this) << "done!\n";
   }
 
-  void coulomb_gauge_fix(int iterations = 100)
+  void coulomb_gauge_fix(mdp_uint iterations = 100)
   {
     (*this) << "starting coulomb gauge fixing...\n";
-    float precision = 1e-6;
-    float boost = 1;
+    mdp_real precision = 1e-6;
+    mdp_real boost = 1;
     /*gaugefixing_stats stats = */ GaugeFixing::fix(*m_pU, GaugeFixing::Coulomb, iterations, precision, boost, false);
     (*this) << "done!\n";
   }
 
-  void coulomb_z3_gauge_fix(int iterations = 100)
+  void coulomb_z3_gauge_fix(mdp_uint iterations = 100)
   {
     (*this) << "starting coulomb gauge fixing...\n";
-    float precision = 1e-6;
-    float boost = 1;
+    mdp_real precision = 1e-6;
+    mdp_real boost = 1;
     /*gaugefixing_stats stats = */ GaugeFixing::fix(*m_pU, GaugeFixing::Coulomb, iterations, precision, boost, true);
     (*this) << "done!\n";
   }
 
-  void landau_gauge_fix(int iterations = 100)
+  void landau_gauge_fix(mdp_uint iterations = 100)
   {
     (*this) << "starting coulomb gauge fixing...\n";
-    float precision = 1e-6;
-    float boost = 1;
+    mdp_real precision = 1e-6;
+    mdp_real boost = 1;
     /*gaugefixing_stats stats = */ GaugeFixing::fix(*m_pU, GaugeFixing::Landau, iterations, precision, boost, false);
     (*this) << "done!\n";
   }

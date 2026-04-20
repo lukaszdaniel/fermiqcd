@@ -3,7 +3,7 @@
 
 using namespace MDP;
 
-float resistance(mdp_uint x0, mdp_uint x1, mdp_suint mu)
+mdp_real resistance(mdp_uint x0, mdp_uint x1, mdp_suint mu)
 {
   return (Pi / 100 * (x0 + 0 * x1 + 0 * mu));
 }
@@ -19,8 +19,8 @@ int main(int argc, char **argv)
   mdp_site x(cylinder);
   mdp_site A(cylinder);
   mdp_site B(cylinder);
-  float precision, old_u;
-  float c = 0, J = 1, deltaJ, deltaR, Rtot;
+  mdp_real precision;
+  mdp_real c = 0, J = 1, deltaJ, deltaR, Rtot;
   A.set(15, 7);
   B.set(62, 3);
 
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     precision = 0;
     forallsites(x)
     {
-      old_u = u(x);
+      mdp_real old_u = u(x);
       if (x == A)
       {
         c = +J;

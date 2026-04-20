@@ -80,7 +80,7 @@ namespace MDP
       mdp_matrix A(2, 2);
       mdp_matrix P = sigma[0];
       mdp_real x[4], a[3], norm_a;
-      mdp_suint steps = 5;
+      constexpr mdp_suint steps = 5;
       mdp_real dx = 1.0 / steps;
       mdp_real precision = 0.0001;
       for (mdp_suint i = 0; i < 4; i++)

@@ -17,11 +17,11 @@ void cool(mdp_uint nt, mdp_uint nx, const char *filename)
   std::string filename2;
   U.load(filename);
   // U.switch_endianess_4bytes();
-  for (int k = 0; k < 100; k++)
+  for (mdp_suint k = 0; k < 100; k++)
   {
     ApeSmearing::smear(U, 0.15, 1, 10);
     filename2 = std::format("{}.cooled.step{:03d}.topologicalchange.vtk", filename, k);
-    // float tc=topological_charge_vtk(U,filename2,0);
+    // mdp_real tc=topological_charge_vtk(U,filename2,0);
   }
 }
 

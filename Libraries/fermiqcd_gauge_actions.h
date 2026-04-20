@@ -127,7 +127,7 @@ namespace MDP
       mdp_matrix M(U.nc(), U.nc());
       mdp_complex a[4], tmpUik;
       mdp_site x(U.lattice());
-      double time = mdp.time();
+      mdp_real time = mdp.time();
 
       mdp << coeff;
 
@@ -422,7 +422,7 @@ namespace MDP
       mdp_suint ndim = U.ndim();
       mdp_matrix M(nc, nc);
       mdp_site x(U.lattice());
-      double time = mdp.time();
+      mdp_real time = mdp.time();
       mdp_complex a[4], tmpUik;
       mdp_real alpha_s;
       mdp_real c_tp = 0, c_tr = 0, c_sp = 0, c_sr = 0, c_p = 0, c_r = 0, c_c = 0;

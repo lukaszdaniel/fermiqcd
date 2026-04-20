@@ -136,7 +136,7 @@ namespace MDP
       fermi_field chi(S.lattice(), S.nc(), S.nspin());
       mdp_site x(S.lattice());
 
-      double time = mdp.time();
+      mdp_real time = mdp.time();
       inversion_stats stats;
       begin_function("generate");
       mdp << "BEGIN Generating ordinary propagator\n";

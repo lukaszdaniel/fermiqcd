@@ -93,7 +93,7 @@ namespace MDP
       mdp_real residue, rresidue = -1, old_rresidue;
       mdp_complex alpha;
       mdp_uint step = 0;
-      double time = mdp.time();
+      mdp_real time = mdp.time();
       inversion_stats stats;
 
       psi_in.update();

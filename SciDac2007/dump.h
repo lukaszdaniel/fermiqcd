@@ -8,7 +8,7 @@
 namespace MDP
 {
   void dump(mdp_field<mdp_real> &s,
-            int site_idx = 0,
+            mdp_int site_idx = 0,
             const std::string &filename = "default.vtk",
             bool bASCII = true)
   {
@@ -29,9 +29,9 @@ namespace MDP
     if (!ofs)
       throw std::ios_base::failure("Unable to open temporary VTK file for writing");
 
-    const int LX = s.lattice().size(0);
-    const int LY = s.lattice().size(1);
-    const int LZ = s.lattice().size(2);
+    const mdp_uint LX = s.lattice().size(0);
+    const mdp_uint LY = s.lattice().size(1);
+    const mdp_uint LZ = s.lattice().size(2);
 
     // VTK header
     ofs << "# vtk DataFile Version 2.0\n"
@@ -47,20 +47,20 @@ namespace MDP
 
     mdp_site p(s.lattice());
 
-    for (int k = 0; k < LZ + 1; k++)
-      for (int j = 0; j < LY + 1; j++)
-        for (int i = 0; i < LX + 1; i++)
+    for (mdp_uint k = 0; k < LZ + 1; k++)
+      for (mdp_uint j = 0; j < LY + 1; j++)
+        for (mdp_uint i = 0; i < LX + 1; i++)
         {
           p.set(i % LX, j % LY, k % LZ);
 
-          float fval = static_cast<float>(s(p, site_idx));
+          mdp_real fval = static_cast<mdp_real>(s(p, site_idx));
           if (bASCII)
           {
             ofs << std::scientific << fval << "\n";
           }
           else
           {
-            ofs.write(reinterpret_cast<char *>(&fval), sizeof(float));
+            ofs.write(reinterpret_cast<char *>(&fval), sizeof(mdp_real));
           }
         }
 

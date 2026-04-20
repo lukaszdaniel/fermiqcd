@@ -33,10 +33,10 @@ namespace MDP
   {
   private:
     std::ofstream m_fp;
-    float m_red;
-    float m_green;
-    float m_blue;
-    float m_scale;
+    mdp_real m_red;
+    mdp_real m_green;
+    mdp_real m_blue;
+    mdp_real m_scale;
 
     void open(const std::string &filename)
     {
@@ -74,20 +74,20 @@ namespace MDP
 
     /** @brief Set paper size
      */
-    void size(float x0, float y0, float x1, float y1)
+    void size(mdp_real x0, mdp_real y0, mdp_real x1, mdp_real y1)
     {
       m_fp << "%%%%BoundingBox: "
-            << static_cast<int>(m_scale * x0) << " "
-            << static_cast<int>(m_scale * y0) << " "
-            << static_cast<int>(m_scale * x1) << " "
-            << static_cast<int>(m_scale * y1) << "\n";
+            << static_cast<mdp_uint>(m_scale * x0) << " "
+            << static_cast<mdp_uint>(m_scale * y0) << " "
+            << static_cast<mdp_uint>(m_scale * x1) << " "
+            << static_cast<mdp_uint>(m_scale * y1) << "\n";
       m_fp << "%%%%EndComments\n";
       m_fp.flush();
     }
 
     /** @brief Draw a line segment
      */
-    void line(float x0, float y0, float x1, float y1)
+    void line(mdp_real x0, mdp_real y0, mdp_real x1, mdp_real y1)
     {
       m_fp << std::fixed << std::setprecision(2)
             << m_red << " " << m_green << " " << m_blue << " setrgbcolor\n"
@@ -99,7 +99,7 @@ namespace MDP
 
     /** @brief Draw a box
      */
-    void box(float x0, float y0, float x1, float y1, bool fill = false)
+    void box(mdp_real x0, mdp_real y0, mdp_real x1, mdp_real y1, bool fill = false)
     {
       if (fill)
         m_fp << "stroke\n";
@@ -119,7 +119,7 @@ namespace MDP
 
     /** @brief Draw an arc
      */
-    void arc(float x0, float y0, float r, float alpha, float beta)
+    void arc(mdp_real x0, mdp_real y0, mdp_real r, mdp_real alpha, mdp_real beta)
     {
       m_fp << std::fixed << std::setprecision(2)
             << m_scale * x0 << " " << m_scale * y0 << " "
@@ -130,9 +130,9 @@ namespace MDP
 
     /** @brief Draw a circle
      */
-    void circle(float x0, float y0, float r, int fill = 0)
+    void circle(mdp_real x0, mdp_real y0, mdp_real r, mdp_suint fill = 0)
     {
-      constexpr int BOLD = 10;
+      constexpr mdp_suint BOLD = 10;
       m_fp << std::fixed << std::setprecision(2);
 
       if (fill != BOLD)
@@ -157,7 +157,7 @@ namespace MDP
 
     /** @brief Set line width
      */
-    void pen(float size)
+    void pen(mdp_real size)
     {
       m_fp << std::fixed << std::setprecision(2)
             << size << " setlinewidth\n";
@@ -168,7 +168,7 @@ namespace MDP
      *
      * @note colours are numbers in [0,1] black=(0,0,0) white=(1,1,1)
      */
-    void color(float r, float g, float b)
+    void color(mdp_real r, mdp_real g, mdp_real b)
     {
       m_red = r;
       m_green = g;
@@ -180,7 +180,7 @@ namespace MDP
 
     /** @brief Set default font
      */
-    void font(const std::string &text, int size)
+    void font(const std::string &text, mdp_suint size)
     {
       m_fp << "/" << text << " findfont\n"
             << size << " scalefont\nsetfont\n";
@@ -189,7 +189,7 @@ namespace MDP
 
     /** @brief Print text
      */
-    void print(float x0, float y0, const std::string &text)
+    void print(mdp_real x0, mdp_real y0, const std::string &text)
     {
       m_fp << std::fixed << std::setprecision(2)
             << m_scale * x0 << " " << m_scale * y0 << " moveto\n"

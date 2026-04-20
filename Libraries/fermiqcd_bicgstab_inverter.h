@@ -72,9 +72,9 @@ namespace MDP
       fieldT r(psi_in);
       fieldT s(psi_in);
       fieldT t(psi_in);
-      double residue, rresidue = -1, old_rresidue;
+      mdp_real residue, rresidue = -1, old_rresidue;
       mdp_complex alpha, beta, rho, rho_old, omega;
-      double time = mdp.time();
+      mdp_real time = mdp.time();
       inversion_stats stats;
 
       mdp << "\tstep\tresidue\t\ttime (sec)\n";

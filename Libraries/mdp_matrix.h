@@ -1125,7 +1125,7 @@ namespace MDP
     const mdp_uint n = a.rows();
 
     // Padé coefficients (order 13)
-    constexpr double c[] = {
+    constexpr mdp_real c[] = {
         64764752532480000.0,
         32382376266240000.0,
         7771770303897600.0,
@@ -1142,7 +1142,7 @@ namespace MDP
         1.0};
 
     // matrix norm
-    double norm = max(a);
+    mdp_real norm = max(a);
 
     int s = 0;
     if (norm > 0.5)

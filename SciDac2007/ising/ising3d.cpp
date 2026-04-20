@@ -15,8 +15,8 @@ int main(int argc, char **argv)
   mdp_lattice cube(L);
   mdp_real_scalar_field spin(cube);
   mdp_site x(cube);
-  int dE = 0, H = L.volume(), dH = 0;
-  float kappa = 0.40;
+  mdp_int dE = 0, H = L.volume(), dH = 0;
+  mdp_real kappa = 0.40;
   if (argc > 1)
     kappa = atof(argv[1]); // try 0.5 or 0.25
 
@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     spin(x) = (x(0) > L[0] / 4 && x(0) <= 3 * L[0] / 4) ? (+1) : (-1);
   }
 
-  for (int i = 0; i < 100; i++)
+  for (mdp_suint i = 0; i < 100; i++)
   {
     dH = 0;
     for (mdp_parity parity : {EVEN, ODD})

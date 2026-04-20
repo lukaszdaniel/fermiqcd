@@ -9,14 +9,14 @@ int main(int argc, char **argv)
   mdp_lattice line(L);
   mdp_int_scalar_field spin(line);
   mdp_site x(line);
-  int dE = 0, H = L.volume(), dH = 0;
-  float kappa = 2.0;
+  mdp_int dE = 0, H = L.volume(), dH = 0;
+  mdp_real kappa = 2.0;
   forallsites(x)
   {
     spin(x) = +1;
   }
 
-  for (int i = 0; i < 100; i++)
+  for (mdp_suint i = 0; i < 100; i++)
   {
     dH = 0;
     for (mdp_parity parity : {EVEN, ODD})

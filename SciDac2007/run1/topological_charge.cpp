@@ -9,7 +9,7 @@ class ModifiedWilsonGaugeAction : public WilsonGaugeAction
 public:
   static gauge_stats heatbath(gauge_field &U,
                               coefficients &coeff,
-                              int n_iter = 1)
+                              mdp_uint n_iter = 1)
   {
     begin_function("WilsonGaugeAction__heatbath");
     if (U.nc() == 1)
@@ -30,11 +30,11 @@ public:
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
     mdp_site x(U.lattice());
-    double time = mdp.time();
+    mdp_real time = mdp.time();
 
     mdp << coeff;
 
-    for (int iter = 0; iter < n_iter; iter++)
+    for (mdp_uint iter = 0; iter < n_iter; iter++)
     {
 
       x.set(mdp_uint(U.lattice().size(0) * mdp_global_random.plain()),
@@ -76,7 +76,7 @@ public:
   }
 };
 
-void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tmax)
+void save_top_charge(gauge_field &U, mdp_uint code, mdp_uint c1, mdp_uint c2, mdp_uint tmin, mdp_uint tmax)
 {
   const mdp_lattice &lattice = U.lattice();
   const Box L = {lattice.size(1), lattice.size(2), lattice.size(3)};
@@ -87,14 +87,14 @@ void save_top_charge(gauge_field &U, int code, int c1, int c2, int tmin, int tma
   mdp_real_scalar_field Q4(lattice);
   std::string filename;
 
-  for (int i1 = 0; i1 < c1; i1++)
+  for (mdp_uint i1 = 0; i1 < c1; i1++)
   {
     ApeSmearing::smear(U, 0.7, c2, 10);
     std::cout << "topological charge...\n";
     topological_charge(Q4, U);
     Q4.save("sample_topological_charge.mdp");
     std::cout << "3d projection...\n";
-    for (int t = tmin; t < tmax; t++)
+    for (mdp_uint t = tmin; t < tmax; t++)
     {
       forallsites(x3)
       {
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
   }
 #endif
 
-  for (int k = 0; k < 1000; k++)
+  for (mdp_suint k = 0; k < 1000; k++)
   {
     std::cout << k << std::endl;
     ModifiedWilsonGaugeAction::heatbath(U, gauge, 1000);
@@ -143,7 +143,7 @@ int main(int argc, char **argv)
     V = U;
     save_top_charge(V, k, 1, 20, 0, 1);
   }
-  for (int k = 10000; k < 10100; k++)
+  for (mdp_suint k = 10000; k < 10100; k++)
     save_top_charge(U, k, 1, 1, 0, 1);
   save_top_charge(U, 10100, 1, 0, 0, L[0]);
   mdp.close_wormholes();

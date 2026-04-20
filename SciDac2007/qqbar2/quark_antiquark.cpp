@@ -10,7 +10,7 @@ public:
   static gauge_stats heatbath(gauge_field &U,
                               coefficients &coeff,
                               std::vector<mdp_site> &sites,
-                              int n_iter = 1)
+                              mdp_uint n_iter = 1)
   {
     begin_function("WilsonGaugeAction__heatbath");
     if (U.nc() == 1)
@@ -29,11 +29,11 @@ public:
     mdp_matrix M;
     mdp_complex a[4], tmpUik;
     mdp_site x(U.lattice());
-    double time = mdp.time();
+    mdp_real time = mdp.time();
 
     mdp << coeff;
 
-    for (int iter = 0; iter < n_iter; iter++)
+    for (mdp_uint iter = 0; iter < n_iter; iter++)
       for (mdp_parity parity : {EVEN, ODD})
         for (mdp_suint mu = 0; mu < U.ndim(); mu++)
         {
@@ -81,12 +81,12 @@ public:
 void punched_ape_smearing(gauge_field &U,
                           std::vector<mdp_site> &sites,
                           mdp_real alpha = 0.7,
-                          int iterations = 20,
-                          int cooling_steps = 10)
+                          mdp_uint iterations = 20,
+                          mdp_uint cooling_steps = 10)
 {
   gauge_field V(U.lattice(), U.nc());
   mdp_site x(U.lattice());
-  for (int iter = 0; iter < iterations; iter++)
+  for (mdp_uint iter = 0; iter < iterations; iter++)
   {
     std::cout << "smearing step " << iter << "/" << iterations << std::endl;
     V = U;
@@ -119,8 +119,8 @@ int main(int argc, char **argv)
 {
   mdp.open_wormholes(argc, argv);
   define_base_matrices("FERMILAB");
-  int N;
-  int nc = 2;
+  mdp_uint N;
+  constexpr mdp_suint nc = 2;
   constexpr Box L = {10, 16, 10, 10};
   constexpr Box L_space = {16, 10, 10};
   int idx[6][3] = {{0, 0, 1}, {1, 0, 2}, {2, 0, 3}, {3, 1, 2}, {4, 1, 3}, {5, 2, 3}};
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
 
   forallsites(x3)
   {
-    for (int i = 0; i < 6; i++)
+    for (mdp_suint i = 0; i < 6; i++)
       PA(x3, i) = PB(x3, i) = 0;
   }
   PC = 0;
@@ -160,7 +160,7 @@ int main(int argc, char **argv)
   }
 #endif
 
-  for (int conf = 0; conf < 1000; conf++)
+  for (mdp_suint conf = 0; conf < 1000; conf++)
   {
 #if 0
     WilsonGaugeAction::heatbath(V, gauge, 50);
@@ -193,7 +193,7 @@ int main(int argc, char **argv)
             forallsites(x3)
             {
               x.set(L[0] / 2, x3(0), x3(1), x3(2));
-              for (int h = 0; h < 6; h++)
+              for (mdp_suint h = 0; h < 6; h++)
               {
                 P = trace(plaquette(U, x, idx[h][1], idx[h][2]));
                 PA(x3, idx[h][0]) += d * P;
@@ -240,15 +240,15 @@ int main(int argc, char **argv)
 #endif
 
     N = (conf + 1) * L[0];
-    float m = 0;
-    float Q;
+    mdp_real m = 0;
+    mdp_real Q;
     forallsites(x3) Q3(x3) = 0;
     forallsites(x3)
     {
       Q = 0;
-      for (int q = 0; q < 3; q++)
+      for (mdp_suint q = 0; q < 3; q++)
         Q += (real(PA(x3, q) / PC - PB(x3, q) / N));
-      for (int q = 3; q < 6; q++)
+      for (mdp_suint q = 3; q < 6; q++)
         Q += (real(PA(x3, q) / PC - PB(x3, q) / N));
       Q3(x3) += Q;
       // x3b.set(L[1] - x3(0), x3(1), x3(2));

@@ -21,7 +21,7 @@ void test_wilson()
 
   set_hot(U);
   set_random(psi);
-  double t0, t1;
+  mdp_real t0, t1;
   inversion_stats stats;
 
   default_fermi_action = FermiCloverActionFast::mul_Q;
@@ -70,7 +70,7 @@ void test_clover()
   set_hot(U);
   compute_em_field(U);
   set_random(psi);
-  double t0, t1;
+  mdp_real t0, t1;
   inversion_stats stats;
 
   default_fermi_action = FermiCloverActionFast::mul_Q;
@@ -115,7 +115,7 @@ void test_staggered()
   staggered_field chi2(lattice, nc);
   coefficients coeff;
   coeff["mass"] = 1.0;
-  double t0, t1;
+  mdp_real t0, t1;
   inversion_stats stats;
   set_hot(U);
   set_random(psi);
@@ -176,7 +176,7 @@ void test_asqtad()
   staggered_field chi2(lattice, nc);
   coefficients coeff;
   coeff["mass"] = 1.0;
-  double t0, t1;
+  mdp_real t0, t1;
   inversion_stats stats;
   set_hot(U);
   set_random(psi);

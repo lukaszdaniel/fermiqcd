@@ -82,7 +82,7 @@ namespace MDP
       mdp_site x(psi_in.lattice());
       mdp_real residue, rresidue = -1, old_rresidue;
       mdp_complex alpha, beta, rho, rho_old, omega;
-      double time = mdp.time();
+      mdp_real time = mdp.time();
       inversion_stats stats;
 
       mdp << "\tstep\tresidue\t\ttime (sec)\n";

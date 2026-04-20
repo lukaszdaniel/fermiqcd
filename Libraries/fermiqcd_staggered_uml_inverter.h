@@ -76,8 +76,8 @@ namespace MDP
       mdp_uint step = 0;
       mdp_parity opposite_parity = EVENODD;
       mdp_suint nc = psi_in.nc();
-      double beta, norm, four_mass_sq;
-      double pMMp, alpha, residue, rresidue = -1, target_residue, old_residue;
+      mdp_real beta, norm, four_mass_sq;
+      mdp_real pMMp, alpha, residue, rresidue = -1, target_residue, old_residue;
       inversion_stats stats;
 
       staggered_field r(psi_in.lattice(), nc);
@@ -86,7 +86,7 @@ namespace MDP
       staggered_field q(psi_in.lattice(), nc);
       mdp_site x(psi_in.lattice());
 
-      double time = mdp.time();
+      mdp_real time = mdp.time();
 
       if (!coeff.has_key("mass") || coeff["mass"] != 0)
         error("coefficient mass undeclared or different from zero");

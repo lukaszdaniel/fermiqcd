@@ -17,7 +17,7 @@ void make_slices(mdp_uint nt, mdp_uint nx, const char *filename)
   std::string filename2;
   U.load(filename);
   filename2 = std::format("{}.topological_charge_20.vtk", filename);
-  float tc = topological_charge_vtk(U, filename2, -1);
+  mdp_real tc = topological_charge_vtk(U, filename2, -1);
   mdp << "topological_charge =" << tc << "\n";
 }
 

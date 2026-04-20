@@ -15,7 +15,7 @@ int main(int argc, char **argv)
   mdp_site x(vacuum);
   mdp_site A(vacuum);
   mdp_site B(vacuum);
-  float precision, old_u;
+  mdp_real precision;
 
   forallsitesandcopies(x)
   {
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
           (x(1) > 0) && (x(1) < mybox[1] - 1) &&
           (x(2) > 0) && (x(2) < mybox[2] - 1))
       {
-        old_u = u(x);
+        mdp_real old_u = u(x);
         u(x) = (q(x) + u(x + 0) + u(x - 0) + u(x + 1) + u(x - 1) + u(x + 2) + u(x - 2)) / 6;
         precision += std::pow(u(x) - old_u, 2);
       }

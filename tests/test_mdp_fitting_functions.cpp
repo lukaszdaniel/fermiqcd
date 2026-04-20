@@ -2,7 +2,7 @@
 
 using namespace MDP;
 
-void assert_near(double a, double b, double tol, const char *msg)
+void assert_near(mdp_real a, mdp_real b, mdp_real tol, const char *msg)
 {
   if (std::fabs(a - b) > tol)
   {
@@ -11,22 +11,22 @@ void assert_near(double a, double b, double tol, const char *msg)
   }
 }
 
-float quad(float *x, mdp_int, void *)
+mdp_real quad(mdp_real *x, mdp_int, void *)
 {
   return (*x - 2.0f) * (*x - 2.0f);
 }
 
-float linear_model(float x, float *a, mdp_int, void *)
+mdp_real linear_model(mdp_real x, mdp_real *a, mdp_int, void *)
 {
   return a[0] * x + a[1];
 }
 
 void test_linear_fit()
 {
-  float x[] = {0, 1, 2, 3};
+  mdp_real x[] = {0, 1, 2, 3};
   mdp_measure y[4];
 
-  for (int i = 0; i < 4; i++)
+  for (mdp_suint i = 0; i < 4; i++)
   {
     y[i].setmean(2 * x[i] + 1);
     y[i].setmerror(0.1);
@@ -41,8 +41,8 @@ void test_linear_fit()
 
 void test_golden()
 {
-  float xmin;
-  float f = golden_rule(quad, xmin, 0, 2, 5);
+  mdp_real xmin;
+  mdp_real f = golden_rule(quad, xmin, 0, 2, 5);
 
   assert_near(xmin, 2.0, 1e-2, "golden xmin");
   assert_near(f, 0.0, 1e-3, "golden fmin");
@@ -50,15 +50,15 @@ void test_golden()
 
 void test_blm()
 {
-  float x[] = {0, 1, 2};
+  mdp_real x[] = {0, 1, 2};
   mdp_measure y[3];
 
-  for (int i = 0; i < 3; i++)
+  for (mdp_suint i = 0; i < 3; i++)
   {
     y[i].set(2 * x[i] + 1, 0.1, i);
   }
 
-  float a[] = {0, 0};
+  mdp_real a[] = {0, 0};
   mdp_matrix cov(2, 2);
 
   BayesianLevenbergMarquardt(x, y, 0, 3, a, 2, cov, linear_model);

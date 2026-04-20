@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 #ifndef TWISTED_BOUNDARY
   printf("COMPUTING C2(t) FOR STAGGERED MESON: %s\n", argv[1]);
 
-  float seed = 0;
+  mdp_int seed = 0;
   mdp_uint Nt = 24, Ns = 8;
   mdp_suint Nc = 3;
   const Box box = {Nt, Ns, Ns, Ns};
@@ -33,7 +33,7 @@ int main(int argc, char **argv)
                          torus_topology,
                          seed, 3);
 
-  int nconf = (int)val(argv[2]);
+  mdp_uint nconf = (mdp_uint)val(argv[2]);
 
   gauge_field U(space_time, Nc);
   gauge_field V(space_time, Nc);
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
   mdp_jackboot c2(nconf, Nt);
 
-  for (int conf = 0; conf < nconf; conf++)
+  for (mdp_uint conf = 0; conf < nconf; conf++)
   {
     c2.set_conf(conf);
     s = std::format("/home/mdp/data/gauge_improved_b7.4_u0.8629/gauge32x08_b7.4_u0.8629_n{:06d}", conf + 1);
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
     for (mdp_uint t = 0; t < Nt; t++)
       c2(t) = real(prop(0, t));
 
-    float x, dx;
+    mdp_real x, dx;
 
     if (isMainProcess())
     {

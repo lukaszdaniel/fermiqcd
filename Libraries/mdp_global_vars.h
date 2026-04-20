@@ -108,7 +108,7 @@ namespace MDP
     /// Used to determine the local endianess of this machine
     constexpr mdp_uint mdp_local_endianess = 0x87654321;
 
-    constexpr double Pi = 3.1415926535897932384626433832795028841971;
+    constexpr mdp_real Pi = 3.1415926535897932384626433832795028841971;
 
     /// Default precision used by iterative algorithms such as
     /// mdp_matrix::sin(), mdp_matrix::cos() and mdp_matrix::exp()
