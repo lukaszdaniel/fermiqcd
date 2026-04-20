@@ -16,6 +16,7 @@ public:
       error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
     gauge_stats stats;
     mdp_real beta, zeta;
+
     if (coeff.has_key("beta"))
       beta = coeff["beta"];
     else
@@ -25,50 +26,52 @@ public:
     else
       zeta = 1;
 
-    mdp_parity parity = EVEN;
-    mdp_suint mu = 0;
-    mdp_matrix M;
-    mdp_complex a[4], tmpUik;
+    mdp_suint nc = U.nc();
+    mdp_suint ndim = U.ndim();
+    mdp_matrix M(nc, nc);
     mdp_site x(U.lattice());
     mdp_real time = mdp.time();
+    mdp_complex a[4];
 
     mdp << coeff;
 
     for (mdp_uint iter = 0; iter < n_iter; iter++)
     {
-
       x.set(mdp_uint(U.lattice().size(0) * mdp_global_random.plain()),
             mdp_uint(U.lattice().size(1) * mdp_global_random.plain()),
             mdp_uint(U.lattice().size(2) * mdp_global_random.plain()),
             mdp_uint(U.lattice().size(3) * mdp_global_random.plain()));
-
-      for (mu = 0; mu < U.ndim(); mu++)
+      for (mdp_parity parity : {EVEN, ODD})
       {
-
-        for (mdp_suint i = 0; i < U.nc() - 1; i++)
-          for (mdp_suint j = i + 1; j < U.nc(); j++)
+        for (mdp_suint mu = 0; mu < ndim; mu++)
+        {
+          for (mdp_suint i = 0; i < nc - 1; i++)
           {
-            if (zeta == 1)
-              M = U(x, mu) * staple_H(U, x, mu);
-            else if (mu == 0)
-              M = zeta * U(x, 0) * staple_H(U, x, 0);
-            else
-              M = ((mdp_real)1.0 / zeta) * U(x, mu) * staple_H(U, x, mu);
-            a[0] = M(i, i);
-            a[1] = M(i, j);
-            a[2] = M(j, i);
-            a[3] = M(j, j);
-            heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-            for (mdp_suint k = 0; k < U.nc(); k++)
+            for (mdp_suint j = i + 1; j < nc; j++)
             {
-              tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
-              U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
-              U(x, mu, i, k) = tmpUik;
+              if (zeta == 1)
+                M = U(x, mu) * staple_H(U, x, mu);
+              else if (mu == 0)
+                M = zeta * U(x, 0) * staple_H(U, x, 0);
+              else
+                M = (1.0 / zeta) * U(x, mu) * staple_H(U, x, mu);
+              a[0] = M(i, i);
+              a[1] = M(i, j);
+              a[2] = M(j, i);
+              a[3] = M(j, j);
+              heatbath_SU2(U.lattice().random(x), beta / nc, a);
+              for (mdp_suint k = 0; k < nc; k++)
+              {
+                mdp_complex tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
+                U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
+                U(x, mu, i, k) = tmpUik;
+              }
             }
           }
+          // The next command does all the communication!
+          U.update(parity, mu, nc * nc);
+        }
       }
-      // The next command does all the communications!
-      U.update(parity, mu, U.nc() * U.nc());
     }
     mdp << "\t<stats>\n\t\t<time>" << mdp.time() - time << "</time>\n\t</stats>\n";
     end_function("WilsonGaugeAction__heatbath");

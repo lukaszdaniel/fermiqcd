@@ -23,7 +23,7 @@ namespace MDP
   // If use class mdp_matrix
   // ///////////////////////////
   mdp_matrix staple(const gauge_field &U, mdp_site x,
-                           mdp_suint mu, int s1, mdp_suint nu)
+                    mdp_suint mu, mdp_int s1, mdp_suint nu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     if (s1 == +1)
@@ -46,17 +46,19 @@ namespace MDP
 
     tmp = 0;
     for (mdp_suint nu = 0; nu < U.ndim(); nu++)
+    {
       if (nu != mu)
       {
         tmp += U(x, nu) * U(x + nu, mu) * hermitian(U(x + mu, nu));
         y = x - nu;
         tmp += hermitian(U(y, nu)) * U(y, mu) * U(y + mu, nu);
       }
+    }
     return tmp;
   }
 
   mdp_matrix staple_H(const gauge_field &U, mdp_site x,
-                             mdp_suint mu, int s1, mdp_suint nu)
+                      mdp_suint mu, mdp_int s1, mdp_suint nu)
   {
     mdp_matrix tmp(U.nc(), U.nc());
     if (s1 == +1)
@@ -78,12 +80,14 @@ namespace MDP
     mdp_site y(U.lattice());
     tmp = 0;
     for (mdp_suint nu = 0; nu < U.ndim(); nu++)
+    {
       if (nu != mu)
       {
         tmp += U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
         y = x - nu;
         tmp += hermitian(U(y + mu, nu)) * hermitian(U(y, mu)) * U(y, nu);
       }
+    }
     return tmp;
   }
 
@@ -94,6 +98,7 @@ namespace MDP
     mdp_real param;
     tmp = 0;
     for (mdp_suint nu = 0; nu < U.ndim(); nu++)
+    {
       if (nu != mu)
       {
         if (nu * mu == 0)
@@ -108,6 +113,7 @@ namespace MDP
         y = x - nu;
         tmp += param * hermitian(U(y + mu, nu)) * hermitian(U(y, mu)) * U(y, nu);
       }
+    }
     return tmp;
   }
 
@@ -142,13 +148,17 @@ namespace MDP
     mdp_site y(U.lattice());
     tmp = 0;
     if (mu != 0)
+    {
       for (mdp_suint nu = 1; nu < U.ndim(); nu++)
+      {
         if (nu != mu)
         {
           tmp += U(x + mu, nu) * hermitian(U(x + nu, mu)) * hermitian(U(x, nu));
           y = x - nu;
           tmp += hermitian(U(y + mu, nu)) * hermitian(U(y, mu)) * U(y, nu);
         }
+      }
+    }
     return tmp;
   }
 

@@ -192,7 +192,7 @@ namespace MDP
       error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
 
     mdp_matrix M;
-    mdp_complex a[4], tmpUik;
+    mdp_complex a[4];
     mdp_site x(U.lattice());
     mdp_real dk;
     mdp_real e[4];
@@ -231,7 +231,7 @@ namespace MDP
 
                 for (mdp_suint k = 0; k < U.nc(); k++)
                 {
-                  tmpUik = (a[0] * a[0] + a[2] * a[1]) * U(x, mu, i, k) + (a[1] * (a[0] + a[3])) * U(x, mu, j, k);
+                  mdp_complex tmpUik = (a[0] * a[0] + a[2] * a[1]) * U(x, mu, i, k) + (a[1] * (a[0] + a[3])) * U(x, mu, j, k);
                   U(x, mu, j, k) = (a[2] * (a[0] + a[3])) * U(x, mu, i, k) + (a[1] * a[2] + a[3] * a[3]) * U(x, mu, j, k);
                   U(x, mu, i, k) = tmpUik;
                 }

@@ -114,7 +114,8 @@ namespace MDP
       if (U.nc() == 1)
         error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
       gauge_stats stats;
-      mdp_real beta = 0.0, zeta = 0.0;
+      mdp_real beta, zeta;
+
       if (coeff.has_key("beta"))
         beta = coeff["beta"];
       else
@@ -124,21 +125,26 @@ namespace MDP
       else
         zeta = 1;
 
-      mdp_matrix M(U.nc(), U.nc());
-      mdp_complex a[4], tmpUik;
+      mdp_suint nc = U.nc();
+      mdp_suint ndim = U.ndim();
+      mdp_matrix M(nc, nc);
       mdp_site x(U.lattice());
       mdp_real time = mdp.time();
+      mdp_complex a[4];
 
       mdp << coeff;
 
       for (mdp_uint iter = 0; iter < n_iter; iter++)
+      {
         for (mdp_parity parity : {EVEN, ODD})
-          for (mdp_suint mu = 0; mu < U.ndim(); mu++)
+        {
+          for (mdp_suint mu = 0; mu < ndim; mu++)
           {
             forallsitesofparity(x, parity)
             {
-              for (mdp_suint i = 0; i < U.nc() - 1; i++)
-                for (mdp_suint j = i + 1; j < U.nc(); j++)
+              for (mdp_suint i = 0; i < nc - 1; i++)
+              {
+                for (mdp_suint j = i + 1; j < nc; j++)
                 {
                   if (zeta == 1)
                     M = U(x, mu) * staple_H(U, x, mu);
@@ -148,18 +154,22 @@ namespace MDP
                   a[1] = M(i, j);
                   a[2] = M(j, i);
                   a[3] = M(j, j);
-                  heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-                  for (mdp_suint k = 0; k < U.nc(); k++)
+                  heatbath_SU2(U.lattice().random(x), beta / nc, a);
+                  for (mdp_suint k = 0; k < nc; k++)
                   {
-                    tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
+                    mdp_complex tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                     U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
                     U(x, mu, i, k) = tmpUik;
                   }
                 }
+              }
             }
-            // The next command does all the communications!
-            U.update(parity, mu, U.nc() * U.nc());
+            // The next command does all the communication!
+            U.update(parity, mu, nc * nc);
           }
+        }
+      }
+
       mdp << "\t<stats>\n\t\t<time>" << mdp.time() - time << "</time>\n\t</stats>\n";
       end_function("WilsonGaugeAction__heatbath");
       return stats;
@@ -381,11 +391,12 @@ namespace MDP
                                 mdp_uint n_iter = 1,
                                 std::string model = "MILC")
     {
-
       begin_function("ImprovedGaugeAction__heatbath");
-
+      if (U.nc() == 1)
+        error("fermiqcd_gauge_algorithms/improved_heatbath(): U(1)? (use metropolis)");
       gauge_stats stats;
-      mdp_real beta = 1.0, zeta, u_s, u_t;
+      mdp_real beta, zeta;
+      mdp_real u_s, u_t;
 
       if (coeff.has_key("beta"))
         beta = coeff["beta"];
@@ -416,14 +427,12 @@ namespace MDP
         error("lattice is not divisible by 3");
 #endif
 
-      if (U.nc() == 1)
-        error("fermiqcd_gauge_algorithms/improved_heatbath(): U(1)? (use metropolis instead)");
       mdp_suint nc = U.nc();
       mdp_suint ndim = U.ndim();
       mdp_matrix M(nc, nc);
       mdp_site x(U.lattice());
       mdp_real time = mdp.time();
-      mdp_complex a[4], tmpUik;
+      mdp_complex a[4];
       mdp_real alpha_s;
       mdp_real c_tp = 0, c_tr = 0, c_sp = 0, c_sr = 0, c_p = 0, c_r = 0, c_c = 0;
 
@@ -461,6 +470,7 @@ namespace MDP
       mdp << coeff;
 
       for (mdp_uint iter = 0; iter < n_iter; iter++)
+      {
         for (mdp_uint type = 0; type < (mdp_uint)std::pow(1.0 * iGauge_min, U.ndim()); type++)
         {
           forallsites(x)
@@ -468,7 +478,9 @@ namespace MDP
             if (strange_mapping(x) == type)
             {
               for (mdp_suint mu = 0; mu < ndim; mu++)
+              {
                 for (mdp_suint i = 0; i < nc - 1; i++)
+                {
                   for (mdp_suint j = i + 1; j < nc; j++)
                   {
                     if (zeta != 1)
@@ -500,18 +512,23 @@ namespace MDP
                     a[1] = M(i, j);
                     a[2] = M(j, i);
                     a[3] = M(j, j);
-                    heatbath_SU2(U.lattice().random(x), beta / U.nc(), a);
-                    for (mdp_suint k = 0; k < U.nc(); k++)
+                    heatbath_SU2(U.lattice().random(x), beta / nc, a);
+                    for (mdp_suint k = 0; k < nc; k++)
                     {
-                      tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
+                      mdp_complex tmpUik = a[0] * U(x, mu, i, k) + a[1] * U(x, mu, j, k);
                       U(x, mu, j, k) = a[2] * U(x, mu, i, k) + a[3] * U(x, mu, j, k);
                       U(x, mu, i, k) = tmpUik;
                     }
                   }
+                }
+              }
             }
           }
+          // The next command does all the communication!
           U.update();
         }
+      }
+
       mdp << "\t<stats>\n\t\t<time>" << mdp.time() - time << "</time>\n\t</stats>\n";
       end_function("ImprovedGaugeAction__heatbath");
       return stats;
