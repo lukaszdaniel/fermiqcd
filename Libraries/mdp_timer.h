@@ -83,7 +83,7 @@ namespace MDP
 #endif
   }
 
-  void getcpuusage(double &user, double &total)
+  void getcpuusage(mdp_real &user, mdp_real &total)
   {
 #ifdef NO_POSIX
     user = total = 0.0;
@@ -112,8 +112,8 @@ namespace MDP
       error("Error while reading cpu stats");
     }
 
-    double usage[4];
-    double sum = 0.0;
+    mdp_real usage[4];
+    mdp_real sum = 0.0;
 
     for (int i = 0; i < 4; ++i)
     {

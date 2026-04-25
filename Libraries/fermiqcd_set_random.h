@@ -21,7 +21,7 @@ namespace MDP
   /// Set the complex field components of chi to be gaussian random numbers
   /// with mean=0 and sigma=1 (useful for stochastic propagators).
   /// can choose parity=EVEN, ODD or EVENODD
-  void set_random(mdp_field<mdp_complex> &chi,
+  void set_random(mdp_complex_field &chi,
                   mdp_parity parity = EVENODD)
   {
     mdp_uint i_max = chi.size_per_site();
@@ -42,7 +42,7 @@ namespace MDP
   /// with mean=0 and sigma=1 (useful for stochastic propagators).
   /// can choose parity=EVEN, ODD or EVENODD
   /// attention! does not set to zero other timeslices!!!
-  void set_wall_random(mdp_field<mdp_complex> &chi,
+  void set_wall_random(mdp_complex_field &chi,
                        mdp_uint t = 0,
                        mdp_parity parity = EVENODD)
   {
@@ -62,7 +62,7 @@ namespace MDP
 
   /// Set the complex field components of chi tozero.
   /// can choose parity=EVEN, ODD or EVENODD
-  void set_zero(mdp_field<mdp_complex> &chi,
+  void set_zero(mdp_complex_field &chi,
                 mdp_parity parity = EVENODD)
   {
     mdp_uint i_max = chi.size_per_site();

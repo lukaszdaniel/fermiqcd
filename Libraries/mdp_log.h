@@ -86,13 +86,13 @@ namespace MDP
     {
       if (m_cpuValid)
       {
-        double cpuTime = static_cast<double>(std::clock() - m_cpuStart) / CLOCKS_PER_SEC;
+        mdp_real cpuTime = static_cast<mdp_real>(std::clock() - m_cpuStart) / CLOCKS_PER_SEC;
 
         (*m_os) << "# CPU time  " << std::setw(12) << cpuTime << " sec\n";
       }
 
       auto timeEnd = std::chrono::system_clock::now();
-      double wallTime = std::chrono::duration<double>(timeEnd - m_timeStart).count();
+      mdp_real wallTime = std::chrono::duration<mdp_real>(timeEnd - m_timeStart).count();
 
       (*m_os) << "# user time " << std::setw(12) << wallTime << " sec\n";
       (*m_os) << "# time stop " << formatTime(timeEnd) << "\n";

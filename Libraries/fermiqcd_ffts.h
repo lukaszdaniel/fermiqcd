@@ -20,16 +20,10 @@
 
 namespace MDP
 {
-  mdp_int i2pow(mdp_int n)
-  {
-    return 0x0001 << n;
-  }
-
-  /** @brief one dimensional Fourier transform
+  /** @brief Computes the one-dimensional Discrete Fourier Transform (DFT)
    *
-   * here n is not the size of f but size of f is i2pow(n)
    */
-  void dft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
+  void dft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, mdp_sint sign,
            mdp_int offset = 0, mdp_int coeff = 1)
   {
     mdp_complex phase = exp(2.0 * Pi * I * (1.0 * sign / n));
@@ -42,13 +36,18 @@ namespace MDP
     }
   }
 
-  void fft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, double sign,
+  /**
+   * @brief Computes the one-dimensional Fast Fourier Transform (FFT)
+   *        using the iterative radix-2 Cooley–Tukey algorithm.
+   *
+   */
+  void fft(mdp_complex *fft_f, mdp_complex *f, mdp_int n, mdp_sint sign,
            mdp_int offset = 0, mdp_int coeff = 1)
   {
-    mdp_int N = i2pow(n); // Size of the transform (2^n)
-    if (sign != 0.0)
-    {
+    mdp_int N = 1 << n; // Size of the transform (2^n)
 
+    if (sign != 0)
+    {
       // Copy data from f to fft_f
       for (mdp_int i = 0; i < N; i++)
         fft_f[offset + coeff * i] = f[offset + coeff * i];
@@ -69,17 +68,19 @@ namespace MDP
       // Cooley-Tukey FFT
       for (mdp_int s = 1; s <= n; s++)
       {
-        mdp_int m = std::pow(2, s); // Size of the current stage
-        mdp_int half_m = m / 2;
+        mdp_int m = 1 << s; // Size of the current stage
+        mdp_int half_m = m >> 1;
         mdp_complex omega_m = exp(mdp_complex(0, sign * 2.0 * Pi / m)); // Twiddle factor
 
         for (mdp_int k = 0; k < N; k += m)
         {
           mdp_complex omega = 1.0;
+
           for (mdp_int j = 0; j < half_m; j++)
           {
             mdp_complex t = omega * fft_f[offset + coeff * (k + j + half_m)];
             mdp_complex u = fft_f[offset + coeff * (k + j)];
+
             fft_f[offset + coeff * (k + j)] = u + t;
             fft_f[offset + coeff * (k + j + half_m)] = u - t;
 
@@ -96,19 +97,23 @@ namespace MDP
     }
     else
     {
-      for (mdp_int a = 0; a < N; a++)
-        fft_f[offset + coeff * a] = f[offset + coeff * a];
+      for (mdp_int i = 0; i < N; i++)
+        fft_f[offset + coeff * i] = f[offset + coeff * i];
     }
   }
 
+  /**
+   * @brief Computes a 3D Fast Fourier Transform (FFT) on a fixed time slice
+   *        of a 4D fermion field.
+   *
+   */
   void fermi_field_fft(mdp_uint t,
                        fermi_field &psi_out,
                        const fermi_field &psi_in,
-                       int sign)
+                       mdp_sint sign)
   {
-
     if (psi_in.lattice().n_dimensions() != 4)
-      error("fft3D requires TxXxXxX");
+      error("fermi_field_fft requires 4D lattice of form TxXxXxX");
 
     mdp_uint size = psi_in.lattice().size(1);
     if (psi_in.lattice().size(2) > size)
@@ -179,13 +184,17 @@ namespace MDP
       }
   }
 
+  /**
+   * @brief Computes a 1D Fast Fourier Transform (FFT) along the time dimension
+   *        of a 4D fermion field.
+   *
+   */
   void fermi_field_fft_t(fermi_field &psi_out,
                          const fermi_field &psi_in,
-                         int sign)
+                         mdp_sint sign)
   {
-
     if (psi_in.lattice().n_dimensions() != 4)
-      error("fft3D requires TxXxXxX");
+      error("fermi_field_fft_t requires 4D lattice of form TxXxXxX");
 
     mdp_uint size = psi_in.lattice().size(0);
     if (psi_in.lattice().size(2) > size)
@@ -225,13 +234,14 @@ namespace MDP
       }
   }
 
-  /** @brief Default FT in space x-y-z
+  /**
+   * @brief Computes Fourier transform of a fermion field.
    *
    * Set ttime=true to FT in time too
    */
   void fermi_field_fft(fermi_field &psi_out,
                        const fermi_field &psi_in,
-                       int sign, bool ttime = false)
+                       mdp_sint sign, bool ttime = false)
   {
     for (mdp_uint t = 0; t < psi_in.lattice().size(0); t++)
       fermi_field_fft(t, psi_out, psi_in, sign);
@@ -240,14 +250,18 @@ namespace MDP
       fermi_field_fft_t(psi_out, psi_out, sign);
   }
 
+  /**
+   * @brief Computes a 3D Discrete Fourier Transform (DFT) on a fermionic
+   *        complex field for a fixed time slice.
+   *
+   */
   void mdp_complex_field_fft(mdp_uint t,
-                             mdp_field<mdp_complex> &psi_out,
-                             const mdp_field<mdp_complex> &psi_in,
-                             int sign)
+                             mdp_complex_field &psi_out,
+                             const mdp_complex_field &psi_in,
+                             mdp_sint sign)
   {
-
     if (psi_in.lattice().n_dimensions() != 4)
-      error("fft3D requires TxXxXxX");
+      error("mdp_complex_field_fft requires 4D lattice of form TxXxXxX");
 
     mdp_uint size = psi_in.lattice().size(1);
     if (psi_in.lattice().size(2) > size)
@@ -318,13 +332,17 @@ namespace MDP
     }
   }
 
-  void mdp_complex_field_fft_t(mdp_field<mdp_complex> &psi_out,
-                               const mdp_field<mdp_complex> &psi_in,
-                               int sign)
+  /**
+   * @brief Computes Fourier transform along the time dimension of a
+   *        4D complex field.
+   *
+   */
+  void mdp_complex_field_fft_t(mdp_complex_field &psi_out,
+                               const mdp_complex_field &psi_in,
+                               mdp_sint sign)
   {
-
     if (psi_in.lattice().n_dimensions() != 4)
-      error("fft3D requires TxXxXxX");
+      error("mdp_complex_field_fft_t requires 4D lattice of form TxXxXxX");
 
     mdp_uint size = psi_in.lattice().size(0);
     if (psi_in.lattice().size(2) > size)
@@ -364,13 +382,14 @@ namespace MDP
     }
   }
 
-  /** @brief Default FT in space x-y-z
+  /**
+   * @brief Computes Fourier transform of a 4D complex field.
    *
    * Set ttime=true to FT in time too
    */
-  void mdp_complex_field_fft(mdp_field<mdp_complex> &psi_out,
-                             const mdp_field<mdp_complex> &psi_in,
-                             int sign, bool ttime = false)
+  void mdp_complex_field_fft(mdp_complex_field &psi_out,
+                             const mdp_complex_field &psi_in,
+                             mdp_sint sign, bool ttime = false)
   {
     for (mdp_uint t = 0; t < psi_in.lattice().size(0); t++)
       mdp_complex_field_fft(t, psi_out, psi_in, sign);

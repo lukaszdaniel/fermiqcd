@@ -474,7 +474,7 @@ namespace MDP
                  "</head>\n";
 
       reset_time();
-      double a, b;
+      mdp_real a, b;
       getcpuusage(a, b);
       wormholes_open = true;
       end_function("open_wormholes");
@@ -485,9 +485,9 @@ namespace MDP
     void print_stats()
     {
 #ifndef NO_POSIX
-      auto a = std::make_unique<double[]>(nproc());
-      auto b = std::make_unique<double[]>(nproc());
-      auto c = std::make_unique<double[]>(nproc());
+      auto a = std::make_unique<mdp_real[]>(nproc());
+      auto b = std::make_unique<mdp_real[]>(nproc());
+      auto c = std::make_unique<mdp_real[]>(nproc());
       for (mdp_uint i = 0; i < nproc(); i++)
         a[i] = b[i] = c[i] = 0;
       getcpuusage(a[me()], b[me()]);

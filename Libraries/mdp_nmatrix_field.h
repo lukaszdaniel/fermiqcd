@@ -28,7 +28,7 @@ namespace MDP
   ///      for(int i=0; i<10; i++)
   ///        h(x,i)=lattice.random(x).SU(3);
   /// @endverbatim
-  class mdp_nmatrix_field : public mdp_field<mdp_complex>
+  class mdp_nmatrix_field : public mdp_complex_field
   {
   protected:
     mdp_uint m_matrices;
@@ -36,17 +36,17 @@ namespace MDP
     mdp_uint m_columns;
 
   public:
-    mdp_nmatrix_field() : mdp_field<mdp_complex>(), m_matrices(0), m_rows(0), m_columns(0)
+    mdp_nmatrix_field() : mdp_complex_field(), m_matrices(0), m_rows(0), m_columns(0)
     {
     }
 
     /** @brief declares a n-component vector field of ixj matrices at each site
      */
-    mdp_nmatrix_field(const mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j) : mdp_field<mdp_complex>(a, n * i * j), m_matrices(n), m_rows(i), m_columns(j)
+    mdp_nmatrix_field(const mdp_lattice &a, mdp_uint n, mdp_uint i, mdp_uint j) : mdp_complex_field(a, n * i * j), m_matrices(n), m_rows(i), m_columns(j)
     {
     }
 
-    mdp_nmatrix_field(const mdp_nmatrix_field &field) : mdp_field<mdp_complex>(field), m_matrices(field.m_matrices), m_rows(field.m_rows), m_columns(field.m_columns)
+    mdp_nmatrix_field(const mdp_nmatrix_field &field) : mdp_complex_field(field), m_matrices(field.m_matrices), m_rows(field.m_rows), m_columns(field.m_columns)
     {
     }
 
@@ -66,7 +66,7 @@ namespace MDP
         return *this;
 
       // base assignment
-      mdp_field<mdp_complex>::operator=(other);
+      mdp_complex_field::operator=(other);
 
       // derived fields assignment
       m_matrices = other.m_matrices;
