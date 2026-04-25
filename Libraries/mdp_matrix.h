@@ -1124,43 +1124,38 @@ namespace MDP
 
     const mdp_uint n = a.rows();
 
-    // Padé coefficients (order 13)
+    // Padé coefficients (order 6)
     constexpr mdp_real c[] = {
-        64764752532480000.0,
-        32382376266240000.0,
-        7771770303897600.0,
-        1187353796428800.0,
-        129060195264000.0,
-        10559470521600.0,
-        670442572800.0,
-        33522128640.0,
-        1323241920.0,
-        40840800.0,
-        960960.0,
-        16380.0,
-        182.0,
-        1.0};
+        1.0,                   // c0
+        0.5,                   // c1
+        0.12,                  // c2
+        0.018333333333333333,  // c3
+        0.0019927536231884053, // c4
+        1.630434782608695e-4,  // c5
+        1.0351966873706e-5     // c6
+    };
 
     // matrix norm
     mdp_real norm = max(a);
 
     int s = 0;
-    if (norm > 0.5)
-      s = std::max(0, (int)std::ceil(std::log2(norm)));
 
-    mdp_matrix B = a * (1.0 / std::pow(2.0, s));
+    constexpr mdp_real theta = 0.5;
+
+    if (norm > theta)
+      s = std::max(0, (int)std::ceil(std::log2(norm / theta)));
+
+    mdp_real scale = std::ldexp(1.0, -s);
+    mdp_matrix B = a * scale;
 
     mdp_matrix B2 = B * B;
     mdp_matrix B4 = B2 * B2;
-    mdp_matrix B6 = B2 * B4;
+    mdp_matrix B6 = B4 * B2;
 
     mdp_matrix I = mdp_identity(n);
 
-    mdp_matrix U =
-        B * (B6 * (c[13] * B6 + c[11] * B4 + c[9] * B2) + c[7] * B6 + c[5] * B4 + c[3] * B2 + c[1] * I);
-
-    mdp_matrix V =
-        B6 * (c[12] * B6 + c[10] * B4 + c[8] * B2) + c[6] * B6 + c[4] * B4 + c[2] * B2 + c[0] * I;
+    mdp_matrix U = B * (c[1] * I + c[3] * B2 + c[5] * B4);
+    mdp_matrix V = c[0] * I + c[2] * B2 + c[4] * B4 + c[6] * B6;
 
     mdp_matrix P = V + U;
     mdp_matrix Q = V - U;

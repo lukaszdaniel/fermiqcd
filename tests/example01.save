@@ -1,4 +1,4 @@
-PSIM LOG: process 0 of 1 created with pid=7378
+PSIM LOG: process 0 of 1 created with pid=13240
 <PROGRAM>
 <open_wormholes>
 <head>
@@ -115,7 +115,7 @@ real(F(x, 0, 0)) = 0.948221 and real(det(F(x))) = 0.964538
 F(x) for x=(3,3)
 real(F(x, 0, 0)) = 0.987348 and real(det(F(x))) = 0.748544
 F(x) for x=(1,0)
-real(F(x, 0, 0)) = 0.947307 and real(det(F(x))) = 0.861466
+real(F(x, 0, 0)) = 0.947307 and real(det(F(x))) = 0.861465
 F(x) for x=(3,0)
 real(F(x, 0, 0)) = 0.965641 and real(det(F(x))) = 0.6327
 F(x) for x=(0,1)
@@ -150,11 +150,11 @@ real(F(x, 0, 0)) = 1.11977 and real(det(F(x))) = 0.990126
 <foot>
 *************************************************
 * Ending [Matrix Distributed Processing]        *
-* Process 0 stats: CPU=0.00% PROCESS=0.00% COMM=0.00%
+* Process 0 stats: CPU=16.67% PROCESS=16.67% COMM=0.00%
 * (above numbers make no sense under windows)
 *************************************************
 </foot>
-PROCESS 0 ENDING AFTER 0.003237 sec.
+PROCESS 0 ENDING AFTER 0.004466 sec.
 </close_wormholes>
 </PROGRAM>
 PSIM LOG: process 0 terminating
