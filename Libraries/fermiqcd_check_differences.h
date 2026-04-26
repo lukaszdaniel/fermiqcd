@@ -36,7 +36,7 @@ namespace MDP
       if (tmp > max)
         max = tmp;
     }
-    mdp << "Fields agree/disagree within precision = " << max << "\n";
+    mdp << "Fields agree within precision = " << max << "\n";
 
     end_function("check_differences");
     return max;
