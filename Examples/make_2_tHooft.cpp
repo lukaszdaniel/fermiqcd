@@ -14,6 +14,7 @@ int main(int argc, char **argv)
   mdp_site x(lattice);
   set_cold(U);
   std::vector<mdp_real> p(4);
+
   for (mdp_suint mu = 0; mu < 4; mu++)
     p[mu] = L[mu] / 2;
 

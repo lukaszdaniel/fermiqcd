@@ -35,7 +35,7 @@ namespace MDP
     }
   }
 
-  /// Projects a will fermion (psi) into a domain wall fermion (chi)
+  /// Projects a wall fermion (psi) into a domain wall fermion (chi)
   void project(dwfermi_field &chi, const fermi_field &psi)
   {
     mdp_site x(chi.lattice());

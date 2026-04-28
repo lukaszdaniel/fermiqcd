@@ -7,7 +7,7 @@
 
 namespace MDP
 {
-  void dump(mdp_field<mdp_real> &s,
+  void dump(mdp_real_field &s,
             mdp_int site_idx = 0,
             const std::string &filename = "default.vtk",
             bool bASCII = true)

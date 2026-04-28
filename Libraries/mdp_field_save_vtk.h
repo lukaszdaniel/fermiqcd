@@ -185,15 +185,15 @@ namespace MDP
     return true;
   }
 
-  mdp_field<mdp_real> &cumulate_field(mdp_field<mdp_real> &field, const std::string &filename)
+  mdp_real_field &cumulate_field(mdp_real_field &field, const std::string &filename)
   {
     static std::map<std::string, int> counter;
-    static std::map<std::string, mdp_field<mdp_real> *> fields;
+    static std::map<std::string, mdp_real_field *> fields;
     mdp_site p(field.lattice());
 
     if (counter.find(filename) == counter.end())
     {
-      fields[filename] = new mdp_field<mdp_real>(field.lattice(), field.size_per_site());
+      fields[filename] = new mdp_real_field(field.lattice(), field.size_per_site());
       forallsites(p)
       {
         for (mdp_uint i = 0; i < field.size_per_site(); i++)
@@ -215,7 +215,7 @@ namespace MDP
   }
 
 #if 0
-  void save_vtk(mdp_field<mdp_real> &field,
+  void save_vtk(mdp_real_field &field,
                 std::string filename,
                 int t = -1,
                 int component = -1,
@@ -223,12 +223,12 @@ namespace MDP
                 bool ASCII = false)
   {
     static std::map<std::string, int> counter;
-    static std::map<std::string, mdp_field<mdp_real> *> fields;
+    static std::map<std::string, mdp_real_field *> fields;
     mdp_site p(field.lattice());
     int k = 0;
     if (counter.find(filename) == counter.end())
     {
-      fields[filename] = new mdp_field<mdp_real>(field.lattice(), field.size_per_site());
+      fields[filename] = new mdp_real_field(field.lattice(), field.size_per_site());
       forallsites(p)
       {
         for (mdp_uint i = 0; i < field.size_per_site(); i++)

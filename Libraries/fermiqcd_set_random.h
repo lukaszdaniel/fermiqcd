@@ -18,9 +18,20 @@
 
 namespace MDP
 {
-  /// Set the complex field components of chi to be gaussian random numbers
-  /// with mean=0 and sigma=1 (useful for stochastic propagators).
-  /// can choose parity=EVEN, ODD or EVENODD
+  /**
+   * @brief Initialize a complex field with Gaussian random numbers.
+   *
+   * Sets each complex component of the field @p chi to independent Gaussian
+   * random values with mean 0 and standard deviation 1. This is commonly used
+   * for stochastic propagators.
+   *
+   * The initialization can be restricted to a subset of lattice sites based on
+   * their parity.
+   *
+   * @param chi Field to be initialized.
+   * @param parity Selection of lattice sites to initialize:
+   *        EVEN, ODD, or EVENODD (default: EVENODD).
+   */
   void set_random(mdp_complex_field &chi,
                   mdp_parity parity = EVENODD)
   {
@@ -37,11 +48,23 @@ namespace MDP
     chi.update();
   }
 
-  /// Set the complex field components of chi to be gaussian random numbers
-  /// on the wall identified by t
-  /// with mean=0 and sigma=1 (useful for stochastic propagators).
-  /// can choose parity=EVEN, ODD or EVENODD
-  /// attention! does not set to zero other timeslices!!!
+  /**
+   * @brief Initialize a time-slice ("wall") of a complex field with Gaussian random numbers.
+   *
+   * Sets each complex component of the field @p chi to independent Gaussian
+   * random values (mean 0, standard deviation 1), but only on the time-slice
+   * specified by @p t.
+   *
+   * The operation can be restricted to lattice sites of a given parity.
+   *
+   * @warning This function does NOT reset or modify values on other time-slices.
+   *          Existing data outside the selected wall remains unchanged.
+   *
+   * @param chi Field to be partially initialized.
+   * @param t Time coordinate (typically x(0)) identifying the wall to initialize.
+   * @param parity Selection of lattice sites to initialize:
+   *        EVEN, ODD, or EVENODD (default: EVENODD).
+   */
   void set_wall_random(mdp_complex_field &chi,
                        mdp_uint t = 0,
                        mdp_parity parity = EVENODD)
@@ -60,8 +83,18 @@ namespace MDP
     chi.update();
   }
 
-  /// Set the complex field components of chi tozero.
-  /// can choose parity=EVEN, ODD or EVENODD
+  /**
+   * @brief Set a complex field to zero.
+   *
+   * Assigns zero to all components of the field @p chi on the selected
+   * subset of lattice sites.
+   *
+   * The operation can be restricted to lattice sites of a given parity.
+   *
+   * @param chi Field to be cleared.
+   * @param parity Selection of lattice sites to reset:
+   *        EVEN, ODD, or EVENODD (default: EVENODD).
+   */
   void set_zero(mdp_complex_field &chi,
                 mdp_parity parity = EVENODD)
   {

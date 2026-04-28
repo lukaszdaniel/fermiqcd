@@ -92,6 +92,7 @@ namespace MDP
           }
         }
       }
+      U.update();
     }
   };
 
@@ -146,7 +147,7 @@ namespace MDP
     }
   }
 
-  void topological_charge(mdp_field<mdp_real> &Q, gauge_field &U)
+  void topological_charge(mdp_real_field &Q, gauge_field &U)
   {
     compute_em_notrace_field(U);
     mdp_site x(U.lattice());

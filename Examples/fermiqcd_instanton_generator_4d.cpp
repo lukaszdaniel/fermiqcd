@@ -14,8 +14,8 @@ int main(int argc, char **argv)
   {
     std::cout << k << std::endl;
     std::vector<SingleInstanton4D> instantons;
-    instantons.push_back(SingleInstanton4D(7.5, 15.5, 15.5, 10 + 0.1 * k, 1, +1)); // instanton
-    instantons.push_back(SingleInstanton4D(7.5, 15.5, 16.5, 20 - 0.1 * k, 1, -1)); // anti-instanton
+    instantons.emplace_back(7.5, 15.5, 15.5, 10 + 0.1 * k, 1, +1); // instanton
+    instantons.emplace_back(7.5, 15.5, 16.5, 20 - 0.1 * k, 1, -1); // anti-instanton
     generator.generate(U, instantons);
     check_unitarity(U);
     mdp_site x(lattice);
