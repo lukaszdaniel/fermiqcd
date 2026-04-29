@@ -30,28 +30,22 @@ namespace MDP
   class SingleInstanton4D
   {
   public:
-    mdp_real x[4];   // Position of the instanton in 4D space-time
-    mdp_real rho;    // Instanton size (radius parameter)
-    mdp_sint charge; // Topological charge (+1 for instanton, -1 for anti-instanton)
+    std::array<mdp_real, 4> x; // Position of the instanton in 4D space-time
+    mdp_real rho;              // Instanton size (radius parameter)
+    mdp_sint charge;           // Topological charge (+1 for instanton, -1 for anti-instanton)
 
     /**
      * @brief Construct a new SingleInstanton4D object.
      *
-     * @param x0 Coordinate in direction 0
-     * @param x1 Coordinate in direction 1
-     * @param x2 Coordinate in direction 2
-     * @param x3 Coordinate in direction 3
-     * @param rho Instanton size parameter
-     * @param charge Topological charge (+1 or -1)
+     * @param pos Position of the instanton in 4D space-time
+     * @param rho_ Instanton size parameter
+     * @param charge_ Topological charge (+1 or -1)
      */
-    SingleInstanton4D(mdp_real x0, mdp_real x1, mdp_real x2, mdp_real x3, mdp_real rho, mdp_sint charge)
+    SingleInstanton4D(const std::array<mdp_real, 4> &pos, mdp_real rho_, mdp_sint charge_)
     {
-      x[0] = x0;
-      x[1] = x1;
-      x[2] = x2;
-      x[3] = x3;
-      this->rho = rho;
-      this->charge = charge;
+      x = pos;
+      rho = rho_;
+      charge = charge_;
     }
   };
 

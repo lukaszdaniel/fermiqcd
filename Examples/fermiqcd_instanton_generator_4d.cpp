@@ -10,12 +10,16 @@ int main(int argc, char **argv)
   mdp_lattice lattice(L);
   gauge_field U(lattice, 3);
   InstantonGenerator4D generator;
+  std::array<mdp_real, 4> pos;
+
   for (int k = 0; k < 100; k++)
   {
     std::cout << k << std::endl;
     std::vector<SingleInstanton4D> instantons;
-    instantons.emplace_back(7.5, 15.5, 15.5, 10 + 0.1 * k, 1, +1); // instanton
-    instantons.emplace_back(7.5, 15.5, 16.5, 20 - 0.1 * k, 1, -1); // anti-instanton
+    pos = {7.5, 15.5, 15.5, 10 + 0.1 * k};
+    instantons.emplace_back(pos, 1, +1); // instanton
+    pos = {7.5, 15.5, 16.5, 20 - 0.1 * k};
+    instantons.emplace_back(pos, 1, -1); // anti-instanton
     generator.generate(U, instantons);
     check_unitarity(U);
     mdp_site x(lattice);

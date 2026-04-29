@@ -543,9 +543,13 @@ int main(int argc, char **argv)
       mdp_real r1 = arguments.get("-gauge", "r1", 0.0);
       InstantonGenerator4D generator;
       std::vector<SingleInstanton4D> instantons;
-      instantons.emplace_back(t0, x0, y0, z0, std::abs(r0), (r0 > 0) ? +1 : -1);
+      std::array<mdp_real, 4> pos = {t0, x0, y0, z0};
+      instantons.emplace_back(pos, std::abs(r0), (r0 > 0) ? +1 : -1);
       if (r1 != 0)
-        instantons.emplace_back(t1, x1, y1, z1, std::abs(r1), (r1 > 0) ? +1 : -1);
+      {
+        pos = {t1, x1, y1, z1};
+        instantons.emplace_back(pos, std::abs(r1), (r1 > 0) ? +1 : -1);
+      }
       generator.generate(U, instantons);
     }
     else if (gauge_start == "load")

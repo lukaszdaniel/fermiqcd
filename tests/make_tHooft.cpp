@@ -13,14 +13,14 @@ int main(int argc, char **argv)
   std::string filename;
   mdp_site x(lattice);
   set_cold(U);
-  std::vector<mdp_real> p(4);
+  std::array<mdp_real, 4> p;
 
   for (mdp_suint mu = 0; mu < 4; mu++)
     p[mu] = L[mu] / 2;
 
   int i = 0, j = 0;
 
-  Instanton4D A(nc, i, j, 1.0, 3, p);
+  Instanton4D A(p, 3, +1, nc, i, j);
 
   forallsites(x)
   {

@@ -47,12 +47,12 @@ namespace MDP
   class Instanton4D
   {
   public:
-    std::vector<mdp_real> p; // Instanton center position in 4D
-    mdp_suint nc;            // Number of colors (SU(N))
-    mdp_suint sub_i, sub_j;  // Indices defining SU(2) subgroup embedding
-    mdp_real charge;         // Charge parameter (proportional to 1/g)
-    mdp_real lambda;         // Instanton size parameter
-    mdp_matrix eta[4][4];    // Embedded 't Hooft symbols
+    std::array<mdp_real, 4> p; // Instanton center position in 4D
+    mdp_suint nc;              // Number of colors (SU(N))
+    mdp_suint sub_i, sub_j;    // Indices defining SU(2) subgroup embedding
+    mdp_real charge;           // Charge parameter (proportional to 1/g)
+    mdp_real lambda;           // Instanton size (radius parameter)
+    mdp_matrix eta[4][4];      // Embedded 't Hooft symbols
 
     /**
      * @brief Construct an SU(N) instanton configuration.
@@ -69,18 +69,15 @@ namespace MDP
      * using rotated Pauli matrices. The SU(2) structure is inserted into
      * the full SU(N) matrix by acting only on the (sub_i, sub_j) subspace.
      */
-    Instanton4D(mdp_suint nc_, mdp_suint sub_i_, mdp_suint sub_j_, mdp_real charge_,
-                mdp_real lambda_, const std::vector<mdp_real> &p_,
-                mdp_real alpha_ = 0.0, mdp_real beta_ = 0.0, mdp_real gamma_ = 0.0)
+    Instanton4D(const std::array<mdp_real, 4> &pos, mdp_real lambda_, mdp_real charge_, mdp_suint nc_, mdp_suint sub_i_, mdp_suint sub_j_,
+                mdp_real alpha = 0.0, mdp_real beta = 0.0, mdp_real gamma = 0.0)
     {
       nc = nc_;
       sub_i = sub_i_;
       sub_j = sub_j_;
       lambda = lambda_;
       charge = charge_;
-      p = p_;
-
-      mdp_real alpha = alpha_, beta = beta_, gamma = gamma_; // Euler angles
+      p = pos;
 
       mdp_matrix U(2, 2);
 
