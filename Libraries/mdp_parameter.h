@@ -220,7 +220,7 @@ namespace MDP
         std::string type, name, value;
 
         if (!(iss >> type >> name >> value))
-          throw std::runtime_error("Syntax error in line " + std::to_string(line_number));
+          throw std::runtime_error(std::format("Syntax error in line {}", line_number));
 
         if (type == "int")
           m_map[name] = std::stoi(value);
@@ -229,7 +229,7 @@ namespace MDP
         else if (type == "string")
           m_map[name] = value;
         else
-          throw std::runtime_error("Unknown parameter type: " + type + " in line " + std::to_string(line_number));
+          throw std::runtime_error(std::format("Unknown parameter type: {} in line {}", type, line_number));
       }
     }
   };

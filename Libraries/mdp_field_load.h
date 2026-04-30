@@ -69,7 +69,7 @@ namespace MDP
                           bool try_switch_endianess)
   {
     if (!file_exists(filename))
-      throw std::string("file ") + filename + std::string(" does not exist");
+      throw std::format("file {} does not exist", filename);
 
     filename = latest_file(filename);
     if (filename == "?")

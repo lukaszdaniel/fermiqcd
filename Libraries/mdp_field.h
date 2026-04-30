@@ -341,7 +341,7 @@ namespace MDP
 #ifdef CHECK_BOUNDARY
       if (i >= m_field_components)
       {
-        error("field rows can be indexed up to " + std::to_string(m_field_components - 1));
+        error(std::format("field rows can be indexed up to {}", m_field_components - 1));
       }
 #endif
       return m_data[x.local_index() * m_field_components + i];
@@ -360,7 +360,7 @@ namespace MDP
 #ifdef CHECK_BOUNDARY
       if (i >= m_field_components)
       {
-        error("field rows can be indexed up to " + std::to_string(m_field_components - 1));
+        error(std::format("field rows can be indexed up to {}", m_field_components - 1));
       }
 #endif
       return m_data[x.local_index() * m_field_components + i];

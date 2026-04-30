@@ -71,7 +71,7 @@ public:
     std::cout << ME << std::endl;
     m_pU->update();
     // set_cold(*m_pU);
-    // m_prefix = m_prefix + std::string("C") + std::to_string((int)mdp.time());
+    // m_prefix = std::format("{}C{}", m_prefix, (int)mdp.time());
     m_counter = 0;
   }
 
@@ -83,7 +83,7 @@ public:
     m_os << "making a hot gauge configuration U with nc=" << nc_ << std::endl;
     m_pU = std::make_unique<gauge_field>(*m_plattice, nc_);
     set_hot(*m_pU);
-    m_prefix = std::string("C") + std::to_string((mdp_uint)mdp.time());
+    m_prefix = std::format("C{}", (mdp_uint)mdp.time());
     m_counter = 0;
   }
 

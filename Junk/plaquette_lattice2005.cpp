@@ -15,9 +15,9 @@ int main(int argc, char **argv)
   set_cold(U);
   for (mdp_suint k = 0; k < nconfig; k++)
   {
-    WilsonGaugeAction::heatbath(U, gauge, 10);        // do heathbath
-    U.save(std::string("gauge") + std::to_string(k)); // save gauge config
-    mdp << average_plaquette(U) << "\n";              // print plaquette
+    WilsonGaugeAction::heatbath(U, gauge, 10); // do heathbath
+    U.save(std::format("gauge.{}", k));        // save gauge config
+    mdp << average_plaquette(U) << "\n";       // print plaquette
   }
   mdp.close_wormholes(); // STOP
   return 0;

@@ -249,14 +249,14 @@ namespace MDP
     if (filename[filename.size() - 1] != '*')
     {
       filename = filename.substr(0, filename.size() - 4);
-      field.save_vtk(filename + ".vtk", t, component, processIO, ASCII);
-      fields[filename]->save_vtk(filename + "_average.vtk", t, component, processIO, ASCII);
+      field.save_vtk(std::format("{}.vtk", filename), t, component, processIO, ASCII);
+      fields[filename]->save_vtk(std::format("{}_average.vtk", filename), t, component, processIO, ASCII);
     }
     else
     {
       std::string filename2 = filename.substr(0, filename.size() - 1);
-      field.save_vtk(filename2 + "_" + std::to_string(k) + ".vtk", t, component, processIO, ASCII);
-      fields[filename]->save_vtk(filename2 + "_average_" + std::to_string(k) + ".vtk", t, component, processIO, ASCII);
+      field.save_vtk(std::format("{}_{}.vtk", filename2, k), t, component, processIO, ASCII);
+      fields[filename]->save_vtk(std::format("{}_average_{}.vtk", filename2, k), t, component, processIO, ASCII);
     }
   }
 #endif

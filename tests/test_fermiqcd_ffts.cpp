@@ -29,14 +29,14 @@ void test_ft(const mdp_suint n, const std::string &&type)
     ft_auto(chk, out, n, -1); // inverse fourier transform
   }
   else
-    error("Unknown type of Fourier transform: " + type);
+    error(std::format("Unknown type of Fourier transform: {}", type));
 
   mdp_real accumulated_difference = 0.0;
   for (mdp_suint i = 0; i < n; i++)
   {
     mdp_real tmp = abs(chk[i] - in[i]);
     std::cout << "(" << real(in[i]) << ", " << imag(in[i]) << ")\n"
-              << "(" << real(chk[i]) << ", " << imag(chk[i]) << ")" << (tmp > mdp_precision ? " difference at index " + std::to_string(i) : "") << "\n"
+              << "(" << real(chk[i]) << ", " << imag(chk[i]) << ")" << (tmp > mdp_precision ? std::format(" difference at index {}", i) : "") << "\n"
               << "(" << real(out[i]) << ", " << imag(out[i]) << ")\n\n";
 
     accumulated_difference += tmp;

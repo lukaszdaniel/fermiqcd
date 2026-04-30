@@ -145,7 +145,7 @@ namespace MDP
             for (mdp_suint k = 0; k < psi_in.nc(); k++)
               sv(x) += std::sqrt(real(psi_out(x, a, k) * conj(psi_out(x, a, k))));
           }
-          filename1 = filename_prefix + ".field" + std::to_string(a) + "." + std::to_string(step) + ".vtk";
+          filename1 = std::format("{}.field{}.{}.vtk", filename_prefix, a, step);
           sv.save_vtk(filename1, tc);
         }
         forallsites(x)

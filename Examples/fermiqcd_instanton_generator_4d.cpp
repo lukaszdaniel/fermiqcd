@@ -25,7 +25,7 @@ int main(int argc, char **argv)
     mdp_site x(lattice);
     x.set(0, 0, 0, 0);
     std::cout << U(x, 0) << std::endl;
-    topological_charge_vtk(U, std::string("engineered.topological.") + std::to_string(k) + ".vtk", 0);
+    topological_charge_vtk(U, std::format("engineered.topological.{}.vtk", k), 0);
   }
   mdp.close_wormholes();
   return 0;

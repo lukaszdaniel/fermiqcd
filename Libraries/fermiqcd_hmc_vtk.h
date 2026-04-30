@@ -398,7 +398,7 @@ namespace MDP
           U(x, mu) = A * U(x, mu);
         }
       }
-      Q.save_vtk(std::string("pressure_" + std::to_string(steps) + ".vtk"));
+      Q.save_vtk(std::format("pressure_{}.vtk", steps));
       U.update();
 
       compute_force(U, nf_U, F, nf_F);

@@ -34,7 +34,7 @@ void cool_vtk(gauge_field &U, const mdp_args &arguments, const std::string &file
                          arguments.get("-cool_vtk", "alpha", 0.7),
                          arguments.get("-cool_vtk", "steps", 1),
                          arguments.get("-cool_vtk", "cooling", 10));
-      topological_charge_vtk(U, filename + ".cool" + std::to_string(k) + ".vtk", 0);
+      topological_charge_vtk(U,  std::format("{}.cool{}.vtk", filename, k), 0);
     }
   else
     mdp.error_message("cooling algorithm not supported");
@@ -190,11 +190,10 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
       }
       // optional ... smer source here
       psi.update();
-      prefix = newfilename + "." + source_type + ".k" + std::to_string(quark["kappa"]);
+      prefix = std::format("{}.{}.k{}", newfilename, source_type, quark["kappa"]);
       if (t0 * t0 + x0 * x0 + y0 * y0 + z0 * z0 > 0)
-        prefix = prefix + ".at" + std::to_string(t0) + "." + std::to_string(x0) +
-                 "." + std::to_string(y0) + "." + std::to_string(z0);
-      inversion_vtk_prefix = prefix + ".s" + std::to_string(a) + ".c" + std::to_string(i);
+        prefix = std::format("{}.at{}.{}.{}.{}", prefix, t0, x0, y0, z0);
+      inversion_vtk_prefix = std::format("{}.s{}.c{}", prefix, a, i);
       quarkfilename = inversion_vtk_prefix + ".quark";
       if (arguments.get("-quark", "load", "false|true") == "true")
       {
@@ -211,7 +210,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
         forspincolor(b, j, nc)
         {
           forallsites(x) Q(x) = abs(phi(x, b, j));
-          Q.save_vtk(inversion_vtk_prefix + ".quark" + std::to_string(b) + std::to_string(j) + ".vtk", -1);
+          Q.save_vtk(std::format("{}.quark{}.{}.vtk", inversion_vtk_prefix, b, j), -1);
         }
       }
       if (arguments.have("-pion"))
@@ -439,7 +438,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
               Q(x) += std::pow(abs(S(x, b, a, i, i) * G1(a, b)), 2);
     }
     // smear_propagator(S,U,smear_steps);
-    Q.save_vtk(prefix + std::string(".") + source_gamma + ".wave.vtk");
+    Q.save_vtk(std::format("{}.{}.wave.vtk", prefix, source_gamma));
   }
 }
 
@@ -569,11 +568,11 @@ int main(int argc, char **argv)
         else
           mdp.error_message("gauge action not supported");
         if (filename.substr(filename.size() - 4, 4) == ".mdp")
-          newfilename = filename.substr(0, filename.size() - 4) + "." + std::to_string(n) + ".mdp";
+          newfilename = std::format("{}.{}.mdp", filename.substr(0, filename.size() - 4), n);
         else if (prefix != "")
-          newfilename = prefix + "." + std::to_string(n) + ".mdp";
+          newfilename = std::format("{}.{}.mdp", prefix, n);
         else
-          newfilename = filename + "." + std::to_string(n) + ".mdp";
+          newfilename = std::format("{}.{}.mdp", filename, n);
         if (arguments.get("-gauge", "save", "true") == "true")
           U.save(newfilename);
       }
