@@ -77,111 +77,134 @@ namespace MDP
   /// Compute average plaquette on plane mu-nu
   mdp_real average_plaquette(const gauge_field &U, mdp_suint mu, mdp_suint nu)
   {
-    mdp_real tmp = 0;
+    mdp_real sum = 0;
     mdp_site x(U.lattice());
-    // U.update();
+
     forallsites(x)
     {
-      tmp += real(trace(plaquette(U, x, mu, nu)));
+      sum += real(trace(plaquette(U, x, mu, nu)));
     }
-    mdp.add(tmp);
-    return tmp / (U.lattice().global_volume() * U.nc());
+    mdp.add(sum);
+    return sum / (U.lattice().global_volume() * U.nc());
   }
 
   /// Compute average plaquette (all planes)
   mdp_real average_plaquette(const gauge_field &U)
   {
-    mdp_real tmp = 0;
+    mdp_real sum = 0;
     mdp_site x(U.lattice());
-    // U.update();
 
     forallsites(x)
     {
       for (mdp_suint mu = 0; mu < U.ndim() - 1; mu++)
         for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
-          tmp += real(trace(plaquette(U, x, mu, nu)));
+          sum += real(trace(plaquette(U, x, mu, nu)));
     }
-    mdp.add(tmp);
-    return 2.0 * tmp / (U.ndim() * (U.ndim() - 1) * U.lattice().global_volume() * U.nc());
+    mdp.add(sum);
+    return 2.0 * sum / (U.ndim() * (U.ndim() - 1) * U.lattice().global_volume() * U.nc());
   }
 
   /** @brief Compute average Time plaquette
    */
   mdp_real TimePlaquette(const gauge_field &U)
   {
-    mdp_real tmp = 0;
+    mdp_real sum = 0;
     mdp_site x(U.lattice());
-    // U.update();
     mdp_suint mu = 0;
+
     forallsites(x)
     {
       for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
-        tmp += real(trace(plaquette(U, x, mu, nu)));
+        sum += real(trace(plaquette(U, x, mu, nu)));
     }
-    mdp.add(tmp);
-    return tmp / (U.lattice().global_volume() * (U.ndim() - 1));
+    mdp.add(sum);
+    return sum / (U.lattice().global_volume() * (U.ndim() - 1));
   }
 
   /** @brief Compute average Space plaquette
    */
   mdp_real SpacePlaquette(const gauge_field &U)
   {
-    mdp_real tmp = 0;
+    mdp_real sum = 0;
     mdp_site x(U.lattice());
-    // U.update();
 
     forallsites(x)
     {
       for (mdp_suint mu = 1; mu < U.ndim() - 1; mu++)
         for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
-          tmp += real(trace(plaquette(U, x, mu, nu)));
+          sum += real(trace(plaquette(U, x, mu, nu)));
     }
-    mdp.add(tmp);
-    return 2 * tmp / (U.lattice().global_volume() * (U.ndim() - 2) * (U.ndim() - 1));
+    mdp.add(sum);
+    return 2 * sum / (U.lattice().global_volume() * (U.ndim() - 2) * (U.ndim() - 1));
   }
 
-  /** @brief Polyakov field L(vec(x))
+  /**
+   * @brief Computes the local Polyakov loop matrix L(x) at spatial sites.
+   *
+   * The Polyakov loop is defined as an ordered product of temporal gauge links:
+   * L(x) = \prod_{t=0}^{Nt-1} U_0(t, x)
+   *
+   * Only sites with x(0) == 0 (first time slice) store the result.
+   *
+   * @param U Gauge field
+   *
+   * @return Field of Polyakov loop matrices
    */
   mdp_matrix_field PolyakovField(const gauge_field &U)
   {
-    mdp_site x(U.lattice()), y(U.lattice());
+    mdp_site x(U.lattice());
     mdp_matrix_field L(U.lattice(), U.nc(), U.nc());
+
+    const mdp_uint Nt = U.lattice().size(0);
 
     forallsites(x)
     {
       if (x(0) == 0)
       {
-        y = x;
-        L(x) = U(x, 0);
-        for (mdp_uint i = 1; i < U.lattice().size(0); i++)
+        mdp_site y = x;
+        L(x) = 1;
+
+        for (mdp_uint t = 0; t < Nt; t++)
         {
-          y = y + 0;
           L(x) *= U(y, 0);
+          y = y + 0;
         }
       }
     }
+
     L.update();
     return L;
   }
 
-  /** @brief Compute averaged Polyakov loop: L(x) - polyakov field
+  /**
+   * @brief Computes the spatially averaged Polyakov loop.
+   *
+   * The observable is:
+   *   <L> = (1 / (Ns^d * Nc)) * sum_x Tr L(x)
+   *
+   * where the sum runs over spatial sites only (t = 0 slice).
+   *
+   * @param U Gauge field
+   *
+   * @return Averaged Polyakov loop
    */
   mdp_complex PolyakovLoop(const gauge_field &U)
   {
-
     mdp_site x(U.lattice());
     mdp_complex sum = 0;
-    mdp_matrix_field L(U.lattice(), U.nc(), U.nc());
 
-    L = PolyakovField(U);
+    mdp_matrix_field L = PolyakovField(U);
+    mdp_uint spatial_volume = U.lattice().global_volume() / U.lattice().size(0);
+
     forallsites(x)
     {
       if (x(0) == 0)
         sum += trace(L(x));
     }
+
     mdp.add(sum);
 
-    return sum * (1.0 * U.lattice().size(0) / (U.lattice().global_volume() * U.nc()));
+    return sum / (spatial_volume * U.nc());
   }
 
   /** @brief Relaxation algorithm
@@ -317,33 +340,94 @@ namespace MDP
     return stats;
   }
 
-  ///////////////////////////////////////////////////////////////////////////
-  /// Polyakov Loop correlation L(x,y)
-  mdp_matrix PolyCor(const gauge_field &U)
+  /**
+   * @brief Computes Polyakov loop correlation function C_mu(r)
+   *        for a given spatial direction mu.
+   *
+   * Definition:
+   *   C_mu(r) = < Tr L(x) Tr L^\dagger(x + r * e_mu) >
+   *
+   * Averaged over all spatial sites (t = 0 slice).
+   *
+   * @param U Gauge field
+   * @param mu Spatial direction (1 <= mu < ndim)
+   *
+   * @return Correlation in mu direction as function of distance r
+   */
+  std::vector<mdp_real> PolyCor(const gauge_field &U, mdp_suint mu)
   {
     mdp_site x(U.lattice());
-    mdp_matrix proj(U.ndim() - 1, U.lattice().size(1));
-    mdp_matrix_field L(U.lattice(), U.nc(), U.nc());
+    mdp_matrix_field L = PolyakovField(U);
 
-    L = PolyakovField(U);
-    for (mdp_suint mu = 1; mu < U.ndim(); mu++)
+    const mdp_suint ndim = U.ndim();
+
+    if (mu == 0 || mu >= ndim)
+      error("PolyCor: mu must be a spatial direction (1 <= mu < ndim)");
+
+    const mdp_uint Ns = U.lattice().size(mu);
+
+    std::vector<mdp_complex> sum(Ns, 0);
+    mdp_uint count = 0;
+
+    forallsites(x)
     {
-      for (mdp_uint i = 0; i < U.lattice().size(1); i++)
+      if (x(0) == 0)
       {
-        proj(mu - 1, i) = 0.0;
-        for (mdp_uint k = 0; k < U.lattice().size(1); k++)
+        count++;
+
+        mdp_vector coords;
+        for (mdp_suint nu = 0; nu < ndim; nu++)
+          coords[nu] = x(nu);
+
+        mdp_site y = x;
+        for (mdp_uint r = 0; r < Ns; r++)
         {
-          if (mu == 1)
-            x.set(0, i, k);
-          else
-            x.set(0, k, i);
-          proj(mu - 1, i) += trace(L(x));
+          coords[mu] = (x(mu) + r) % Ns;
+          y.set(coords);
+
+          sum[r] += trace(L(x)) * conj(trace(L(y)));
         }
-        proj(mu - 1, i) /= U.lattice().size(1);
       }
     }
 
-    return proj;
+    for (mdp_uint r = 0; r < Ns; r++)
+      mdp.add(sum[r]);
+
+    std::vector<mdp_real> correlation(Ns);
+    for (mdp_uint r = 0; r < Ns; r++)
+      correlation[r] = sum[r].real() / count;
+
+    return correlation;
+  }
+
+  /**
+   * @brief Computes Polyakov loop correlation functions for all spatial directions.
+   *
+   * For each spatial direction mu = 1,...,ndim-1:
+   *   C_mu(r) = < Tr L(x) Tr L^\dagger(x + r * e_mu) >
+   *
+   * @param U Gauge field
+   * @return Matrix of size (ndim-1) x Ns,
+   *         where each row corresponds to a spatial direction.
+   */
+  mdp_matrix PolyCor(const gauge_field &U)
+  {
+    const mdp_suint ndim = U.ndim();
+    const mdp_uint Ns = U.lattice().size(1);
+
+    mdp_matrix correlation(ndim - 1, Ns);
+
+    for (mdp_suint mu = 1; mu < ndim; mu++)
+    {
+      std::vector<mdp_real> corr_mu = PolyCor(U, mu);
+
+      for (mdp_uint r = 0; r < Ns; r++)
+      {
+        correlation(mu - 1, r) = corr_mu[r];
+      }
+    }
+
+    return correlation;
   }
 
   /// Given a field U compute the chromo-electro-magnetic field U.em
@@ -703,28 +787,27 @@ namespace MDP
     return sum / (1.0 * U.lattice().global_volume() * U.nc());
   }
 
-  /// Takes a field U, a site x, a path d of length and compute the product
-  /// of links and the path starting at x. Assumes computation can be done
-  /// locally for each site
+  /// Builds the ordered product of gauge links along the path d starting at x.
+  /// The result is computed locally for each site.
   ///
   /// Example:
   /// @verbatim
   ///   mdp_suint mu=0, nu=1;
   ///   gauge_field U(lattice,nc);
   ///   Path d = {{+1,mu},{+1,nu},{-1,mu},{-1,nu}};
-  ///   forallsites(x)
-  ///      std::cout << "plaquette(x)=" << average_path(U,x,d) << std::endl;
+  ///   forallsites(x) {
+  ///     mdp_matrix plaquette = build_path(U, x, d);
+  ///     std::cout << "plaquette(x)=" << trace(plaquette) << std::endl;
+  ///   }
   /// @endverbatim
   mdp_matrix build_path(const gauge_field &U, mdp_site x, const Path &d)
   {
-    mdp_suint nc = U.nc();
-    mdp_matrix tmp = mdp_identity(nc);
-    mdp_site y = x;
+    mdp_matrix tmp = mdp_identity(U.nc());
 
     for (const auto &[orientation, direction] : d)
     {
-      tmp = tmp * U(y, orientation, direction);
-      y = (orientation < 0) ? y - direction : y + direction;
+      tmp = tmp * U(x, orientation, direction);
+      x = (orientation < 0) ? x - direction : x + direction;
     }
 
     return tmp;

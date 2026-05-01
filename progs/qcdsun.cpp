@@ -134,16 +134,6 @@ int main(int argc, char **argv)
   polycorfile << std::setprecision(16);
   // std::ofstream plaqcorfile(plaqCorFileName);  plaqcorfile << std::setprecision(16);
 
-  mdp_real Pt, Ps;
-  mdp_real S;
-  const mdp_real D = 1.0 * U.ndim() * (U.ndim() - 1) / 2;
-  const mdp_real as = 1.0 * (U.ndim() - 2) * (U.ndim() - 1) / 2;
-  const mdp_real at = 1.0 * U.ndim() - 1;
-
-  // constexpr mdp_real c1 = -1.0 / 12; // Symanzik
-  // constexpr mdp_real c1 = -0.331;     // Iwasaki
-  // constexpr mdp_real c1 = -1.4088;   // DBW2
-  // constexpr mdp_real c0 = 1 - 8 * c1;
   mdp_complex polyakov;
 
   //  SWEEPING
@@ -154,11 +144,10 @@ int main(int argc, char **argv)
     WilsonGaugeAction::heatbath(U, coeff);
     relaxation(U, relax_freq);
 
-    Pt = TimePlaquette(U);
-    Ps = SpacePlaquette(U);
-    S = (D - (as * Ps + at * Pt) / U.nc());
+    mdp_real Pt = TimePlaquette(U);
+    mdp_real Ps = SpacePlaquette(U);
 
-    plaqfile << Pt << " " << Ps << " " << S << "\n";
+    plaqfile << Pt << " " << Ps << " " << GaugeAction(U, coeff) << "\n";
 
     if (poly_meas_freq > 0 && i % poly_meas_freq == 0)
     {

@@ -149,7 +149,7 @@ namespace MDP
                   if (zeta == 1)
                     M = U(x, mu) * staple_H(U, x, mu);
                   else
-                    M = U(x, mu) * staple_H_unisotropic(U, x, mu, zeta);
+                    M = U(x, mu) * staple_H_anisotropic(U, x, mu, zeta);
                   a[0] = M(i, i);
                   a[1] = M(i, j);
                   a[2] = M(j, i);
