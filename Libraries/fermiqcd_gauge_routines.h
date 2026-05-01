@@ -580,32 +580,32 @@ namespace MDP
                           const std::string &action_type = "wilson")
   {
     mdp_site x(U.lattice());
+
     const mdp_real Nc = U.nc();
 
-    if (!coeff.has_key("beta"))
-    {
-      mdp << "beta undeclared\n";
-      mdp.abort();
-    }
+    mdp_real beta;
+    if (coeff.has_key("beta"))
+      beta = coeff["beta"];
+    else
+      error("beta undeclared");
 
-    mdp_real beta = coeff["beta"];
+    mdp_real c1 = 0.0;
 
-    mdp_real c1;
-
-    if (action_type == "symanzik")
+    if (action_type == "wilson")
+      c1 = 0.0;
+    else if (action_type == "symanzik")
       c1 = -1.0 / 12.0;
     else if (action_type == "iwasaki")
       c1 = -0.331;
     else if (action_type == "dbw2")
       c1 = -1.4088;
-    else if (action_type == "wilson")
-      c1 = 0.0;
     else
     {
-      error("Unknown action type");
+      error(std::format("Unknown action type: {}", action_type));
     }
 
-    mdp_real c0 = 1.0 - 8.0 * c1;
+    const mdp_real c0 = 1.0 - 8.0 * c1;
+    const bool use_rect = (c1 != 0.0);
 
     forallsites(x)
     {
@@ -617,7 +617,7 @@ namespace MDP
         mdp_matrix total = c0 * H_plaq;
 
         // --- rectangle part ---
-        if (c1 != 0.0)
+        if (use_rect)
         {
           mdp_matrix H_rect(U.nc(), U.nc());
           H_rect = 0;
@@ -687,14 +687,14 @@ namespace MDP
     mdp_site x(U.lattice());
 
     const mdp_real Nc = U.nc();
+
     mdp_real beta;
     if (coeff.has_key("beta"))
       beta = coeff["beta"];
     else
       error("beta undeclared");
 
-    // --- współczynniki ---
-    mdp_real c1;
+    mdp_real c1 = 0.0;
 
     if (action_type == "wilson")
       c1 = 0.0;
