@@ -81,7 +81,6 @@ int main(int argc, char **argv)
   mdp_uint Ls = par.i("L_space");
 
   mdp_uint Lt = par.i("L_time");
-  mdp_real stats;
 
   Box mybox;
   mybox[0] = Lt;
@@ -116,8 +115,8 @@ int main(int argc, char **argv)
       relaxation(U, relax_freq);
       if ((unit_freq > 0) && (i % unit_freq == 0))
       {
-        stats = unitarize(U);
-        log << i << " " << std::setprecision(12) << stats << "\n";
+        auto stats = unitarize(U);
+        log << i << " " << std::setprecision(12) << stats.first << " -> " << stats.second << "\n";
       }
       log.flush();
       U.save(cfgFileName);
@@ -134,6 +133,10 @@ int main(int argc, char **argv)
   polycorfile << std::setprecision(16);
   // std::ofstream plaqcorfile(plaqCorFileName);  plaqcorfile << std::setprecision(16);
 
+  // const mdp_real D = 1.0 * U.ndim() * (U.ndim() - 1) / 2;
+  // const mdp_real as = 1.0 * (U.ndim() - 2) * (U.ndim() - 1) / 2;
+  // const mdp_real at = 1.0 * U.ndim() - 1;
+
   mdp_complex polyakov;
 
   //  SWEEPING
@@ -146,8 +149,10 @@ int main(int argc, char **argv)
 
     mdp_real Pt = TimePlaquette(U);
     mdp_real Ps = SpacePlaquette(U);
+    // mdp_real S = coeff["beta"] * (D - (as * Ps + at * Pt) / U.nc());
+    mdp_real S = GaugeAction(U, coeff);
 
-    plaqfile << Pt << " " << Ps << " " << GaugeAction(U, coeff) << "\n";
+    plaqfile << Pt << " " << Ps << " " << S << "\n";
 
     if (poly_meas_freq > 0 && i % poly_meas_freq == 0)
     {
@@ -194,8 +199,8 @@ int main(int argc, char **argv)
     if (unit_freq > 0 && i % unit_freq == 0)
     {
 
-      stats = unitarize(U);
-      log << i << " " << std::setprecision(12) << stats << "\n";
+      auto stats = unitarize(U);
+      log << i << " " << std::setprecision(12) << stats.first << " -> " << stats.second << "\n";
       plaqfile << std::flush;
       polyfile << std::flush;
       log.flush();

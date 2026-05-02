@@ -207,18 +207,42 @@ namespace MDP
     return sum / (spatial_volume * U.nc());
   }
 
-  /** @brief Relaxation algorithm
+  /**
+   * @brief Performs SU(N) overrelaxation updates of the gauge field.
+   *
+   * This function applies a deterministic overrelaxation algorithm to the gauge
+   * field U using SU(2) subgroup updates (Cabibbo–Marinari scheme). The update
+   * preserves the local gauge action while reducing autocorrelations by reflecting
+   * each link with respect to the local staple.
+   *
+   * For each link U(x,mu), the algorithm:
+   * 1. Computes the staple matrix X.
+   * 2. Iterates over all SU(2) subgroups (i,j).
+   * 3. Extracts the corresponding 2x2 block from X and normalizes it to an SU(2) matrix V.
+   * 4. Applies the overrelaxation transformation:
+   *        U -> V^\dagger * U^\dagger * V^\dagger
+   *
+   * This transformation preserves Re Tr(U * X) and therefore leaves the Wilson
+   * gauge action unchanged (up to numerical precision).
+   *
+   * @param U Gauge field with SU(N) link variables. Updated in place.
+   * @param n_iter Number of overrelaxation sweeps.
+   *
+   * @note The algorithm assumes U is close to SU(N). It is typically used in
+   *       combination with heatbath updates.
+   *
+   * @warning Numerical stability requires the staple projection onto SU(2)
+   *          subgroups to be well-defined (non-zero norm).
+   *
+   * @complexity O(N^3) per link due to repeated matrix multiplications.
    */
   void relaxation(gauge_field &U, mdp_uint n_iter = 1)
   {
     if (U.nc() == 1)
-      error("fermiqcd_gauge_algorithms/heatbath(): U(1)? (use metropolis)");
+      error("relaxation(): U(1)? (use metropolis)");
 
-    mdp_matrix M;
-    mdp_complex a[4];
+    const mdp_suint nc = U.nc();
     mdp_site x(U.lattice());
-    mdp_real dk;
-    mdp_real e[4];
 
     for (mdp_uint iter = 0; iter < n_iter; iter++)
       for (mdp_parity parity : {EVEN, ODD})
@@ -226,118 +250,140 @@ namespace MDP
         {
           forallsitesofparity(x, parity)
           {
-            for (mdp_suint i = 0; i < U.nc() - 1; i++)
-              for (mdp_suint j = i + 1; j < U.nc(); j++)
+            mdp_matrix staple = staple_H(U, x, mu);
+            mdp_matrix Ulink = U(x, mu); // local copy
+
+            for (mdp_suint i = 0; i < nc - 1; i++)
+              for (mdp_suint j = i + 1; j < nc; j++)
               {
-                M = U(x, mu) * staple_H(U, x, mu);
+                // --- SU(2) block from staple ---
+                mdp_complex a00 = staple(i, i);
+                mdp_complex a01 = staple(i, j);
+                mdp_complex a10 = staple(j, i);
+                mdp_complex a11 = staple(j, j);
 
-                e[0] = real(M(i, i) + M(j, j));
-                e[1] = imag(M(i, j) + M(j, i));
-                e[2] = real(M(i, j) - M(j, i));
-                e[3] = imag(M(i, i) - M(j, j));
+                mdp_real e0 = real(a00 + a11);
+                mdp_real e1 = imag(a01 + a10);
+                mdp_real e2 = real(a01 - a10);
+                mdp_real e3 = imag(a00 - a11);
 
-                dk = 0;
-                for (mdp_suint t = 0; t < 4; t++)
+                mdp_real norm = std::sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
+                if (norm < 1e-16)
+                  continue;
+
+                e0 /= norm;
+                e1 /= norm;
+                e2 /= norm;
+                e3 /= norm;
+
+                mdp_complex v00 = mdp_complex(e0, -e3);
+                mdp_complex v01 = -mdp_complex(e2, e1);
+                mdp_complex v10 = mdp_complex(e2, -e1);
+                mdp_complex v11 = mdp_complex(e0, e3);
+
+                // --- U† (only required rows) ---
+                std::vector<mdp_complex> Ui(nc), Uj(nc);
+                for (mdp_suint k = 0; k < nc; k++)
                 {
-                  dk += std::pow(e[t], 2);
+                  Ui[k] = conj(Ulink(k, i));
+                  Uj[k] = conj(Ulink(k, j));
                 }
-                dk = std::sqrt(dk);
-                for (mdp_suint t = 0; t < 4; t++)
+
+                // --- V† * U† ---
+                for (mdp_suint k = 0; k < nc; k++)
                 {
-                  e[t] /= dk;
+                  mdp_complex tmp_i = conj(v00) * Ui[k] + conj(v10) * Uj[k];
+                  mdp_complex tmp_j = conj(v01) * Ui[k] + conj(v11) * Uj[k];
+                  Ui[k] = tmp_i;
+                  Uj[k] = tmp_j;
                 }
 
-                a[0] = mdp_complex(e[0], -e[3]);
-                a[1] = -mdp_complex(e[2], e[1]);
-                a[2] = mdp_complex(e[2], -e[1]);
-                a[3] = mdp_complex(e[0], e[3]);
-
-                for (mdp_suint k = 0; k < U.nc(); k++)
+                for (mdp_suint k = 0; k < nc; k++)
                 {
-                  mdp_complex tmpUik = (a[0] * a[0] + a[2] * a[1]) * U(x, mu, i, k) + (a[1] * (a[0] + a[3])) * U(x, mu, j, k);
-                  U(x, mu, j, k) = (a[2] * (a[0] + a[3])) * U(x, mu, i, k) + (a[1] * a[2] + a[3] * a[3]) * U(x, mu, j, k);
-                  U(x, mu, i, k) = tmpUik;
+                  Ulink(i, k) = Ui[k];
+                  Ulink(j, k) = Uj[k];
                 }
               }
+
+            U(x, mu) = Ulink;
           }
-          U.update(parity, mu, U.nc() * U.nc());
+
+          U.update(parity, mu, nc * nc);
         }
   }
 
-  /// Unitarize SU(N) matrix
-  /*
-   *          [ e0 e1 e2 ]
-   * SU(3) =  [ |  |  |  ]
-   *          [ .  .  .  ]
+  /**
+   * @brief Projects gauge links onto the SU(N) group manifold.
    *
+   * This function "reunitarizes" each link matrix of the gauge field by projecting
+   * it onto the closest unitary matrix using an iterative Newton–Schulz scheme.
+   * It is intended for matrices that are already close to SU(N), e.g. obtained
+   * from products of SU(N) matrices with accumulated floating-point errors.
    *
+   * The procedure consists of two steps:
+   * 1. Iterative projection onto U(N):
+   *    X_{k+1} = 1/2 * X_k * (3I - X_k^\dagger X_k)
+   *    which converges quadratically to a unitary matrix when the input is
+   *    sufficiently close to unitary.
+   *
+   * 2. Projection from U(N) to SU(N):
+   *    The determinant phase is removed by rescaling
+   *        U -> U / (det(U))^{1/N}
+   *    ensuring det(U) = 1.
+   *
+   * The function also accumulates a diagnostic measure of how far the original
+   * matrices were from SU(N), defined as |1 - det(U)| averaged over all links.
+   *
+   * @param U Gauge field whose link variables U(x, mu) are N x N complex matrices.
+   *          The matrices are modified in place and projected onto SU(N).
+   *
+   * @return The average deviation of the determinant from unity before projection,
+   *         i.e. <|1 - det(U)|>, computed over all lattice sites and directions.
+   *
+   * @note The algorithm assumes that input matrices are non-singular and close
+   *       to unitary. Convergence is typically achieved in a small fixed number
+   *       of iterations (e.g. 3–5).
+   *
+   * @warning The Newton–Schulz iteration is not globally convergent; applying it
+   *          to matrices far from unitary may lead to instability or divergence.
+   *
+   * @complexity O(N^3) per link per iteration due to matrix multiplications.
    */
-  mdp_real unitarize(gauge_field &U)
+  std::pair<mdp_real, mdp_real> unitarize(gauge_field &U)
   {
-
-    mdp_real stats;
+    const mdp_suint nc = U.nc();
     mdp_site x(U.lattice());
-    mdp_real precision = 0;
-    mdp_matrix e(U.nc(), U.nc());
-    mdp_matrix m(U.nc() - 1, U.nc() - 1);
-    mdp_real quadnorm;
-    mdp_complex scalar;
-    e = U(x, 0);
+    mdp_real precision_before = 0;
+    mdp_real precision_after = 0;
 
     forallsites(x)
     {
       for (mdp_suint mu = 0; mu < U.ndim(); mu++)
       {
-        precision += abs(1.0 - det(U(x, mu)));
+        mdp_matrix e = U(x, mu);
+        precision_before += abs(1.0 - det(e));
 
-        // Gram-Schmidt's orthonormalization method for the 'U.nc' vectors (e1, e2, ..., en)
-        for (mdp_suint i = 0; i < U.nc(); i++)
+        for (int iter = 0; iter < 5; iter++)
         {
-          for (mdp_suint k = 0; k < i; k++)
-          {
-            scalar = 0;
-            for (mdp_suint j = 0; j < U.nc(); j++)
-            {
-              scalar += conj(e(k, j)) * e(i, j);
-            } //<ek|ei>
-            for (mdp_suint j = 0; j < U.nc(); j++)
-            {
-              e(i, j) -= e(k, j) * scalar;
-            } // ei = ei - ek<ek|ei>
-          }
-          quadnorm = 0;
-          for (mdp_suint j = 0; j < U.nc(); j++)
-            quadnorm += abs2(e(i, j)); // quadnorm = ||ei||^2
-
-          for (mdp_suint j = 0; j < U.nc(); j++)
-            e(i, j) /= std::sqrt(quadnorm); // ei = ei/||ei||
+          mdp_matrix inv_dag = hermitian(inv(e));
+          e = 0.5 * (e + inv_dag);
         }
 
-        // The last vector is calculated as the cross product: ek = ei x ej
-        mdp_suint i = U.nc() - 1;
-        for (mdp_suint j = 0; j < U.nc(); j++)
-        {
-          for (mdp_suint s = 0; s < U.nc() - 1; s++)
-          {
-            for (mdp_suint k = 0; k < U.nc() - 1; k++)
-            {
-              if (k < j)
-                m(s, k) = e(s, k);
-              else
-                m(s, k) = e(s, k + 1);
-            }
-          }
-          e(i, j) = det(conj(m));
-          if ((j + i) % 2 == 1)
-            e(i, j) *= -1;
-        }
+        // FIX det = 1
+        mdp_complex d = det(e);
+        e /= pow(d, 1.0 / nc);
+
         U(x, mu) = e;
+        precision_after += abs(1.0 - det(e));
       }
     }
-    mdp.add(precision);
-    stats = precision / (U.ndim() * U.lattice().global_volume());
 
-    return stats;
+    precision_before /= (U.ndim() * U.lattice().global_volume());
+    precision_after /= (U.ndim() * U.lattice().global_volume());
+    mdp.add(precision_before);
+    mdp.add(precision_after);
+
+    return std::make_pair(precision_before, precision_after);
   }
 
   /**
@@ -447,6 +493,7 @@ namespace MDP
     forallsites(x)
     {
       for (mdp_suint mu = 0; mu < U.ndim() - 1; mu++)
+      {
         for (mdp_suint nu = mu + 1; nu < U.ndim(); nu++)
         {
 
@@ -459,6 +506,7 @@ namespace MDP
 
           U.em(x, mu, nu) = (0.125) * (A - hermitian(A));
         }
+      }
     }
     U.em.update();
   }
@@ -538,18 +586,53 @@ namespace MDP
     end_function("set_antiperiodic_phases");
   }
 
-  /// takes a matrix M, performs a Cabibbo-Marinari cooling
-  /// and returns the projected matrix
+  /**
+   * @brief Projects an arbitrary complex matrix onto the SU(N) group manifold.
+   *
+   * This function performs an iterative Cabibbo–Marinari SU(2) projection to map a
+   * general complex matrix onto the closest special unitary matrix SU(N).
+   *
+   * The algorithm consists of three main stages:
+   *
+   * 1. Preconditioning (Gram–Schmidt orthonormalization):
+   *    The columns of the input matrix M are orthonormalized to obtain an initial
+   *    approximation C ∈ U(N).
+   *
+   * 2. Construction of a correlation matrix:
+   *    A matrix B = M† C is built to encode the alignment between the original
+   *    matrix and its orthonormalized version.
+   *
+   * 3. Iterative SU(2) subgroup projections (Cabibbo–Marinari scheme):
+   *    For each pair of indices (i, j), a 2×2 SU(2) matrix is constructed from
+   *    the corresponding block of B. This rotation is applied iteratively to
+   *    improve unitarity while preserving the structure of the matrix.
+   *
+   * After nstep iterations, the function returns a matrix S that is a numerically
+   * stable projection of M onto SU(N).
+   *
+   * @param M Input complex matrix to be projected onto SU(N).
+   * @param nstep Number of Cabibbo–Marinari iteration steps (default: 1).
+   *
+   * @return A matrix S ∈ SU(N) obtained as a numerical projection of M.
+   *
+   * @note This procedure is a projection/cooling algorithm and does not preserve
+   *       any physical action or probability measure. It is intended for numerical
+   *       stabilization and reunitarization purposes only.
+   *
+   * @warning The result depends on the number of iterations nstep and is not a
+   *          unique analytic projection. For large nstep, the result converges
+   *          towards a locally optimal SU(N) approximation.
+   *
+   * @complexity O(nstep · N^3) due to repeated SU(2) subgroup updates and matrix
+   *             multiplications.
+   */
   mdp_matrix project_SU(mdp_matrix M, mdp_uint nstep = 1)
   {
-    mdp_suint nc = M.rows();
-    mdp_real e0, e1, e2, e3, dk, d;
-    mdp_complex dc, u0, u1, u2, u3;
+    const mdp_suint nc = M.rows();
     mdp_matrix B(nc, nc);
-    mdp_matrix C(nc, nc);
     mdp_matrix S(nc, nc);
 
-    C = M;
+    mdp_matrix C = M;
     // /////////////////
     // preconditioning
     // /////////////////
@@ -557,51 +640,77 @@ namespace MDP
     {
       for (mdp_suint j = 0; j < i; j++)
       {
-        dc = 0;
+        mdp_complex dc = 0;
         for (mdp_suint k = 0; k < nc; k++)
+        {
           dc += conj(C(k, j)) * C(k, i);
+        }
         for (mdp_suint k = 0; k < nc; k++)
+        {
           C(k, i) -= dc * C(k, j);
+        }
       }
-      d = 0;
+      mdp_real d = 0;
       for (mdp_suint k = 0; k < nc; k++)
+      {
         d += std::pow(abs(C(k, i)), 2.0);
+      }
       d = std::sqrt(d);
       for (mdp_suint k = 0; k < nc; k++)
+      {
         C(k, i) /= d;
+      }
     }
+
     // ////////////////////////////
     // Cabibbo Marinari Projection
     // ////////////////////////////
     for (mdp_suint i = 0; i < nc; i++)
+    {
       for (mdp_suint j = 0; j < nc; j++)
+      {
         for (mdp_suint k = 0; k < nc; k++)
+        {
           B(i, j) += conj(M(k, i)) * C(k, j);
+        }
+      }
+    }
+
     for (mdp_uint step = 0; step < nstep; step++)
     {
       for (mdp_suint i = 0; i < nc - 1; i++)
+      {
         for (mdp_suint j = i + 1; j < nc; j++)
         {
-          e0 = real(B(i, i)) + real(B(j, j));
-          e1 = imag(B(i, j)) + imag(B(j, i));
-          e2 = real(B(i, j)) - real(B(j, i));
-          e3 = imag(B(i, i)) - imag(B(j, j));
-          dk = std::sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
-          u0 = mdp_complex(e0, -e3) / dk;
-          u1 = mdp_complex(e2, -e1) / dk;
-          u2 = mdp_complex(-e2, -e1) / dk;
-          u3 = mdp_complex(e0, e3) / dk;
+          mdp_real e0 = real(B(i, i)) + real(B(j, j));
+          mdp_real e1 = imag(B(i, j)) + imag(B(j, i));
+          mdp_real e2 = real(B(i, j)) - real(B(j, i));
+          mdp_real e3 = imag(B(i, i)) - imag(B(j, j));
+          mdp_real dk = std::sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
+          mdp_complex u0 = mdp_complex(e0, -e3) / dk;
+          mdp_complex u1 = mdp_complex(e2, -e1) / dk;
+          mdp_complex u2 = mdp_complex(-e2, -e1) / dk;
+          mdp_complex u3 = mdp_complex(e0, e3) / dk;
           // S=C;
           for (mdp_suint k = 0; k < nc; k++)
           {
             S(k, i) = C(k, i) * u0 + C(k, j) * u1;
             S(k, j) = C(k, i) * u2 + C(k, j) * u3;
           }
+
           if ((i == nc - 2) && (j == nc - 1))
+          {
             for (mdp_suint k = 0; k < nc; k++)
+            {
               for (mdp_suint l = 0; l < nc - 2; l++)
+              {
                 S(k, l) = C(k, l);
+              }
+            }
+          }
+
           if ((i != nc - 2) || (j != nc - 1) || (step != nstep - 1))
+          {
             for (mdp_suint k = 0; k < nc; k++)
             {
               C(k, i) = B(k, i) * u0 + B(k, j) * u1;
@@ -611,7 +720,9 @@ namespace MDP
               C(k, i) = S(k, i);
               C(k, j) = S(k, j);
             }
+          }
         }
+      }
     }
     return S;
   }

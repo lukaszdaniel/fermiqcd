@@ -53,22 +53,18 @@ namespace MDP
     static void heatbath_SU2(mdp_random &random,
                              mdp_real beta_eff, mdp_complex *a)
     {
-      mdp_real e0, e1, e2, e3, dk, p0;
       mdp_real r1, r2, r3, r4;
-      mdp_real a0, a1, a2, a3;
-      mdp_complex u0, u1, u2, u3;
-      mdp_complex v0, v1, v2, v3;
-      mdp_real delta, phi, sin_alpha, sin_theta, cos_theta;
-      e0 = real(a[0]) + real(a[3]);
-      e1 = imag(a[1]) + imag(a[2]);
-      e2 = real(a[1]) - real(a[2]);
-      e3 = imag(a[0]) - imag(a[3]);
-      dk = std::sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
-      p0 = (dk * beta_eff);
-      u0 = mdp_complex(e0 / dk, -e3 / dk);
-      u1 = mdp_complex(-e2 / dk, -e1 / dk);
-      u2 = mdp_complex(e2 / dk, -e1 / dk);
-      u3 = mdp_complex(e0 / dk, e3 / dk);
+      mdp_real delta;
+      mdp_real e0 = real(a[0]) + real(a[3]);
+      mdp_real e1 = imag(a[1]) + imag(a[2]);
+      mdp_real e2 = real(a[1]) - real(a[2]);
+      mdp_real e3 = imag(a[0]) - imag(a[3]);
+      mdp_real dk = std::sqrt(e0 * e0 + e1 * e1 + e2 * e2 + e3 * e3);
+      mdp_real p0 = (dk * beta_eff);
+      mdp_complex u0 = mdp_complex(e0 / dk, -e3 / dk);
+      mdp_complex u1 = mdp_complex(-e2 / dk, -e1 / dk);
+      mdp_complex u2 = mdp_complex(e2 / dk, -e1 / dk);
+      mdp_complex u3 = mdp_complex(e0 / dk, e3 / dk);
 
       if (beta_eff <= 0.0)
         error("fermiqcd_gauge_algorithms/heatbath_SU2: beta is zero");
@@ -88,18 +84,19 @@ namespace MDP
         delta = r2 + r1 * r3;
         r4 = random.plain();
       } while (r4 * r4 > (1.0 - 0.5 * delta));
-      a0 = 1.0 - delta;
-      cos_theta = 2.0 * random.plain() - 1.0;
-      sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
-      sin_alpha = std::sqrt(1 - a0 * a0);
-      phi = 2.0 * Pi * random.plain();
-      a1 = sin_alpha * sin_theta * std::cos(phi);
-      a2 = sin_alpha * sin_theta * std::sin(phi);
-      a3 = sin_alpha * cos_theta;
-      v0 = mdp_complex(a0, a3);
-      v1 = mdp_complex(a2, a1);
-      v2 = mdp_complex(-a2, a1);
-      v3 = mdp_complex(a0, -a3);
+
+      mdp_real a0 = 1.0 - delta;
+      mdp_real cos_theta = 2.0 * random.plain() - 1.0;
+      mdp_real sin_theta = std::sqrt(1.0 - cos_theta * cos_theta);
+      mdp_real sin_alpha = std::sqrt(1 - a0 * a0);
+      mdp_real phi = 2.0 * Pi * random.plain();
+      mdp_real a1 = sin_alpha * sin_theta * std::cos(phi);
+      mdp_real a2 = sin_alpha * sin_theta * std::sin(phi);
+      mdp_real a3 = sin_alpha * cos_theta;
+      mdp_complex v0 = mdp_complex(a0, a3);
+      mdp_complex v1 = mdp_complex(a2, a1);
+      mdp_complex v2 = mdp_complex(-a2, a1);
+      mdp_complex v3 = mdp_complex(a0, -a3);
       a[0] = v0 * u0 + v1 * u2;
       a[1] = v0 * u1 + v1 * u3;
       a[2] = v2 * u0 + v3 * u2;
@@ -125,8 +122,8 @@ namespace MDP
       else
         zeta = 1;
 
-      mdp_suint nc = U.nc();
-      mdp_suint ndim = U.ndim();
+      const mdp_suint nc = U.nc();
+      const mdp_suint ndim = U.ndim();
       mdp_matrix M(nc, nc);
       mdp_site x(U.lattice());
       mdp_real time = mdp.time();
@@ -192,7 +189,7 @@ namespace MDP
   ///    ImprovedGaugeAction::heatbath(U,gauge,steps,"MILC");
   ///    U.save("myfield.0001");
   /// @endverbatim
-  /// Example using the Morningstar unisotropic improved action:
+  /// Example using the Morningstar anisotropic improved action:
   /// @verbatim
   ///    int steps=10;
   ///    mdp_suint nc=2;
@@ -220,36 +217,31 @@ namespace MDP
     {
       mdp_suint nc = U.nc();
       mdp_matrix tmp(nc, nc);
-      mdp_matrix b1(nc, nc);
-      mdp_matrix b2(nc, nc);
-      mdp_matrix b3(nc, nc);
-      mdp_site y0(U.lattice());
-      mdp_site y1(U.lattice());
-      mdp_site y2(U.lattice());
+
       tmp = 0;
       if (mu == 0)
       {
         for (mdp_suint nu = 1; nu < U.ndim(); nu++)
         {
-          y0 = x + mu;
-          y1 = y0 + nu;
+          mdp_site y0 = x + mu;
+          mdp_site y1 = y0 + nu;
           tmp += U(y0, nu) * U(y1, nu) * hermitian(U(x, nu) * U(x + nu, nu) * U((x + nu) + nu, mu));
 
           y0 = (x - nu) - nu;
           y1 = y0 + mu;
-          y2 = y1 + nu;
+          mdp_site y2 = y1 + nu;
           tmp += hermitian(U(y0, mu) * U(y1, nu) * U(y2, nu)) * U(y0, nu) * U(x - nu, nu);
         }
       }
       else
       {
         mdp_suint nu = 0;
-        y0 = (x - mu) + nu;
+        mdp_site y0 = (x - mu) + nu;
         tmp += U(x + mu, nu) * hermitian(U(x - mu, nu) * U(y0, mu) * U(x + nu, mu)) * U(x - mu, mu);
 
         y0 = x - mu;
-        y1 = y0 - nu;
-        y2 = y1 + mu;
+        mdp_site y1 = y0 - nu;
+        mdp_site y2 = y1 + mu;
         tmp += hermitian(U(y1, mu) * U(y2, mu) * U(y2 + mu, nu)) * U(y1, nu) * U(y0, mu);
 
         y0 = x + mu;
@@ -272,24 +264,19 @@ namespace MDP
     {
       mdp_suint nc = U.nc();
       mdp_matrix tmp(nc, nc);
-      mdp_matrix b1(nc, nc);
-      mdp_matrix b2(nc, nc);
-      mdp_matrix b3(nc, nc);
-      mdp_site y0(U.lattice());
-      mdp_site y1(U.lattice());
-      mdp_site y2(U.lattice());
+
       tmp = 0;
       for (mdp_suint nu = min_nu; nu < U.ndim(); nu++)
       {
         if (nu != mu)
         {
-          y0 = x + mu;
-          y1 = y0 + nu;
+          mdp_site y0 = x + mu;
+          mdp_site y1 = y0 + nu;
           tmp += U(y0, nu) * U(y1, nu) * hermitian(U(x, nu) * U(x + nu, nu) * U((x + nu) + nu, mu));
 
           y0 = (x - nu) - nu;
           y1 = y0 + mu;
-          y2 = y1 + nu;
+          mdp_site y2 = y1 + nu;
           tmp += hermitian(U(y0, mu) * U(y1, nu) * U(y2, nu)) * U(y0, nu) * U(x - nu, nu);
 
           y0 = (x - mu) + nu;
@@ -322,29 +309,24 @@ namespace MDP
 
     static mdp_matrix chair_H(const gauge_field &U, mdp_site x, mdp_suint mu)
     {
-      mdp_suint ndim = U.ndim();
-      mdp_suint nc = U.nc();
+      const mdp_suint ndim = U.ndim();
+      const mdp_suint nc = U.nc();
       mdp_matrix tmp(nc, nc);
-      mdp_matrix b1(nc, nc);
-      mdp_matrix b2(nc, nc);
-      mdp_matrix b3(nc, nc);
-      mdp_site y1(U.lattice());
-      mdp_site y2(U.lattice());
-      mdp_site y3(U.lattice());
-      mdp_site y4(U.lattice());
-      mdp_site y5(U.lattice());
       tmp = 0;
+
       for (mdp_suint nu = 0; nu < ndim; nu++)
       {
         if (nu != mu)
+        {
           for (mdp_suint rho = 0; rho < ndim; rho++)
+          {
             if ((rho != nu) && (rho != mu))
             {
-              y1 = x + mu;
-              y2 = y1 + nu;
-              y3 = y2 + rho;
-              y4 = y3 - mu;
-              y5 = y4 - nu;
+              mdp_site y1 = x + mu;
+              mdp_site y2 = y1 + nu;
+              mdp_site y3 = y2 + rho;
+              mdp_site y4 = y3 - mu;
+              mdp_site y5 = y4 - nu;
               tmp += U(y1, nu) * U(y2, rho) * hermitian(U(x, rho) * U(y5, nu) * U(y4, mu));
 
               y1 = x + mu;
@@ -368,6 +350,8 @@ namespace MDP
               y5 = y4 + nu;
               tmp += hermitian(U(y4, mu) * U(y3, rho) * U(y2, nu)) * U(y4, nu) * U(y5, rho);
             }
+          }
+        }
       }
       return tmp;
     }
@@ -427,8 +411,8 @@ namespace MDP
         error("lattice is not divisible by 3");
 #endif
 
-      mdp_suint nc = U.nc();
-      mdp_suint ndim = U.ndim();
+      const mdp_suint nc = U.nc();
+      const mdp_suint ndim = U.ndim();
       mdp_matrix M(nc, nc);
       mdp_site x(U.lattice());
       mdp_real time = mdp.time();
