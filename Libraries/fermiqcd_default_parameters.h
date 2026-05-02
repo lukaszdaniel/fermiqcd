@@ -23,10 +23,6 @@ namespace MDP
 #define SPACE_Y 2
 #define SPACE_Z 3
 
-#ifndef DAGGER
-#define DAGGER -1
-#endif
-
     constexpr mdp_real fermi_inversion_precision = 1e-6;
     constexpr mdp_real staggered_inversion_precision = 1e-6;
     constexpr mdp_real dwfermi_inversion_precision = 1e-6;

@@ -20,18 +20,38 @@
 
 namespace MDP
 {
-  /// @brief Lanczos algorithms
-  ///
-  /// Example:
-  /// @verbatim
-  /// mdp_gauge U(lattice,nc);
-  /// fermi_field psi(lattice,nc);
-  /// coefficients coeff;
-  /// coeff["kappa"]=1.12;
-  /// for(int k=0; k<100; k++)
-  ///    mdp << Lanczos::step(psi,U,coeff) << "\n";
-  /// @endverbatim
-  /// return mdp_complex(alpha,eta)
+  /**
+   * @brief Lanczos iterative eigenvalue algorithm for lattice fermion operators.
+   *
+   * This class implements a single-step Lanczos iteration for computing
+   * extremal eigenvalues of large sparse operators arising in lattice QCD,
+   * such as Dirac-type operators.
+   *
+   * The algorithm builds an orthogonal Krylov basis using recursive relations:
+   *
+   *    A p_k = beta_{k+1} p_{k+1} + alpha_k p_k + beta_k p_{k-1}
+   *
+   * where A is implicitly defined through the fermion operator (mul_Q) and
+   * gamma5 hermitization.
+   *
+   * The implementation uses a 3-vector recurrence scheme and is intended for
+   * iterative use.
+   *
+   * @tparam fieldT Type representing lattice fermion field.
+   *
+   * @example
+   * @verbatim
+   * mdp_gauge U(lattice,nc);
+   * fermi_field psi(lattice,nc);
+   * coefficients coeff;
+   * coeff["kappa"]=1.12;
+   *
+   * for(int k=0; k<100; k++)
+   *   mdp << Lanczos::step(psi,U,coeff) << "\n";
+   * @endverbatim
+   *
+   * @note This implementation uses static internal state and is not reentrant.
+   */
   template <class fieldT>
   class Lanczos
   {
@@ -42,6 +62,44 @@ namespace MDP
     Lanczos &operator=(const Lanczos &) = delete;
 
   public:
+    /**
+     * @brief Performs a single Lanczos iteration step.
+     *
+     * This function advances the Lanczos recursion by one step using a
+     * 3-term recurrence relation applied to lattice fermion fields.
+     *
+     * The operator is implicitly defined via:
+     * - mul_Q (fermion matrix application)
+     * - gamma5 hermitization
+     *
+     * The iteration updates:
+     * - p: previous Lanczos vector
+     * - q: current vector
+     * - r: auxiliary vector
+     *
+     * and computes the tridiagonal coefficients:
+     * - alpha = diagonal element
+     * - beta  = off-diagonal coupling
+     *
+     * @param psi Initial / working fermion field (modified in-place during init).
+     * @param U Gauge field used in fermion operator.
+     * @param coeff Coefficients defining fermion operator parameters (e.g. kappa).
+     * @param force If true, reinitializes Lanczos basis.
+     * @param output_check If true, prints diagnostic orthogonality checks.
+     *
+     * @return Complex number (alpha, beta) representing Lanczos coefficients
+     *         of the tridiagonal matrix.
+     *
+     * @note This implementation uses static internal vectors and preserves state
+     *       between calls.
+     *
+     * @warning Not thread-safe due to static storage of Lanczos vectors.
+     *
+     * @warning Numerical stability may degrade due to loss of orthogonality
+     *          in long runs (no reorthogonalization is performed).
+     *
+     * @complexity One application of fermion operator per iteration.
+     */
     static mdp_complex step(fieldT &psi,
                             gauge_field &U,
                             coefficients &coeff,

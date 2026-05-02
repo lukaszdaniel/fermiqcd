@@ -18,27 +18,52 @@
 
 namespace MDP
 {
-  /// Structure for gaugefixing stats
+  /**
+   * @brief Structure storing statistics from the gauge fixing procedure.
+   *
+   * This structure collects diagnostic information about the iterative gauge
+   * fixing algorithm, including convergence behaviour and final physical
+   * observables estimated during the procedure.
+   */
   class gaugefixing_stats
   {
   public:
+    /// Maximum number of gauge fixing iterations allowed.
     mdp_uint max_steps;
+
+    /// Target precision threshold for convergence.
     mdp_real target_precision;
+
+    /// Number of iterations actually performed.
     mdp_uint steps;
+
+    /// Final measured gauge fixing precision.
     mdp_real precision;
+
+    /// Final value of the diagnostic gauge "action".
     mdp_real action;
   };
 
-  /// @brief the main gaugefixing algorithm
-  ///
-  /// Example:
-  /// @verbatim
-  ///    gauge_field U(lattice,nc);
-  ///    gaugefixing_stats stats;
-  ///    U.load("myfield");
-  ///    stats=GaugeFixing::fix(U,GaugeFixing::Coulomb,100);
-  ///    U.save("myfield_gaugefixed");
-  /// @endverbatim
+  /**
+   * @brief Collection of gauge fixing algorithms for lattice gauge fields.
+   *
+   * This class implements iterative gauge fixing procedures for lattice gauge
+   * theories, including Coulomb and Landau gauges. The algorithms are based on
+   * SU(2) subgroup overrelaxation (Cabibbo–Marinari scheme) applied to SU(N)
+   * gauge fields.
+   *
+   * The class is non-instantiable and acts purely as a namespace for static
+   * algorithms.
+   *
+   * @example
+   * @verbatim
+   *    gauge_field U(lattice,nc);
+   *    gaugefixing_stats stats;
+   *    U.load("myfield");
+   *    stats = GaugeFixing::fix(U, GaugeFixing::Coulomb, 100);
+   *    U.save("myfield_gaugefixed");
+   * @endverbatim
+   */
   class GaugeFixing
   {
   private:
@@ -48,9 +73,33 @@ namespace MDP
     GaugeFixing &operator=(const GaugeFixing &) = delete;
 
   public:
+    /// Coulomb gauge fixing mode identifier.
     static constexpr mdp_suint Coulomb = 0;
+
+    /// Landau gauge fixing mode identifier.
     static constexpr mdp_suint Landau = 10;
 
+    /**
+     * @brief Applies a single SU(2) subgroup gauge fixing update (overrelaxation step).
+     *
+     * This function performs a local gauge transformation on a selected SU(2)
+     * subgroup (i, j) embedded in SU(N). The transformation is constructed from
+     * local staples and applied in an overrelaxation-like manner.
+     *
+     * The update acts differently on even/odd lattice sites to preserve
+     * consistency of link updates:
+     * - forward links: left multiplication
+     * - backward links: right multiplication with Hermitian conjugate
+     *
+     * @param U Gauge field to be updated.
+     * @param mu Direction of the link being updated.
+     * @param parity Lattice parity (EVEN or ODD) of updated sites.
+     * @param i First color index of SU(2) subgroup.
+     * @param j Second color index of SU(2) subgroup.
+     * @param overrelaxation_boost Optional parameter controlling relaxation strength.
+     *
+     * @note This is a local update and does not itself ensure global convergence.
+     */
     static void hit(gauge_field &U,
                     mdp_suint mu,
                     mdp_parity parity,
@@ -164,6 +213,19 @@ namespace MDP
       U.update();
     }
 
+    /**
+     * @brief Removes residual Z(N) center symmetry on a given lattice direction.
+     *
+     * This function fixes the global Z(3) (or Z(N)) ambiguity present in lattice
+     * gauge configurations due to toroidal boundary conditions. It scans lattice
+     * slices and applies center-phase rotations that maximize the trace alignment.
+     *
+     * @param U Gauge field to be center-fixed.
+     * @param mu Direction along which Z(N) fixing is performed.
+     *
+     * @note This step is optional and typically applied after gauge fixing
+     *       convergence has been reached.
+     */
     static void z3_fix(gauge_field &U, mdp_suint mu)
     {
       mdp_suint i = 0;
@@ -202,14 +264,40 @@ namespace MDP
       }
     }
 
-    /// performs the gauge fixing
-    /// @param U the gauge field
-    /// @param mu = GaugeFixing::Coulomb or GaugeFixing::Landau or other direction
-    /// @param max_steps maximum number of gaugefixing steps
-    /// @param target_precision precision in gaugefixing
-    /// @param overrelaxation_boost
-    /// @param z3 if set to true fixes residual Z(n) symmetry due to lattice
-    ///           torus topology
+    /**
+     * @brief Iterative gauge fixing procedure (Landau or Coulomb gauge).
+     *
+     * This function performs iterative gauge fixing of a lattice gauge field
+     * using SU(2) subgroup overrelaxation (Cabibbo–Marinari method). The
+     * algorithm alternates updates over even/odd sublattices and SU(2)
+     * embeddings until convergence is reached or a maximum number of steps
+     * is exceeded.
+     *
+     * The procedure minimizes a gauge-fixing functional (depending on the
+     * chosen gauge type) by iteratively applying local gauge transformations.
+     *
+     * Convergence is monitored using a lattice-wide "precision" measure based
+     * on deviations from the gauge condition.
+     *
+     * Optionally, a Z(N) center fixing step can be applied after convergence.
+     *
+     * @param U Gauge field to be gauge fixed (modified in place).
+     * @param mu Gauge direction or gauge type selector
+     *           (e.g. GaugeFixing::Landau or GaugeFixing::Coulomb).
+     * @param max_steps Maximum number of gauge fixing iterations.
+     * @param target_precision Convergence threshold for stopping criterion.
+     * @param overrelaxation_boost Controls strength of overrelaxation updates.
+     * @param z3 If true, applies Z(3) center fixing after convergence.
+     *
+     * @return gaugefixing_stats Structure containing convergence information:
+     *         number of steps, final precision, and diagnostic action.
+     *
+     * @note The "action" reported here is a diagnostic quantity and is not
+     *       necessarily the Wilson gauge action.
+     *
+     * @warning Convergence depends on initial configuration and may stall if
+     *          the field is far from satisfying the gauge condition.
+     */
     static gaugefixing_stats fix(gauge_field &U,
                                  mdp_suint mu = 0,
                                  mdp_uint max_steps = 1,
@@ -277,9 +365,9 @@ namespace MDP
       if (z3)
         z3_fix(U, mu);
 
-      mdp << "steps=" << step
-          << ", action=" << action
-          << ", precison+" << precision << "\n";
+      mdp << "steps = " << step
+          << ", action = " << action
+          << ", precision = " << precision << "\n";
 
       return stats;
     }
