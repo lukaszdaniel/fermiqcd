@@ -6,18 +6,93 @@
 import os
 import sys
 import glob
-import wx
-from mayavi.core.api import Mayavi
-from enthought.mayavi.sources.vtk_file_reader import VTKFileReader
-from enthought.mayavi.modules.outline import Outline
-from enthought.mayavi.modules.text import Text
-from enthought.mayavi.modules.surface import Surface
-from enthought.mayavi.modules.orientation_axes import OrientationAxes
+import time
+import threading
+import pyvista as pv
 
-# usage: show.py FILE(s) [OPTION]
+# ================================================================================
+# Show.py — Simple interactive VTK viewer based on PyVista
+# ================================================================================
+# 
+# DESCRIPTION
+# -----------
+# This script provides a lightweight interactive viewer for VTK-compatible files
+# (using PyVista). It supports both:
+# 
+#   • Animation over a sequence of files (e.g. simulation timesteps)
+#   • Live monitoring of a file that is being updated during a simulation
+# 
+# The script is intended mainly for quick visualization of simulation outputs,
+# especially those produced in time series (e.g. field snapshots).
+# 
+# INPUT
+# -----
+# The script takes a single command-line argument: a list of file patterns.
+# 
+# Example:
+#     python show.py "*.vtk"
+#     python show.py "out_*.vtk,data_*.vtk"
+# 
+# Patterns can be comma-separated and are expanded using glob.
+# 
+# FEATURES
+# --------
+# • Interactive 3D visualization using PyVista
+# • Automatic loading of VTK (and other PyVista-supported formats)
+# • Two animation modes:
+#   
+#   1. LOOP MODE ("l")
+#      - Iterates over all input files in order
+#      - Loops indefinitely
+#      - Useful for visualizing time evolution
+# 
+#   2. WATCH MODE ("w")
+#      - Monitors the first file in the list
+#      - Reloads it when it changes on disk
+#      - Useful for real-time simulation output
+# 
+# • Snapshot support (saving screenshots)
+# • Keyboard-controlled interaction
+# • Multithreaded animation (non-blocking UI)
+# 
+# KEYBOARD CONTROLS
+# -----------------
+# l : Start looping over all files (animation mode)
+# w : Watch first file for changes (live mode)
+# s : Stop animation (loop/watch)
+# p : Save screenshot (if output directory is configured)
+# 
+# VISUALIZATION DETAILS
+# ---------------------
+# • Displays mesh with:
+#     - semi-transparent surface (opacity = 0.5)
+#     - optional edges disabled
+# • Shows:
+#     - axes
+#     - bounding box
+#     - filename index (during loop mode)
+# 
+# INTERNAL DESIGN
+# ---------------
+# • Uses PyVista Plotter for rendering
+# • Background thread handles animation (loop/watch)
+# • Mesh is reloaded completely on each update
+# • File change detection based on modification time (mtime)
+# 
+# LIMITATIONS
+# -----------
+# • No CLI options beyond file patterns
+# • WATCH mode only monitors the first file
+# • No direct control over colormaps or scalar fields
+# • Reloading clears and rebuilds the scene (not incremental)
+# • Output directory for snapshots must be set manually in code
+#
+#
+# ================================================================================
+
 
 VERSION_INFO = (
-    "Show.py v1.0\n"
+    "Show.py v2.0\n"
     "Copyright (c) 2007, DePaul University\n"
     "All rights reserved.\n"
     "License: BSD Style\n"
@@ -27,170 +102,130 @@ VERSION_INFO = (
 
 
 def parse():
-    """Parses file input from command-line arguments."""
+    """Parse file patterns from CLI."""
     if len(sys.argv) < 2:
         print("Usage: show.py FILE(s)")
         sys.exit(1)
+
     filepatterns = sys.argv[1]
     files = []
     for pattern in filepatterns.split(","):
-        files.extend(glob.glob(pattern))
-    # Return a list of file lists for compatibility with rest of code
-    return [files]
+        files.extend(sorted(glob.glob(pattern)))
+
+    return files
 
 
-class Watcher(wx.Timer):
-    def __init__(self, interval, callback, *args, **kwargs):
-        super().__init__()
-        self.callback = callback
-        self.args = args
-        self.kwargs = kwargs
-        self.Start(interval)
-
-    def Notify(self):
-        self.callback(*self.args, **self.kwargs)
-
-
-class MayaViShow(Mayavi):
-    def __init__(self, filelists, title):
-        super().__init__()
-        self.filelists = filelists
+class PyVistaShow:
+    def __init__(self, files, title="PyVista Viewer"):
+        self.files = files
         self.title = title
-        self.data = []
-        self.watcher = None
+
+        self.plotter = pv.Plotter()
+        self.mesh_actor = None
+
         self.stop = True
+        self.mode = None  # "loop" or "watch"
+        self.index = 0
+        self.file_mtime = None
+
+        self.outputdir = None
         self.imagecount = 0
-        self.sceneTextCount = None
-        self.filestatus = []
+
+    # --------------------------------------------------------
+    # Visualization setup
+    # --------------------------------------------------------
+    def setup_scene(self):
+        self.plotter.add_text(self.title, position="upper_edge", font_size=12)
+        self.plotter.add_axes()
+
+        if not self.files:
+            return
+
+        mesh = pv.read(self.files[0])
+        self.mesh_actor = self.plotter.add_mesh(
+            mesh,
+            opacity=0.5,
+            show_edges=False
+        )
+
+        self.plotter.add_bounding_box()
+
+    def update_mesh(self, filename):
+        mesh = pv.read(filename)
+        self.plotter.clear_actors()
+        self.setup_scene()
+        self.mesh_actor = self.plotter.add_mesh(mesh, opacity=0.5)
+
+    # --------------------------------------------------------
+    # Animation: LOOP
+    # --------------------------------------------------------
+    def loop(self):
+        self.stop = False
+        self.mode = "loop"
+
+        def run():
+            while not self.stop:
+                if self.index >= len(self.files):
+                    self.index = 0
+
+                self.update_mesh(self.files[self.index])
+                self.plotter.add_text(f"{self.index}", position="lower_right", font_size=10)
+
+                self.index += 1
+                time.sleep(1)
+
+        threading.Thread(target=run, daemon=True).start()
+
+    # --------------------------------------------------------
+    # Animation: WATCH
+    # --------------------------------------------------------
+    def watch(self):
+        self.stop = False
+        self.mode = "watch"
+
+        if not self.files:
+            return
+
+        self.file_mtime = os.stat(self.files[0]).st_mtime
+
+        def run():
+            while not self.stop:
+                mtime = os.stat(self.files[0]).st_mtime
+                if mtime != self.file_mtime:
+                    self.file_mtime = mtime
+                    self.update_mesh(self.files[0])
+                time.sleep(1)
+
+        threading.Thread(target=run, daemon=True).start()
+
+    # --------------------------------------------------------
+    # Stop animation
+    # --------------------------------------------------------
+    def stop_anim(self):
+        self.stop = True
+
+    # --------------------------------------------------------
+    # Snapshot
+    # --------------------------------------------------------
+    def snapshot(self):
+        if self.outputdir:
+            path = os.path.join(self.outputdir, f"output{self.imagecount:05d}.png")
+            self.plotter.screenshot(path)
+            self.imagecount += 1
+
+    def bind_keys(self):
+        self.plotter.add_key_event("l", self.loop)
+        self.plotter.add_key_event("s", self.stop_anim)
+        self.plotter.add_key_event("w", self.watch)
+        self.plotter.add_key_event("p", self.snapshot)
 
     def run(self):
-        win = self.script.engine.application.gui.GetTopWindow()
-        win.CenterOnScreen()
-        self.script.new_scene()
-
-        for idx, filegroup in enumerate(self.filelists):
-            if not filegroup:
-                continue
-            f = filegroup[0]
-            reader = VTKFileReader()
-            reader.initialize(f)
-            self.data.append(reader)
-            self.filestatus.append(os.stat(f).st_mtime)
-            self.script.add_source(reader)
-            self.add_modules(idx, add_text=(idx == 0))
-
-        self.add_animation_menu()
-
-    def add_animation_menu(self):
-        """Adds a custom 'Animations' menu to the GUI."""
-        window = self.script.engine.application.gui.GetTopWindow()
-        menubar = window.GetMenuBar()
-        animation_menu = wx.Menu()
-        pos = menubar.GetMenuCount() - 1
-        menubar.Insert(pos, animation_menu, "Animations")
-
-        items = {
-            "Loop": self.AnimLoop,
-            "Stop": self.AnimStop,
-            "Watch": self.AnimWatch,
-            # "Save as MPEG": self.AnimMPEG  # Placeholder
-        }
-
-        for label, handler in items.items():
-            menu_item = wx.MenuItem(animation_menu, wx.ID_ANY, label)
-            animation_menu.Append(menu_item)  # Changed here for wxPython Phoenix
-            window.Bind(wx.EVT_MENU, handler, menu_item)
-
-    def AnimStop(self, evt):
-        self.stop = True
-
-    def AnimLoop(self, evt):
-        self.stop = False
-        self.timestep = 0
-        self.watcher = Watcher(1000, self.AnimLoopRec)
-
-    def AnimLoopRec(self):
-        if self.stop:
-            self.watcher = None
-            return
-
-        filelist = self.filelists[0]
-        if self.timestep < len(filelist):
-            for idx, _ in enumerate(self.filelists):
-                self.data[idx].initialize(filelist[self.timestep])
-
-            if self.sceneTextCount:
-                self.sceneTextCount.text = str(self.timestep)
-            self.timestep += 1
-        else:
-            self.watcher = None
-
-    def AnimWatch(self, evt):
-        self.stop = False
-        self.frame = 0
-        self.watcher = Watcher(1000, self.AnimWatchRec)
-
-    def AnimWatchRec(self):
-        if self.stop:
-            self.watcher = None
-            return
-
-        changed = False
-        for idx, filegroup in enumerate(self.filelists):
-            if not filegroup:
-                continue
-            f = filegroup[0]
-            if self.filestatus[idx] != os.stat(f).st_mtime:
-                self.data[idx].reader.modified()
-                self.data[idx].update()
-                self.data[idx].data_changed = True
-                self.filestatus[idx] = os.stat(f).st_mtime
-                changed = True
-
-        if changed and self.sceneTextCount:
-            self.sceneTextCount.text = str(self.frame)
-            self.frame += 1
-
-    def add_modules(self, idx, add_text=False):
-        """Adds default modules for rendering."""
-        self.script.add_module(Outline())
-        self.script.add_module(OrientationAxes())
-
-        surface = Surface()
-        surface.enable_contours = True
-        surface.actor.property.opacity = 0.5
-        self.script.add_module(surface)
-
-        # Title Text
-        title_text = Text()
-        title_text.text = self.title
-        title_text.actor.scaled_text = False
-        title_text.actor.text_property.font_size = 18
-        self.script.add_module(title_text)
-
-        width = title_text.actor.mapper.get_width(title_text.scene.renderer) / title_text.scene.renderer.size[0]
-        height = title_text.actor.mapper.get_height(title_text.scene.renderer) / title_text.scene.renderer.size[1]
-        title_text.x_position = 0.5 - width / 2
-        title_text.y_position = 1 - height
-
-        if add_text:
-            self.sceneTextCount = Text()
-            self.sceneTextCount.text = "0"
-            self.sceneTextCount.actor.scaled_text = False
-            self.sceneTextCount.actor.text_property.font_size = 24
-            self.sceneTextCount.x_position = 0.95
-            self.sceneTextCount.y_position = 0.05
-            self.script.add_module(self.sceneTextCount)
-
-    def snapshot(self):
-        """Saves a PNG snapshot of the current scene."""
-        if hasattr(self, 'outputdir') and self.outputdir:
-            scene = self.script.engine.current_scene.scene
-            path = os.path.join(self.outputdir, f"output{self.imagecount:05d}.png")
-            scene.save_png(path)
-            self.imagecount += 1
+        self.setup_scene()
+        self.bind_keys()
+        self.plotter.show(title=self.title)
 
 
 if __name__ == "__main__":
     files = parse()
-    MayaViShow(files, "TEST").main()
+    app = PyVistaShow(files, "VTK Viewer")
+    app.run()
