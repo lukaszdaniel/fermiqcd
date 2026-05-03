@@ -1,6 +1,6 @@
 include ../../Makefile.common
 
-.PHONY: plaquette topological ising3d
+.PHONY: plaquette topological
 
 plaquette:
 	python iqcd.py code +cold +loop n=100 { +heatbath +plaquette }
@@ -15,8 +15,3 @@ topological:
 	./latest.exe > latest.log
 	python ibootstrap.py latest.log '"topological_charge"'
 	python isee.py topological_charge_00000.vtk
-
-ising3d:
-	./ising3d.exe > ising3d.log &
-	python isee.py ising3d.vtk
-

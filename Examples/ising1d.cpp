@@ -1,5 +1,7 @@
 #include "mdp.h"
 
+#define X 0
+
 using namespace MDP;
 
 int main(int argc, char **argv)
@@ -11,6 +13,9 @@ int main(int argc, char **argv)
   mdp_site x(line);
   mdp_int dE = 0, H = L.volume(), dH = 0;
   mdp_real kappa = 2.0;
+  if (argc > 1)
+    kappa = atof(argv[1]); // user provided kappa
+
   forallsites(x)
   {
     spin(x) = +1;
@@ -23,7 +28,7 @@ int main(int argc, char **argv)
     {
       forallsitesofparity(x, parity)
       {
-        dE = 2 * spin(x) * (spin(x - 0) + spin(x + 0));
+        dE = 2 * spin(x) * (spin(x - X) + spin(x + X));
         if (exp(-kappa * dE) > mdp_global_random.plain())
         {
           spin(x) *= -1;

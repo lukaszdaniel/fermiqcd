@@ -62,12 +62,12 @@ CUSTOM_CLEAN  := 1
 include ../Makefile.common
 
 # ================== Subdirectories =================
-SUBDIRS := ising meson meson_wave qqbar2 run1 staggered_quark wilson_quark
+SUBDIRS := meson meson_wave qqbar2 run1 staggered_quark wilson_quark
 
 # ================== Default target =================
 all: $(BINS) $(SUBDIRS)
 
-.PHONY: all clean rebuild plaquette topological ising3d $(SUBDIRS)
+.PHONY: all clean rebuild plaquette topological $(SUBDIRS)
 
 # ================== Recursive make =================
 $(SUBDIRS):
@@ -113,8 +113,4 @@ topological:
 	./latest.exe > latest.log
 	python ibootstrap.py latest.log '"topological_charge"'
 	python isee.py topological_charge_00000.vtk
-
-ising3d:
-	./ising3d.exe > ising3d.log &
-	python isee.py ising3d.vtk
 

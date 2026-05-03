@@ -1,6 +1,4 @@
-#include "../../Libraries/mdp.h"
-// #include "../mdp_all.h"
-#include "../dump.h"
+#include "mdp.h"
 
 #define X 0
 #define Y 1
@@ -13,12 +11,12 @@ int main(int argc, char **argv)
   mdp.open_wormholes(argc, argv);
   constexpr Box L = {20, 20, 20};
   mdp_lattice cube(L);
-  mdp_real_scalar_field spin(cube);
+  mdp_int_scalar_field spin(cube);
   mdp_site x(cube);
   mdp_int dE = 0, H = L.volume(), dH = 0;
   mdp_real kappa = 0.40;
   if (argc > 1)
-    kappa = atof(argv[1]); // try 0.5 or 0.25
+    kappa = atof(argv[1]); // user provided kappa
 
   forallsites(x)
   {
@@ -44,12 +42,10 @@ int main(int argc, char **argv)
     mdp.add(dH);
     H = H + dH;
     mdp << "magnetization=" << H << "\n";
-    // spin.save_vtk(std::format("ising3d{:03d}.vtk", i), -1, -1, 0, true);
-    dump(spin, 0, std::format("ising3d_{:03d}.vtk", i), true);
+    spin.save_vtk(std::format("ising3d{:03d}.vtk", i), -1, -1, 0, true);
   }
 
-  // spin.save_vtk("ising3d.vtk", -1, -1, 0, true);
-  dump(spin);
+  spin.save_vtk("ising3d.vtk", -1, -1, 0, true);
   mdp.close_wormholes();
   return 0;
 }
