@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     mdp << "k=" << k << "\n";
     // if (k > 0)
     //   ApeSmearing::smear(U, 0.7, 1, 10);
-    filename = std::format("{}.{}.vtk", argv[0], k);
+    filename = std::format("{}.{:03d}.vtk", argv[0], k);
     mdp << "top=" << topological_charge_vtk(U, filename) << "\n";
   }
   mdp.close_wormholes();

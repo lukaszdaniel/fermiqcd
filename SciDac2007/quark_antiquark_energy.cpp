@@ -91,7 +91,7 @@ int main(int argc, char **argv)
                    (F(x3, 6) + F(x3, 7) + F(x3, 8) - F(x3, 9) - F(x3, 10) - F(x3, 11)) / L[0] / (conf + 1));
     }
     std::cout << "saving vtk file\n";
-    name = std::format("qqbar_{}.vtk", conf);
+    name = std::format("qqbar_{:03d}.vtk", conf);
     dump(Q3, 0, name);
   }
   // compute correlatiton between three (or four) polyakov lines.

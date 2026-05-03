@@ -44,7 +44,10 @@ int main(int argc, char **argv)
     mdp.add(dH);
     H = H + dH;
     mdp << "magnetization=" << H << "\n";
+    // spin.save_vtk(std::format("ising3d{:03d}.vtk", i), -1, -1, 0, true);
+    dump(spin, 0, std::format("ising3d_{:03d}.vtk", i), true);
   }
+
   // spin.save_vtk("ising3d.vtk", -1, -1, 0, true);
   dump(spin);
   mdp.close_wormholes();

@@ -253,7 +253,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     mdp.add(&pion[0], NT);
     pretty_print("C2", pion);
     if (arguments.get("-pion", "vtk", "false|true") == "true")
-      Q.save_vtk(prefix + ".pion.vtk");
+      Q.save_vtk(std::format("{}.pion.vtk", prefix));
   }
   /// mind - before here Q ony to be used for pion
   if (arguments.have("-meson"))
@@ -284,7 +284,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     mdp.add(&meson[0], NT);
     pretty_print("C2_meson", meson);
     if (arguments.get("-meson", "vtk", "false|true") == "true")
-      Q.save_vtk(prefix + ".meson.vtk");
+      Q.save_vtk(std::format("{}.meson.vtk", prefix));
   }
   if (arguments.have("-current_static"))
   {
@@ -343,7 +343,7 @@ void make_quark(gauge_field &U, coefficients &gauge, coefficients &quark,
     mdp.add(&current[0], NT);
     pretty_print("C2_current", current);
     if (arguments.get("-current_static", "vtk", "false|true") == "true")
-      Q.save_vtk(prefix + ".current_static.vtk");
+      Q.save_vtk(std::format("{}.current_static.vtk", prefix));
   }
   if (arguments.have("-4quark"))
   {
@@ -594,15 +594,15 @@ int main(int argc, char **argv)
       }
       if (arguments.have("-plaquette_vtk"))
       {
-        plaquette_vtk(U, newfilename + ".plaquette.vtk");
+        plaquette_vtk(U, std::format("{}.plaquette.vtk", newfilename));
       }
       if (arguments.have("-polyakov_vtk"))
       {
-        polyakov_vtk(U, newfilename + ".polyakov.vtk");
+        polyakov_vtk(U, std::format("{}.polyakov.vtk", newfilename));
       }
       if (arguments.have("-topcharge_vtk"))
       {
-        mdp_real tc = topological_charge_vtk(U, newfilename + ".topcharge.vtk", -1);
+        mdp_real tc = topological_charge_vtk(U, std::format("{}.topcharge.vtk", newfilename), -1);
         mdp << "topcharge = " << tc << "\n";
       }
       if (arguments.have("-quark"))

@@ -58,7 +58,6 @@ namespace MDP
     return true;
   }
 
-  /// Best way to save a field
   template <class T>
   bool mdp_field<T>::save(std::string filename,
                           mdp_uint processIO,

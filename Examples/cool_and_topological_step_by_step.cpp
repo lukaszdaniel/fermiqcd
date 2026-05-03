@@ -18,7 +18,7 @@ void test_gauge(mdp_uint nt, mdp_uint nx, const char *filename)
   // U.switch_endianess_4bytes();
   for (mdp_suint k = 0; k <= 20; k += 5)
   {
-    filename2 = std::format("{}.topological_charge_{}.vtk", filename, k);
+    filename2 = std::format("{}.topological_charge_{:03d}.vtk", filename, k);
     mdp_real tc = topological_charge_vtk(U, filename2, 0);
     mdp << "topological_charge=" << tc << "\n";
     ApeSmearing::smear(U, 0.7, 5, 10);

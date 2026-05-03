@@ -12,16 +12,10 @@
 #ifndef MDP_FIELD_UPDATE_
 #define MDP_FIELD_UPDATE_
 
-
 #include "mdp_field.h"
 
 namespace MDP
 {
-  /** @brief The only communication function for a field object
-   *
-   * To be invoked every time field variables are assigned and
-   * need to be synchronized between the parallel processes
-   */
   template <class T>
   void mdp_field<T>::update(mdp_parity np, int d, mdp_uint ncomp)
   {

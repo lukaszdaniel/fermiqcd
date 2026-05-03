@@ -58,7 +58,6 @@ namespace MDP
     return true;
   }
 
-  /// Best way to load a field
   template <class T>
   bool mdp_field<T>::load(std::string filename,
                           mdp_uint processIO,

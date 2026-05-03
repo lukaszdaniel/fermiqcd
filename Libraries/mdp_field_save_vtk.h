@@ -24,7 +24,7 @@ namespace MDP
 {
   template <class T>
   bool mdp_field<T>::save_vtk(std::string filename,
-                              int t,
+                              int t_slice,
                               int component,
                               mdp_uint processIO,
                               bool ASCII)
@@ -35,7 +35,6 @@ namespace MDP
     int max_buffer_size = 1024;
     mdp_uint nvol_gl = lattice().global_volume();
     mdp_real mytime = mdp.time();
-    m_header.reset();
 
     if (lattice().n_dimensions() < 3 || lattice().n_dimensions() > 4)
       error("mdp_field::save_vtk only works for ndim=3 and 4");
@@ -64,16 +63,16 @@ namespace MDP
         throw std::ios_base::failure("Unable to open temporary VTK file for writing");
 
       mdp_uint space_volume = lattice().size() / lattice().size(0);
-      mdp_uint LZ = lattice().size(1);
+      mdp_uint LZ = lattice().size(3);
       mdp_uint LY = lattice().size(2);
-      mdp_uint LX = lattice().size(3);
+      mdp_uint LX = lattice().size(1);
       if (lattice().n_dimensions() == 3)
       {
         space_volume = lattice().size();
-        LZ = lattice().size(0);
+        LZ = lattice().size(2);
         LY = lattice().size(1);
-        LX = lattice().size(2);
-        t = -1;
+        LX = lattice().size(0);
+        t_slice = -1;
       }
 
       // VTK header
@@ -115,16 +114,22 @@ namespace MDP
         if (process != NOWHERE)
         {
           mdp_uint timeslice = idx_gl / space_volume;
-          if (idx_gl % space_volume == 0 && (t < 0 || timeslice == mdp_uint(t)))
-            ofs << "\nSCALARS scalars_t" << timeslice << " float\nLOOKUP_TABLE default\n";
+          if (idx_gl % space_volume == 0 && (t_slice < 0 || timeslice == mdp_uint(t_slice)))
+          {
+#ifdef USE_SINGLE_PRECISION
+            ofs << "SCALARS scalars_t" << timeslice << " float\nLOOKUP_TABLE default\n";
+#else
+            ofs << "SCALARS scalars_t" << timeslice << " double\nLOOKUP_TABLE default\n";
+#endif
+          }
 
-          if (t < 0 || timeslice == mdp_uint(t) || lattice().n_dimensions() == 3)
+          if (t_slice < 0 || timeslice == mdp_uint(t_slice) || lattice().n_dimensions() == 3)
           {
             for (mdp_uint fc = 0; fc < m_field_components; fc++)
             {
               if (component == -1 || fc == mdp_uint(component))
               {
-                float fval = static_cast<float>(short_buffer[fc]);
+                mdp_real fval = static_cast<mdp_real>(short_buffer[fc]);
                 if (ASCII)
                 {
                   ofs << std::scientific << fval << "\n";
@@ -132,7 +137,7 @@ namespace MDP
                 else
                 {
                   switch_endianess(fval);
-                  ofs.write(reinterpret_cast<char *>(&fval), sizeof(float));
+                  ofs.write(reinterpret_cast<char *>(&fval), sizeof(mdp_real));
                   if (!ofs)
                     error("probably out of disk space");
                 }
@@ -143,8 +148,9 @@ namespace MDP
       }
 
       ofs.close();
-      std::remove(filename.c_str());
-      std::rename(tempfile.c_str(), filename.c_str());
+      namespace fs = std::filesystem;
+      fs::remove(filename);
+      fs::rename(tempfile, filename);
     }
     else
     {
@@ -217,7 +223,7 @@ namespace MDP
 #if 0
   void save_vtk(mdp_real_field &field,
                 std::string filename,
-                int t = -1,
+                int t_slice = -1,
                 int component = -1,
                 mdp_uint processIO = 0,
                 bool ASCII = false)
@@ -249,14 +255,14 @@ namespace MDP
     if (filename[filename.size() - 1] != '*')
     {
       filename = filename.substr(0, filename.size() - 4);
-      field.save_vtk(std::format("{}.vtk", filename), t, component, processIO, ASCII);
-      fields[filename]->save_vtk(std::format("{}_average.vtk", filename), t, component, processIO, ASCII);
+      field.save_vtk(std::format("{}.vtk", filename), t_slice, component, processIO, ASCII);
+      fields[filename]->save_vtk(std::format("{}_average.vtk", filename), t_slice, component, processIO, ASCII);
     }
     else
     {
       std::string filename2 = filename.substr(0, filename.size() - 1);
-      field.save_vtk(std::format("{}_{}.vtk", filename2, k), t, component, processIO, ASCII);
-      fields[filename]->save_vtk(std::format("{}_average_{}.vtk", filename2, k), t, component, processIO, ASCII);
+      field.save_vtk(std::format("{}_{}.vtk", filename2, k), t_slice, component, processIO, ASCII);
+      fields[filename]->save_vtk(std::format("{}_average_{}.vtk", filename2, k), t_slice, component, processIO, ASCII);
     }
   }
 #endif

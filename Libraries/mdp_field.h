@@ -606,27 +606,105 @@ namespace MDP
       return m_data.get() + i;
     }
 
-    /** @brief communication function for a field object
+    /**
+     * @brief Synchronizes field data between MPI processes (halo exchange).
      *
-     * The only communication function for a field object
-     * to be invoked every time field variables are assigned and
-     * need to be synchronized between the parallel processes
-     * The most important communication function in MDP.
-     * it must be called after each field variables are modified.
-     * it restores the synchronization between parallel processes.
+     * This method exchanges boundary (ghost/halo) data between neighboring
+     * processes to ensure consistency of distributed field values across
+     * the lattice decomposition.
+     *
+     * Each process sends selected components of its local field to other
+     * processes that own neighboring sites and receives corresponding data
+     * to update its ghost regions.
+     *
+     * @param np     Parity selector:
+     *               - EVENODD (default): update both even and odd sites
+     *               - EVEN or ODD: update only selected subset
+     * @param d      Starting component index (used when updating only part
+     *               of the field). If -1, all components are updated.
+     * @param ncomp  Number of components to update starting from @p d.
+     *
+     * @note
+     * - This function performs a nearest-neighbor communication (halo exchange),
+     *   not a global reduction or averaging.
+     * - Only boundary/ghost data are exchanged; interior sites are untouched.
+     * - The communication pattern is defined by the lattice partitioning.
+     *
+     * @warning
+     * - Must be called after modifying field values that are used by other
+     *   processes (e.g., before stencil operations or nearest-neighbor access).
+     * - Not required if only strictly local (non-neighbor-dependent) computations
+     *   are performed.
+     *
+     * @usage
+     * Typical usage pattern:
+     * @code
+     * // modify local field values
+     * field(x) = ...;
+     *
+     * // synchronize ghost cells before using neighbor values
+     * field.update();
+     *
+     * // now safe to use field at neighboring sites
+     * @endcode
+     *
+     * @note
+     * - Partial updates (using @p d and @p ncomp) allow reducing communication
+     *   when only some components have changed.
+     * - EVEN/ODD splitting can be used for performance optimization in
+     *   checkerboard-style algorithms.
      */
     void update(mdp_parity np = EVENODD, int d = -1, mdp_uint ncomp = 1);
 
-    /** @brief Best way to load a field
+    /**
+     * @brief Collective parallel read of a field from a binary file.
      *
-     * IO functions: load(filename, processIO, buffersize)
-     *               save(filename, processIO, buffersize)
-     * filename should possibly include the path.
-     * processIO is the process that physically perform the IO.
-     * buffersize if the size of the buffer associated to the
-     *   communication to each process. buffersize*Nproc
-     *   should fit in the memory of processIO.
-     *   By default buffersize=1024 and it works reasonably fast.
+     * This method loads field data from a single binary file using the process
+     * identified by @p processIO and distributes the data across MPI processes.
+     * The I/O process reads the file in global lattice order and sends buffered
+     * chunks to the appropriate processes.
+     *
+     * Data are expected to be stored as contiguous blocks of
+     * @c m_field_components elements of type @c T per lattice site,
+     * in global lattice ordering (as produced by save()).
+     *
+     * @param filename              Name of the input file (resolved via latest_file()).
+     * @param processIO             Rank of the process responsible for file I/O.
+     * @param max_buffer_size       Maximum number of lattice sites transferred
+     *                              per communication buffer.
+     * @param load_header           If true, reads and validates an
+     *                              @c mdp_field_file_header from the file.
+     * @param skip_bytes            Number of bytes to skip before reading data
+     *                              (useful for custom headers).
+     * @param user_read             Optional callback for custom reading.
+     *                              If provided, it is called for each lattice site:
+     *                              @code
+     *                              bool user_read(std::ifstream& fp,
+     *                                             void* data,
+     *                                             mdp_int nbytes,
+     *                                             mdp_int offset,
+     *                                             mdp_int global_index,
+     *                                             const mdp_lattice& lattice);
+     *                              @endcode
+     *                              If null, raw binary data are read.
+     * @param try_switch_endianess  If true, automatically converts data endianess
+     *                              when the file header indicates mismatch.
+     *
+     * @return true on success, false if header validation fails.
+     *
+     * @throws std::format if the file does not exist.
+     * @throws error on I/O failures or unexpected end of file.
+     *
+     * @note
+     * - Only the @p processIO performs file reads.
+     * - Other processes receive their data via buffered communication.
+     * - If @p load_header is enabled, the file header is validated against the
+     *   current lattice (dimensions, size, data layout).
+     * - Endianess mismatch is detected from the header and optionally corrected
+     *   after loading.
+     * - Missing lattice sites (NOWHERE) trigger repositioning in the input stream.
+     * - The method assumes the file was written with a compatible layout (see save()).
+     * - After loading, update() is called and endianess information is broadcast.
      */
     bool load(std::string filename,
               mdp_uint processIO = 0,
@@ -636,7 +714,51 @@ namespace MDP
               bool (*user_read)(std::ifstream &, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr,
               bool try_switch_endianess = true);
 
-    /** @brief Best way to save a field
+    /**
+     * @brief Collective parallel write of the field to a binary file.
+     *
+     * This method gathers field data distributed across MPI processes and writes
+     * them into a single binary file using the process identified by @p processIO.
+     * Other processes send their local data in buffered chunks.
+     *
+     * Data are written in global lattice order as contiguous blocks of
+     * @c m_field_components elements of type @c T per lattice site.
+     *
+     * The method supports writing an optional file header and allows full
+     * customization of the output format via a user-provided callback.
+     *
+     * @param filename        Name of the output file (may be modified by
+     *                        next_to_latest_file() to avoid overwriting).
+     * @param processIO       Rank of the process responsible for file I/O.
+     * @param max_buffer_size Maximum number of lattice sites sent in one buffer
+     *                        from each process.
+     * @param load_header     (Unused / legacy) retained for API compatibility.
+     * @param skip_bytes      Number of bytes to skip at the beginning of the file
+     *                        before writing data (useful for custom headers).
+     * @param user_write      Optional callback for custom writing.
+     *                        If provided, it is called for each lattice site:
+     *                        @code
+     *                        bool user_write(std::ofstream& fp,
+     *                                        void* data,
+     *                                        mdp_int nbytes,
+     *                                        mdp_int offset,
+     *                                        mdp_int global_index,
+     *                                        const mdp_lattice& lattice);
+     *                        @endcode
+     *                        If null, raw binary data are written.
+     *
+     * @return true on success.
+     *
+     * @throws error if the file cannot be opened or a write operation fails.
+     *
+     * @note
+     * - Only the @p processIO performs file operations.
+     * - Other processes act as data providers via buffered communication.
+     * - If @p save_header is enabled, an @c mdp_field_file_header is written
+     *   at the beginning of the file (after @p skip_bytes).
+     * - If @p user_write is provided, it overrides the default raw binary write.
+     * - The method assumes a consistent global lattice ordering across processes.
+     * - Missing lattice sites (NOWHERE) trigger repositioning in the output stream.
      */
     bool save(std::string filename,
               mdp_uint processIO = 0,
@@ -645,17 +767,42 @@ namespace MDP
               mdp_int skip_bytes = 0,
               bool (*user_write)(std::ofstream &, void *, mdp_int, mdp_int, mdp_int, const mdp_lattice &) = nullptr);
 
-    /** @brief Best way to save a field to a VTK file
+    /**
+     * @brief Collective parallel write of the field to a VTK file (STRUCTURED_POINTS).
      *
-     * @param filename String giving name of file to create
-     * @param t Int that specifies which timeslice to save.  Value of -1 saves all timeslices.
-     * @param component Int specifying which component to save.  Value of -1 saves all components.
-     * @param processIO Int naming the ID of processor that should perform the save
-     * @param ASCII Bool flag to save data in ASCII when true, binary when false
-     * @return Returns true on success, throws an error for unexpected conditions.
+     * This method gathers field data distributed across MPI processes and writes it
+     * into a single VTK file using the process identified by @p processIO.
+     * Other processes send their local data in buffered chunks to the I/O process.
+     *
+     * Supported only for 3D or 4D lattices:
+     * - In 4D, data are interpreted as a sequence of 3D time slices.
+     * - In 3D, the entire field is written as a single dataset (t_slice ignored).
+     *
+     * The output file is written via a temporary file and then atomically renamed
+     * to avoid partial/corrupted results.
+     *
+     * @param filename   Base name of the output VTK file (a temporary ".tmp" file is used internally).
+     * @param t_slice    Time slice to save (4D only).
+     *                   -1 writes all time slices.
+     * @param component  Field component to save.
+     *                   -1 writes all components.
+     * @param processIO  Rank of the process responsible for file I/O.
+     *                   This process gathers data from all others.
+     * @param ASCII      If true, writes ASCII VTK; otherwise writes binary (with endian conversion).
+     *
+     * @return true on success.
+     *
+     * @throws std::ios_base::failure if the output file cannot be opened.
+     * @throws error if lattice dimensionality is not 3 or 4, or on I/O failure.
+     *
+     * @note
+     * - Data are written in global lattice order.
+     * - In parallel mode, non-I/O processes do not perform file operations.
+     * - Binary output uses mdp_real precision and applies endian conversion.
+     * - File name may be modified by next_to_latest_file() to avoid overwriting.
      */
     bool save_vtk(std::string filename,
-                  int t = -1,
+                  int t_slice = -1,
                   int component = -1,
                   mdp_uint processIO = 0,
                   bool ASCII = false);
